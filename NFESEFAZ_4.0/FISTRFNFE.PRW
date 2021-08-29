@@ -1,0 +1,6 @@
+
+User Function FISTRFNFE()
+//INCLUI BOTAO PARA IMPRIMIR A CARTA DE CORREÇÃO DA NOTA FISCAL SELECIONADA NO BROWSER
+	AADD(aRotina,{ "Imprimir CCe", "U_impcce2()", 0, 2, 0, NIL } )
+	
+Return NIL

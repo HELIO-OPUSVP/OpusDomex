@@ -1,0 +1,107 @@
+#INCLUDE "PROTHEUS.CH"
+#INCLUDE "TOPCONN.CH"
+
+
+*------------------------------------------------------------------------------------*
+USER FUNCTION TCTESTE()
+*------------------------------------------------------------------------------------*
+LOCAL nX        :=0
+LOCAL _nPERIODO :=0
+LOCAL cQueryPER :=''
+LOCAL cQuery    :=''
+
+FOR nX:=1 TO 65
+	cQueryPER  :=" SELECT * FROM SHA010 WHERE HA_PER"+strzero(nX,3)+" >0 "
+	nRESULT1 :=(TCSQLEXEC(cQueryPER))
+	IF nRESULT1 <>0  // ERRO NA QUERY NÃO EXISTE CAMPO
+		_nPERIODO := nX-1
+		nX := 65
+	ENDIF
+	
+NEXT
+
+MSGALERT("PERIODO SHA "+STR(_nPERIODO))
+
+cQuery := " SELECT * FROM SHA010 ,SB1010 "
+cQuery += " WHERE HA_PRODUTO=B1_COD "
+cQuery += " AND B1_TIPO NOT IN ('MO')  "
+cQuery += " AND HA_TIPO='6'  "
+cQuery += " AND SHA010.D_E_L_E_T_<>'*' AND SB1010.D_E_L_E_T_<>'*'  "
+cQuery += " AND ( "
+
+FOR nX:=1 TO _nPERIODO
+	cQuery += " HA_PER"+alltrim(strzero(nX,3))+">0 "
+	IF nX<_nPERIODO
+		cQuery +=" OR "
+	ENDIF
+NEXT
+cQuery += "           )  "
+cQuery += " ORDER BY HA_PRODUTO "
+
+*-----------------------------------------------------------------------------------------------------------------------------------*
+dbSelectArea("SHA")
+dbGoTop()
+
+FOR nX:=1 TO 65
+	cQueryPER  :=" SELECT * FROM SHA010 WHERE HA_PER"+strzero(nX,3)+" >0 "
+	nRESULT1 :=(TCSQLEXEC(cQueryPER))
+	IF nRESULT1 <>0  // ERRO NA QUERY NÃO EXISTE CAMPO
+		_nPERIODO := nX-1
+		nX := 65
+	ENDIF
+	
+NEXT
+
+nX:=0
+DO While !Eof()
+	
+	cQUERY1:=" INSERT INTO SHA010 "
+	cQUERY1+=" ( "
+	FOR nX:=1 TO _nPERIODO
+		cQUERY1+=" HA_PER"+alltrim(strzero(nX,3))+", "
+	NEXT
+	cQUERY1+=" HA_FILIAL,HA_NUMMRP,HA_NIVEL,HA_PRODUTO,HA_PRODSHW,HA_OPC,HA_REVISAO,HA_REVSHW,HA_TIPO,HA_TEXTO    , "
+	cQUERY1+=" R_E_C_N_O,R_E_C_N_O_  ) "
+	cQUERY1+=" VALUES "
+	cQUERY1+=" ( "
+	FOR nX:=1 TO _nPERIODO
+		cQuery += " HA_PER"+alltrim(strzero(nX,3))+">0 "
+		cQUERY1+=" '"+&(STR(SHA->HA_PER+alltrim(strzero(nX,3))))+"','"
+	NEXT
+	cQUERY1+=" '"+SHA->HA_FILIAL+"','"+SHA->HA_NUMMRP+"','"+SHA->HA_NIVEL +"','"+SHA->HA_PRODUTO+"','"+SHA->HA_PRODSHW+"','"+SHA->HA_OPC   +"','"+SHA->HA_REVISAO+"','"+SHA->HA_REVSHW+"','"+SHA->HA_TIPO  +"','"+SHA->HA_TEXTO +"','"+STR(nX)+"','"+STR(nX)+"' "
+	cQUERY1+=" ) "
+	DBSKIP()
+ENDDO
+
+
+/*
+cQUERY1+=" HA_PER001,HA_PER002,HA_PER003,HA_PER004,HA_PER005,HA_PER006,HA_PER007,HA_PER008,HA_PER009,HA_PER010, "
+cQUERY1+=" HA_PER011,HA_PER012,HA_PER013,HA_PER014,HA_PER015,HA_PER016,HA_PER017,HA_PER018,HA_PER019,HA_PER020, "
+cQUERY1+=" HA_PER021,HA_PER022,HA_PER023,HA_PER024,HA_PER025,HA_PER026,HA_PER027,HA_PER028,HA_PER029,HA_PER030, "
+
+cQUERY1+=" HA_PER031,HA_PER032,HA_PER033,HA_PER034,HA_PER035,HA_PER036,HA_PER037,HA_PER038,HA_PER039,HA_PER040, "
+cQUERY1+=" HA_PER041,HA_PER042,HA_PER043,HA_PER044,HA_PER045,HA_PER046,HA_PER047,HA_PER048,HA_PER049,HA_PER050, "
+cQUERY1+=" HA_PER051,HA_PER052,HA_PER053,HA_PER054,HA_PER055,HA_PER056,HA_PER057,HA_PER058,HA_PER059,HA_PER060, "
+
+cQUERY1+=" HA_FILIAL,HA_NUMMRP,HA_NIVEL,HA_PRODUTO,HA_PRODSHW,HA_OPC,HA_REVISAO,HA_REVSHW,HA_TIPO,HA_TEXTO    , "
+cQUERY1+=" R_E_C_N_O,R_E_C_N_O_  ) "
+cQUERY1+=" VALUES "
+cQUERY1+=" ( "
+cQUERY1+=" '"+STR(SHA->HA_PER001)+"','"+STR(SHA->HA_PER002)+"','"+STR(SHA->HA_PER003)+"','"+STR(SHA->HA_PER004) +"','"+STR(SHA->HA_PER005) +"','"+STR(SHA->HA_PER006)+"','"+STR(SHA->HA_PER007) +"','"+STR(SHA->HA_PER008)+"','"+STR(SHA->HA_PER009)+"','"+STR(SHA->HA_PER010)+"',"
+cQUERY1+=" '"+STR(SHA->HA_PER011)+"','"+STR(SHA->HA_PER012)+"','"+STR(SHA->HA_PER013)+"','"+STR(SHA->HA_PER014) +"','"+STR(SHA->HA_PER015) +"','"+STR(SHA->HA_PER016)+"','"+STR(SHA->HA_PER017) +"','"+STR(SHA->HA_PER018)+"','"+STR(SHA->HA_PER019)+"','"+STR(SHA->HA_PER020)+"',"
+cQUERY1+=" '"+STR(SHA->HA_PER021)+"','"+STR(SHA->HA_PER022)+"','"+STR(SHA->HA_PER023)+"','"+STR(SHA->HA_PER024) +"','"+STR(SHA->HA_PER025) +"','"+STR(SHA->HA_PER026)+"','"+STR(SHA->HA_PER027) +"','"+STR(SHA->HA_PER028)+"','"+STR(SHA->HA_PER029)+"','"+STR(SHA->HA_PER030)+"',"
+
+cQUERY1+=" '"+STR(SHA->HA_PER031)+"','"+STR(SHA->HA_PER032)+"','"+STR(SHA->HA_PER033)+"','"+STR(SHA->HA_PER034) +"','"+STR(SHA->HA_PER035) +"','"+STR(SHA->HA_PER036)+"','"+STR(SHA->HA_PER037) +"','"+STR(SHA->HA_PER038)+"','"+STR(SHA->HA_PER039)+"','"+STR(SHA->HA_PER040)+"',"
+cQUERY1+=" '"+STR(SHA->HA_PER041)+"','"+STR(SHA->HA_PER042)+"','"+STR(SHA->HA_PER043)+"','"+STR(SHA->HA_PER044) +"','"+STR(SHA->HA_PER045) +"','"+STR(SHA->HA_PER046)+"','"+STR(SHA->HA_PER047) +"','"+STR(SHA->HA_PER048)+"','"+STR(SHA->HA_PER049)+"','"+STR(SHA->HA_PER050)+"',"
+cQUERY1+=" '"+STR(SHA->HA_PER051)+"','"+STR(SHA->HA_PER052)+"','"+STR(SHA->HA_PER053)+"','"+STR(SHA->HA_PER054) +"','"+STR(SHA->HA_PER055) +"','"+STR(SHA->HA_PER056)+"','"+STR(SHA->HA_PER057) +"','"+STR(SHA->HA_PER058)+"','"+STR(SHA->HA_PER059)+"','"+STR(SHA->HA_PER060)+"',"
+
+cQUERY1+=" '"+SHA->HA_FILIAL+"','"+SHA->HA_NUMMRP+"','"+SHA->HA_NIVEL +"','"+SHA->HA_PRODUTO+"','"+SHA->HA_PRODSHW+"','"+SHA->HA_OPC   +"','"+SHA->HA_REVISAO+"','"+SHA->HA_REVSHW+"','"+SHA->HA_TIPO  +"','"+SHA->HA_TEXTO +"','"+STR(nX)+"','"+STR(nX)+"' "
+cQUERY1+=" ) "
+
+*/
+
+MSGALERT(cQuery)
+
+RETURN
+
+

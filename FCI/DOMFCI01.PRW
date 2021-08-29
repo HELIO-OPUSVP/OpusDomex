@@ -1,0 +1,150 @@
+#INCLUDE "RWMAKE.CH"
+#INCLUDE "TOPCONN.CH"
+
+USER Function DOMFCI01()
+
+/*
+
+//----------PRODUTO VENDIDO FORA ESTADO
+cQuery1 := " SELECT D2_COD,SUM(D2_QUANT) QTDE ,SUM(D2_TOTAL-D2_VALIPI) VALOR ,SUM(D2_TOTAL-D2_VALIPI)/SUM(D2_QUANT) MEDIO "
+cQuery1 += " FROM SD2010 SD2,SB1010 SB1  "
+cQuery1 += " WHERE  B1_COD=D2_COD AND B1_ORIGEM IN ('0','3','5','8') AND SUBSTRING(D2_EMISSAO,1,6)='201308' "
+cQuery1 += " AND B1_TIPO='PA' "
+cQuery1 += " and D2_CF IN ('6107','6101','6103','6105','6109','6111','6113','6116','6118','6122','6124','6125','6401','6402','6403','6404') "
+cQuery1 += " AND SD2.D_E_L_E_T_<>'*' AND SB1.D_E_L_E_T_<>'*' "
+cQuery1 += " GROUP BY D2_COD "
+cQuery1 += " ORDER BY D2_COD "
+//-----------------PRODUTO VENDIDO DENTRO DO ESTADO
+cQuery2 := " SELECT D2_COD,SUM(D2_QUANT) QTDE ,SUM(D2_TOTAL-D2_VALIPI) VALOR ,SUM(D2_TOTAL-D2_VALIPI)/SUM(D2_QUANT) MEDIO "
+cQuery2 += " FROM SD2010 SD2,SB1010 SB1  "
+cQuery2 += " WHERE  B1_COD=D2_COD AND B1_ORIGEM IN ('0','3','5','8') AND SUBSTRING(D2_EMISSAO,1,6)='201308' "
+cQuery2 += " AND B1_TIPO='PA' "
+//cQuery2 += " and D2_CF NOT IN ('6107','6101','6103','6105','6109','6111','6113','6116','6118','6122','6124','6125','6401','6402','6403','6404') "
+cQuery2 += " and D2_CF     IN ('5107','5101','5103','5105','5109','5111','5113','5116','5118','5122','5124','5125','5401','5402','5403','5404') "
+cQuery2 += " AND SD2.D_E_L_E_T_<>'*' AND SB1.D_E_L_E_T_<>'*' "
+cQuery2 += " GROUP BY D2_COD "
+cQuery2 += " ORDER BY D2_COD "
+
+TcQuery cQuery1 Alias "TR1" New
+TcQuery cQuery2 Alias "TR2" New
+
+TR1->(DbGoTop())
+CFD->(DBSELECTAREA('CFD'))
+CFD->(DBSETORDER(1))
+
+DO WHILE !TR1->(EOF())
+	RecLock("CFD",.T.)
+	CFD_FILIAL :='01'
+	CFD_PERCAL :='102013'
+	CFD_PERVEN :='082013'
+	CFD_COD    :=TR1->D2_COD
+	CFD_OP     :=''
+	CFD_VPARIM :=0
+	CFD_VSAIIE :=TR1->MEDIO
+	CFD_CONIMP :=0
+	CFD_FCICOD :=''
+	CFD_FILOP  :='01'
+	CFD_ORIGEM :=''
+	CFD->( msUnlock() )
+	
+	TR1->(DBSKIP())
+ENDDO
+TR1->(dbCloseArea())
+
+TR2->(DbGoTop())
+DO WHILE !TR2->(EOF())
+	IF !CFD->(DBSEEK(xFILIAL('CFD')+'102013'+'082013'+TR2->D2_COD ))
+		RecLock("CFD",.T.)
+		CFD_FILIAL :='01'
+		CFD_PERCAL :='102013'
+		CFD_PERVEN :='082013'
+		CFD_COD    :=TR2->D2_COD
+		CFD_OP     :=''
+		CFD_VPARIM :=0
+		CFD_VSAIIE :=TR2->MEDIO
+		CFD_CONIMP :=0
+		CFD_FCICOD :=''
+		CFD_FILOP  :='01'
+		CFD_ORIGEM :=''
+		CFD->( msUnlock() )
+	ENDIF
+	TR2->(DBSKIP())
+ENDDO
+TR2->(dbCloseArea())
+
+
+CFD->(DBSELECTAREA('CFD'))
+CFD->(DBSETORDER(1))
+
+CFD->(DBGOTOP())
+DO WHILE !CFD->(EOF())
+	cQuery3 := " SELECT TOP 1 D3_OP  "
+	cQuery3 += " FROM SD3010  "
+	cQuery3 += " WHERE D3_COD ='"+CFD->CFD_COD+"'  AND SUBSTRING(D3_CF,1,2)='PR'  AND D_E_L_E_T_<>'*'  "
+	cQuery3 += " AND SUBSTRING(D3_EMISSAO,1,6) <='201308' "
+	cQuery3 += " ORDER BY D3_EMISSAO DESC,D3_OP DESC "
+	TcQuery cQuery3 Alias "TR3" New
+	
+	TR3->(DbGoTop())
+	
+	RecLock("CFD",.F.)
+	CFD_OP     :=TR3->D3_OP
+	CFD->( msUnlock() )
+	TR3->(dbCloseArea())
+	CFD->(DBSKIP())
+ENDDO
+
+CFD->(DBGOTOP())
+DO WHILE !CFD->(EOF())
+	IF ALLTRIM(CFD->CFD_OP)<>''
+		cQuery3 := " SELECT  D3_OP,B1_ORIGEM,D3_COD,D3_QUANT, "
+		cQuery3 += "  (SELECT TOP 1 D1_VUNIT FROM SD1010 WHERE D1_COD=D3_COD AND SUBSTRING(D1_CF,1,1)='3' AND D1_QUANT>0  AND D_E_L_E_T_<>'*' ORDER BY D1_EMISSAO DESC )*D3_QUANT AS D3_TOTAL, "
+		cQuery3 += "  (SELECT TOP 1 D1_DOC+'/'+D1_SERIE  FROM SD1010 WHERE D1_COD=D3_COD AND SUBSTRING(D1_CF,1,1)='3' AND D1_QUANT>0  AND D_E_L_E_T_<>'*' ORDER BY D1_EMISSAO DESC ) AS D3_NFISCAL "
+		cQuery3 += " ,D3_CUSTO1 AS  D3_CUSTO"
+		cQuery3 += " FROM SD3010 D3,SB1010 B1 "
+		cQuery3 += " WHERE B1_COD=D3_COD AND B1_ORIGEM IN ('1','2','3','5','8') "
+		cQuery3 += " AND D3_OP='"+ALLTRIM(CFD->CFD_OP)+"' AND SUBSTRING(D3_CF,1,2)='RE' "
+		cQuery3 += " AND D3.D_E_L_E_T_<>'*' AND B1.D_E_L_E_T_<>'*' "
+		
+		TcQuery cQuery3 Alias "TR3" New
+		cARQ :='FCI_'+ALLTRIM(CFD->CFD_OP)
+		
+		TR3->(DbGoTop())
+		
+		_nTOTALOP:=0
+		_nQTDOP:=0
+		_nVPARIMP:=0
+		
+      TR3->(DbGoTop())		
+		DO WHILE !TR3->(EOF())
+		   IF TR3->D3_TOTAL>0
+			   _nTOTALOP:=_nTOTALOP+TR3->D3_TOTAL         
+			   ELSE
+			   _nTOTALOP:=_nTOTALOP+TR3->D3_CUSTO
+			ENDIF
+			TR3->(DBSKIP())
+		ENDDO
+		COPY TO  &cARQ
+		TR3->(dbCloseArea())
+		cQuery3 := "  SELECT SUM(D3_QUANT) AS D3_QUANT FROM SD3010 WHERE D3_OP='"+ALLTRIM(CFD->CFD_OP)+"' AND SUBSTRING(D3_CF,1,2)='PR' AND D_E_L_E_T_<>'*' "
+		TcQuery cQuery3 Alias "TR3" New
+		TR3->(DbGoTop())
+		_nQTDOP:=TR3->D3_QUANT
+		IF _nQTDOP>0
+			_nVPARIMP:=_nTOTALOP/_nQTDOP
+		ENDIF
+		TR3->(dbCloseArea())
+		
+		RecLock("CFD",.F.)
+		CFD_VPARIM :=_nVPARIMP
+		CFD->( msUnlock() )
+	ENDIF
+	CFD->(DBSKIP())
+ENDDO
+
+TCSQLEXEC('UPDATE CFD010 SET CFD_CONIMP=ROUND((CFD_VPARIM/CFD_VSAIIE)*100,2) WHERE  CFD_VSAIIE>0 ')
+*/
+
+MSGALERT('FIM')
+
+RETURN

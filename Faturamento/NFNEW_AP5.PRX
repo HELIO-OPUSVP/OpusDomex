@@ -1,0 +1,889 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 20/07/01
+#IFNDEF WINDOWS
+   #DEFINE PSAY SAY
+#ENDIF
+
+User Function NFNEW()        // incluido pelo assistente de conversao do AP5 IDE em 20/07/01
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("MV_PAR01,MV_PAR02,MV_PAR03,WNREL,CNREL,CTITULO")
+SetPrvt("CDESC1,CDESC2,CDESC3,CNAT,CSTRING,NPERICM")
+SetPrvt("NPOSREG,NIT,NDOCANT,LCONTINUA,ARETURN,NLASTKEY")
+SetPrvt("NDUP,NTD,CIMPNORM,CIMPCOMP,CIMPON,CIMPOFF")
+SetPrvt("CIMPRESET,CCFOP,CREDNOME,CREDEND,CREDMUN,CREDEST")
+SetPrvt("CREDCGC,NDESC,CPEDCLI,APEDCLI,NOPC,CCLASFIS")
+SetPrvt("NEWHEAD,CMENS,NTAMMEN,CPERG,NRADIO,ARADIO")
+SetPrvt("OK,CSAVSCR2,CSAVSCR3,CKEY,AITENS,AITENSISS")
+SetPrvt("ACFO,ACLASFIS,ANUMPED,CNUMPED,AMENPAD1,AMENPAD2")
+SetPrvt("NI,ADUPL,NLIN,NK,NJ,NFIM")
+SetPrvt("XCLAS,YISS,MAIOR,NCOL,_I,")
+
+#IFNDEF WINDOWS
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 20/07/01 ==>    #DEFINE PSAY SAY
+#ENDIF
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡ao    ³ DOMEXNF  ³ Marco A. Bianchi    ³ Data ³ 30/11/98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡ao ³ Nota Fiscal Saida da Domex                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                         ³±±
+±±³ Rev A    ³ 27/09/00 - Alteracao da posicao de impressao     ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01         // De Nota                                  ³
+//³ mv_par02         // Ate a Nota                               ³
+//³ mv_par03         // Serie                                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+mv_par01 := Space(9)
+mv_par02 := Space(9)
+mv_par03 := Space(3)
+wNrel    := "DOMENF"
+cNrel    := "DOMENF"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+ctitulo   := "NOTA FISCAL SAIDA"
+cDesc1    := "Emissao de N.F. de Saida Lay-Out Padrao DOMEX"
+cDesc2	  := ""
+cDesc3	  := ""
+cNat	  := ""
+cString   := "SF2"
+nPerICM   := nPosReg := nIt := nDocAnt := 0
+lContinua := .T.
+aReturn   := { "Especial", 1,"Administracao", 2, 2, 1, "",1 }
+nLastKey  := nDup := 0
+nTD       := 55                 //Largura da Coluna de Descricao do Item
+cImpNorm  := chr(18)            //impressora - normal
+cImpComp  := chr(15)            //         comprimido
+cImpOn    := chr(17)            //         on-line
+cImpOff   := chr(19)            //         off-line
+cImpReset := chr(27) + "@"      //             reset
+cCFOP	  := ""                 //C.F.O.P da nota fiscal
+cRedNome  := ""                 //nome da transp. redespacho
+cRedEnd   := ""                 //end. da transp. redespacho
+cRedMun   := ""                 //municipio da transp. redespacho
+cRedEst   := ""                 //estado da transp. redespacho
+cRedCGC   := ""                 //CGC da transp. redespacho
+nDesc     := 0                  //7% de desconta se for suframa
+cPedCli   := ""                 //numero do pedido do cliente
+aPedCli   := {}                 //array com num. do pedido do cliente
+nOpc      := 1                  //confirma ou abandona
+cClasfis  := ""                 //classificacao fiscal
+NewHead   := ""                 //versao windows precisa desta variavel
+cMens     := ""
+nTamMen   := 0
+cString:= "SF2"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas, busca o padrao da NFSAI  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cPerg := "DOMENF"
+pergunte(cPerg,.t.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cNrel:=SetPrint("SF2",cNrel,cPerg,cTitulo,cDesc1,cDesc2,cDesc3,.F.,"")
+
+If nLastKey==27
+	Return
+Endif
+
+SetDefault(aReturn,cString)
+
+If nLastKey==27
+	Return
+Endif
+
+/*If LastKey() == 27 .OR. nLastKey == 27
+   Return
+EndIf
+
+cNrel:=SetPrint("SF2",cNrel,cPerg,cTitulo,cDesc1,cDesc2,cDesc3,.F.,"")
+
+SetDefault(aReturn,cString)
+
+If LastKey() == 27 .OR. nLastKey == 27
+   Return
+EndIf */
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Imprime * p/ posicionamento do formulario                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+#IFDEF WINDOWS		    //Impressao para Winwdows
+
+   nRadio := 2
+   aRadio := {"Sim","Nao","Cancela"}
+
+   SetPrc(0,0)
+   If aReturn[5] <> 1		//relatorio na impressora
+      @001,001 PSAY cImpComp
+      @001,002 PSAY Space(43) + "."
+      @001,088 PSAY "*"
+
+      Ok := "N"
+      While OK <> "S"
+         Set Device to Printer
+         //controlar salto inicial p/outras imp.
+         //devera ser 0 p/imp sem load autom.
+         //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+         //³Padroniza a Impressora                                  ³
+         //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+         @001,000 PSAY cImpReset
+         @001,002 PSAY Space(43) + "."
+         @001,088 PSAY "*"
+         //@001,105 PSAY cImpOff
+
+         Set Device to Screen
+
+         @10,10 TO 150,300 DIALOG oDlg TITLE "Formulario Posicionado?"
+         @11,12 Say "O Asterisco deve estar entre os quadros de cabecalho"
+         @12,12 Say "e o de numero da nota !!"
+         @22,12 Say "Formulario esta posicionado?"
+         @35,30 RADIO aRadio VAR nRadio
+         @40,90 BUTTON "_Ok" SIZE 28,15 ACTION Close(oDlg)
+         ACTIVATE DIALOG oDlg CENTERED
+         Do Case
+            Case nRadio ==1
+               lContinua:=.T.
+               Exit
+            Case nRadio ==2
+               OK := "N"
+               Loop
+            Case nRadio ==3
+               lContinua:=.F.
+               Return
+         EndCase
+
+         Set Device To Printer
+         //@Prow(),Pcol()+1 PSAY cImpOn
+      EndDo
+   Endif
+
+#ELSE			//Impressao para DOS
+
+   SetPrc(0,0)
+   If aReturn[5] <> 1		//relatorio na impressora
+      @Prow(),00  PSAY Space(43) + "."
+      @Prow(),088 PSAY "*"
+
+      Ok := "N"
+      Set Device to Screen
+      cSavScr2 := SaveScreen(9,8,18,72)
+      DrawAdvWindow("Posicionamento do Formulario",9,10,17,72)
+      While Ok <> "S"
+         Set Device to Printer
+         If !Isprinter()
+            Set Device to Screen
+            cSavScr3 := SaveScreen(11,18,16,60)
+            DrawAdvWindow("",11,20,15,60)
+            While !Isprinter()
+              @13,30 PSAY "Ligue a Impressora"
+            EndDo
+            RestScreen(11,18,16,60,cSavScr3)
+            Set Device to Printer
+         Endif
+         //controlar salto inicial p/outras imp.
+         //devera ser 0 p/imp sem load autom.
+         //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+         //³Padroniza a Impressora                                  ³
+         //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+         @4     ,00  PSAY cImpReset
+         @Prow(),00  PSAY Space(43) + "."
+         @Prow(),088 PSAY "*"
+         @Prow(),Pcol()+1 PSAY cImpOff
+
+         Set Device to Screen
+         DrawAdvWindow(" Formulario ",10,25,14,56)
+         @ 12,27 PSAY "Formulario esta posicionado?"
+         nOpc:=Menuh({"Sim","Nao","Cancela Impressao"},14,26,"b/w,w+/n,r/w","SNC","",1)
+         Set Device to Print
+
+         Do Case
+            Case nOpc==1
+               lContinua:=.T.
+               Exit
+            Case nOpc==2
+               Loop
+            Case nOpc==3
+               lContinua:=.F.
+               Return
+         EndCase
+
+         Set Device To Printer
+         @Prow(),Pcol()+1 PSAY cImpOn
+      EndDo
+      RestScreen(9,8,18,72,cSavScr2)
+      Set Device to Printer
+      If !Isprinter()
+         Set Device to Screen
+         cSavScr3 := SaveScreen(11,22,16,60)
+         DrawAdvWindow("",11,20,15,60)
+         While !Isprinter()
+           @13,30 PSAY "Ligue a Impressora"
+         EndDo
+         RestScreen(11,22,16,60,cSavScr3)
+         Set Device to Printer
+      Endif
+   Endif
+
+#ENDIF
+
+@Prow(),0 PSAY " "
+SetPrc(0,0)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Posiciona todos os indices necessarios                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea("SA1")         //clientes
+dbSetOrder(1)                 //filial,codigo cliente,loja
+dbSelectArea("SA2")         //fornecedores
+dbSetOrder(1)                 //filial,codigo fornecedor,loja
+dbSelectArea("SA4")         //transportadoras
+dbSetOrder(1)                 //filial,codigo transport.
+dbSelectArea("SB1")         //produtos
+dbSetOrder(1)                 //filial,codigo produto
+dbSelectArea("SC5")         //cabecalho do P.V.
+dbSetOrder(1)                 //filial,pedido
+dbSelectArea("SC6")         //itens dos pedidos de vendas
+dbSetOrder(1)                 //filial,num,item,produto
+dbSelectArea("SD2")         //itens da N.F.
+dbSetOrder(3)                 //filial,documento,serie,cliente,loja,codigo
+dbSelectArea("SE1")         //contas a receber
+dbSetOrder(1)                 //filial,prefixo,numero
+dbSelectArea("SE4")         //condicao de pagamento
+dbSetOrder(1)                 //filial,codigo
+dbSelectArea("SF4")         //TES
+dbSetOrder(1)                 //filial,codigo tes
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Posiciona o SF2 - Cabecalho da NF                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea("SF2")         //cabecalho de N.F.
+dbSetOrder(1)                 //filial,documento,serie,cliente,loja
+dbSeek(xFilial("SF2")+mv_par01+mv_par03)
+
+While !eof() .and. F2_FILIAL == xFilial("SF2");
+      .and. F2_DOC <= mv_par02 .and. F2_SERIE == mv_par03
+      If LastKey() == 286
+         @25,1 PSAY "** CANCELADO PELO OPERADOR **"
+         lContinua := .F.
+         Exit
+      EndIf
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³ Posiciona o SD2 - Itens da NF                          ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      cKey := xFilial("SD2") + SF2->F2_DOC + SF2->F2_SERIE
+      dbSelectArea("SD2")
+      dbSetOrder(3)	  //filial,documento,serie,cliente,loja,codigo
+      dbSeek(cKey)
+
+      // Estrutura do array de Itens da NF aItens[n][m]
+      // n = numero do item
+      // m = Unid Quant Desc CF Origem PrUnit Total Pipi Vipi
+      aItens	:= {}		  //itens da nota fiscal
+      aItensISS := {}             //itens de servico da nota fiscal
+      aCFO      := {}             //array p/ CFOs
+      aClasFis	:= {}		  //array p/ Tab.Classif.Fiscal (Cod IPI)
+      cNat      := ""             //string p/ naturezas
+      aNumPed   := {}             //array  p/ numeros de nossos pedidos
+      cNumPed   := ""             //string p/ impressao de num.ped.
+      aMenPad1  := {}             //array  p/ codigo da mensagem padrao
+      aMenPad2  := {}             //array  p/ descricao mensagem padrao
+      cCFOP     := ""             //C.F.O.P da nota fiscal
+      cRedNome  := ""             //nome da transp. redespacho
+      cRedEnd   := ""             //end. da transp. redespacho
+      cRedMun   := ""             //municipio da transp. redespacho
+      cRedEst   := ""             //estado da transp. redespacho
+      cRedCGC   := ""             //CGC da transp. redespacho
+      nDesc     := 0              //7% de desconta se for suframa
+      cPedCli   := ""             //numero do pedido do cliente
+      aPedCli	:= {}		  //array com num. do pedido do cliente
+      cClasfis  := ""             //classificacao fiscal
+      cMens     := 0
+
+      nPosReg := Recno()
+      While !eof() .and. D2_FILIAL+D2_DOC+D2_SERIE == cKey
+	    If LastKey() == 286
+	       @25,1 PSAY "** CANCELADO PELO OPERADOR **"
+	       lContinua := .F.
+	       Exit
+	    EndIf
+	    If !Empty(SD2->D2_PICM)
+	       nPerICM := SD2->D2_PICM
+	    EndIf
+
+	    //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+            //³ Posiciona o SB1 - Produtos                       ³
+	    //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	    dbSelectArea("SB1")
+	    dbSeek(xFilial("SB1")+SD2->D2_COD)
+
+	    //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+            //³ Posiciona o SF4 - Tes                            ³
+	    //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	    dbSelectArea("SF4")
+	    dbSeek(xFilial("SF4")+SD2->D2_TES)
+	    cClasfis := ""
+
+	    //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+            //³ Posiciona o SC6 - Itens do Pedido de Vendas      ³
+	    //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	    dbSelectArea("SC6")
+	    dbSeek(xFilial("SC6") + SD2->D2_PEDIDO + SD2->D2_ITEMPV)
+
+	    nI := Ascan(aPedCli,C6_PEDCLI)
+	    If nI == 0			   //pedido do cliente nao existente
+	       AADD(aPedCli,C6_PEDCLI)	  //adiciona Ped.cliente no Array
+	       cPedCli := Substr(cPedCli,2) + "/" + AllTrim(C6_PEDCLI)
+	    EndIf
+
+	    //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+            //³ Preenche array dos Itens da N.F.                  ³
+	    //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+            If Empty(SD2->D2_CODISS)
+               dbSelectArea("SD2")
+               AADD(aItens,{ AllTrim(SC6->C6_PRODUTO) ;  //codigo do produto
+                            ,AllTrim(SC6->C6_DESCRI)  ;  //descricao do produto
+                            ,SB1->B1_CLASFIS          ;  //posicao do IPI
+                            ,SB1->B1_ORIGEM           ;  //classificacao fiscal
+                            ,SD2->D2_UM               ;  //unidade
+                            ,SD2->D2_QUANT            ;  //quantidade
+                            ,SD2->D2_PRCVEN           ;  //valor unitario
+                            ,SD2->D2_TOTAL            ;  //valor total
+                            ,SD2->D2_PICM             ;  //% ICMS
+                            ,SD2->D2_IPI              ;  //% IPI
+                            ,SD2->D2_VALIPI           ;  //valor do IPI
+                            ,SB1->B1_POSIPI           ;  //codigo do IPI
+                            ,SC6->C6_SEUCOD           ;  //codigo do PROD.CLIENTE
+                            ,SC6->C6_PEDCLI           ;  //codigo do PROD.CLIENTE
+                            })
+            Else
+               AADD(aItensISS,AllTrim(SC6->C6_DESCRI))   //descricao do produto
+            EndIf
+
+            If aScan(aClasFis,{|x| x[1] == SB1->B1_CLASFIS }) == 0
+                aAdd(aClasFis,{SB1->B1_CLASFIS,SB1->B1_POSIPI})
+            EndIf
+
+	    //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+            //³ Preenche natureza da operacao e CFOP              ³
+	    //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	    nI := Ascan(aCFO,SD2->D2_CF)
+	    If nI == 0
+	       AADD(aCFO,SD2->D2_CF)
+	       dbSelectArea("SF4")
+	       dbSeek(xFilial("SF4")+SD2->D2_TES)
+               cNat  := cNat  + "/" + AllTrim(SF4->F4_TEXTO)
+	       cCFOP := cCFOP + "/" + SD2->D2_CF
+	    EndIf
+
+	    nI := Ascan(aNumPed,SD2->D2_PEDIDO)
+	    If nI == 0
+	       AADD(aNumPed,SD2->D2_PEDIDO)
+	       cNumPed := cNumPed + "-" + AllTrim(SD2->D2_PEDIDO)
+	    EndIf
+
+	    //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	    //³Posiciona SC5 - Cabecalho do Pedido de Vendas	   ³
+	    //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	    dbSelectArea("SC5")
+	    dbSeek(xFilial("SC5")+SD2->D2_PEDIDO)
+
+	    //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+            //³Posiciona SM4 - Cadastro de Mensagens               ³
+	    //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+            //Mensagem Padrao no Arquivo de SM4
+            If !Empty(SC5->C5_MENPAD)
+               nI := Ascan(aMenPad1,SC5->C5_MENPAD)
+               If nI == 0         //nova msg padrao
+                  dbSelectArea("SM4")
+                  dbSeek(xFilial("SM4") + SC5->C5_MENPAD)
+                  nTamMen := Len(AllTrim(SM4->M4_FORMULA)) - 2
+                  While Substr(SC5->C5_MENPAD,1,2) == Substr(SM4->M4_CODIGO,1,2)
+                     AADD(aMenPad2,Substr(SM4->M4_FORMULA,2,nTamMen))
+                     AADD(aMenPad1,SC5->C5_MENPAD)
+                     dbSkip()
+                  EndDo
+               EndIf
+            EndIf
+
+            //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+            //³Mensagem padrao amarrada ao cadastro de produtos    ³
+            //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+            If !Empty(SB1->B1_MENPAD)
+               nI := Ascan(aMenPad1,SB1->B1_MENPAD)
+               If nI == 0         //nova msg padrao
+                  dbSelectArea("SM4")
+                  dbSeek(xFilial("SM4") + SB1->B1_MENPAD)
+                  nTamMen := Len(AllTrim(SM4->M4_FORMULA)) - 2
+                  While Substr(SB1->B1_MENPAD,1,2) == Substr(SM4->M4_CODIGO,1,2)
+                     AADD(aMenPad2,Substr(SM4->M4_FORMULA,2,nTamMen))
+                     AADD(aMenPad1,SB1->B1_MENPAD)
+                     dbSkip()
+                  EndDo
+               EndIf
+            EndIf
+
+         dbSelectArea("SD2")
+         dbSkip()
+      EndDo
+
+      Go nPosReg
+      If !lContinua
+         Exit
+      Endif
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³ Posiciona o SE4 - condicao de pagamento                ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      dbSelectArea("SE4")
+      dbSeek(xFilial("SE4")+SF2->F2_COND)
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³Posiciona SA1 (Cliente) ou SA2 (Fornecedor)             ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      If SF2->F2_TIPO == "D" .OR. SF2->F2_TIPO == "B"
+         dbSelectArea("SA2")
+         dbSeek(xFilial()+SD2->D2_CLIENTE+SD2->D2_LOJA)
+      Else
+         dbSelectArea("SA1")
+         dbSeek(xFilial("SA1")+SD2->D2_CLIENTE+SD2->D2_LOJA)
+      EndIf
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³ Posiciona o SA4 para buscar transportadora redespacho        ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      dbSelectArea("SA4")
+      dbSeek(xFilial()+SC5->C5_REDESP)
+      If Found()
+         cRedNome  := AllTrim(A4_NOME)
+         cRedEnd   := AllTrim(A4_END)
+         cRedMun   := AllTrim(A4_MUN)
+         cRedEst   := A4_EST
+         cRedCGC   := AllTrim(A4_CGC)
+      EndIf
+      dbSeek(xFilial("SA4")+SF2->F2_TRANSP)
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³Posiciona o SE1 - Contas a Receber                            ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      // Estrutura do array de Duplicatas aDupl[n][m]
+      // n = numero do item ( maximo 4 duplicatas por NF )
+      // m = Numero Valor Vencimento
+      aDupl := {{"","",0},{"","",0},{"","",0},{"","",0},{"","",0},{"","",0}}
+      nDup  := 0
+      cKey  := xFilial("SE1") + SF2->F2_SERIE + SF2->F2_DOC
+      dbSelectArea("SE1")
+      dbSetOrder(1)
+      dbSeek(cKey)
+      While !eof() .and. E1_FILIAL+E1_PREFIXO+E1_NUM == cKey
+	    If LastKey()==286
+	       @25,1 PSAY "** CANCELADO PELO OPERADOR **"
+	       lContinua := .F.
+	       Exit
+	    Endif
+	    nDup := nDup + 1
+	    If nDup <= 4
+	       aDupl[nDup,1] := AllTrim(Str(nDup))
+	       aDupl[nDup,2] := E1_VENCTO
+	       aDupl[nDup,3] := E1_VALOR
+	    EndIf
+	    DbSkip()
+      EndDo
+      If !lContinua
+         Exit
+      Endif
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³                                                        ³
+      //³                  I M P R E S S A O                     ³
+      //³                                                        ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      @000,001 PSAY cImpComp
+
+      nLin := 000
+      @ nLin,115 PSAY "X"
+      @ nLin,159 PSAY SF2->F2_DOC
+
+// impressao da nova razao social
+// retirada por Fabrício (15/01/2003)
+
+/*      nLin := 003
+      @ nLin,000 PSAY "NOVA RAZAO SOCIAL: ROSENBERGER DOMEX TELECOM S/A"*/
+
+      nLin := 005
+      @ nLin,000 PSAY Substr(cNat,2)
+      @ nLin,070 PSAY Substr(cCFOP,2)
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³ Redespacho, dados do cliente/fornecedor                          ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      nLin := 008
+      If SF2->F2_TIPO == "D" .or. SF2->F2_TIPO == "B"
+         @ nLin  ,000 PSAY ALLTRIM(SA2->A2_NOME)
+         @ nLin  ,120 PSAY SA2->A2_CGC     PICTURE "@R 99.999.999/9999-99"
+         @ nLin  ,156 PSAY SF2->F2_EMISSAO
+         @ nLin+2,000 PSAY ALLTRIM(SA2->A2_END)
+         @ nLin+2,073 PSAY ALLTRIM(SA2->A2_BAIRRO)
+         @ nLin+2,125 PSAY Substr(SA2->A2_CEP,1,5)+"-"+Substr(SA2->A2_CEP,6,3)
+         @ nLin+4,000 PSAY ALLTRIM(SA2->A2_MUN)
+         @ nLin+4,070 PSAY AllTrim(SA2->A2_TEL)
+         @ nLin+4,102 PSAY SA2->A2_EST
+         @ nLin+4,120 PSAY SA2->A2_INSCR   PICTURE "@!"
+      Else
+         @ nLin  ,000 PSAY ALLTRIM(SA1->A1_NOME)
+         @ nLin  ,120 PSAY SA1->A1_CGC     PICTURE "@R 99.999.999/9999-99"
+         @ nLin  ,156 PSAY SF2->F2_EMISSAO
+         @ nLin+2,000 PSAY ALLTRIM(SA1->A1_END)
+         @ nLin+2,073 PSAY ALLTRIM(SA1->A1_BAIRRO)
+         @ nLin+2,125 PSAY Substr(SA1->A1_CEP,1,5)+"-"+Substr(SA1->A1_CEP,6,3)
+         @ nLin+4,000 PSAY ALLTRIM(SA1->A1_MUN)
+         @ nLin+4,070 PSAY AllTrim(SA1->A1_TEL)
+         @ nLin+4,102 PSAY SA1->A1_EST
+         @ nLin+4,120 PSAY SA1->A1_INSCR   PICTURE "@!"
+      EndIf
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³ Desdobramento das duplicatas / Endereco de cobranca              ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      nLin := 015
+
+      If aDupl[1,3] > 0 		    //primeira parcela
+         @nLin,012 PSAY aDupl[1,2]
+      Endif
+
+      If aDupl[2,3] > 0                    //Segunda parcela
+         @nLin,038 PSAY aDupl[2,2]
+      Endif
+
+      If aDupl[3,3] > 0                    //Terceira parcela
+         @nLin,064 PSAY aDupl[3,2]
+      Endif
+
+      If aDupl[4,3] > 0                    //Quarta parcela
+         @nLin,090 PSAY aDupl[4,2]
+      Endif
+
+      @ nLin,120 PSAY SC5->C5_CLIENTE
+      If SF2->F2_TIPO <> "D" .and. SF2->F2_TIPO <> "B"
+         @nLin,135 PSAY SA1->A1_ENDCOB
+      EndIf     
+
+      nLin := nLin + 1
+      If aDupl[1,3] > 0 		    //primeira parcela
+         @nLin,010 PSAY aDupl[1,3]  PICTURE "@E 999,999.99"
+      Endif
+
+      If aDupl[2,3] > 0                    //Segunda parcela
+         @nLin,036 PSAY aDupl[2,3]  PICTURE "@E 999,999.99"
+      Endif
+
+      If aDupl[3,3] > 0                    //Terceira parcela
+         @nLin,062 PSAY aDupl[3,3]  PICTURE "@E 999,999.99"
+      Endif
+
+      If aDupl[4,3] > 0                    //Quarta parcela
+         @nLin,088 PSAY aDupl[4,3]  PICTURE "@E 999,999.99"
+      Endif
+
+      @ nLin,120 PSAY SC5->C5_NUM
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³ Impressao dos itens da NF                                        ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      nLin := 019
+      If !(SF2->F2_TIPO) $ "PI"
+         For nK := 1 To Len(aItens)
+            @nLin,000 PSAY aItens[nK,1]      //codigo
+            cDesc2 := AllTrim(aItens[nK,2])      //nTD=Larg Col Descr
+            nJ := At("#",cDesc2)                             //busca quebra
+            If nJ==0 .or. nJ>nTD+1           //sem quebra
+               cDesc1 := Left(cDesc2,nTD)        //no trecho
+               cDesc2 := Iif(Len(cDesc2)>nTD,Substr(cDesc2,nTD+1)," ")
+            Else
+               cDesc1 := Left(cDesc2,nJ-1)      //proximo trecho
+               cDesc2 := Iif(Len(cDesc2)>nJ,Substr(cDesc2,nJ+1)," ")
+            EndIf
+            cDesc2 := AllTrim(cDesc2)
+            @nLin,016 PSAY subS(cDesc1,1,38)    //descr.prod
+            @nLin,061 PSAY RTRIM(LTRIM(aItens[nK,13]))+" "+aItens[nK,14]  //cod.prod cliente+pedcli
+            @nLin,093 PSAY aItens[nK,12]        //cod. IPI
+//          @nLin,103 PSAY aItens[nK,3]         //clas.fisc.
+            @nLin,106 PSAY aItens[nK,4]         //sit. trib.
+            @nLin,112 PSAY aItens[nK,5]         //unidade
+// Modificado por Fabrício (18/06/04)
+//            @nLin,116 PSAY aItens[nK,6]   PICTURE TM(aItens[nK,6],7,2) //quantidade
+            @nLin,116 PSAY aItens[nK,6]   PICTURE "@R 999999" //quantidade
+            @nLin,126 PSAY aItens[nK,7]   PICTURE TM(aItens[nK,7],10,2) //vlr unit
+            @nLin,138 PSAY aItens[nK,8]   PICTURE TM(aItens[nK,8],13,2) //vlr tot
+            @nLin,155 PSAY aItens[nK,9]   PICTURE "@Z 99"               //%icm
+            @nLin,158 PSAY aItens[nK,10]  PICTURE "@Z 99"               //%ipi
+            @nLin,162 PSAY aItens[nK,11]  PICTURE "@EZ 99,999.99"       //val total
+
+            nLin := nLin + 1
+            While !Empty(cDesc2)             //nTD=Larg Col Desc
+               nJ := At("#",cDesc2)                          //busca quebra
+               If nJ==0 .or. nJ>nTD+1       //sem quebra
+                  cDesc1 := Left(cDesc2,nTD)     //no trecho
+                  cDesc2 := Iif(Len(cDesc2)>nTD,Substr(cDesc2,nTD+1)," ")
+               Else
+                  cDesc1 := Left(cDesc2,nJ-1)    //proximo trecho
+                  cDesc2 := Iif(Len(cDesc2)>nJ,Substr(cDesc2,nJ+1)," ")
+               EndIf
+               cDesc2 := AllTrim(cDesc2)
+               @nLin,015 PSAY cDesc1
+               nLin := nLin + 1
+            EndDo
+         Next
+
+
+//---- IMPRESSAO DAS MENSAGENS NO CORPO DA NOTA
+      If Len(aMenPad2) >= 1
+         nLin := nLin + 1
+         @ nLin,015 PSAY aMenPad2[1]
+      EndIf
+//---- FIM
+
+      ElseIf SF2->F2_TIPO == "P"               //nota de complemento de IPI
+
+         For nK := 1 To Len(aItens)
+            @nLin,001 PSAY aItens[nK,1]      //codigo
+            cDesc2 := AllTrim(aItens[nK,2])      //nTD=Larg Col Descr
+            nJ := At("#",cDesc2)                             //busca quebra
+            If nJ==0 .or. nJ>nTD+1       //sem quebra
+               cDesc1 := Left(cDesc2,nTD)        //no trecho
+               cDesc2 := Iif(Len(cDesc2)>nTD,Substr(cDesc2,nTD+1)," ")
+            Else
+               cDesc1 := Left(cDesc2,nJ-1)      //proximo trecho
+               cDesc2 := Iif(Len(cDesc2)>nJ,Substr(cDesc2,nJ+1)," ")
+            EndIf
+            cDesc2 := AllTrim(cDesc2)
+            @nLin,016 PSAY cDesc1                   //descr.prod
+            @nLin,103 PSAY aItens[nK,3]             //clas.fisc.
+            @nLin,106 PSAY aItens[nK,4]             //sit. trib.
+
+            nLin := nLin + 1
+            While !Empty(cDesc2)         //nTD=Larg Col Desc
+               nJ := At("#",cDesc2)                          //busca quebra
+               If nJ==0 .or. nJ>nTD+1       //sem quebra
+                   cDesc1 := Left(cDesc2,nTD)     //no trecho
+                   cDesc2 := Iif(Len(cDesc2)>nTD,Substr(cDesc2,nTD+1)," ")
+               Else
+                   cDesc1 := Left(cDesc2,nJ-1)        //proximo trecho
+                   cDesc2 := Iif(Len(cDesc2)>nJ,Substr(cDesc2,nJ+1)," ")
+               EndIf
+               cDesc2 := AllTrim(cDesc2)
+               @nLin,016 PSAY cDesc1
+               nLin := nLin + 1
+            EndDo
+         Next
+      EndIf
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³ Impressao dos itens de servico                                   ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      nLin := 32
+      nFim := 10
+
+      xclas := len(aClasfis)
+      yiss  := len(aItensISS)
+
+      **************** 
+      If xclas > yiss
+         maior := xclas
+      Else
+         maior := yiss
+      Endif
+      *****************
+      nFim := maior
+      nCol := 000
+      nLin := nLin + 1
+      For _I := 1 to maior                             //len(aClasFis)
+//       if _i <= xclas
+//           @ nLin,000 PSAY AllTrim(aClasFis[_I,1]) + " - " + aClasFis[_I,2]
+//       endif
+         if _i <= yiss
+             @ nLin,000 PSAY aItensISS[_I]         //descricao do produto
+         endif
+         nLin := nLin+1                                      // nCol := nCol + 16
+      Next
+      nLin := 39
+      @nLin,090 PSAY SF2->F2_VALISS   PICTURE "@E 99,999,999.99"
+      @nLin,150 PSAY SF2->F2_BASEISS  PICTURE "@E 99,999,999.99"
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³Totalizacoes da N.F.                                    ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      nLin := 042
+      If !Empty(SA1->A1_SUFRAMA)
+         nDesc := SF2->F2_VALMERC * 0.07
+      EndIf
+
+      If !(SF2->F2_TIPO) $ "PI"
+         If Empty(SA1->A1_SUFRAMA)
+            @nLin,010 PSAY SF2->F2_BASEICM PICTURE "@E 999,999,999.99"    //vlr icms
+         EndIf
+      EndIf
+
+      If SF2->F2_TIPO == "I"
+         @nLin,046 PSAY SF2->F2_VALBRUT PICTURE "@E 999,999,999.99"
+      ELSE
+         @nLin,046 PSAY SF2->F2_VALICM  PICTURE "@E 999,999,999.99"    //vlr icms
+      EndIf
+
+      If !(SF2->F2_TIPO) $ "PI"
+         @nLin  ,150 PSAY SF2->F2_VALMERC - nDesc - SF2->F2_BASEISS  PICTURE "@E 999,999,999.99"    //vlr mercadoria
+         @nLin+2,010 PSAY SF2->F2_FRETE      PICTURE "@E 999,999,999.99"    //val.frete
+         @nLin+2,046 PSAY SF2->F2_SEGURO     PICTURE "@E 999,999,999.99"    //val.seguro
+      EndIf
+      @nLin+2,075 PSAY SC5->C5_DESPESA       PICTURE "@E 999,999,999.99"    //despesas acessorias
+
+      If SF2->F2_TIPO <> "I"
+         @nLin+2,120 PSAY SF2->F2_VALIPI  PICTURE "@E 999,999,999.99"    //vlr ipi
+      EndIf
+
+      If SF2->F2_TIPO <> "I"
+         @nLin+2,150 PSAY SF2->F2_VALBRUT - nDesc PICTURE "@E 999,999,999.99"  //vlr tot NF
+      EndIf
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³Dados da transportadora                                        ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      nLin := 047 
+      If !(SF2->F2_TIPO) $ "PI"
+         @ nLin,000 PSAY ALLTRIM(SA4->A4_NOME)
+                                            //If SF2->F2_FRETE == 1
+                                            // @ nLin,078 PSAY "1"
+                                            //ElseIf SF2->F2_FRETE > 1
+                                            //   @ nLin,078 PSAY "2"
+                                            //EndIf       
+
+
+         If SC5->C5_FRET == "1"
+            @ nLin,105 PSAY "1"
+         ElseIf SC5->C5_FRET <> "1"
+            @ nLin,105 PSAY "2"
+         EndIf       
+
+
+
+         @ nLin,131 PSAY SA4->A4_EST
+         @ nLin,140 PSAY SA4->A4_CGC   PICTURE "@R 99.999.999/9999-99"
+
+         nLin := nLin + 2
+         @ nLin,000 PSAY ALLTRIM(SA4->A4_END)
+         @ nLin,100 PSAY ALLTRIM(SA4->A4_MUN)
+         @ nLin,131 PSAY SA4->A4_EST
+      EndIf
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³Quantidade,peso liq.,peso bruto, especie                       ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      nLin := 051
+      If !(SF2->F2_TIPO) $ "PI"
+         If SF2->F2_VOLUME1 <> 0
+            @nLin,011 PSAY SF2->F2_VOLUME1    PICTURE "@E 9999"
+         EndIf
+         @nLin,040 PSAY SC5->C5_ESPECI1
+      EndIf
+
+      @nLin,060 PSAY "DOMEX"
+
+      If !(SF2->F2_TIPO) $ "PI"
+         If SC5->C5_PBRUTO <> 0
+            @nLin,125 PSAY SC5->C5_PBRUTO     PICTURE "@E 999,999.99"
+         EndIf
+         If SC5->C5_PESOL <> 0
+            @nLin,150 PSAY SC5->C5_PESOL      PICTURE "@E 999,999.99"
+         EndIf
+      EndIf
+
+      //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      //³Mensagens para nota                                            ³
+      //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      nLin := 055
+      If !Empty(SC5->C5_MENNOTA)
+         @ nLin,000 PSAY SUBS(SC5->C5_MENNOTA,1,60)
+         nLin := nLin + 1
+         @ nLin,000 PSAY SUBS(SC5->C5_MENNOTA,61,110)
+      EndIf
+      If !Empty(SC5->C5_MNOTA2)
+         nLin := nLin + 1
+         @ nLin,000 PSAY SUBS(SC5->C5_MNOTA2,1,60)
+         nLin := nLin + 1
+         @ nLin,000 PSAY SUBS(SC5->C5_MNOTA2,61,110)
+      EndIf
+/*
+      If Len(aMenPad2) >= 1
+         nLin := nLin + 1
+         @ nLin,000 PSAY aMenPad2[1] 
+      EndIf
+      If Len(aMenPad2) >= 2
+         nLin := nLin + 1
+         @ nLin,000 PSAY aMenPad2[2] 
+      EndIf
+      If Len(aMenPad2) >= 3
+         nLin := nLin + 1
+         @ nLin,000 PSAY aMenPad2[3] 
+      EndIf
+      If Len(aMenPad2) >= 4
+         nLin := nLin + 1
+         @ nLin,000 PSAY aMenPad2[4] 
+      EndIf
+
+      If Len(aMenPad2) >= 5
+         nLin := nLin + 1
+         @ nLin,000 PSAY aMenPad2[5] 
+      EndIf
+*/
+      If Len(aMenPad2) >= 6
+         nLin := nLin + 1
+         @ nLin,000 PSAY aMenPad2[6] 
+      EndIf
+
+// LINHAS ADICIONADAS PARA A IMP. DO NO. DA NF NA DECLARACAO.
+
+      nLin := 064
+      @nLin,070 PSAY SF2->F2_DOC
+
+      nLin := 066
+      @nLin,156 PSAY SF2->F2_DOC
+
+      dbSelectArea("SF2")
+      dbSkip()
+      @ 072,0 PSAY " "                       //salto de formulario
+      SetPrc(0,0)
+
+EndDo
+
+dbSelectArea("SF2")
+Set Device To Screen
+If lContinua
+   If aReturn[5] == 1		//relatorio em tela
+      Set Printer To
+      dbcommitAll()
+      ourspool(wNrel)
+   EndIf
+EndIf
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³                         F  I   M                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+

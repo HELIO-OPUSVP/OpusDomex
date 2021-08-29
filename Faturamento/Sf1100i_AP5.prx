@@ -1,0 +1,137 @@
+#include "rwmake.ch"
+
+User Function SF1100I()        // incluido pelo assistente de conversao do AP5 IDE em 01/08/01
+                                        	
+Local _aAreaGER    := GetArea()
+Local _aAreaSD1    := SD1->( GetArea() )
+Local _aAreaSF4    := SF4->( GetArea() )
+Local _aAreaSB1   := SB1->( GetArea() )
+Local _aAreaSD7   := SD7->( GetArea() )
+Local _aAreaSDA   := SDA->( GetArea() )
+Local _aAreaSBE   := SBE->( GetArea() )
+Local _aAreaSDB   := SDB->( GetArea() )
+Local _aAreaXD1   := XD1->( GetArea() )
+Local _aAreaSC2   := SC2->( GetArea() )
+Local _aAreaSG1   := SG1->( GetArea() )
+Local _aAreaSD3   := SD3->( GetArea() )
+Local _aAreaSD4   := SD4->( GetArea() )
+
+SetPrvt("NRADIO,ARADIO,X_DECL,X_REC,X_IMP,OK")
+SetPrvt("LCONTINUA,")
+
+//#IFDEF WINDOWS		    //Impressao para Windows
+
+nRadio := 2
+aRadio := {"Sim","Nao","Cancela"}
+x_Decl := space(18)
+x_Rec  := space(32)
+x_Imp  := 0
+
+Ok := "N"
+While OK <> "S"
+	
+	// @10,10 TO 150,450 DIALOG oDlg TITLE "Complemento da NF de Entrada"
+	
+	@10,10 TO 165,450 DIALOG oDlg TITLE "Complemento da NF de Entrada"
+	@13,10 say "Imp.Import : "
+	@13,40 get x_Imp  picture "@E 99,999,999.99"
+	
+	@25,10 say "Declaracao : "
+	@25,40 get x_Decl picture"@!"
+	@37,10 say "Recinto: "
+	@37,40 get x_Rec  picture"@!"
+	@50,35 RADIO aRadio VAR nRadio
+	@55,95 BUTTON "_Ok" SIZE 28,15 ACTION Close(oDlg)
+	ACTIVATE DIALOG oDlg CENTERED
+	Do Case
+		Case nRadio ==1
+			lContinua:=.T.
+			Exit
+		Case nRadio ==2
+			OK := "N"
+			Loop
+		Case nRadio ==3
+			lContinua:=.F.
+			Return
+	EndCase
+Enddo
+IF SF1->F1_TIPO <> "C"
+	SF1->F1_DECL    := x_Decl
+	SF1->F1_RECINTO := X_Rec
+	SF1->F1_IMPIMP  := x_Imp
+ELSE
+	SF1->F1_DECL    := x_Decl
+	SF1->F1_RECINTO := X_Rec
+Endif
+
+TCSQLEXEC("UPDATE "+RetSqlName("SD7")+" SET D7_XXETIQ = 'N' WHERE D7_XXETIQ = '' ")
+
+SD1->( dbSetOrder(1) )
+If SD1->( dbSeek( xFilial() + SF1->F1_DOC + SF1->F1_SERIE + SF1->F1_FORNECE + SF1->F1_LOJA ) )
+	cEtiq := ''
+	SF4->( dbSetOrder(1) )
+	SB1->( dbSetOrder(1) )
+	While !SD1->( EOF() ) .and. SF1->F1_DOC + SF1->F1_SERIE + SF1->F1_FORNECE + SF1->F1_LOJA == SD1->D1_DOC + SD1->D1_SERIE + SD1->D1_FORNECE + SD1->D1_LOJA
+		SF4->( dbSeek( xFilial() + SD1->D1_TES ) )
+		SB1->( dbSeek( xFilial() + SD1->D1_COD ) )
+		If SF4->F4_ESTOQUE == 'S' .and. SB1->B1_TIPO <> 'SR' .and. SB1->B1_TIPO <> 'MO'
+			cEtiq := 'A'
+			Reclock("SD1",.F.)
+			SD1->D1_XXETIQ := 'A'  //  S=Sem etiqueta;I=Impressa;A=Aguardando
+			SD1->( msUnlock() )
+		Else
+			If Empty(cEtiq)
+				cEtiq := 'S'
+			EndIf
+			Reclock("SD1",.F.)
+			SD1->D1_XXETIQ := 'S'
+			SD1->( msUnlock() )
+		EndIf
+		SD1->( dbSkip() )
+	End
+	Reclock("SF1",.F.)
+	SF1->F1_XXETIQ := cEtiq
+	SF1->( msUnlock() )
+Else
+	MsgStop("Itens da NF não encontrados.")
+EndIf
+
+
+// Trata Itens com Enquadramento de IPI      - MAS - 04/05/2016
+SD1->( dbSetOrder(1) )
+If SD1->( dbSeek( xFilial() + SF1->F1_DOC + SF1->F1_SERIE + SF1->F1_FORNECE + SF1->F1_LOJA ) )
+	SF4->( dbSetOrder(1) )
+	While !SD1->( EOF() ) .and. SF1->F1_DOC + SF1->F1_SERIE + SF1->F1_FORNECE + SF1->F1_LOJA == SD1->D1_DOC + SD1->D1_SERIE + SD1->D1_FORNECE + SD1->D1_LOJA
+
+		SF4->( dbSeek( xFilial() + SD1->D1_TES ) )
+		If !empty(SF4->F4_GRPCST) 
+//			_cD1Chave := SD1->R_E_C_N_O_
+//			TCSQLEXEC("UPDATE "+RetSqlName("SD1")+" SET D1_GRPCST = '"+SF4->F4_GRPCST+"' WHERE R_E_C_N_O_ = '"+_cD1Chave+"' ")
+			_cD1Chave := SD1->(D1_FORNECE+D1_LOJA+D1_DOC+D1_SERIE+D1_ITEM)
+			TCSQLEXEC("UPDATE "+RetSqlName("SD1")+" SET D1_GRPCST = '"+SF4->F4_GRPCST+"' WHERE D1_FORNECE+D1_LOJA+D1_DOC+D1_SERIE+D1_ITEM ='"+_cD1Chave+"' ")			
+		endif
+
+		SD1->( dbSkip() )
+	Enddo
+Endif
+
+
+//
+
+
+
+RestArea(_aAreaSG1)
+RestArea(_aAreaSC2)
+RestArea(_aAreaSD3)
+RestArea(_aAreaSD4)
+RestArea(_aAreaSB1)
+RestArea(_aAreaSD7)
+RestArea(_aAreaSDA)
+RestArea(_aAreaSBE)
+RestArea(_aAreaSDB)
+RestArea(_aAreaXD1)
+RestArea(_aAreaSF4)
+RestArea(_aAreaSD1)
+RestArea(_aAreaGER)
+
+Return
