@@ -651,7 +651,7 @@ Static Function Atu_aCols2()
 		ENDIF
 
 
-		cHAWB := ''
+		cHAWB      := ''
 		cW6_DI_NUM := ''
 
 		IF EMPTY(TRB->WN_HAWB)
