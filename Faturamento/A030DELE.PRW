@@ -17,6 +17,8 @@ User Function A030DELE()
 
 //JONAS TESTE 12345	
 
+//JONAS TESTE 2
+
 MsgInfo('Passando pelo Ponto de Entrada de Exclusão do Item Contábil do Cliente.')
 CTD->(dbSetOrder(1))
 If CTD->(dbSeek(xFilial("CTD")+"C"+SA1->A1_COD+SA1->A1_LOJA))
