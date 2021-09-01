@@ -502,9 +502,9 @@ Static Function VldEtiq()
 											And %Exp:cWhere%
 											And %Exp:cWhereSZY%
 											ORDER BY G1_COD
-											EndSQL
-										Else
-											BeginSQL Alias cAliasSZY
+												EndSQL
+											Else
+												BeginSQL Alias cAliasSZY
 											SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT-ZY_QUJE) ZY_VOLUMES
 											From %table:SZY% SZY (NOLOCK)
 											JOIN %table:SB1% SB1 (NOLOCK)
@@ -514,181 +514,181 @@ Static Function VldEtiq()
 											And %Exp:cWhere%
 											And %Exp:cWhereSZY%
 											ORDER BY ZY_PRODUTO
-											EndSQL
-										EndIf
-									Else
-										// Query comentada por HИlio
-										If cNivelFat == '3'
-											cQuery := "SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, G1_QUANT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT*G1_QUANT) ZY_VOLUMES, " + Chr(13)
-											cQuery += "CASE "																																			+ Chr(13)
-											cQuery += "   WHEN (ZY_QUANT*G1_QUANT) <> CAST((ZY_QUANT*G1_QUANT) as INT) THEN CAST(((ZY_QUANT*G1_QUANT)+1) as INT) " 	+ Chr(13)
-											cQuery += "   WHEN (ZY_QUANT*G1_QUANT)  = CAST((ZY_QUANT*G1_QUANT) as INT) THEN CAST((ZY_QUANT*G1_QUANT) as INT)  " 		+ Chr(13)
-											cQuery += "END ZY_VOLUME_FINAL " + Chr(13)
-											cQuery += "			From SZY010 SZY (NOLOCK) "                                                      + Chr(13)
-											cQuery += "			JOIN SG1010 SG1 (NOLOCK) "                                                      + Chr(13)
-											cQuery += "			ON G1_FILIAL = '"+xFilial("SG1")+"' AND G1_COD = ZY_PRODUTO   "                 + Chr(13)
-											cQuery += "			JOIN SB1010 SB1 (NOLOCK) "                                                      + Chr(13)
-											cQuery += "			ON B1_COD = ZY_PRODUTO   "                                                      + Chr(13)
-											cQuery += "			WHERE SG1.D_E_L_E_T_ = '' "                                                     + Chr(13)
-											cQuery += "					And SZY.D_E_L_E_T_ = '' "                                                 + Chr(13)
-											cQuery += "					And SB1.D_E_L_E_T_ = '' "                                                 + Chr(13)
-											cQuery += "					And " + StrTran(cWhere    ,'%','')                                        + Chr(13)
-											cQuery += "					And " + StrTran(cWhereSZY ,'%','')                                        + Chr(13)
-											cQuery += "					ORDER BY G1_COD "                                                         + Chr(13)
+												EndSQL
+											EndIf
 										Else
-											cQuery := "SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT-ZY_QUJE) ZY_VOLUMES "  + Chr(13)
-											cQuery += "			From SZY010 SZY (NOLOCK) "                                                      + Chr(13)
-											cQuery += "			JOIN SB1010 SB1 (NOLOCK) "                                                      + Chr(13)
-											cQuery += "			ON B1_COD = ZY_PRODUTO   "                                                      + Chr(13)
-											cQuery += "			WHERE	SZY.D_E_L_E_T_ = '' "                                                 	  + Chr(13)
-											cQuery += "					And SB1.D_E_L_E_T_ = '' "                                                 + Chr(13)
-											cQuery += "					And " + StrTran(cWhere    ,'%','')                                        + Chr(13)
-											cQuery += "					And " + StrTran(cWhereSZY ,'%','')                                        + Chr(13)
-											cQuery += "					ORDER BY ZY_PRODUTO "                                                     + Chr(13)
+											// Query comentada por HИlio
+											If cNivelFat == '3'
+												cQuery := "SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, G1_QUANT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT*G1_QUANT) ZY_VOLUMES, " + Chr(13)
+												cQuery += "CASE "																																			+ Chr(13)
+												cQuery += "   WHEN (ZY_QUANT*G1_QUANT) <> CAST((ZY_QUANT*G1_QUANT) as INT) THEN CAST(((ZY_QUANT*G1_QUANT)+1) as INT) " 	+ Chr(13)
+												cQuery += "   WHEN (ZY_QUANT*G1_QUANT)  = CAST((ZY_QUANT*G1_QUANT) as INT) THEN CAST((ZY_QUANT*G1_QUANT) as INT)  " 		+ Chr(13)
+												cQuery += "END ZY_VOLUME_FINAL " + Chr(13)
+												cQuery += "			From SZY010 SZY (NOLOCK) "                                                      + Chr(13)
+												cQuery += "			JOIN SG1010 SG1 (NOLOCK) "                                                      + Chr(13)
+												cQuery += "			ON G1_FILIAL = '"+xFilial("SG1")+"' AND G1_COD = ZY_PRODUTO   "                 + Chr(13)
+												cQuery += "			JOIN SB1010 SB1 (NOLOCK) "                                                      + Chr(13)
+												cQuery += "			ON B1_COD = ZY_PRODUTO   "                                                      + Chr(13)
+												cQuery += "			WHERE SG1.D_E_L_E_T_ = '' "                                                     + Chr(13)
+												cQuery += "					And SZY.D_E_L_E_T_ = '' "                                                 + Chr(13)
+												cQuery += "					And SB1.D_E_L_E_T_ = '' "                                                 + Chr(13)
+												cQuery += "					And " + StrTran(cWhere    ,'%','')                                        + Chr(13)
+												cQuery += "					And " + StrTran(cWhereSZY ,'%','')                                        + Chr(13)
+												cQuery += "					ORDER BY G1_COD "                                                         + Chr(13)
+											Else
+												cQuery := "SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT-ZY_QUJE) ZY_VOLUMES "  + Chr(13)
+												cQuery += "			From SZY010 SZY (NOLOCK) "                                                      + Chr(13)
+												cQuery += "			JOIN SB1010 SB1 (NOLOCK) "                                                      + Chr(13)
+												cQuery += "			ON B1_COD = ZY_PRODUTO   "                                                      + Chr(13)
+												cQuery += "			WHERE	SZY.D_E_L_E_T_ = '' "                                                 	  + Chr(13)
+												cQuery += "					And SB1.D_E_L_E_T_ = '' "                                                 + Chr(13)
+												cQuery += "					And " + StrTran(cWhere    ,'%','')                                        + Chr(13)
+												cQuery += "					And " + StrTran(cWhereSZY ,'%','')                                        + Chr(13)
+												cQuery += "					ORDER BY ZY_PRODUTO "                                                     + Chr(13)
+											EndIf
+
+											TCQUERY cQuery new alias &(cAliasSZY)
+
 										EndIf
 
-										TCQUERY cQuery new alias &(cAliasSZY)
+										//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+										//ЁValidando apenas uma progrmaГЦo de fatuamento para cada item de PV
+										//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+										aTemp := {}
 
-									EndIf
-
-									//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-									//ЁValidando apenas uma progrmaГЦo de fatuamento para cada item de PV
-									//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
-									aTemp := {}
-
-									Do While (cAliasSZY)->(!Eof())
-										If aScan(aTemp, (cAliasSZY)->(ZY_PEDIDO+ZY_ITEM+ZY_PRVFAT) ) == 0
-											AADD(aTemp,(cAliasSZY)->(ZY_PEDIDO+ZY_ITEM+ZY_PRVFAT) )
-										Else
-											U_MsgColetor("Existem duas previsУes de faturamento para o mesmo item de Pedido com esta data")
-											_cNumEtqPA := Space(_nTamEtiq)
-											oGetOp:Refresh()
-											oGetOp:SetFocus()
-											Return(.F.)
-										EndIf
-										(cAliasSZY)->(dbSkip())
-									EndDo
-
-									//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-									//ЁValidaГЦo entre PrevisЦo de Faturamento e Pedido de vendas  Ё
-									//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
-									cQuery   := "SELECT ZY_PEDIDO, ZY_ITEM, SUM(ZY_QUANT) AS ZY_QUANT FROM SZY010 WHERE ZY_PEDIDO ='"+cOpPedido+"' AND D_E_L_E_T_ = '' GROUP BY ZY_PEDIDO, ZY_ITEM ORDER BY ZY_ITEM "
-									If Select("QUERYSZY") <> 0
-										QUERYSZY->( dbCloseArea() )
-									EndIf
-									TCQUERY cQuery NEW ALIAS 'QUERYSZY'
-									nTemp1 := 0
-									nTemp2 := 0
-									While !QUERYSZY->( EOF() )
-										nTemp1++
-										QUERYSZY->(dbSkip())
-									End
-									SC6->( dbSetOrder(1) )
-									If SC6->( dbSeek( xFilial() + cOpPedido ) )
-										While !SC6->( EOF() ) .and. SC6->C6_NUM == cOpPedido
-											nTemp2++
-											SC6->( dbSkip() )
-										End
-									EndIf
-									If nTemp1 <> nTemp2
-										U_MsgColetor("NЗmero de Itens do Pedido de Vendas ("+Alltrim(Str(nTemp2))+") diferente da PrevisЦo de Faturamento ("+Alltrim(Str(nTemp1))+").")
-										_cNumEtqPA := Space(_nTamEtiq)
-										oGetOp:Refresh()
-										oGetOp:SetFocus()
-										Return(.F.)
-									EndIf
-									QUERYSZY->( dbGoTop() )
-									While !QUERYSZY->( EOF() )
-										If SC6->( dbSeek( xFilial() + QUERYSZY->ZY_PEDIDO + QUERYSZY->ZY_ITEM ) )
-											If QUERYSZY->ZY_QUANT <> SC6->C6_QTDVEN
-												U_MsgColetor("Quantidade do Pedido ("+Alltrim(Str(SC6->C6_QTDVEN))+") diferente da quantidade da PrevisЦo de Faturamento ("+Alltrim(Str(QUERYSZY->ZY_QUANT))+"). Pedido/Item: " + QUERYSZY->ZY_PEDIDO + '/' + QUERYSZY->ZY_ITEM+'.')
+										Do While (cAliasSZY)->(!Eof())
+											If aScan(aTemp, (cAliasSZY)->(ZY_PEDIDO+ZY_ITEM+ZY_PRVFAT) ) == 0
+												AADD(aTemp,(cAliasSZY)->(ZY_PEDIDO+ZY_ITEM+ZY_PRVFAT) )
+											Else
+												U_MsgColetor("Existem duas previsУes de faturamento para o mesmo item de Pedido com esta data")
 												_cNumEtqPA := Space(_nTamEtiq)
 												oGetOp:Refresh()
 												oGetOp:SetFocus()
 												Return(.F.)
 											EndIf
-										Else
-											U_MsgColetor("NЦo foi encontrada PrevisЦo de Faturamento para o Pedido/Item: " + QUERYSZY->ZY_PEDIDO + '/' + QUERYSZY->ZY_ITEM+'.')
+											(cAliasSZY)->(dbSkip())
+										EndDo
+
+										//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+										//ЁValidaГЦo entre PrevisЦo de Faturamento e Pedido de vendas  Ё
+										//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+										cQuery   := "SELECT ZY_PEDIDO, ZY_ITEM, SUM(ZY_QUANT) AS ZY_QUANT FROM SZY010 WHERE ZY_PEDIDO ='"+cOpPedido+"' AND D_E_L_E_T_ = '' GROUP BY ZY_PEDIDO, ZY_ITEM ORDER BY ZY_ITEM "
+										If Select("QUERYSZY") <> 0
+											QUERYSZY->( dbCloseArea() )
+										EndIf
+										TCQUERY cQuery NEW ALIAS 'QUERYSZY'
+										nTemp1 := 0
+										nTemp2 := 0
+										While !QUERYSZY->( EOF() )
+											nTemp1++
+											QUERYSZY->(dbSkip())
+										End
+										SC6->( dbSetOrder(1) )
+										If SC6->( dbSeek( xFilial() + cOpPedido ) )
+											While !SC6->( EOF() ) .and. SC6->C6_NUM == cOpPedido
+												nTemp2++
+												SC6->( dbSkip() )
+											End
+										EndIf
+										If nTemp1 <> nTemp2
+											U_MsgColetor("NЗmero de Itens do Pedido de Vendas ("+Alltrim(Str(nTemp2))+") diferente da PrevisЦo de Faturamento ("+Alltrim(Str(nTemp1))+").")
 											_cNumEtqPA := Space(_nTamEtiq)
 											oGetOp:Refresh()
 											oGetOp:SetFocus()
 											Return(.F.)
 										EndIf
-										QUERYSZY->( dbSkip() )
-									End
+										QUERYSZY->( dbGoTop() )
+										While !QUERYSZY->( EOF() )
+											If SC6->( dbSeek( xFilial() + QUERYSZY->ZY_PEDIDO + QUERYSZY->ZY_ITEM ) )
+												If QUERYSZY->ZY_QUANT <> SC6->C6_QTDVEN
+													U_MsgColetor("Quantidade do Pedido ("+Alltrim(Str(SC6->C6_QTDVEN))+") diferente da quantidade da PrevisЦo de Faturamento ("+Alltrim(Str(QUERYSZY->ZY_QUANT))+"). Pedido/Item: " + QUERYSZY->ZY_PEDIDO + '/' + QUERYSZY->ZY_ITEM+'.')
+													_cNumEtqPA := Space(_nTamEtiq)
+													oGetOp:Refresh()
+													oGetOp:SetFocus()
+													Return(.F.)
+												EndIf
+											Else
+												U_MsgColetor("NЦo foi encontrada PrevisЦo de Faturamento para o Pedido/Item: " + QUERYSZY->ZY_PEDIDO + '/' + QUERYSZY->ZY_ITEM+'.')
+												_cNumEtqPA := Space(_nTamEtiq)
+												oGetOp:Refresh()
+												oGetOp:SetFocus()
+												Return(.F.)
+											EndIf
+											QUERYSZY->( dbSkip() )
+										End
 
-									//здддддддддддддддддддддддддддддддддддддддддддддддддд©
-									//ЁDesconta caixas separadas								  Ё
-									//юдддддддддддддддддддддддддддддддддддддддддддддддддды
-									SC6->( dbSetOrder(1) )
-									(cAliasSZY)->( dbGoTop() )
-									//aCx2SepPv := {}
-									aVetGeral := {}
-									cZY_SEQ   := ""
+										//здддддддддддддддддддддддддддддддддддддддддддддддддд©
+										//ЁDesconta caixas separadas								  Ё
+										//юдддддддддддддддддддддддддддддддддддддддддддддддддды
+										SC6->( dbSetOrder(1) )
+										(cAliasSZY)->( dbGoTop() )
+										//aCx2SepPv := {}
+										aVetGeral := {}
+										cZY_SEQ   := ""
 
-									Do While (cAliasSZY)->(!Eof())
+										Do While (cAliasSZY)->(!Eof())
 
-										If Alltrim((cAliasSZY)->ZY_PEDIDO) == Alltrim(cOpPedido) .AND. Alltrim((cAliasSZY)->ZY_ITEM) == Alltrim(cOPItemPV)
-											cZY_SEQ := (cAliasSZY)->ZY_SEQ
+											If Alltrim((cAliasSZY)->ZY_PEDIDO) == Alltrim(cOpPedido) .AND. Alltrim((cAliasSZY)->ZY_ITEM) == Alltrim(cOPItemPV)
+												cZY_SEQ := (cAliasSZY)->ZY_SEQ
+											EndIf
+
+											SC6->( dbSeek( xFilial() + (cAliasSZY)->ZY_PEDIDO + (cAliasSZY)->ZY_ITEM ) )
+											nDisponiveis := U_Disp2Emb(Alltrim(SC6->C6_NUMOP+SC6->C6_ITEMOP),'2','')
+											nSeparadas 	 := U_Separa2Emb((cAliasSZY)->ZY_PEDIDO, (cAliasSZY)->ZY_ITEM,'2')
+
+											// aVetGeral 	1 - Numero do Pedido
+											//					2 - Codigo do Item do Pedido
+											//					3 - Quantidade do Item do Pedido
+											//					4 - Quantidade de Volumes Calculado para Expedicao
+											//					5 - NЗmero de caixas separadas
+											//					6 - Numero de caixas DisponМveis
+											AADD(aVetGeral,{(cAliasSZY)->ZY_PEDIDO,(cAliasSZY)->ZY_ITEM, (cAliasSZY)->ZY_QUANT, (cAliasSZY)->ZY_VOLUMES, nSeparadas , nDisponiveis  })
+
+											(cAliasSZY)->(dbSkip())
+										EndDo
+
+										nQtdPed := 0
+										For _nxy := 1 to Len(aVetGeral)
+											nQtdPed    += aVetGeral[_nxy,3] // ZY_QUANT
+										Next _nxy
+
+										nCx2SepPv  := 0
+										For _nxy := 1 to Len(aVetGeral)
+											nCx2SepPv  += aVetGeral[_nxy,5] // caixas separadas
+										Next
+
+										nDisponivel := 0
+										For _nxy := 1 to Len(aVetGeral)
+											nDisponivel += aVetGeral[_nxy,6] // caixinhas disponМveis
+										Next
+
+										nTotCx2PV := 0
+										For _nxy := 1 to Len(aVetGeral)
+											nInteiro   := Int(aVetGeral[_nxy,4])
+											nResto     := aVetGeral[_nxy,4] - Int(aVetGeral[_nxy,4])
+											nVolUso    := 0
+											If nResto >= 0.0001 .And. nResto <= 0.0009
+												nVolUso := nInteiro
+											Else
+												nVolUso := ( nInteiro + 1)
+											EndIf
+
+											nTemp      := If( Int(aVetGeral[_nxy,4]) <> aVetGeral[_nxy,4], nVolUso, aVetGeral[_nxy,4] ) // ZY_VOLUMES
+											nTotCx2PV  += nTemp
+										Next _nxy
+
+										If Empty(cZY_SEQ)
+											U_MsgColetor("Sequencia nЦo localizada. Verifique se o item possui nМvel de embalagem na estrutura.")
+											_cNumEtqPA := Space(_nTamEtiq)
+											oGetOp:Refresh()
+											oGetOp:SetFocus()
+											(cAliasSZY)->(dbCloseArea())
+											Return(.F.)
 										EndIf
 
-										SC6->( dbSeek( xFilial() + (cAliasSZY)->ZY_PEDIDO + (cAliasSZY)->ZY_ITEM ) )
-										nDisponiveis := U_Disp2Emb(Alltrim(SC6->C6_NUMOP+SC6->C6_ITEMOP),'2','')
-										nSeparadas 	 := U_Separa2Emb((cAliasSZY)->ZY_PEDIDO, (cAliasSZY)->ZY_ITEM,'2')
-
-										// aVetGeral 	1 - Numero do Pedido
-										//					2 - Codigo do Item do Pedido
-										//					3 - Quantidade do Item do Pedido
-										//					4 - Quantidade de Volumes Calculado para Expedicao
-										//					5 - NЗmero de caixas separadas
-										//					6 - Numero de caixas DisponМveis
-										AADD(aVetGeral,{(cAliasSZY)->ZY_PEDIDO,(cAliasSZY)->ZY_ITEM, (cAliasSZY)->ZY_QUANT, (cAliasSZY)->ZY_VOLUMES, nSeparadas , nDisponiveis  })
-
-										(cAliasSZY)->(dbSkip())
-									EndDo
-
-									nQtdPed := 0
-									For _nxy := 1 to Len(aVetGeral)
-										nQtdPed    += aVetGeral[_nxy,3] // ZY_QUANT
-									Next _nxy
-
-									nCx2SepPv  := 0
-									For _nxy := 1 to Len(aVetGeral)
-										nCx2SepPv  += aVetGeral[_nxy,5] // caixas separadas
-									Next
-
-									nDisponivel := 0
-									For _nxy := 1 to Len(aVetGeral)
-										nDisponivel += aVetGeral[_nxy,6] // caixinhas disponМveis
-									Next
-
-									nTotCx2PV := 0
-									For _nxy := 1 to Len(aVetGeral)
-										nInteiro   := Int(aVetGeral[_nxy,4])
-										nResto     := aVetGeral[_nxy,4] - Int(aVetGeral[_nxy,4])
-										nVolUso    := 0
-										If nResto >= 0.0001 .And. nResto <= 0.0009
-											nVolUso := nInteiro
-										Else
-											nVolUso := ( nInteiro + 1)
-										EndIf
-
-										nTemp      := If( Int(aVetGeral[_nxy,4]) <> aVetGeral[_nxy,4], nVolUso, aVetGeral[_nxy,4] ) // ZY_VOLUMES
-										nTotCx2PV  += nTemp
-									Next _nxy
-
-									If Empty(cZY_SEQ)
-										U_MsgColetor("Sequencia nЦo localizada. Verifique se o item possui nМvel de embalagem na estrutura.")
-										_cNumEtqPA := Space(_nTamEtiq)
-										oGetOp:Refresh()
-										oGetOp:SetFocus()
 										(cAliasSZY)->(dbCloseArea())
-										Return(.F.)
-									EndIf
 
-									(cAliasSZY)->(dbCloseArea())
-
-								Else
+									Else
 
 								   /* Desligado Controle de SeparaГЦo por Site do cliente por Michel Sander em 13.12.2018
 									//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
@@ -778,191 +778,156 @@ Static Function VldEtiq()
 									(cAliasSZY)->(dbCloseArea())
                            */
 
-								EndIf
+									EndIf
 
-								//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-								//ЁVerifica se embalagem calculada estА disponМvel			Ё
-								//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-								//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-								//ЁVerifica se existe apontamento suficiente para montar embalagem nivel 3 Ё
-								//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
-								//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-								//ЁVerifica embalagem que serА usada para o produto		Ё
-								//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-								nQtdProx := 0
-								If cNivelFat == "3"	// Embalagem fora da estrutura
-									If !lSelPorItem
-										nUsoEmb := If ( (nTotCx2PV - nCx2SepPv) < 0, nDisponivel, If((nTotCx2PV - nCx2SepPv)==0, 1, (nTotCx2PV - nCx2SepPv)) )
-										//aEmb := U_RetEmb2ZW(cGrupoItem, (nTotCx2PV - nCx2SepPv) , cNivelFat , SA1->A1_COD, SA1->A1_LOJA)
-										aEmb := U_RetEmb2ZW(If(lPadTec,SB1->B1_GRUPO, cGrupoItem), nUsoEmb , cNivelFat , SA1->A1_COD, SA1->A1_LOJA)
-										If Empty(aEmb[1,1])  // CСdigo da embalagem
-											U_MsgColetor("Grupo de produtos sem embalagens definida, ou o nivel de embalagem do produto esta vazio.")
-											_cNumEtqPA := Space(_nTamEtiq)
-											oGetOp:Refresh()
-											oGetOp:SetFocus()
-											Return(.F.)
-										EndIf
-										nQtdProx   := aEmb[1,2]
-									Else
-										For _nXY := 1 to Len(aVetGeral)
-											//nAuxSepara := IIf((aVetGeral[_nXY,6] - aVetGeral[_nXY,5]) < 0, aVetGeral[_nXY,6], (aVetGeral[_nXY,6] - aVetGeral[_nXY,5]) )
-											nAuxSepara := aVetGeral[_nXY,6]
-											aEmb := U_RetEmb2ZW(SB1->B1_GRUPO, nAuxSepara , cNivelFat , SA1->A1_COD, SA1->A1_LOJA)
+									//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+									//ЁVerifica se embalagem calculada estА disponМvel			Ё
+									//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+									//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+									//ЁVerifica se existe apontamento suficiente para montar embalagem nivel 3 Ё
+									//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+									//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+									//ЁVerifica embalagem que serА usada para o produto		Ё
+									//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+									nQtdProx := 0
+									If cNivelFat == "3"	// Embalagem fora da estrutura
+										If !lSelPorItem
+											nUsoEmb := If ( (nTotCx2PV - nCx2SepPv) < 0, nDisponivel, If((nTotCx2PV - nCx2SepPv)==0, 1, (nTotCx2PV - nCx2SepPv)) )
+											//aEmb := U_RetEmb2ZW(cGrupoItem, (nTotCx2PV - nCx2SepPv) , cNivelFat , SA1->A1_COD, SA1->A1_LOJA)
+											aEmb := U_RetEmb2ZW(If(lPadTec,SB1->B1_GRUPO, cGrupoItem), nUsoEmb , cNivelFat , SA1->A1_COD, SA1->A1_LOJA)
 											If Empty(aEmb[1,1])  // CСdigo da embalagem
 												U_MsgColetor("Grupo de produtos sem embalagens definida, ou o nivel de embalagem do produto esta vazio.")
 												_cNumEtqPA := Space(_nTamEtiq)
 												oGetOp:Refresh()
 												oGetOp:SetFocus()
 												Return(.F.)
-											Else
-												nQtdProx   := aEmb[1,2]
 											EndIf
-										Next
-									EndIf
-								Else
-									aEmb := {}
-									AADD(aEmb, { XD1->XD1_EMBALA, XD1->XD1_QTDATU, Posicione("SB1",1,xFilial("SB1")+XD1->XD1_EMBALA,"B1_PESO") } )
-								EndIf
-
-								//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-								//Valida se И possМvel montar a prСxima caixa                             Ё
-								//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
-								If nDisponivel < nQtdProx
-									U_MsgColetor("NЦo existem caixas suficientes deste pedido para montagem da prСxima embalagem. "+Chr(13)+Chr(13)+"DisponМveis: "+Alltrim(Str(nDisponivel))+Chr(13)+" Embalagem: "+Alltrim(Str(nQtdProx)))
-									_cNumEtqPA := Space(_nTamEtiq)
-									oGetOp:Refresh()
-									oGetOp:SetFocus()
-									Return(.F.)
-								Endif
-
-								//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-								//Calcula a quantidade de volumes do pedido										  Ё
-								//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
-								AADD(aEmbPed,{ cGrupoItem, (nTotCx2PV - nCx2SepPv) })
-
-								nTotalGrupo := 0
-								nSaldoGrupo := nTotCx2PV
-								While !Empty(nSaldoGrupo)
-									If cNivelFat == "3"	// Embalagem fora da estrutura
-										If lSelPorItem
-											nTemp := U_RetEmb2ZW(SB1->B1_GRUPO, nSaldoGrupo , cNivelFat, SA1->A1_COD, SA1->A1_LOJA)[1][2]
+											nQtdProx   := aEmb[1,2]
 										Else
-											nTemp := U_RetEmb2ZW(If(lPadTec,SB1->B1_GRUPO, cGrupoItem) , nSaldoGrupo , cNivelFat, SA1->A1_COD, SA1->A1_LOJA)[1][2]
+											For _nXY := 1 to Len(aVetGeral)
+												//nAuxSepara := IIf((aVetGeral[_nXY,6] - aVetGeral[_nXY,5]) < 0, aVetGeral[_nXY,6], (aVetGeral[_nXY,6] - aVetGeral[_nXY,5]) )
+												nAuxSepara := aVetGeral[_nXY,6]
+												aEmb := U_RetEmb2ZW(SB1->B1_GRUPO, nAuxSepara , cNivelFat , SA1->A1_COD, SA1->A1_LOJA)
+												If Empty(aEmb[1,1])  // CСdigo da embalagem
+													U_MsgColetor("Grupo de produtos sem embalagens definida, ou o nivel de embalagem do produto esta vazio.")
+													_cNumEtqPA := Space(_nTamEtiq)
+													oGetOp:Refresh()
+													oGetOp:SetFocus()
+													Return(.F.)
+												Else
+													nQtdProx   := aEmb[1,2]
+												EndIf
+											Next
 										EndIf
 									Else
-										nTemp := XD1->XD1_QTDATU
+										aEmb := {}
+										AADD(aEmb, { XD1->XD1_EMBALA, XD1->XD1_QTDATU, Posicione("SB1",1,xFilial("SB1")+XD1->XD1_EMBALA,"B1_PESO") } )
 									EndIf
-									nTotalGrupo++
-									nSaldoGrupo -= nTemp
-									If nSaldoGrupo < 0
-										nSaldoGrupo := 0
-									EndIf
-								End
 
-								nSaldoGrupo := U_Separa2Emb(SC2->C2_PEDIDO,'', cNivelFat ,'6')+1
-								cVolumeAtu  := PADL(AllTrim(Str(nSaldoGrupo))+"/"+AllTrim(Str(nTotalGrupo)),18)
-								oSldGrupo:Refresh()
+									//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+									//Valida se И possМvel montar a prСxima caixa                             Ё
+									//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+									If nDisponivel < nQtdProx
+										U_MsgColetor("NЦo existem caixas suficientes deste pedido para montagem da prСxima embalagem. "+Chr(13)+Chr(13)+"DisponМveis: "+Alltrim(Str(nDisponivel))+Chr(13)+" Embalagem: "+Alltrim(Str(nQtdProx)))
+										_cNumEtqPA := Space(_nTamEtiq)
+										oGetOp:Refresh()
+										oGetOp:SetFocus()
+										Return(.F.)
+									Endif
+
+									//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+									//Calcula a quantidade de volumes do pedido										  Ё
+									//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+									AADD(aEmbPed,{ cGrupoItem, (nTotCx2PV - nCx2SepPv) })
+
+									nTotalGrupo := 0
+									nSaldoGrupo := nTotCx2PV
+									While !Empty(nSaldoGrupo)
+										If cNivelFat == "3"	// Embalagem fora da estrutura
+											If lSelPorItem
+												nTemp := U_RetEmb2ZW(SB1->B1_GRUPO, nSaldoGrupo , cNivelFat, SA1->A1_COD, SA1->A1_LOJA)[1][2]
+											Else
+												nTemp := U_RetEmb2ZW(If(lPadTec,SB1->B1_GRUPO, cGrupoItem) , nSaldoGrupo , cNivelFat, SA1->A1_COD, SA1->A1_LOJA)[1][2]
+											EndIf
+										Else
+											nTemp := XD1->XD1_QTDATU
+										EndIf
+										nTotalGrupo++
+										nSaldoGrupo -= nTemp
+										If nSaldoGrupo < 0
+											nSaldoGrupo := 0
+										EndIf
+									End
+
+									nSaldoGrupo := U_Separa2Emb(SC2->C2_PEDIDO,'', cNivelFat ,'6')+1
+									cVolumeAtu  := PADL(AllTrim(Str(nSaldoGrupo))+"/"+AllTrim(Str(nTotalGrupo)),18)
+									oSldGrupo:Refresh()
+
+								EndIf
+
+							Else
+
+								U_MsgColetor("Produto do Pedido de Venda: "+SC6->C6_NUM+" item: "+ SC6->C6_ITEM + " Produto: " + SC6->C6_PRODUTO + " diferente do produto da OP: "+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN+" Produto: " + SC2->C2_PRODUTO)
+								_cNumEtqPA := Space(_nTamEtiq)
+								oGetOp:Refresh()
+								oGetOp:SetFocus()
+								Return(.F.)
 
 							EndIf
-
-						Else
-
-							U_MsgColetor("Produto do Pedido de Venda: "+SC6->C6_NUM+" item: "+ SC6->C6_ITEM + " Produto: " + SC6->C6_PRODUTO + " diferente do produto da OP: "+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN+" Produto: " + SC2->C2_PRODUTO)
-							_cNumEtqPA := Space(_nTamEtiq)
-							oGetOp:Refresh()
-							oGetOp:SetFocus()
-							Return(.F.)
 
 						EndIf
 
-					EndIf
-
-					//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-					//ЁAtualiza dados para o coletor									Ё
-					//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-					SB1->(dbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
-					nSaldoEmb := aEmb[1,2]
-					_cEmbalag := aEmb[1,1]
-					nPesoEmb  := aEmb[1,3]
-					_cNomCli  := "  "+SUBSTR(SA1->A1_NOME,1,15)
-					_cNumPed  := SC2->C2_PEDIDO
-					_cProdEmp := SB1->B1_COD
-					_cDescric := SB1->B1_DESC
-					SB1->(dbSeek(xFilial("SB1")+aEmb[1,1]))
-					_cDescEmb := SUBSTR(SB1->B1_DESC,1,27)
-
-					//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-					//ЁColeta etiqueta bipada											Ё
-					//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-					_nQtd     += 1
-					nQtdCaixa += XD1->XD1_QTDATU
-					AADD(aEmbBip,{_cNumEtqPA,SC2->C2_PEDIDO,SC2->C2_ITEMPV})
-					AADD(aSeqBib,cZY_SEQ)
-
-					//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-					//ЁNovo calculo de peso												Ё
-					//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-					nNovoPeso := 0
-					lNovoPeso := .T. // Habilita a pesagem para atualizar peso liquido do produto
-					If lNovoPeso
-						SB1->(dbSetOrder(1))
+						//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+						//ЁAtualiza dados para o coletor									Ё
+						//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
 						SB1->(dbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
-						If Empty(SB1->B1_XPESOOK)
-							aAuxEmb := U_RetEmbala(SC2->C2_PRODUTO,XD1->XD1_NIVEMB)
-							nXD1QPESO := XD1->XD1_QTDATU
-							If Int(nXD1QPESO) == Int(aAuxEmb[2])
-								lDigNovo := .T.
-								While lDigNovo
-									nXD1QPESO := XD1->XD1_QTDATU
-									
-									nNovoPeso := fTelaPeso(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,nXD1QPESO)
-									If nNovoPeso > 0 .And. nNovoPeso < 1000
-										nDesconta := fDescEmb(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, nNovoPeso, XD1->XD1_NIVEMB)
-										nPesoFinal := ((nNovoPeso-nDesconta) / nXD1QPESO)
-										SB1->(dbSetOrder(1))
-										SB1->(dbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
-										Reclock("SB1",.F.)
-										SB1->B1_XPESOOK := "S"			    	   // Flag de peso atualizado
-										SB1->B1_XXPESOK := "1"                 // Para assumir o calculo de peso em caso de Зltimo nМvel menor que 3 e nЦo atualizar mais o peso bruto
-										If XD1->XD1_ULTNIV == "S"
-											SB1->B1_PESBRU  := nNovoPeso/nXD1QPESO // Atualiza peso bruto
-										Else
-											SB1->B1_PESO    := nPesoFinal		   // Atualiza peso liquido		                               //SB1->B1_XXPESOK = 1 => NЦo, SB1->B1_XXPESOK = 2 => ValidaГЦo, SB1->B1_XXPESOK = 3 => Sim
-										EndIf
-										SB1->(MsUnlock())
-										lDigNovo := .F.
-									Else
-										If !Empty(nNovoPeso)
-											U_MsgColetor("Peso digitado invalido.")
-										Else
-											lDigNovo := .F.
-										EndIf
-									EndIf
-								EndDo
-							EndIf
-						Else
-							// Para habilitar a Repesagem numa prСxima Fase apСs 90 dias
-							//Michel Sander em 20.11.2018
-							/*
-							If SB1->B1_XPESOOK == "S"
+						nSaldoEmb := aEmb[1,2]
+						_cEmbalag := aEmb[1,1]
+						nPesoEmb  := aEmb[1,3]
+						_cNomCli  := "  "+SUBSTR(SA1->A1_NOME,1,15)
+						_cNumPed  := SC2->C2_PEDIDO
+						_cProdEmp := SB1->B1_COD
+						_cDescric := SB1->B1_DESC
+						SB1->(dbSeek(xFilial("SB1")+aEmb[1,1]))
+						_cDescEmb := SUBSTR(SB1->B1_DESC,1,27)
+
+						//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+						//ЁColeta etiqueta bipada											Ё
+						//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+						_nQtd     += 1
+						nQtdCaixa += XD1->XD1_QTDATU
+						AADD(aEmbBip,{_cNumEtqPA,SC2->C2_PEDIDO,SC2->C2_ITEMPV})
+						AADD(aSeqBib,cZY_SEQ)
+
+						//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+						//ЁNovo calculo de peso												Ё
+						//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+						nNovoPeso := 0
+						lNovoPeso := .T. // Habilita a pesagem para atualizar peso liquido do produto
+						If lNovoPeso
+							SB1->(dbSetOrder(1))
+							SB1->(dbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
+							If Empty(SB1->B1_XPESOOK)
 								aAuxEmb := U_RetEmbala(SC2->C2_PRODUTO,XD1->XD1_NIVEMB)
 								nXD1QPESO := XD1->XD1_QTDATU
 								If Int(nXD1QPESO) == Int(aAuxEmb[2])
 									lDigNovo := .T.
 									While lDigNovo
 										nXD1QPESO := XD1->XD1_QTDATU
+
 										nNovoPeso := fTelaPeso(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,nXD1QPESO)
 										If nNovoPeso > 0 .And. nNovoPeso < 1000
-											nPesoFinal := (nNovoPeso / nXD1QPESO)
+											nDesconta := fDescEmb(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, nNovoPeso, XD1->XD1_NIVEMB)
+											nPesoFinal := ((nNovoPeso-nDesconta) / nXD1QPESO)
 											SB1->(dbSetOrder(1))
 											SB1->(dbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
-											nDiscrepa := (SB1->B1_PESO * 5)/100     // DiscrepБncia de 5% para mais ou para menos
 											Reclock("SB1",.F.)
-											If ( nPesoFinal > (SB1->B1_PESO+nDiscrepa) ) .Or. ( nPesoFinal < (SB1->B1_PESO-nDiscrepa) )
-												SB1->B1_XPESOOK := "D"         // D = Divergencia de Peso
-												SB1->B1_PESO    := nPesoFinal
+											SB1->B1_XPESOOK := "S"			    	   // Flag de peso atualizado
+											SB1->B1_XXPESOK := "1"                 // Para assumir o calculo de peso em caso de Зltimo nМvel menor que 3 e nЦo atualizar mais o peso bruto
+											If XD1->XD1_ULTNIV == "S"
+												SB1->B1_PESBRU  := nNovoPeso/nXD1QPESO // Atualiza peso bruto
 											Else
-												SB1->B1_PESO    := nPesoFinal
+												SB1->B1_PESO    := nPesoFinal		   // Atualiza peso liquido		                               //SB1->B1_XXPESOK = 1 => NЦo, SB1->B1_XXPESOK = 2 => ValidaГЦo, SB1->B1_XXPESOK = 3 => Sim
 											EndIf
 											SB1->(MsUnlock())
 											lDigNovo := .F.
@@ -975,198 +940,233 @@ Static Function VldEtiq()
 										EndIf
 									EndDo
 								EndIf
+							Else
+								// Para habilitar a Repesagem numa prСxima Fase apСs 90 dias
+								//Michel Sander em 20.11.2018
+								If U_VALIDACAO()  // Helio 01/09/21
+									If SB1->B1_XPESOOK == "S"
+										aAuxEmb := U_RetEmbala(SC2->C2_PRODUTO,XD1->XD1_NIVEMB)
+										nXD1QPESO := XD1->XD1_QTDATU
+										If Int(nXD1QPESO) == Int(aAuxEmb[2])
+											lDigNovo := .T.
+											While lDigNovo
+												nXD1QPESO := XD1->XD1_QTDATU
+												nNovoPeso := fTelaPeso(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,nXD1QPESO)
+												If nNovoPeso > 0 .And. nNovoPeso < 1000
+													nPesoFinal := (nNovoPeso / nXD1QPESO)
+													SB1->(dbSetOrder(1))
+													SB1->(dbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
+													nDiscrepa := (SB1->B1_PESO * 5)/100     // DiscrepБncia de 5% para mais ou para menos
+													Reclock("SB1",.F.)
+													If ( nPesoFinal > (SB1->B1_PESO+nDiscrepa) ) .Or. ( nPesoFinal < (SB1->B1_PESO-nDiscrepa) )
+														SB1->B1_XPESOOK := "D"         // D = Divergencia de Peso
+														SB1->B1_PESO    := nPesoFinal
+													Else
+														SB1->B1_PESO    := nPesoFinal
+													EndIf
+													SB1->(MsUnlock())
+													lDigNovo := .F.
+												Else
+													If !Empty(nNovoPeso)
+														U_MsgColetor("Peso digitado invalido.")
+													Else
+														lDigNovo := .F.
+													EndIf
+												EndIf
+											EndDo
+										EndIf
+									EndIf
+								EndIf
 							EndIf
-							*/
+
 						EndIf
 
-					EndIf
+						//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+						//ЁVerifica se cliente И TELEFONICA para coletar peso		Ё
+						//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+						If lTelefonic
+							If cOpTelef	<> SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
 
-					//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-					//ЁVerifica se cliente И TELEFONICA para coletar peso		Ё
-					//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-					If lTelefonic
-						If cOpTelef	<> SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
+								nPesoTel := 0
+								cOpTelef	 := SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
+								cAliasTEL := GetNextAlias()
+								cWhere    := "%XD1_OP='"+cOpTelef+"' AND XD1_NIVEMB = '"+XD1->XD1_NIVEMB+"' %"
 
-							nPesoTel := 0
-							cOpTelef	 := SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
-							cAliasTEL := GetNextAlias()
-							cWhere    := "%XD1_OP='"+cOpTelef+"' AND XD1_NIVEMB = '"+XD1->XD1_NIVEMB+"' %"
-
-							//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-							//ЁVerifica se peso do item atual jА foi coletado			Ё
-							//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-							BeginSQL Alias cAliasTEL
+								//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+								//ЁVerifica se peso do item atual jА foi coletado			Ё
+								//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+								BeginSQL Alias cAliasTEL
 							SELECT XD1_PESOB From %table:XD1% XD1 (NOLOCK)
 							WHERE XD1.%NotDel%
 							And XD1_PESOB > 0
 							And XD1_ULTNIV = 'N'
 							And %Exp:cWhere%
-							EndSQL
+								EndSQL
 
-							If (cAliasTEL)->( EOF() )
-								If nNovoPeso == 0
-									nPesoTel := fTelaPeso(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,0)
+								If (cAliasTEL)->( EOF() )
+									If nNovoPeso == 0
+										nPesoTel := fTelaPeso(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,0)
+									Else
+										nPesoTel := nNovoPeso
+									EndIf
 								Else
-									nPesoTel := nNovoPeso
+									nPesoTel := (cAliasTEL)->XD1_PESOB
+								EndIf
+
+								(cAliasTEL)->(dbCloseArea())
+
+								If !Empty(nPesoTel)
+									Reclock("XD1",.F.)
+									XD1->XD1_PESOB  := nPesoTel
+									XD1->XD1_ULTNIV := "N"
+									XD1->(MsUnlock())
+								Else
+									cOpTelef	 := ""
 								EndIf
 							Else
-								nPesoTel := (cAliasTEL)->XD1_PESOB
-							EndIf
-
-							(cAliasTEL)->(dbCloseArea())
-
-							If !Empty(nPesoTel)
 								Reclock("XD1",.F.)
 								XD1->XD1_PESOB  := nPesoTel
 								XD1->XD1_ULTNIV := "N"
 								XD1->(MsUnlock())
-							Else
-								cOpTelef	 := ""
 							EndIf
-						Else
-							Reclock("XD1",.F.)
-							XD1->XD1_PESOB  := nPesoTel
-							XD1->XD1_ULTNIV := "N"
-							XD1->(MsUnlock())
 						EndIf
-					EndIf
 
-					//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-					//ЁImprime etiqueta nivel 3										Ё
-					//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-					If _nQtd == nSaldoEmb .Or. (cNivelFat <> "3")
-
-						//зддддддддддддд ддддддддддддддддддддддддддддддддддддддддд©
-						//ЁAbre digitaГЦo do peso											Ё
+						//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+						//ЁImprime etiqueta nivel 3										Ё
 						//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-						oGetQtd:Refresh()
-						nPesoBruto := U_CalPEmb(SC2->C2_PEDIDO,SC2->C2_PRODUTO)
+						If _nQtd == nSaldoEmb .Or. (cNivelFat <> "3")
 
-						If lPesoEmb
+							//зддддддддддддд ддддддддддддддддддддддддддддддддддддддддд©
+							//ЁAbre digitaГЦo do peso											Ё
+							//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+							oGetQtd:Refresh()
+							nPesoBruto := U_CalPEmb(SC2->C2_PEDIDO,SC2->C2_PRODUTO)
 
-							If ImpNivel3()
+							If lPesoEmb
 
-								//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-								//ЁAtualiza separacao do pedido									Ё
-								//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+								If ImpNivel3()
 
-								If cNivelFat <> "3"   // NIvel 3 Volume Fora da Estrutura
-									Reclock("XD1",.F.)
-									XD1->XD1_VOLUME := ALLTRIM(cVolumeAtu)
-									XD1->XD1_PVSEP  := SC2->C2_PEDIDO+SC2->C2_ITEMPV
-									XD1->XD1_PESOB  := nPesoBruto
-									XD1->XD1_ULTNIV := "S"
-									XD1->(MsUnlock())
-								Else
-									If !Empty(XD1->XD1_PESOB)
+									//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+									//ЁAtualiza separacao do pedido									Ё
+									//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+									If cNivelFat <> "3"   // NIvel 3 Volume Fora da Estrutura
 										Reclock("XD1",.F.)
+										XD1->XD1_VOLUME := ALLTRIM(cVolumeAtu)
+										XD1->XD1_PVSEP  := SC2->C2_PEDIDO+SC2->C2_ITEMPV
+										XD1->XD1_PESOB  := nPesoBruto
 										XD1->XD1_ULTNIV := "S"
 										XD1->(MsUnlock())
+									Else
+										If !Empty(XD1->XD1_PESOB)
+											Reclock("XD1",.F.)
+											XD1->XD1_ULTNIV := "S"
+											XD1->(MsUnlock())
+										EndIf
 									EndIf
-								EndIf
 
-								AtuSepEmb(SC2->C2_PEDIDO,SC2->C2_ITEMPV)
+									AtuSepEmb(SC2->C2_PEDIDO,SC2->C2_ITEMPV)
 
-								aEmbBip     := {}
-								aSeqBib     := {}
-								nSaldoEmb   := 0
-								nSaldoGrupo += 1
-								cVolumeAtu := PADL(AllTrim(Str(nSaldoGrupo))+"/"+Alltrim(Str(nTotalGrupo)),17)
-								If nSaldoGrupo == nTotalGrupo
-									cVolumeAtu  := SPACE(20)
-									nTotalGrupo := 0
-									aEmbPed     := {}
-									aEmb        := {}
+									aEmbBip     := {}
+									aSeqBib     := {}
+									nSaldoEmb   := 0
+									nSaldoGrupo += 1
+									cVolumeAtu := PADL(AllTrim(Str(nSaldoGrupo))+"/"+Alltrim(Str(nTotalGrupo)),17)
+									If nSaldoGrupo == nTotalGrupo
+										cVolumeAtu  := SPACE(20)
+										nTotalGrupo := 0
+										aEmbPed     := {}
+										aEmb        := {}
+									EndIf
+									nPesoBruto  := 0
+									//nPesoTel    := 0
+									nQtdCaixa   := 0
+									_nQtdEmp    := 0
+									_cEmbalag   := ""
+									_cNomCli    := ""
+									_cProdEmp   := SPACE(27)
+									_cDescric   := SPACE(27)
+									_cDescEmb   := SPACE(27)
+									_cNumOp     := SPACE(11)
+									cOPItemPV   := ""
+									_nQtdEmp    := 0
+									_cNumPed    := SPACE(06)
+									cGrupoItem  := ""
+									_cNumSite   := ""
+									lTelefonic  := .T.
+
 								EndIf
-								nPesoBruto  := 0
-								//nPesoTel    := 0
-								nQtdCaixa   := 0
-								_nQtdEmp    := 0
-								_cEmbalag   := ""
-								_cNomCli    := ""
-								_cProdEmp   := SPACE(27)
-								_cDescric   := SPACE(27)
-								_cDescEmb   := SPACE(27)
-								_cNumOp     := SPACE(11)
-								cOPItemPV   := ""
-								_nQtdEmp    := 0
-								_cNumPed    := SPACE(06)
-								cGrupoItem  := ""
-								_cNumSite   := ""
-								lTelefonic  := .T.
 
 							EndIf
 
+							_nQtd       := 0
+
 						EndIf
 
-						_nQtd       := 0
+						oTxtProdCod:Refresh()
+						oTxtProdEmp:Refresh()
+						oTxtQtdEmp:Refresh()
+						oTxtEmbalag:Refresh()
+						oTxtDescEmb:Refresh()
+						oNumPed:Refresh()
+						oSaldoEmb:Refresh()
+						oNumOp:Refresh()
+						oGetQtd:Refresh()
+						cTipoSenf := ""
+						_cNumEtqPA := Space(_nTamEtiq)
+						oGetOp:SetFocus()
 
+					Else
+						U_MsgColetor("NЗmero da OP nЦo encontrada.")
+						_cNumEtqPA := Space(_nTamEtiq)
+						oGetOp:Refresh()
+						oGetOp:SetFocus()
+						_lRet:=.F.
 					EndIf
-
-					oTxtProdCod:Refresh()
-					oTxtProdEmp:Refresh()
-					oTxtQtdEmp:Refresh()
-					oTxtEmbalag:Refresh()
-					oTxtDescEmb:Refresh()
-					oNumPed:Refresh()
-					oSaldoEmb:Refresh()
-					oNumOp:Refresh()
-					oGetQtd:Refresh()
-					cTipoSenf := ""
-					_cNumEtqPA := Space(_nTamEtiq)
-					oGetOp:SetFocus()
-
 				Else
-					U_MsgColetor("NЗmero da OP nЦo encontrada.")
 					_cNumEtqPA := Space(_nTamEtiq)
 					oGetOp:Refresh()
 					oGetOp:SetFocus()
 					_lRet:=.F.
+					cTipoSenf := ""
 				EndIf
+
 			Else
+				U_MsgColetor("Embalagem nЦo encontrada. Verifique se etiqueta И manual.")
 				_cNumEtqPA := Space(_nTamEtiq)
 				oGetOp:Refresh()
 				oGetOp:SetFocus()
-				_lRet:=.F.
 				cTipoSenf := ""
+				_lRet:=.F.
 			EndIf
 
 		Else
-			U_MsgColetor("Embalagem nЦo encontrada. Verifique se etiqueta И manual.")
+
+			U_MsgColetor("Tipo Revenda para SENF nЦo permitido nessa rotina.")
 			_cNumEtqPA := Space(_nTamEtiq)
 			oGetOp:Refresh()
 			oGetOp:SetFocus()
 			cTipoSenf := ""
 			_lRet:=.F.
+
 		EndIf
 
 	Else
 
-		U_MsgColetor("Tipo Revenda para SENF nЦo permitido nessa rotina.")
+		U_MsgColetor("Etiqueta nЦo encontrada.")
 		_cNumEtqPA := Space(_nTamEtiq)
 		oGetOp:Refresh()
 		oGetOp:SetFocus()
-		cTipoSenf := ""
 		_lRet:=.F.
 
 	EndIf
 
-Else
+	If Empty(_cNumEtqPA)
+		_lRet := .T.
+	Else
+	EndIf
 
-	U_MsgColetor("Etiqueta nЦo encontrada.")
-	_cNumEtqPA := Space(_nTamEtiq)
-	oGetOp:Refresh()
-	oGetOp:SetFocus()
-	_lRet:=.F.
-
-EndIf
-
-If Empty(_cNumEtqPA)
-	_lRet := .T.
-Else
-EndIf
-
-oTelaOP:Refresh()
+	oTelaOP:Refresh()
 
 Return(_lRet)
 
@@ -1390,7 +1390,7 @@ Return ( nSepara )
 */
 
 Static Function AtuSepEmb()
-
+	Local nQ
 	For nQ := 1 to Len(aEmbBip)
 
 		If XD1->(dbSeek(xFilial("XD1")+aEmbBip[nQ,1]))
@@ -1651,6 +1651,7 @@ Static Function AlertC(cTexto)
 	Local aTemp := U_QuebraString(cTexto,20)
 	Local cTemp := ''
 	Local lRet  := .T.
+	Local x
 
 	For x := 1 to Len(aTemp)
 		cTemp += aTemp[x] + Chr(13)
