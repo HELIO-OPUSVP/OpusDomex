@@ -26,6 +26,19 @@ User Function M460FIM()
 	Local aAreaD2 := GetArea()
 //Local lExp    := .F.
 
+
+	//If DtoS(Date()) == '20210901'  .and.  'JONAS.OPUS' $ Upper(GetEnvServer()) //.AND. xFilial("SF1") == '02'
+	//	PARAMIXB := {}
+	//	RpcSetEnv("01","01")
+	//	AADD(PARAMIXB, 3)
+	//	AADD(PARAMIXB, 1)
+	//	SF2->( dbGoTo(122218) )
+
+	//	nConfirma := 1
+	//	nOpcao := 3
+	//EndIf
+
+
 /////////////
 	SD2->(DBSETORDER(3))
 	SD2->(DBSEEK(XFILIAL("SD2")+SF2->F2_DOC+SF2->F2_SERIE+SF2->F2_CLIENTE+SF2->F2_LOJA))
@@ -168,7 +181,7 @@ User Function AtuXD1(cFilNF, cDocNF, cSerieNF, cCliNF, cLojaNF)
 			XD1->XD1_ZYSERI  := SD2->D2_SERIE
 			XD1->XD1_ZYDTNF  := SD2->D2_EMISSAO
 			XD1->XD1_PVSEP   := SD2->D2_PEDIDO+''+SD2->D2_ITEMPV
-			XD1->XD1_ZYSEQ   := SD2->D2_I
+			XD1->XD1_ZYSEQ   := SD2->D2_ITEM
 			XD1->(MsUnlock())
 		EndIf
 	Next x

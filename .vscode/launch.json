@@ -11,5 +11,13 @@
 			"isMultiSession": true,
 			"enableTableSync": true
 		}
-	]
+	],
+	"lastPrograms": [
+		{
+			"args": [],
+			"label": "u_M460FIM",
+			"description": ""
+		}
+	],
+	"lastProgramExecuted": "u_M460FIM"
 }
