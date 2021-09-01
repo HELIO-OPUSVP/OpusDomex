@@ -20,7 +20,7 @@ User Function A030DELE()
 //JONAS TESTE 12345	
 
 //JONAS TESTE 2
-
+///JONAS 3
 // MARCO - TESTE 99
 
 MsgInfo('Passando pelo Ponto de Entrada de Exclusão do Item Contábil do Cliente.')

@@ -11,5 +11,18 @@
 			"isMultiSession": true,
 			"enableTableSync": true
 		}
-	]
+	],
+	"lastPrograms": [
+		{
+			"args": [],
+			"label": "u_M460FIM",
+			"description": ""
+		},
+		{
+			"args": [],
+			"label": "sigaadv",
+			"description": ""
+		}
+	],
+	"lastProgramExecuted": "sigaadv"
 }
