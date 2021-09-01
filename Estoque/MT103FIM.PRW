@@ -181,7 +181,7 @@ USER FUNCTION MT103FIM()
 				MATA265( _aCabSDA, _aItensSDB, 3)
 
 				//RestArea(_aAreaSD1)
-				If lMsErroAuto
+				If lMsErroAuto .AND. .F.
 					MostraErro("\UTIL\LOG\Classificacao\")
 					MsgInfo("Erro no endereçamento automático.","A T E N Ç Ã O")
 
