@@ -108,9 +108,9 @@ Static Function GERAEXCEL(cArquivo)
 	oXML:SetFreezeRow(1)
 	oXML:SetFilter(1,1,1,22)
 
-	oXML:SetColSize(	{"150"		,"150"	,"80"			,"240"				,"140"		,"240"			,"100"			,"130"				,"130"			,"130"			,"130"			,"130"		,"150"					,"150"			,"300"			,"200"	,"100"		,"100"		,"150"			,"200"			,"150","150"	 })
-	oXML:addrow("24",	{"Emissão"	,"OF"	,"Item da OF"	,"Nome do Cliente"	,"Codigo"	,"Produto"		,"Cod. Cliente"	,"Item do Cliente"	,"Quantidade"	,"Valor s/IPI"	,"Valor c/Imp"	,"Total"	,"Previsao Faturamento"	,"Data Entrega"	,"Pedido do Cliente","Lote"	,"Shipment"	,"Sequencia","Nota Fiscal"	,"Elaborador"	,"OTD","Status Vendas"},;
-						{oCab01		,oCab01	,oCab01			,oCab01				,oCab01		,oCab01			,oCab01			,oCab01				,oCab01			,oCab01			,oCab01			,oCab01		,oCab01					,oCab01			,oCab01			    ,oCab01	,oCab01		,oCab01		,oCab01			,oCab01			,oCab01,oCab01})
+	oXML:SetColSize(	{"150"		,"150"	,"80"			,"240"				,"140"		,"240"			,"100"			,"130"				,"130"			,"130"			,"130"			,"130"		,"150"					,"150"			,"150"			,"300"			,"200"	,"100"		,"100"		,"150"			,"200"			,"150","150"	 })
+	oXML:addrow("24",	{"Emissão"	,"OF"	,"Item da OF"	,"Nome do Cliente"	,"Codigo"	,"Produto"		,"Cod. Cliente"	,"Item do Cliente"	,"Quantidade"	,"Valor s/IPI"	,"Valor c/Imp"	,"Total"	,"Previsao Faturamento"	,"Data Entrega","Data Cliente"	,"Pedido do Cliente","Lote"	,"Shipment"	,"Sequencia","Nota Fiscal"	,"Elaborador"	,"OTD","Status Vendas"},;
+						{oCab01		,oCab01	,oCab01			,oCab01				,oCab01		,oCab01			,oCab01			,oCab01				,oCab01			,oCab01			,oCab01			,oCab01		,oCab01					,oCab01		   ,oCab01			,oCab01				,oCab01	,oCab01		,oCab01		,oCab01			,oCab01			,oCab01			,oCab01})
 	//oXML:addrow("20",	{"OF"	,"Item"	,"Nota Fiscal"	,"Cod. Cliente"	,"Nome Cliente"	,"Codigo"	,"Produto"	,"Quantidade"	,"Valor s/IPI"	,"Valor c/Imp."	,"Total"	,"Data Entrega"	,"Previsao Faturamento"	,"Observacao"	,"Lote"	,"Sequencia"},;
 	//					{oCab01	,oCab01	,oCab01			,oCab01			,oCab01			,oCab01		,oCab01		,oCab01			,oCab01			,oCab01			,oCab01		,oCab01			,oCab01					,oCab01			,oCab01	,oCab01		})
 	
@@ -142,6 +142,7 @@ Static Function ImpDados()
 	cQuery += "		SC6.C6_PRCVEN, 	"
 	cQuery += "		SC6.C6_IPI, 	"
 	cQuery += "		SC6.C6_DTFATUR, "
+	cQuery += "		SC6.C6_ENTREG, 	"
 	cQuery += "		SC6.C6_ENTRE3, 	"
 	cQuery += "		SC5.C5_ESP1, 	"
 	cQuery += "		SC6.C6_QTDVEN,	"
@@ -205,12 +206,12 @@ Static Function ImpDados()
 	While ((cAlias)->(!Eof()))
 		IncProc()
 		If lCor
-								//{"Emissão"						,"OF"				,"Item da OF"		,"Nome do Cliente"				,"Codigo"					,"Produto"						,"Cod. Cliente"					,"Item do Cliente"				,"Quantidade"		,"Valor s/IPI"			,"Valor c/Imp"									,"Total"																,"Previsao Faturamento"					 ,"Data Entrega"						  	,"Pedido do Cliente"		,"Lote"							,"Shipment"					  ,"Sequencia"					,"Nota Fiscal"		,"Elaborador"					, "OTD"}
-			oXml:addrow("20",	{DtoC(StoD((cAlias)->C5_EMISSAO))	,(cAlias)->C5_NUM	,(cAlias)->C6_ITEM	,SUBS((cAlias)->A1_NOME,1,30)	,AllTrim((cAlias)->B1_COD)	,AllTrim((cAlias)->C6_DESCRI)	,Alltrim((cAlias)->C6_SEUCOD)	,AllTrim((cAlias)->C6_SEUDES)	,(cAlias)->ZY_QUANT	,(cAlias)->C6_PRCVEN	,(cAlias)->C6_PRCVEN*(((cAlias)->C6_IPI/100)+1)	,(cAlias)->ZY_QUANT * ((cAlias)->C6_PRCVEN*(((cAlias)->C6_IPI/100)+1)) 	,Alltrim(DtoC(StoD((cAlias)->ZY_PRVFAT))),Alltrim(DtoC(StoD((cAlias)->ZY_DTFATUR)))	,Alltrim((cAlias)->C5_ESP1)	,Alltrim((cAlias)->C6_LOTECTL)	,Alltrim((cAlias)->C6_XXSHIPM),Alltrim((cAlias)->ZY_SEQ)	,(cAlias)->ZY_NOTA	,Alltrim((cAlias)->C5_ELABORA)	,DtoC(StoD((cAlias)->ZY_DTOTD)),iif((cAlias)->C5_XXLIBCO=="S","Liberado","Bloqueado")},;
-								{oDet01								,oDet01N			,oDet01				,oDet01							,oDet01						,oDet01							,oDet01							,oDet01							,oDet01				,oDet01R				,oDet01R										,oDet01R																,oDet01									 ,oDet01									,oDet01						,oDet01							,oDet01						,oDet01							,oDet01				,oDet01							,oDet01						  ,oDet01})	
+								//{"Emissão"						,"OF"				,"Item da OF"		,"Nome do Cliente"				,"Codigo"					,"Produto"						,"Cod. Cliente"					,"Item do Cliente"				,"Quantidade"		,"Valor s/IPI"			,"Valor c/Imp"									,"Total"																,"Previsao Faturamento"					 ,"Data Entrega"						  	,"Data Cliente"							  ,"Pedido do Cliente"		,"Lote"							,"Shipment"					  ,"Sequencia"					,"Nota Fiscal"		,"Elaborador"					, "OTD"}
+			oXml:addrow("20",	{DtoC(StoD((cAlias)->C5_EMISSAO))	,(cAlias)->C5_NUM	,(cAlias)->C6_ITEM	,SUBS((cAlias)->A1_NOME,1,30)	,AllTrim((cAlias)->B1_COD)	,AllTrim((cAlias)->C6_DESCRI)	,Alltrim((cAlias)->C6_SEUCOD)	,AllTrim((cAlias)->C6_SEUDES)	,(cAlias)->ZY_QUANT	,(cAlias)->C6_PRCVEN	,(cAlias)->C6_PRCVEN*(((cAlias)->C6_IPI/100)+1)	,(cAlias)->ZY_QUANT * ((cAlias)->C6_PRCVEN*(((cAlias)->C6_IPI/100)+1)) 	,Alltrim(DtoC(StoD((cAlias)->ZY_PRVFAT))),Alltrim(DtoC(StoD((cAlias)->ZY_DTFATUR))), Alltrim(DtoC(StoD((cAlias)->C6_ENTREG))) ,Alltrim((cAlias)->C5_ESP1)	,Alltrim((cAlias)->C6_LOTECTL)	,Alltrim((cAlias)->C6_XXSHIPM),Alltrim((cAlias)->ZY_SEQ)	,(cAlias)->ZY_NOTA	,Alltrim((cAlias)->C5_ELABORA)	,DtoC(StoD((cAlias)->ZY_DTOTD)),iif((cAlias)->C5_XXLIBCO=="S","Liberado","Bloqueado")},;
+								{oDet01								,oDet01N			,oDet01				,oDet01							,oDet01						,oDet01							,oDet01							,oDet01							,oDet01				,oDet01R				,oDet01R										,oDet01R																,oDet01									 ,oDet01								   ,oDet01									  ,oDet01						,oDet01							,oDet01						,oDet01							,oDet01				,oDet01							,oDet01						  ,oDet01})	
 		Else		
-			oXml:addrow("20",	{DtoC(StoD((cAlias)->C5_EMISSAO))	,(cAlias)->C5_NUM	,(cAlias)->C6_ITEM	,SUBS((cAlias)->A1_NOME,1,30)	,AllTrim((cAlias)->B1_COD)	,AllTrim((cAlias)->C6_DESCRI)	,Alltrim((cAlias)->C6_SEUCOD)	,AllTrim((cAlias)->C6_SEUDES)	,(cAlias)->ZY_QUANT	,(cAlias)->C6_PRCVEN	,(cAlias)->C6_PRCVEN*(((cAlias)->C6_IPI/100)+1)	,(cAlias)->ZY_QUANT * ((cAlias)->C6_PRCVEN*(((cAlias)->C6_IPI/100)+1)) 	,Alltrim(DtoC(StoD((cAlias)->ZY_PRVFAT))),Alltrim(DtoC(StoD((cAlias)->ZY_DTFATUR)))	,Alltrim((cAlias)->C5_ESP1)	,Alltrim((cAlias)->C6_LOTECTL)	,Alltrim((cAlias)->C6_XXSHIPM),Alltrim((cAlias)->ZY_SEQ)	,(cAlias)->ZY_NOTA	,Alltrim((cAlias)->C5_ELABORA)	,DtoC(StoD((cAlias)->ZY_DTOTD)),iif((cAlias)->C5_XXLIBCO=="S","Liberado","Bloqueado")},;
-								{oDet02								,oDet02N			,oDet02				,oDet02							,oDet02						,oDet02							,oDet02					,oDet02							,oDet02				,oDet02R				,oDet02R												,oDet02R																,oDet02									 ,oDet02									,oDet02						,oDet02							,oDet02						  ,oDet02						,oDet02				,oDet02							,oDet02  					   ,oDet02  })
+			oXml:addrow("20",	{DtoC(StoD((cAlias)->C5_EMISSAO))	,(cAlias)->C5_NUM	,(cAlias)->C6_ITEM	,SUBS((cAlias)->A1_NOME,1,30)	,AllTrim((cAlias)->B1_COD)	,AllTrim((cAlias)->C6_DESCRI)	,Alltrim((cAlias)->C6_SEUCOD)	,AllTrim((cAlias)->C6_SEUDES)	,(cAlias)->ZY_QUANT	,(cAlias)->C6_PRCVEN	,(cAlias)->C6_PRCVEN*(((cAlias)->C6_IPI/100)+1)	,(cAlias)->ZY_QUANT * ((cAlias)->C6_PRCVEN*(((cAlias)->C6_IPI/100)+1)) 	,Alltrim(DtoC(StoD((cAlias)->ZY_PRVFAT))),Alltrim(DtoC(StoD((cAlias)->ZY_DTFATUR))), Alltrim(DtoC(StoD((cAlias)->C6_ENTREG))) ,Alltrim((cAlias)->C5_ESP1)	,Alltrim((cAlias)->C6_LOTECTL)	,Alltrim((cAlias)->C6_XXSHIPM),Alltrim((cAlias)->ZY_SEQ)	,(cAlias)->ZY_NOTA	,Alltrim((cAlias)->C5_ELABORA)	,DtoC(StoD((cAlias)->ZY_DTOTD)),iif((cAlias)->C5_XXLIBCO=="S","Liberado","Bloqueado")},;
+								{oDet02								,oDet02N			,oDet02				,oDet02							,oDet02						,oDet02							,oDet02							,oDet02							,oDet02				,oDet02R				,oDet02R										,oDet02R																,oDet02									 ,oDet02								   ,oDet02									  ,oDet02						,oDet02							,oDet02						  ,oDet02						,oDet02				,oDet02							,oDet02  					   ,oDet02  })
 		EndIf
 		lCor:=iif(lCor,.F.,.T.)
 		(cAlias)->(DbSkip())
