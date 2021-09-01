@@ -181,7 +181,7 @@ USER FUNCTION MT103FIM()
 				MATA265( _aCabSDA, _aItensSDB, 3)
 
 				//RestArea(_aAreaSD1)
-				If lMsErroAuto
+				If lMsErroAuto .AND. .F.
 					MostraErro("\UTIL\LOG\Classificacao\")
 					MsgInfo("Erro no endereçamento automático.","A T E N Ç Ã O")
 
@@ -203,7 +203,7 @@ USER FUNCTION MT103FIM()
 
 						While XD1->(!Eof()) .AND. XD1->XD1_FILIAL == cFilFiltro  .AND. XD1->XD1_COD == SD1->D1_COD .AND. XD1->XD1_LOCAL == "95" .AND. XD1->XD1_OCORRE == "9"
 
-							If XD1->XD1_ZYNOTA  == SF1->F1_DOC .and. XD1->XD1_ZYSERIE == SF1->F1_SERIE .and. XD1->XD1_ZYDTNF  == SF1->F1_EMISSAO	//.AND. XD1->XD1_QTDATU  == SD1->D1_QUANT
+							If XD1->XD1_ZYNOTA  == SF1->F1_DOC .and. XD1->XD1_ZYSERIE == SF1->F1_SERIE .and. XD1->XD1_ZYDTNF  == SF1->F1_EMISSAO .AND. StrZero(VAL(XD1->XD1_ZYSEQ),4) == SD1->D1_ITEM	//.AND. XD1->XD1_QTDATU  == SD1->D1_QUANT
 
 								SB1->(DBSEEK(xfilial()+SD1->D1_COD))
 								SD3->( dbSetOrder(2))
