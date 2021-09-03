@@ -559,9 +559,9 @@ Static function fProcInv()
 					SB2->(dbskip())
 					LOOP
 				EndIF
-				SB1->(DbSeek(xFilial("SB1")+INV->B1_COD))		
+				//SB1->(DbSeek(xFilial("SB1")+INV->B1_COD))		
 				//PA COM OU SEM SALDO NO 13 NAO GERA CONTAGEM		
-				If SB1->B1_TIPO == 'PA' .AND. alltrim(SB2->B2_LOCAL) = "13" 
+				If INV->B1_TIPO == 'PA' .AND. alltrim(SB2->B2_LOCAL) = "13" 
 					SB2->(dbskip())
 					LOOP
 				EndIF
@@ -571,38 +571,38 @@ Static function fProcInv()
 						dInvUlt := fultinv(SB2->B2_COD, SB2->B2_LOCAL)
 						dInvUlt := if(Empty(dInvUlt),if(SB2->B2_DINVENT<dPriDiaAno,ctod('  /  /  '),SB2->B2_DINVENT),dInvUlt)
 						If Empty(dInvUlt) 
-							AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, SB1->B1_TIPO } )
+							AADD(aLstInv, {SB2->B2_COD, INV->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, INV->B1_TIPO } )
 						Else
 							If INV->B1_XCLASIN == 'SM' 
-								AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, SB1->B1_TIPO } )
+								AADD(aLstInv, {SB2->B2_COD, INV->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, INV->B1_TIPO } )
 							Else
 								If fultmov(SB2->B2_COD, SB2->B2_LOCAL, dInvUlt)
-									AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, SB1->B1_TIPO } )
+									AADD(aLstInv, {SB2->B2_COD, INV->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, INV->B1_TIPO } )
 								EndIf
 							EndIf
 						EndIf						
-					Else
-						aSaldoEst := CalcEst(SB2->B2_COD, SB2->B2_LOCAL, dUltDia + 1 )
-						If aSaldoEst[1] != 0
-							dInvUlt := fultinv(SB2->B2_COD, SB2->B2_LOCAL)
-							dInvUlt := if(Empty(dInvUlt),if(SB2->B2_DINVENT<dPriDiaAno,ctod('  /  /  '),SB2->B2_DINVENT),dInvUlt)
-							If Empty(dInvUlt)  
-								AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, SB1->B1_TIPO } )
+				    EndIf
+				Else
+					aSaldoEst := CalcEst(SB2->B2_COD, SB2->B2_LOCAL, dUltDia + 1 )
+					If aSaldoEst[1] != 0
+						dInvUlt := fultinv(SB2->B2_COD, SB2->B2_LOCAL)
+						dInvUlt := if(Empty(dInvUlt),if(SB2->B2_DINVENT<dPriDiaAno,ctod('  /  /  '),SB2->B2_DINVENT),dInvUlt)
+						If Empty(dInvUlt)  
+							AADD(aLstInv, {SB2->B2_COD, INV->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, INV->B1_TIPO } )
+						Else
+							If INV->B1_XCLASIN == 'SM' 
+								AADD(aLstInv, {SB2->B2_COD, INV->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, INV->B1_TIPO } )
 							Else
-								If INV->B1_XCLASIN == 'SM' 
-									AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, SB1->B1_TIPO } )
-								Else
-									If fultmov(SB2->B2_COD, SB2->B2_LOCAL, dInvUlt)
-										AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, SB1->B1_TIPO } )
-									EndIf
+								If fultmov(SB2->B2_COD, SB2->B2_LOCAL, dInvUlt)
+									AADD(aLstInv, {SB2->B2_COD, INV->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, INV->B1_TIPO } )
 								EndIf
 							EndIf
-						EndIF
-					EndIf
-				EndIf
-				SB2->(dbskip())
-			EndDo
-		EndIf
+						EndIf
+					EndIF
+				EndIf			
+			SB2->(dbskip())
+		  	EndDo
+	    EndIf
 		INV->(dbskip())
 	EndDo
 
