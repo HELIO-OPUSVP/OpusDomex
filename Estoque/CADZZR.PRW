@@ -441,9 +441,9 @@ Static function fProcCla()
 			If SB1->(DbSeek(xFilial()+aClass[x][1]))
 				cDescPr := SB1->B1_DESC
 
-				//RecLock("SB1",.F.)
-				//SB1->B1_XCLASIN := aClass[x][2]+''+aClass[x][3]
-				//SB1->(MsUnlock())
+				RecLock("SB1",.F.)
+				SB1->B1_XCLASIN := aClass[x][2]+''+aClass[x][3]
+				SB1->(MsUnlock())
 
 				Reclock("ZZS",.T.)
 				ZZS->ZZS_FILIAL := xFilial("ZZS")
@@ -475,7 +475,7 @@ Return
 User Function ZZRGER01()
 
 
-//FWMsgRun(, {|oSay| fProcCla() }, "Processando", "Classificando produtos...")         
+    FWMsgRun(, {|oSay| fProcCla() }, "Processando", "Classificando produtos...")         
 	FWMsgRun(, {|oSay| fProcInv() }, "Processando", "Gerando inventario...")
 
 Return
@@ -536,12 +536,12 @@ Static function fProcInv()
 	EndIf
 
 
-//cQuery := " SELECT * FROM SB1010 (NOLOCK) WHERE D_E_L_E_T_='' AND B1_XCLASINV <> '' AND B1_FILIAL='"+xFilial("SB1")+"' ORDER BY B1_XCLASINV "
+    cQuery := " SELECT * FROM SB1010 (NOLOCK) WHERE D_E_L_E_T_='' AND B1_XCLASIN <> '' AND B1_FILIAL='"+xFilial("SB1")+"' ORDER BY B1_XCLASIN "
 
-	cQuery := " SELECT ZZS_PRODUT AS PRODUTO, ZZS_DESCRI AS DESCRICAO, ZZS_CLASV++ZZS_CLASQ AS CLAS FROM ZZS010 (NOLOCK) "
-	cQuery += " WHERE D_E_L_E_T_='' AND ZZS_CODIGO='000007' "//AND ZZS_PRODUT='10118SM20125PR' "
-	cQuery += " GROUP BY ZZS_PRODUT, ZZS_DESCRI, ZZS_CLASV,ZZS_CLASQ "
-	cQuery += " ORDER BY ZZS_CLASV, ZZS_CLASQ "
+	//cQuery := " SELECT ZZS_PRODUT AS PRODUTO, ZZS_DESCRI AS DESCRICAO, ZZS_CLASV++ZZS_CLASQ AS CLAS FROM ZZS010 (NOLOCK) "
+	//cQuery += " WHERE D_E_L_E_T_='' AND ZZS_CODIGO='000007' "//AND ZZS_PRODUT='10118SM20125PR' "
+	//cQuery += " GROUP BY ZZS_PRODUT, ZZS_DESCRI, ZZS_CLASV,ZZS_CLASQ "
+	//cQuery += " ORDER BY ZZS_CLASV, ZZS_CLASQ "
 
 
 	If Select("INV") <> 0
@@ -552,16 +552,16 @@ Static function fProcInv()
 
 	SB2->(dbSetOrder(1))
 	While INV->(!EOF())
-		If SB2->(DbSeek(xFilial("SB2")+INV->PRODUTO)) 
-			While SB2->(!EOF()) .AND. xFilial("SB2") == SB2->B2_FILIAL .AND. SB2->B2_COD == INV->PRODUTO
+		If SB2->(DbSeek(xFilial("SB2")+INV->B1_COD)) 
+			While SB2->(!EOF()) .AND. xFilial("SB2") == SB2->B2_FILIAL .AND. SB2->B2_COD == INV->B1_COD
 				//Armazens excluidos da contagem
 				If SB2->B2_LOCAL == "  " .OR. alltrim(SB2->B2_LOCAL) $ "03/04/05/06/07/08/09/10/11/12/14/19/30/50/60/92/93/95/96/97/98/99/  /CA/RE/PI" 
 					SB2->(dbskip())
 					LOOP
 				EndIF
-				SB1->(DbSeek(xFilial("SB1")+INV->PRODUTO))		
+				//SB1->(DbSeek(xFilial("SB1")+INV->B1_COD))		
 				//PA COM OU SEM SALDO NO 13 NAO GERA CONTAGEM		
-				If SB1->B1_TIPO == 'PA' .AND. alltrim(SB2->B2_LOCAL) = "13" 
+				If INV->B1_TIPO == 'PA' .AND. alltrim(SB2->B2_LOCAL) = "13" 
 					SB2->(dbskip())
 					LOOP
 				EndIF
@@ -570,115 +570,42 @@ Static function fProcInv()
 					If SB9->B9_QINI != 0
 						dInvUlt := fultinv(SB2->B2_COD, SB2->B2_LOCAL)
 						dInvUlt := if(Empty(dInvUlt),if(SB2->B2_DINVENT<dPriDiaAno,ctod('  /  /  '),SB2->B2_DINVENT),dInvUlt)
-						If Empty(dInvUlt) //.OR. INV->CLAS == 'SM'
-							AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )
+						If Empty(dInvUlt) 
+							AADD(aLstInv, {SB2->B2_COD, INV->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, INV->B1_TIPO } )
 						Else
-							If INV->CLAS == 'SM' 
-								AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )
+							If INV->B1_XCLASIN == 'SM' 
+								AADD(aLstInv, {SB2->B2_COD, INV->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, INV->B1_TIPO } )
 							Else
 								If fultmov(SB2->B2_COD, SB2->B2_LOCAL, dInvUlt)
-									AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )
+									AADD(aLstInv, {SB2->B2_COD, INV->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, INV->B1_TIPO } )
 								EndIf
 							EndIf
 						EndIf						
-					Else
-						aSaldoEst := CalcEst(SB2->B2_COD, SB2->B2_LOCAL, dUltDia + 1 )
-						If aSaldoEst[1] != 0
-							dInvUlt := fultinv(SB2->B2_COD, SB2->B2_LOCAL)
-							dInvUlt := if(Empty(dInvUlt),if(SB2->B2_DINVENT<dPriDiaAno,ctod('  /  /  '),SB2->B2_DINVENT),dInvUlt)
-							If Empty(dInvUlt) //.OR. INV->CLAS == 'SM' 
-								AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )
+				    EndIf
+				Else
+					aSaldoEst := CalcEst(SB2->B2_COD, SB2->B2_LOCAL, dUltDia + 1 )
+					If aSaldoEst[1] != 0
+						dInvUlt := fultinv(SB2->B2_COD, SB2->B2_LOCAL)
+						dInvUlt := if(Empty(dInvUlt),if(SB2->B2_DINVENT<dPriDiaAno,ctod('  /  /  '),SB2->B2_DINVENT),dInvUlt)
+						If Empty(dInvUlt)  
+							AADD(aLstInv, {SB2->B2_COD, INV->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, INV->B1_TIPO } )
+						Else
+							If INV->B1_XCLASIN == 'SM' 
+								AADD(aLstInv, {SB2->B2_COD, INV->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, INV->B1_TIPO } )
 							Else
-								If INV->CLAS == 'SM' 
-									AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )
-								Else
-									If fultmov(SB2->B2_COD, SB2->B2_LOCAL, dInvUlt)
-										AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )
-									EndIf
+								If fultmov(SB2->B2_COD, SB2->B2_LOCAL, dInvUlt)
+									AADD(aLstInv, {SB2->B2_COD, INV->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->B1_XCLASIN, INV->B1_TIPO } )
 								EndIf
 							EndIf
-						EndIF
-					EndIf
-				EndIf
-				SB2->(dbskip())
-			EndDo
-		EndIf
+						EndIf
+					EndIF
+				EndIf			
+			SB2->(dbskip())
+		  	EndDo
+	    EndIf
 		INV->(dbskip())
 	EndDo
-/*
-	SB2->(dbSetOrder(1))
-	While INV->(!EOF())
-		If SB2->(DbSeek(xFilial("SB2")+INV->PRODUTO))
-			While SB2->(!EOF()) .AND. xFilial("SB2") == SB2->B2_FILIAL .AND. SB2->B2_COD == INV->PRODUTO
-				If SB2->B2_LOCAL == "  "
-					SB2->(dbskip())
-					LOOP
-				EndIF
-				SB1->(DbSeek(xFilial("SB1")+INV->PRODUTO))
-				If SB1->B1_TIPO == 'PA' //.and.  INV->CLAS != 'SM'
-					//SE PA E ARMAZEM DIFERENTE DE 13 VERIFICA SE TEM SALDO NO ULTIMO DIA DO MES
-					//SE PA NO ARMAZEM 13 NAO GERA CONTAGEM, MESMO COM SALDO
-					If !alltrim(SB2->B2_LOCAL) $ "13/03/04/05/06/07/08/09/10/11/12/14/19/30/50/60/92/93/95/96/97/98/99/  /CA/RE/PI" //!SB2->B2_LOCAL == "13"
-						If SB9->(dbSeek(xFilial("SB9") + SB2->B2_COD + SB2->B2_LOCAL + DTOS(dUltDia)))
-							If SB9->B9_QINI != 0
-								dInvUlt := fultinv(SB2->B2_COD, SB2->B2_LOCAL)
-								dInvUlt := if(Empty(dInvUlt),if(SB2->B2_DINVENT<dPriDiaAno,ctod('  /  /  '),SB2->B2_DINVENT),dInvUlt)
-								If Empty(dInvUlt) //.OR. INV->CLAS == 'SM'
-									AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )
-								Else
-									If fultmov(SB2->B2_COD, SB2->B2_LOCAL, dInvUlt)
-										AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )
-									EndIf
-								EndIf
-							EndIF
-						Else
-							aSaldoEst := CalcEst(SB2->B2_COD, SB2->B2_LOCAL, dUltDia + 1 )
-							If aSaldoEst[1] != 0
-								dInvUlt := fultinv(SB2->B2_COD, SB2->B2_LOCAL)
-								dInvUlt := if(Empty(dInvUlt),if(SB2->B2_DINVENT<dPriDiaAno,ctod('  /  /  '),SB2->B2_DINVENT),dInvUlt)
-								If Empty(dInvUlt) //.OR. INV->CLAS == 'SM' 
-									AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )
-								Else
-									If fultmov(SB2->B2_COD, SB2->B2_LOCAL, dInvUlt)
-										AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )
-									EndIf
-								EndIf
-							EndIF
-						EndIf
-					EndIf
-				ElseIf !alltrim(SB2->B2_LOCAL) $ "03/04/05/06/07/08/09/10/11/12/14/19/30/50/60/92/93/95/96/97/98/99/  /CA/RE/PI" .and.  INV->CLAS != 'SM'
-					dInvUlt := fultinv(SB2->B2_COD, SB2->B2_LOCAL)
-					dInvUlt := if(Empty(dInvUlt),if(SB2->B2_DINVENT<dPriDiaAno,ctod('  /  /  '),SB2->B2_DINVENT),dInvUlt)
-					If Empty(dInvUlt) //.OR. INV->CLAS == 'SM'
-						AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )
-					Else
-						If fultmov(SB2->B2_COD, SB2->B2_LOCAL, dInvUlt)
-							AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )
-						EndIf
-					EndIf
-				ElseIf !alltrim(SB2->B2_LOCAL) $ "03/04/05/06/07/08/09/10/11/12/14/19/30/50/60/92/93/95/96/97/98/99/  /CA/RE/PI" .and. INV->CLAS == 'SM' 
-					If SB9->(dbSeek(xFilial("SB9") + SB2->B2_COD + SB2->B2_LOCAL + DTOS(dUltDia)))
-						If SB9->B9_QINI != 0
-							dInvUlt := fultinv(SB2->B2_COD, SB2->B2_LOCAL)
-							dInvUlt := if(Empty(dInvUlt),if(SB2->B2_DINVENT<dPriDiaAno,ctod('  /  /  '),SB2->B2_DINVENT),dInvUlt)							
-							AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )							
-						EndIF
-					Else
-						aSaldoEst := CalcEst(SB2->B2_COD, SB2->B2_LOCAL, dUltDia + 1 )
-						If aSaldoEst[1] != 0
-							dInvUlt := fultinv(SB2->B2_COD, SB2->B2_LOCAL)
-							dInvUlt := if(Empty(dInvUlt),if(SB2->B2_DINVENT<dPriDiaAno,ctod('  /  /  '),SB2->B2_DINVENT),dInvUlt)
-							AADD(aLstInv, {SB2->B2_COD, SB1->B1_DESC, SB2->B2_LOCAL, dInvUlt, INV->CLAS, SB1->B1_TIPO } )
-						EndIf
-					EndIf
 
-				EndIf
-				SB2->(dbskip())
-			EndDo
-		EndIf
-		INV->(dbskip())
-	EndDo
-*/
 	dInv4x := LastDate(monthsub(STOD(cPeriodo),4))
 	dInv2x := LastDate(monthsub(STOD(cPeriodo),7))
 	dInv1x := LastDate(monthsub(STOD(cPeriodo),13))
