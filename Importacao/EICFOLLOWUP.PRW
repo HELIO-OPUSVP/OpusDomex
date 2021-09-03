@@ -215,7 +215,7 @@ User Function EICFLWUP()
 	nUsado	:= len(aHeader)
 	aAdd(aCols,Array(nUsado+1))
 
-	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V1.8")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
+	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V1.9")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
 
 	@ 032, 003 GROUP oGroup1 TO 092, 649 PROMPT "Filtros" OF oDlg COLOR 0, 16777215 PIXEL
 
@@ -572,6 +572,66 @@ Static Function Atu_aCols2()
 	cQuery += " FROM SWN010 WHERE D_E_L_E_T_='' AND SUBSTRING(WN_HAWB,1,11)=SUBSTRING(W5_HAWB,1,11) "
 	cQuery += " AND TRIM(WN_PO_NUM)=TRIM(W2_PO_SIGA) AND TRIM(WN_PRODUTO)=TRIM(W3_COD_I) ) "
 
+
+	IF !EMPTY(cnf)
+		cQuery += " AND  WN_DOC LIKE('%"+ALLTRIM(cnf)+"%')  "
+	ENDIF
+
+	IF !EMPTY(cblhouse)
+		cQuery += " AND  W3_XHOUSE LIKE('%"+ALLTRIM(cblhouse)+"%')  "
+	ENDIF
+
+	IF !EMPTY(cagent)
+		cQuery += " AND  W3_XFREIGT LIKE('%"+ALLTRIM(cagent)+"%')  "
+	ENDIF
+
+	IF !EMPTY(cfornec)
+		cQuery += " AND  A2_NREDUZ LIKE('%"+ALLTRIM(cfornec)+"%')  "
+	ENDIF
+
+	IF !EMPTY(cDesc)
+		cQuery += " AND  B1_DESC LIKE('%"+ALLTRIM(cDesc)+"%')  "
+	ENDIF
+	DO CASE
+	CASE substr(cComboBox2,1,1)=="E"
+		cQuery += " AND  W3_XENTREG <> '' "
+	CASE substr(cComboBox2,1,1)=="A"
+		cQuery += " AND  W3_XENTREG = '' "
+	Otherwise
+		//substr(cComboBox2,1,1)=="T"
+	EndCase
+
+	*---------------------------------------------------------------------------------------------
+	// PRODUTO ANUENTE
+	cQuery += " UNION ALL "
+	cQuery += " SELECT W2_ORIGEM,W2_PO_SIGA,CCH_PAIS,W2_PO_NUM,W3_POSICAO,W2_PO_DT,A2_NREDUZ,W2_DIAS_PA,"
+	cQuery += "       W3_COD_I,B1_DESC,W3_QTDE,W3_PRECO,W3_QTDE*W3_PRECO VL_TOT ,'' WN_DOC,0 WN_QUANT,'' WN_HAWB,'' WN_INVOICE,'' WN_SDOC,0 WN_QUANT,'' WN_ITEM,A2_COD,A2_LOJA,'' WN_HAWB, "
+	cQuery += "       W3_XXOBS,W3_XCONFDT,W3_XNEWDT,W3_XPRVPO,W3_XCOLETA,W3_XETD,W3_XETA,W3_XPRALER,W3_XPRDSB,W3_XENTREG,W3_XFREIGT, "
+	cQuery += "       W3_XMODAL,W3_XDTPCOL,W3_XHOUSE , "
+	cQuery += "       W2_TIPO_EM,W2_DEST "
+	cQuery += "  FROM SW2010 SW2 WITH(NOLOCK),SW3010 SW3 WITH(NOLOCK),SA2010 SA2 WITH(NOLOCK),CCH010 CCH WITH(NOLOCK) ,SB1010 SB1 WITH(NOLOCK)
+	cQuery += " WHERE  W2_PO_NUM=W3_PO_NUM AND A2_COD+A2_LOJA=W2_FORN+W2_FORLOJ AND   CCH_CODIGO=A2_CODPAIS AND B1_COD=W3_COD_I
+	cQuery += " AND W2_PO_DT  >='"+DTOS(dGetPodt1)+"' AND W2_PO_DT  <='"+DTOS(dGetPodt2)+"' "
+	cQuery += " AND W2_PO_NUM >='"+cGetPoEIC1+"'      AND W2_PO_NUM <='"+cGetPoEIC2+"' "
+	cQuery += " AND W3_COD_I  >='"+cGetPn1+"'         AND W3_COD_I  <='"+cGetPn2+"' "
+	cQuery += " AND W3_SEQ=0"
+	cQuery += " AND W3_FLUXO='1' "   //ANUENTE
+	cQuery += " AND  SW2.D_E_L_E_T_=''"
+	cQuery += " AND  SW3.D_E_L_E_T_=''"
+	cQuery += " AND  SA2.D_E_L_E_T_=''"
+	cQuery += " AND  CCH.D_E_L_E_T_=''"
+	cQuery += " AND  SB1.D_E_L_E_T_=''"
+	cQuery += " AND  W2_FILIAL='"+xFILIAL('SW2')+"' "
+	cQuery += " AND  W3_FILIAL='"+xFILIAL('SW3')+"' "
+	cQuery += " AND  A2_FILIAL='"+xFILIAL('SA2')+"' "
+	cQuery += " AND  CCH_FILIAL='"+xFILIAL('CCH')+"' "
+	cQuery += " AND  B1_FILIAL='"+xFILIAL('SB1')+"' "
+	cQuery += "	 AND W2_PO_NUM+W3_COD_I+W3_POSICAO NOT IN
+	cQuery += "     (SELECT WN_PO_EIC+WN_PRODUTO+WN_ITEM FROM SWN010 WHERE D_E_L_E_T_='' AND WN_PO_EIC=W2_PO_NUM AND WN_PRODUTO=W3_COD_I
+	cQuery += "  AND WN_ITEM=W3_POSICAO )
+	cQuery += "	AND   W2_PO_NUM+W3_COD_I+W3_POSICAO NOT IN  "
+	cQuery += "  (SELECT W5_PO_NUM+W5_COD_I+W5_POSICAO FROM SW5010 WHERE D_E_L_E_T_=''  "
+	cQuery += "  AND W5_PO_NUM=W2_PO_NUM AND W5_COD_I=W3_COD_I AND W5_POSICAO=W3_POSICAO ) "
 
 	IF !EMPTY(cnf)
 		cQuery += " AND  WN_DOC LIKE('%"+ALLTRIM(cnf)+"%')  "
@@ -1394,6 +1454,13 @@ User Function GRAVAZZT(_cEmpresa, _cFilial, aCols1)
 		cQRDEL1:=" DELETE FROM ZZT010 WHERE ZZT_PO_NUM ='"+acols1[nX][04]+"' "
 		TCSqlExec(cQRDEL1)
 	next nx
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	cQRDEL2 := " DELETE FROM ZZT010 WHERE SUBSTRING(ZZT_PO_SIG,1,6)+SUBSTRING(ZZT_PO_NUM,20,4) NOT IN  "
+	cQRDEL2 += " (SELECT C7_NUM+C7_ITEM FROM SC7010  WHERE C7_NUM=SUBSTRING(ZZT_PO_SIG,1,6) AND C7_ITEM=SUBSTRING(ZZT_PO_NUM,20,4) AND D_E_L_E_T_='') "
+	cQRDEL2 += " AND SUBSTRING(ZZT_PO_NUM,1,2)<>'DA' AND ZZT_NFISCA='' "
+	TCSqlExec(cQRDEL2)
+	//---------------------------------------------------------------------------------------------------
 
 	dbSelectArea("ZZT")
 	ZZT->(dbSetOrder(1)) //ZZT_FILIAL+ZZT_PO_NUM
