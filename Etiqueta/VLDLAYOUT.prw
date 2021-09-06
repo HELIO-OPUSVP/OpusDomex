@@ -9,7 +9,7 @@
 (examples)
 @see (links_or_references)
 /*/
-
+//teste
 User Function ZDESIGNER(aVetor,cLayout,cImpres)
 
 Local cLinha  := ""
