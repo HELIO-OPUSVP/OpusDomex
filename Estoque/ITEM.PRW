@@ -62,43 +62,6 @@ User Function ITEM()
 		oObj := aParam[1]
 		cIdPonto := aParam[2]
 		cIdModel := aParam[3]
-		// IF __CUSERID <> cUserAtu
-		// 	cUserAtu:= __CUSERID
-		// 	lWhenSB1:= .T.
-		// Endif
-
-		// If aParam <> NIL .and. lWhenSB1 //.or. ALLTRIM(FUNNAME()) == "DOMCADI"
-		// 	dbSelectArea("P08")
-		// 	P08->(DbSetOrder(1))
-		// 	IF P08->(dbSeek(xFilial("P08")+__cUserId)) //.and. !(ALLTRIM(FUNNAME()) == "DOMCADI")
-		// 		While !P08->( EOF() ) .and. Alltrim(__cUserId) == P08->P08_CODUSR
-		// 			_cPastas += P08->P08_PASTA+","
-		// 			P08->( dbSkip() )
-		// 		End
-		// 	EndIf
-		// 	SX3->( dbSetOrder(1) )
-		// 	SX3->(dbSeek("SB1"))
-		// 	While SX3->(!Eof()) .And. SX3->X3_ARQUIVO == "SB1"
-		// 		IF (INCLUI .AND. !EMPTY(_cPastas))// .OR. ALLTRIM(FUNNAME()) == "DOMCADI"
-		// 			RecLock("SX3",.F.)
-		// 			SX3-> := "lTrue"
-		// 			SX3->( MsUnlock() )
-		// 		ELSE
-		// 			If Alltrim(SX3->X3_FOLDER) $ _cPastas
-		// 				RecLock("SX3",.F.)
-		// 				SX3-> X3_WHEN:= "lTrue"
-		// 				SX3->( MsUnlock() )
-		// 			Else
-		// 				RecLock("SX3",.F.)
-		// 				SX3-> X3_WHEN:= "lFalse"
-		// 				SX3->( MsUnlock() )
-		// 			EndIf
-		// 		END
-
-		// 		SX3->( dbSkip() )
-		// 	End
-		// 	lWhenSB1:= .F.
-		// Endif
 
 		aEstrut:= {}
 		aDoctos := {}

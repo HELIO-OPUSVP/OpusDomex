@@ -87,8 +87,6 @@ Next _i
     	msgStop(_msg,"AVISO" )
     Endif    
 
- 
-
 
 Return aLayout  
 
