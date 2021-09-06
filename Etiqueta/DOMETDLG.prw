@@ -220,7 +220,7 @@ User Function DOMETDLG()
 			ElseIf mv_par06 == "116" .and. U_VALIDACAO() // Layout 116 - (novo Layout 004)
 				U_DOMET116(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie) 
 			ElseIf mv_par06 == "117" .and. U_VALIDACAO() // Layout 117 - ()
-				 
+				  
 			EndIf
 
 
