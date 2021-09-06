@@ -9,9 +9,9 @@
 (examples)
 @see (links_or_references)
 /*/
-//teste
-User Function ZDESIGNER(aVetor,cLayout,cImpres)
 
+User Function ZDESIGNER(aVetor,cLayout,cImpres)
+// teste roda
 Local cLinha  := ""
 Local lPrim   := .T.
 Local aLayout := {}
