@@ -181,7 +181,7 @@ User Function AtuXD1(cFilNF, cDocNF, cSerieNF, cCliNF, cLojaNF)
 			XD1->XD1_ZYSERI  := SD2->D2_SERIE
 			XD1->XD1_ZYDTNF  := SD2->D2_EMISSAO
 			XD1->XD1_PVSEP   := SD2->D2_PEDIDO+''+SD2->D2_ITEMPV
-			XD1->XD1_ZYSEQ   := SD2->D2_ITEM
+			XD1->XD1_ZYITNF  := SD2->D2_ITEM
 			XD1->(MsUnlock())
 		EndIf
 	Next x
