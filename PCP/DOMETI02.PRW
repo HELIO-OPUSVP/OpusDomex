@@ -103,7 +103,7 @@ for _i := 1 to nPrint
 		AADD(_aArq,'^BY42,42^FT600,'+cValtochar(68-nAjLin)+'^BXN,3,200,0,0,1,~'+ CRLF)
         AADD(_aArq,'^FH\^FD'+cValtoChar(nNumSerie+(nNumEt+3))+'\09'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
         AADD(_aArq,'^FT570,'+cValtochar(89-nAjLin)+'^A0N,21,24^FB110,1,0,C^FH\^FD'+strzero((nNumSerie+(nNumEt+3)),ntam)+'A^FS'+ CRLF)
-        AADD(_aArq,'^FT'+cvaltochar(570+nPos1)+','+cValtochar(115-nAjLin)+'^A0N,21,24^FB'+cvaltochar(nPos2)+',1,0,C^FH\^FD'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
+        AADD(_aArq,'^FT'+cvaltochar(550+nPos1)+','+cValtochar(115-nAjLin)+'^A0N,21,24^FB'+cvaltochar(nPos2)+',1,0,C^FH\^FD'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
     Endif
 
     AADD(_aArq,'^PQ1,0,1,Y^XZ'+ CRLF)

@@ -2435,7 +2435,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	If __mv_par06 == "99"
 
-		IF U_VALIDACAO() // RODA 20/08/2021
+		IF U_VALIDACAO() .Or. .T. // RODA 20/08/2021
 			lRotValid :=  U_DOMET87B(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) 			// Validações de Layout 01
 		Else
 			lRotValid :=  U_DOMETQ99(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) 			// Validações de Layout 01
@@ -2455,7 +2455,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 				Else
 					cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
 
-					IF U_VALIDACAO() // RODA 20/08/2021
+					IF U_VALIDACAO() .Or. .T. // RODA 20/08/2021
 						MsgRun("Imprimindo etiqueta Layout 87B","Aguarde...",{|| lRetEtq := U_DOMET87B(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) })  // Impressão de Etiqueta Layout 01
 					Else
 						MsgRun("Imprimindo etiqueta Layout 99","Aguarde...",{|| lRetEtq := U_DOMETQ99(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) })  // Impressão de Etiqueta Layout 01
@@ -2463,7 +2463,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 				EndIf
 			Else
 				cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
-				IF U_VALIDACAO() // RODA 20/08/2021
+				IF U_VALIDACAO()  .Or. .T.// RODA 20/08/2021
 					MsgRun("Imprimindo etiqueta Layout 87B","Aguarde...",{|| lRetEtq := U_DOMET87B(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) })  // Impressão de Etiqueta Layout 01
 				Else
 					MsgRun("Imprimindo etiqueta Layout 99","Aguarde...",{|| lRetEtq := U_DOMETQ99(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) })  // Impressão de Etiqueta Layout 01
@@ -2687,7 +2687,7 @@ Return
 			EndIf
 		EndIf
 		If cDomEtDl36_CancLay == "99"
-			IF U_VALIDACAO() // RODA 20/08/2021
+			IF U_VALIDACAO() .Or. .T. // RODA 20/08/2021
 				U_DOMET87B(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie) //Layout 99 - Etiqueta Novo Layout HUAWEI
 			Else
 				U_DOMETQ99(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie) //Layout 99 - Etiqueta Novo Layout HUAWEI
@@ -3008,7 +3008,7 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			U_DOMETQ98(cOp,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 98 - Etiqueta Somente com CODBAR
 			U_DOMETQ94(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
 		ElseIf cLayout == "99"
-			IF U_VALIDACAO() // RODA 20/08/2021
+			IF U_VALIDACAO()  .Or. .T.// RODA 20/08/2021
 				U_DOMET87B(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
 			Else
 				U_DOMETQ99(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
