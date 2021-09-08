@@ -213,12 +213,19 @@ User Function DOMETDLG()
 				U_DOMET112(mv_par02,mv_par03,mv_par04,mv_par05,/*cNivel*/,/*aFilhas*/{},/*lImpressao*/.T.,/*nPesoVol*/1,/*cVolumeAtu*/,/*lColetor*/.F.)
 			ElseIf mv_par06 == "113" // Layout 113 - (ID CORTE - AVULSA))
 				U_DOMET113(mv_par02,mv_par05,mv_par07)
-			ElseIf mv_par06 == "114" // Layout 113 - (ID CORTE - AVULSA))
+			ElseIf mv_par06 == "114" // Layout 114
 				U_DOMET114(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie)
+			ElseIf mv_par06 == "115"  // Layout 115 - (ID CORTE FURUKAWA - AVULSA))
+				U_DOMET115(mv_par02,mv_par05,mv_par07)
+			ElseIf mv_par06 == "116" .and. U_VALIDACAO() // Layout 116 - (novo Layout 004)
+				U_DOMET116(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie) 
+			ElseIf mv_par06 == "117" .and. U_VALIDACAO() // Layout 117 - (Novo Layout )
+				// teste
 			EndIf
 
-		EndIf
 
+		EndIf
+ 
 	End
 
 Return

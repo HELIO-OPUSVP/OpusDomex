@@ -443,7 +443,7 @@ User Function DOMET87B(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄxÔ[¿                                                          	// Parametros dentro do Crystal
 
 			AADD(_aArq,'CT~~CD,~CC^~CT~'+CRLF)
-			AADD(_aArq,'^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD'+cSD+'^JUS^LRN^CI0^XZ'+CRLF)
+			AADD(_aArq,'^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR6,6^JUS^LRN^CI0^XZ'+CRLF)
 			AADD(_aArq,'^XA'+CRLF)
 			AADD(_aArq,'^MMT'+CRLF)
 			AADD(_aArq,'^PW1181'+CRLF)
@@ -495,7 +495,7 @@ User Function DOMET87B(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			AADD(_aArq,'^BY2,3,65^FT555,206^BCN,,N,N'+CRLF)//Qtd.CODBAR
 			AADD(_aArq,'^FD>:'+Strzero(MVPAR02,4)+'^FS'+CRLF)
 
-			AADD(_aArq,'^BY200,200^FT900,649^BXN,8,200,0,0,1,~'+CRLF)//Data Matrix
+			AADD(_aArq,'^BY200,200^FT900,710^BXN,6,200,0,0,1,~'+CRLF)//Data Matrix
 			AADD(_aArq,'^FH\^FD'+cCB_SN+'^FS'+CRLF)
 
 			AADD(_aArq,'^BY2,3,51^FT40,554^BCN,,N,N'+CRLF) 
