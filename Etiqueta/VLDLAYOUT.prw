@@ -11,7 +11,7 @@
 /*/
 
 User Function ZDESIGNER(aVetor,cLayout,cImpres)
-
+// teste roda
 Local cLinha  := ""
 Local lPrim   := .T.
 Local aLayout := {}
@@ -31,7 +31,7 @@ Private nHdl
 Private cPacth := GetSrvProfString('Startpath','')
 Private cLocaliz := cPacth+'\Layout Zebra\'
 
-cArq := cLocaliz+cLayout+".txt"
+cArq := cLocaliz+cLayout+".prn"
 nHdl    := fOpen(cArq,68)
 
 If Empty(cEOL)
@@ -86,8 +86,6 @@ Next _i
       _msg+= "VERIFIQUE"
     	msgStop(_msg,"AVISO" )
     Endif    
-
-
 
 
 Return aLayout  

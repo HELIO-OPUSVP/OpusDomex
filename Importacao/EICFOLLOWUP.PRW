@@ -215,7 +215,7 @@ User Function EICFLWUP()
 	nUsado	:= len(aHeader)
 	aAdd(aCols,Array(nUsado+1))
 
-	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V1.7")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
+	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V1.9")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
 
 	@ 032, 003 GROUP oGroup1 TO 092, 649 PROMPT "Filtros" OF oDlg COLOR 0, 16777215 PIXEL
 
@@ -602,6 +602,66 @@ Static Function Atu_aCols2()
 	EndCase
 
 	*---------------------------------------------------------------------------------------------
+	// PRODUTO ANUENTE
+	cQuery += " UNION ALL "
+	cQuery += " SELECT W2_ORIGEM,W2_PO_SIGA,CCH_PAIS,W2_PO_NUM,W3_POSICAO,W2_PO_DT,A2_NREDUZ,W2_DIAS_PA,"
+	cQuery += "       W3_COD_I,B1_DESC,W3_QTDE,W3_PRECO,W3_QTDE*W3_PRECO VL_TOT ,'' WN_DOC,0 WN_QUANT,'' WN_HAWB,'' WN_INVOICE,'' WN_SDOC,0 WN_QUANT,'' WN_ITEM,A2_COD,A2_LOJA,'' WN_HAWB, "
+	cQuery += "       W3_XXOBS,W3_XCONFDT,W3_XNEWDT,W3_XPRVPO,W3_XCOLETA,W3_XETD,W3_XETA,W3_XPRALER,W3_XPRDSB,W3_XENTREG,W3_XFREIGT, "
+	cQuery += "       W3_XMODAL,W3_XDTPCOL,W3_XHOUSE , "
+	cQuery += "       W2_TIPO_EM,W2_DEST "
+	cQuery += "  FROM SW2010 SW2 WITH(NOLOCK),SW3010 SW3 WITH(NOLOCK),SA2010 SA2 WITH(NOLOCK),CCH010 CCH WITH(NOLOCK) ,SB1010 SB1 WITH(NOLOCK)
+	cQuery += " WHERE  W2_PO_NUM=W3_PO_NUM AND A2_COD+A2_LOJA=W2_FORN+W2_FORLOJ AND   CCH_CODIGO=A2_CODPAIS AND B1_COD=W3_COD_I
+	cQuery += " AND W2_PO_DT  >='"+DTOS(dGetPodt1)+"' AND W2_PO_DT  <='"+DTOS(dGetPodt2)+"' "
+	cQuery += " AND W2_PO_NUM >='"+cGetPoEIC1+"'      AND W2_PO_NUM <='"+cGetPoEIC2+"' "
+	cQuery += " AND W3_COD_I  >='"+cGetPn1+"'         AND W3_COD_I  <='"+cGetPn2+"' "
+	cQuery += " AND W3_SEQ=0"
+	cQuery += " AND W3_FLUXO='1' "   //ANUENTE
+	cQuery += " AND  SW2.D_E_L_E_T_=''"
+	cQuery += " AND  SW3.D_E_L_E_T_=''"
+	cQuery += " AND  SA2.D_E_L_E_T_=''"
+	cQuery += " AND  CCH.D_E_L_E_T_=''"
+	cQuery += " AND  SB1.D_E_L_E_T_=''"
+	cQuery += " AND  W2_FILIAL='"+xFILIAL('SW2')+"' "
+	cQuery += " AND  W3_FILIAL='"+xFILIAL('SW3')+"' "
+	cQuery += " AND  A2_FILIAL='"+xFILIAL('SA2')+"' "
+	cQuery += " AND  CCH_FILIAL='"+xFILIAL('CCH')+"' "
+	cQuery += " AND  B1_FILIAL='"+xFILIAL('SB1')+"' "
+	cQuery += "	 AND W2_PO_NUM+W3_COD_I+W3_POSICAO NOT IN
+	cQuery += "     (SELECT WN_PO_EIC+WN_PRODUTO+WN_ITEM FROM SWN010 WHERE D_E_L_E_T_='' AND WN_PO_EIC=W2_PO_NUM AND WN_PRODUTO=W3_COD_I
+	cQuery += "  AND WN_ITEM=W3_POSICAO )
+	cQuery += "	AND   W2_PO_NUM+W3_COD_I+W3_POSICAO NOT IN  "
+	cQuery += "  (SELECT W5_PO_NUM+W5_COD_I+W5_POSICAO FROM SW5010 WHERE D_E_L_E_T_=''  "
+	cQuery += "  AND W5_PO_NUM=W2_PO_NUM AND W5_COD_I=W3_COD_I AND W5_POSICAO=W3_POSICAO ) "
+
+	IF !EMPTY(cnf)
+		cQuery += " AND  WN_DOC LIKE('%"+ALLTRIM(cnf)+"%')  "
+	ENDIF
+
+	IF !EMPTY(cblhouse)
+		cQuery += " AND  W3_XHOUSE LIKE('%"+ALLTRIM(cblhouse)+"%')  "
+	ENDIF
+
+	IF !EMPTY(cagent)
+		cQuery += " AND  W3_XFREIGT LIKE('%"+ALLTRIM(cagent)+"%')  "
+	ENDIF
+
+	IF !EMPTY(cfornec)
+		cQuery += " AND  A2_NREDUZ LIKE('%"+ALLTRIM(cfornec)+"%')  "
+	ENDIF
+
+	IF !EMPTY(cDesc)
+		cQuery += " AND  B1_DESC LIKE('%"+ALLTRIM(cDesc)+"%')  "
+	ENDIF
+	DO CASE
+	CASE substr(cComboBox2,1,1)=="E"
+		cQuery += " AND  W3_XENTREG <> '' "
+	CASE substr(cComboBox2,1,1)=="A"
+		cQuery += " AND  W3_XENTREG = '' "
+	Otherwise
+		//substr(cComboBox2,1,1)=="T"
+	EndCase
+
+	*---------------------------------------------------------------------------------------------
 	DO Case
 	CASE cComboBox5=='Origem'
 		cQuery += " ORDER BY CCH.CCH_PAIS,W2_ORIGEM,W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
@@ -651,9 +711,27 @@ Static Function Atu_aCols2()
 		ENDIF
 
 
-		cHAWB := ''
+		cHAWB      := ''
 		cW6_DI_NUM := ''
 
+
+//---------------------------------------------------------------------------------------------
+		cW6_DI_NUM :=''
+		cHAWB      :=''
+		SW7->(DbSetOrder(RetOrder("SW7","W7_FILIAL+W7_PO_NUM+W7_COD_I+W7_POSICAO")))
+		If SW7->( dbSeek( xFilial() + SUBSTR(TRB->W2_PO_NUM,1,15) + TRB->W3_COD_I + TRB->W3_POSICAO ) )
+			SW6->( dbSetOrder(1) )
+			IF SW6->( dbSeek( xFilial() + SW7->W7_HAWB ) )
+				cW6_DI_NUM := SW6->W6_DI_NUM
+			ENDIF
+			IF EMPTY(TRB->WN_HAWB)
+				cHAWB :=SW7->W7_HAWB
+			ELSE
+				cHAWB := TRB->WN_HAWB
+			EndIf
+		ENDIF
+
+/*
 		IF EMPTY(TRB->WN_HAWB)
 			*-------------------------------------------------------------------------------*
 			//cQuery2 := "SELECT W6_DI_NUM,W7_PO_NUM,W7_COD_I,W7_HAWB,W7_POSICAO ,W6_HOUSE"
@@ -692,7 +770,6 @@ Static Function Atu_aCols2()
 					//apMsgInfo("SW7 entrou no seek")
 					SW6->( dbSetOrder(1) )
 					SW6->( dbSeek( xFilial() + SW7->W7_HAWB ) )
-
 					cW6_DI_NUM := SW6->W6_DI_NUM
 					cHAWB :=SW7->W7_HAWB
 				EndIf
@@ -700,11 +777,13 @@ Static Function Atu_aCols2()
 		ELSE
 			cHAWB := TRB->WN_HAWB
 		ENDIF
+*/
+//---------------------------------------------------------------------------------------------		
 
 		dDatanf := posicione('SF1',1,xFILIAL('SF1')+TRB->WN_DOC+TRB->WN_SDOC+TRB->A2_COD+TRB->A2_LOJA+'N','F1_EMISSAO')
-		//4	C7_FILIAL+C7_PRODUTO+C7_NUM+C7_ITEM+C7_SEQUEN
+//4	C7_FILIAL+C7_PRODUTO+C7_NUM+C7_ITEM+C7_SEQUEN
 		dDatPC  := posicione('SC7',4,xFILIAL('SC7')+TRB->W3_COD_I+SUBSTR(TRB->W2_PO_SIGA,1,6)+TRB->W3_POSICAO+TRB->W3_POSICAO,'C7_XDATPRF')
-		//	W8_HAWB W8_FORN W8_FORLOJ W8_COD_I W8_PO_NUM W8_POSICAO
+//	W8_HAWB W8_FORN W8_FORLOJ W8_COD_I W8_PO_NUM W8_POSICAO
 
 		cW8_INVOICE := ''
 		If RetOrder("SW8","W8_FILIAL+W8_FORN+W8_FORLOJ+W8_COD_I+W8_PO_NUM+W8_POSICAO") == 1 //.or. .T.
@@ -736,19 +815,19 @@ Static Function Atu_aCols2()
 			EndIf
 		EndIf
 
-		// CALCULO LEAD TIME  LT ENTREGA - COLETA     DateDiffDay (Data1, Data2)
+// CALCULO LEAD TIME  LT ENTREGA - COLETA     DateDiffDay (Data1, Data2)
 		nLT := 0
 		IF !EMPTY(TRB->W3_XENTREG) .AND. !EMPTY(TRB->W3_XCOLETA)
 			nLT :=  DateDiffDay((STOD(TRB->W3_XENTREG)),(STOD(TRB->W3_XCOLETA)))
 		ENDIF
 
 
-		//TRANSIT TIME---------------------------------------------------------
-		//SELECT W2_TIPO_EM,W2_ORIGEM,W2_DEST,* FROM SW2010
-		//SELECT * FROM SIX010 WHERE INDICE='SYR'--(2)   YR_FILIAL+YR_VIA+YR_DESTINO+YR_ORIGEM
+//TRANSIT TIME---------------------------------------------------------
+//SELECT W2_TIPO_EM,W2_ORIGEM,W2_DEST,* FROM SW2010
+//SELECT * FROM SIX010 WHERE INDICE='SYR'--(2)   YR_FILIAL+YR_VIA+YR_DESTINO+YR_ORIGEM
 		nTRSTIME :=POSICIONE('SYR',2,xFILIAL('SYR')+TRB->W2_TIPO_EM+TRB->W2_DEST+TRB->W2_ORIGEM,'YR_TRANS_T')
-		//MODAL----------------------------------------------------------------------
-		//SYQ    1     YQ_FILIAL+YQ_VIA///YQ_COD_DI
+//MODAL----------------------------------------------------------------------
+//SYQ    1     YQ_FILIAL+YQ_VIA///YQ_COD_DI
 		IF EMPTY(TRB->W3_XMODAL)
 			cMODAL :=POSICIONE('SYQ',1,xFILIAL('SYQ')+TRB->W2_TIPO_EM,'YQ_COD_DI')
 		ELSE
@@ -801,14 +880,14 @@ Static Function Atu_aCols2()
 			nLINHA=nLINHA-1
 		ENDIF
 
-		// COR LEGENDA -------------------------------------------
+// COR LEGENDA -------------------------------------------
 		IF !EMPTY(TRB->W3_XENTREG)
 			oBmpAux :=oBmpVermelho
 		Endif
 
-		//IF EMPTY(TRB->WN_DOC) .AND. dDatPC <DATE()
-		//	oBmpAux :=oBmpaZUL
-		//Endif
+//IF EMPTY(TRB->WN_DOC) .AND. dDatPC <DATE()
+//	oBmpAux :=oBmpaZUL
+//Endif
 		IF ALLTRIM(TRB->W3_XMODAL)=='B-COURIER'
 			oBmpAux :=oBmpLARANJA
 		ENDIF
@@ -818,7 +897,7 @@ Static Function Atu_aCols2()
 		if  EMPTY(cHAWB) .AND. EMPTY(TRB->W3_XENTREG)
 			oBmpAux :=oBmpVerde
 		ENDIF
-		//----------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
 		nSLDPO :=0
 		cOBS   := TRB->W3_XXOBS
 		SC7->(DbSelectArea("SC7"))
@@ -832,7 +911,7 @@ Static Function Atu_aCols2()
 				ENDIF
 			ENDIF
 		ENDIF
-		//----------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
 		nQTDIMP:=0
 		IF !EMPTY(cHAWB)
 
@@ -858,15 +937,15 @@ Static Function Atu_aCols2()
 			Else
 				SW5->( dbSetOrder(RetOrder("SW5","W5_FILIAL+W5_HAWB+W5_PO_NUM+W5_COD_I+W5_POSICAO")) )
 				If SW5->( dbSeek( xFilial() + cHAWB + SUBSTR(TRB->W2_PO_NUM,1,15) + TRB->W3_COD_I + TRB->W3_POSICAO ) )
-				    //apMsgInfo("SW5 entrou no seek")
+					//apMsgInfo("SW5 entrou no seek")
 					nQTDIMP := SW5->W5_QTDE
 				EndIf
 			EndIf
 		ENDIF
 
-		//SELECT W5_QTDE,* FROM SW5010  WHERE W5_HAWB='IMP 4612/21' AND W5_PO_NUM='I0011310' AND W5_COD_I='121F0304L' AND W5_POSICAO='0001'
-		//W5_PO_NUM=W2_PO_NUM AND W5_COD_I=W3_COD_I  AND W5_HAWB<>'' AND W5_POSICAO=W3_POSICAO
-		//----------------------------------------------------------------------------------
+//SELECT W5_QTDE,* FROM SW5010  WHERE W5_HAWB='IMP 4612/21' AND W5_PO_NUM='I0011310' AND W5_COD_I='121F0304L' AND W5_POSICAO='0001'
+//W5_PO_NUM=W2_PO_NUM AND W5_COD_I=W3_COD_I  AND W5_HAWB<>'' AND W5_POSICAO=W3_POSICAO
+//----------------------------------------------------------------------------------
 		IF lGRAVA == .T.
 			/*    01 @BMP                   */	AADD(aCols1, {oBmpAux   ,  ;
 				/*02 Linha       ZZT_NLINHA */	Transform(nLINHA,"@E 99999") ,;
@@ -1375,6 +1454,13 @@ User Function GRAVAZZT(_cEmpresa, _cFilial, aCols1)
 		cQRDEL1:=" DELETE FROM ZZT010 WHERE ZZT_PO_NUM ='"+acols1[nX][04]+"' "
 		TCSqlExec(cQRDEL1)
 	next nx
+
+	//--------------------------------------------------------------------------------------------------------------------------------------
+	cQRDEL2 := " DELETE FROM ZZT010 WHERE SUBSTRING(ZZT_PO_SIG,1,6)+SUBSTRING(ZZT_PO_NUM,20,4) NOT IN  "
+	cQRDEL2 += " (SELECT C7_NUM+C7_ITEM FROM SC7010  WHERE C7_NUM=SUBSTRING(ZZT_PO_SIG,1,6) AND C7_ITEM=SUBSTRING(ZZT_PO_NUM,20,4) AND D_E_L_E_T_='') "
+	cQRDEL2 += " AND SUBSTRING(ZZT_PO_NUM,1,2)<>'DA' AND ZZT_NFISCA='' "
+	TCSqlExec(cQRDEL2)
+	//---------------------------------------------------------------------------------------------------
 
 	dbSelectArea("ZZT")
 	ZZT->(dbSetOrder(1)) //ZZT_FILIAL+ZZT_PO_NUM

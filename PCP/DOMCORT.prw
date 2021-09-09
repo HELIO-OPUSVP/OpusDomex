@@ -11,7 +11,7 @@
 @see (links_or_references)
 /*/
 User Function DOMCORT()
-
+  
 	Private oApont, oBitmap1, oButton1,oButton2,oButton3,oButton4,oButton5,oCFibra, oCodOP, oCodPA, oEtiq, oLoteCtl, oNFibra, oNomePA, oStatus, oQtdOp, oQtdProd, oQtdRest
 	Private oGroup1, oGroup2, oSay1, oSay2, oSay3, oSay4, oSay5, oSay6, oSay7, oSay8, oSay9, oSay10, oSay11, oSay12,oSay13,oSay14,oSay15,oSay16
 	Private oQtdTOp, oTamCort, oTamRolo, oQtdAProd, oTotMtrs, oPrevCort, oEmCort, oSButton1,oNomePA2,oGroup2, oResMtrs,oQtdSD3

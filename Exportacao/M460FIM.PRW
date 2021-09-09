@@ -26,6 +26,19 @@ User Function M460FIM()
 	Local aAreaD2 := GetArea()
 //Local lExp    := .F.
 
+/*
+	If DtoS(Date()) == '20210901'  .and.  'JONAS.OPUS' $ Upper(GetEnvServer()) //.AND. xFilial("SF1") == '02'
+		PARAMIXB := {}
+		RpcSetEnv("01","01")
+		AADD(PARAMIXB, 3)
+		AADD(PARAMIXB, 1)
+		SF2->( dbGoTo(122218) )
+
+		nConfirma := 1
+		nOpcao := 3
+	EndIf
+*/
+
 /////////////
 	SD2->(DBSETORDER(3))
 	SD2->(DBSEEK(XFILIAL("SD2")+SF2->F2_DOC+SF2->F2_SERIE+SF2->F2_CLIENTE+SF2->F2_LOJA))
@@ -160,7 +173,7 @@ User Function AtuXD1(cFilNF, cDocNF, cSerieNF, cCliNF, cLojaNF)
 	For x := 1 to Len(aXD1Recno)
 		XD1->( dbGoTo(aXD1Recno[x,1]) )
 		SD2->( dbGoTo(aXD1Recno[x,2]) )
-		If XD1->( Recno() ) == aXD1Recno[x,1] .and. SD2->( Recno() ) == aXD1Recno[x,2]
+		If XD1->( Recno() ) == aXD1Recno[x,1] .and. SD2->( Recno() ) == aXD1Recno[x,2] .AND. ALLTRIM(SUBSTR(XD1->XD1_LOTECTL,1,8)) == ALLTRIM(SD2->D2_LOTECTL)
 			Reclock("XD1",.F.)
 			XD1->XD1_FILORI  := XD1->XD1_FILIAL
 			XD1->XD1_OCORRE  := "9"   // EM TRANSFERENCIA
@@ -168,10 +181,12 @@ User Function AtuXD1(cFilNF, cDocNF, cSerieNF, cCliNF, cLojaNF)
 			XD1->XD1_ZYSERI  := SD2->D2_SERIE
 			XD1->XD1_ZYDTNF  := SD2->D2_EMISSAO
 			XD1->XD1_PVSEP   := SD2->D2_PEDIDO+''+SD2->D2_ITEMPV
-			XD1->XD1_ZYSEQ   := SD2->D2_I
+			XD1->XD1_ZYITNF  := SD2->D2_ITEM
 			XD1->(MsUnlock())
 		EndIf
 	Next x
+
+	
 
 
 	RestArea(aArea)
