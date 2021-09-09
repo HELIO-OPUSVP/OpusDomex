@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"uri": "vscode-vfs://github/HELIO-OPUSVP/OpusDomex"
+		}
+	],
+	"settings": {
+		"totvsLanguageServer.welcomePage": false
+	}
+}
