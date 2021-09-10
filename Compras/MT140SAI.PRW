@@ -25,6 +25,7 @@
 USER FUNCTION MT140SAI()
 	Local _cQR1  :=''
 	Local _cQR2  :=''
+    Local _cQR3  :=''    
 //Local nOrdem := SF1->( IndexOrd() )
 //PARAMIXB[1] = Numero da opera��o - ( 2-Visualiza��o, 3-Inclus�o, 4-Altera��o, 5-Exclus�o )
 //PARAMIXB[2] = N�mero da nota
