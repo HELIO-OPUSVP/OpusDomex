@@ -61,7 +61,7 @@ USER FUNCTION MT140SAI()
 	TCSQLEXEC(_cQR1)
 	Sleep( 3000 ) // Para o processamento por 3 segundo
 	TCSQLEXEC(_cQR2)
-	Sleep( 3000 ) // Para o processamento por 3 segundo
-	TCSQLEXEC(_cQR3)    
+	//Sleep( 3000 ) // Para o processamento por 3 segundo
+	//TCSQLEXEC(_cQR3)    
 
 Return( NIL )
