@@ -59,9 +59,9 @@ USER FUNCTION MT140SAI()
     _cQR3 +="            AND WN_FILIAL='"+xFILIAL('SWN')+"') "
 
 	TCSQLEXEC(_cQR1)
-	Sleep( 3000 ) // Para o processamento por 3 segundo
+	Sleep( 3000 )  // Para o processamento por 3 segundo
 	TCSQLEXEC(_cQR2)
-	Sleep( 3000 ) // Para o processamento por 3 segundo
+	Sleep( 3000 )  // Para o processamento por 3 segundo
 	TCSQLEXEC(_cQR3)    
 
 Return( NIL )
