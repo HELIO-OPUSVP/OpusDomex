@@ -170,12 +170,19 @@ If (SCK->(DbSeek(xFilial("SCK")+SCJ->CJ_NUM)))
 	If (cAliasSCK)->QTDE  <= 5
 		nPag:= 2
 	else
-		nCalcPag :=round((cAliasSCK)->QTDE   / 7,1) 
-		If nCalcPag - Int(nCalcPag) >= 0
-			nPag := Int(nCalcPag) + 2
-		Else
-			nPag:= Int(nCalcPag) + 1
-		EndIf
+		//nCalcPag :=round((cAliasSCK)->QTDE   / 7,1) 
+		//If nCalcPag - Int(nCalcPag) >= 0
+		//	nPag := Int(nCalcPag) + 2		
+		//Else
+		//	nPag:= Int(nCalcPag) + 1	
+		//EndIf
+		nCalcPag := Int((cAliasSCK)->QTDE  / 6,0) 
+		If (nCalcPag * 6) = (cAliasSCK)->QTDE
+			nPag := nCalcPag + 1
+		Else	
+			nPag := nCalcPag + 2
+		EndIf	
+
 	EndIf 
 	nQtdProdT:=(cAliasSCK)->QTDE   
 	//Impressão do Cabeçalho
