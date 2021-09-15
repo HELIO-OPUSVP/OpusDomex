@@ -211,11 +211,12 @@ User Function EICFLWUP()
 	/*37*/aAdd(aHeader,{"Data NF     "			    ,"ZZT_DTNF  "	,	"99/99/9999         ",         8,         0,	""   ,	"€€€€€€€€€€€€€€",	"D",	"",,,Nil,,"V"})
 	/*38*/aAdd(aHeader,{"SLD_PO_Qty  "		    	,"ZZT_SLDPO "	,	"@E 999,999,999.9999",        14,         4,	""   ,	"€€€€€€€€€€€€€€",	"N",	"",,,Nil,,"V"})
 	/*39*/aAdd(aHeader,{"Qty_IMP     "		    	,"ZZT_QTDIMP "	,	"@E 999,999,999.9999",        14,         4,	""   ,	"€€€€€€€€€€€€€€",	"N",	"",,,Nil,,"V"})
+    /*40*/aAdd(aHeader,{"SLD_PO_IMP  "		    	,"ZZT_SLD_PO "	,	"@E 999,999,999.9999",        14,         4,	""   ,	"€€€€€€€€€€€€€€",	"N",	"",,,Nil,,"V"})	
 
 	nUsado	:= len(aHeader)
 	aAdd(aCols,Array(nUsado+1))
 
-	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V1.9")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
+	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V2.0")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
 
 	@ 032, 003 GROUP oGroup1 TO 092, 649 PROMPT "Filtros" OF oDlg COLOR 0, 16777215 PIXEL
 
@@ -913,10 +914,13 @@ Static Function Atu_aCols2()
 		ENDIF
 //----------------------------------------------------------------------------------
 		nQTDIMP:=0
+		nSLDIMP:=0
+		dTEMB  :=STOD(TRB->W3_XCOLETA)   //COLETA
+		dDTPCOL:=STOD(TRB->W3_XDTPCOL)
 		IF !EMPTY(cHAWB)
 
 			If RetOrder("SW5","W5_FILIAL+W5_HAWB+W5_PO_NUM+W5_COD_I+W5_POSICAO") == 1 //.or. .T.
-				cQRYIMP := " SELECT W5_QTDE  FROM SW5010 WITH(NOLOCK)  "
+				cQRYIMP := " SELECT W5_QTDE,W5_SALDO_Q ,W5_DT_EMB FROM SW5010 WITH(NOLOCK)  "
 				cQRYIMP += "  WHERE D_E_L_E_T_='' "
 				cQRYIMP += "  AND W5_HAWB   ='"+cHAWB+"' "
 				cQRYIMP += "  AND W5_PO_NUM ='"+TRB->W2_PO_NUM+"'  "
@@ -934,14 +938,60 @@ Static Function Atu_aCols2()
 				EndIf
 
 				nQTDIMP :=TR5->W5_QTDE
+				nSLDIMP :=TR5->W5_SALDO_Q
+				dTEMB   :=TR5->W5_DT_EMB
+
+				dDTPCOL :=DaySum(STOD(TR5->W5_DT_EMB), nTRSTIME)
+				dDTPCOL := DataValida(dDTPCOL,.T.)
+
 			Else
 				SW5->( dbSetOrder(RetOrder("SW5","W5_FILIAL+W5_HAWB+W5_PO_NUM+W5_COD_I+W5_POSICAO")) )
 				If SW5->( dbSeek( xFilial() + cHAWB + SUBSTR(TRB->W2_PO_NUM,1,15) + TRB->W3_COD_I + TRB->W3_POSICAO ) )
 					//apMsgInfo("SW5 entrou no seek")
 					nQTDIMP := SW5->W5_QTDE
+					nSLDIMP := SW5->W5_SALDO_Q
+					dTEMB   := SW5->W5_DT_EMB
+
+					dDTPCOL := DaySum((SW5->W5_DT_EMB), nTRSTIME)
+					dDTPCOL := DataValida(dDTPCOL,.T.)
+
 				EndIf
 			EndIf
 		ENDIF
+
+		nSLDIMP:=0
+
+		cQRYIMP := " SELECT SUM(W5_QTDE) AS XQTDIMP FROM "+RETSQLNAME('SW5')+"  "
+		cQRYIMP += " WHERE D_E_L_E_T_='' AND  W5_PO_NUM='"+TRB->W2_PO_NUM+"' "
+		cQRYIMP += " AND  W5_POSICAO='"+TRB->W3_POSICAO+"' AND W5_SEQ<>0
+		cQRYIMP += " AND  W5_COD_I  ='"+TRB->W3_COD_I+"'  "
+		cQRYIMP += " AND W5_FILIAL='"+xFILIAL('SW5')+"' "
+		If Select("TR6") > 0
+			TR6->(dbCloseArea())
+		EndIf
+		dbUseArea( .T.,"TOPCONN", TcGenQry( ,,cQRYIMP ), "TR6", .F., .T. )
+
+		If Select("TR6") > 0
+			If !('Residuo' $ cOBS)
+				nSLDIMP:=TRB->W3_QTDE-TR6->XQTDIMP
+			ELSE
+				nSLDIMP:=0
+			ENDIF
+			TR6->(dbCloseArea())
+		EndIf
+
+
+		dPRVRDT:=STOD(TRB->W3_XPRDSB)
+		IF !EMPTY(TRB->W3_XETA)
+			dPRVRDT := DaySum(STOD(TRB->W3_XETA), 3)
+			dPRVRDT := DataValida(dPRVRDT,.T.)
+		ENDIF
+		IF !EMPTY(TRB->W3_XPRALER)
+			dPRVRDT := DaySum(STOD(TRB->W3_XPRALER) , 3)
+			dPRVRDT := DataValida(dPRVRDT,.T.)
+		ENDIF
+
+
 
 //SELECT W5_QTDE,* FROM SW5010  WHERE W5_HAWB='IMP 4612/21' AND W5_PO_NUM='I0011310' AND W5_COD_I='121F0304L' AND W5_POSICAO='0001'
 //W5_PO_NUM=W2_PO_NUM AND W5_COD_I=W3_COD_I  AND W5_HAWB<>'' AND W5_POSICAO=W3_POSICAO
@@ -968,13 +1018,13 @@ Static Function Atu_aCols2()
 				/*19 Pag Antec.  ZZT_PGTANT */	TRB->W2_DIAS_PA ,;
 				/*20 Modal       ZZT_MODAL SUBSTR(TRB->W3_XMODAL,1,1)  */	cMODAL,;
 				/*21 IMP         ZZT_HAWB   */	cHAWB ,;
-				/*22 Coleta      ZZT_DTCOLE */	STOD(TRB->W3_XCOLETA) ,;
-				/*23 Prv ColxRdt ZZT_DTPCOL */	STOD(TRB->W3_XDTPCOL) ,;
+				/*22 Coleta      ZZT_DTCOLE 	STOD(TRB->W3_XCOLETA) */   dTEMB,;
+				/*23 Prv ColxRdt ZZT_DTPCOL 	STOD(TRB->W3_XDTPCOL)*/   dDTPCOL,;
 				/*24 Freight     ZZT_FREIGH */	TRB->W3_XFREIGT ,;
 				/*25 ETD         ZZT_ETD    */	STOD(TRB->W3_XETD) ,;
 				/*26 ETA         ZZT_ETA    */	STOD(TRB->W3_XETA) ,;
 				/*27 Pre Alerta  ZZT_DTALER */	STOD(TRB->W3_XPRALER) ,;
-				/*28 Prev Rdt    ZZT_PRVRDT */	STOD(TRB->W3_XPRDSB) ,;
+				/*28 Prev Rdt    ZZT_PRVRDT 	STOD(TRB->W3_XPRDSB) */  dPRVRDT,;
 				/*29 Prev Rdt    ZZT_HOUSE  */	TRB->W3_XHOUSE ,;
 				/*30 Obs         ZZT_OBS    */	cOBS ,;
 				/*31 Entrega     ZZT_ENTREG */	STOD(TRB->W3_XENTREG) ,;
@@ -986,8 +1036,9 @@ Static Function Atu_aCols2()
 				/*37 Data NF     ZZT_DTNF   */	dDatanf ,;
 				/*38 Sld_PO_Qty  ZZT_SLDPO  */	nSLDPO ,;				
 				/*39 Qty_IMP     ZZT_QTDIMP */	nQTDIMP ,;				
-				/*40 Transit time           */	nTRSTIME ,;
-				/*41 FLAG                   */ .F. })
+				/*40 SLD_PO_IMP  ZZT_SLD_PO */	nSLDIMP ,;								
+				/*41 Transit time           */	nTRSTIME ,;
+				/*42 FLAG                   */ .F. })
 		ENDIF
 
 		TRB->(DbSkip())
@@ -1033,8 +1084,9 @@ Static Function Atu_aCols2()
 			/*37 Data NF     ZZT_DTNF   */	' ' ,;
 			/*38 Sld_PO_Qty  ZZT_SLDPO  */	' ' ,;						
             /*39 QTY_IMP     ZZT_QTDIMP */	' ' ,;									
-			/*40 Transit time           */	' ' ,;
-			/*41 FLAG                   */ .T. })
+            /*40 SLD_PO_IMP  ZZT_SLD_PO */	' ' ,;												
+			/*41 Transit time           */	' ' ,;
+			/*42 FLAG                   */ .T. })
 	ENDIF
 
 	TRB->(DbCloseArea())
@@ -1189,24 +1241,39 @@ USER FUNCTION fGRVZZT(NLIN,lFST)
 
 		//-------------------transit time
 		IF !EMPTY(aCols[N][nPos16]) //ZZT_DTCONF
-			dPRV := DaySum(aCols[N][nPos16], aCols[N][40]) //DaySum(Data, nDias)
+			dPRV := DaySum(aCols[N][nPos16], aCols[N][41]) //DaySum(Data, nDias)
 			dPRV := DataValida(dPRV,.T.)
 			M->ZZT_DTPPOR    := dPRV
 			aCols[N][nPos18] := dPRV
 		ENDIF
 		IF !EMPTY(aCols[N][nPos17]) //ZZT_DNEW
-			dPRV := DaySum(aCols[N][nPos17], aCols[N][40]) //DaySum(Data, nDias)
+			dPRV := DaySum(aCols[N][nPos17], aCols[N][41]) //DaySum(Data, nDias)
 			dPRV := DataValida(dPRV,.T.)
 			M->ZZT_DTPPOR    := dPRV
 			aCols[N][nPos18] := dPRV
 		ENDIF
 
 		IF !EMPTY(aCols[N][nPos22]) //ZZT_DTCOLE
-			dPRV := DaySum(aCols[N][nPos22], aCols[N][40]) //DaySum(Data, nDias)
+			dPRV := DaySum(aCols[N][nPos22], aCols[N][41]) //DaySum(Data, nDias)
 			dPRV := DataValida(dPRV,.T.)
 			M->ZZT_DTPCOL    := dPRV
 			aCols[N][nPos23] := dPRV
 		ENDIF
+
+		IF !EMPTY(aCols[N][nPos26]) //ZZT_ETA
+			dPRV := DaySum(aCols[N][nPos26], 3) //DaySum(Data, nDias)
+			dPRV := DataValida(dPRV,.T.)
+			M->ZZT_PRVRDT   := dPRV
+			aCols[N][nPos28] := dPRV
+		ENDIF
+
+		IF !EMPTY(aCols[N][nPos27]) //ZZT_DTALER
+			dPRV := DaySum(aCols[N][nPos27], 3) //DaySum(Data, nDias)
+			dPRV := DataValida(dPRV,.T.)
+			M->ZZT_PRVRDT   := dPRV
+			aCols[N][nPos28] := dPRV
+		ENDIF
+
 		//-----fup--------------------------------
 		IF !EMPTY(aCols[N][nPos18]) //FUP1 previsao poxrdt
 			dDTFUP  :=aCols[N][nPos18]
@@ -1508,8 +1575,9 @@ User Function GRAVAZZT(_cEmpresa, _cFilial, aCols1)
 			/*37 Data NF      */ ZZT_DTNF   :=aCols1[nX][37]
 			/*38 Sld_PO_Qty   */ ZZT_SLDPO  :=aCols1[nX][38] 
             /*39 QTY_IMP      */ ZZT_QTDIMP  :=aCols1[nX][39] 			
-			/*40 Transit time            	' ' ,; */
-			/*41 FLAG                    .T. }) */
+            /*40 QTY_IMP      */ ZZT_SLD_PO  :=aCols1[nX][40] 						
+			/*41 Transit time            	' ' ,; */
+			/*42 FLAG                    .T. }) */
 			ZZT->(MsUnlock())
 		ENDIF
 	Next nX
