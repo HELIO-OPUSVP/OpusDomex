@@ -567,7 +567,7 @@ Next x
 
 For x := 1 to len(aDadosINV)
 
-    nPos  := aScan(aDadosZZR,{|x| Alltrim(x[1])==alltrim(aDadosINV[x][1] .AND. Alltrim(x[2])==alltrim(aDadosINV[x][2] })
+    nPos  := aScan(aDadosZZR,{|x| Alltrim(x[1])==alltrim(aDadosINV[x][1]) .AND. Alltrim(x[2])==alltrim(aDadosINV[x][2]) })
 
     If !Empty(nPos)
         If aDadosINV[x][4] == '999'
