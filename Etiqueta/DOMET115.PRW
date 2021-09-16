@@ -11,7 +11,7 @@ Description ETIQUETA DE SERIAL CORTE FIBRA FURUKAWA
 @param xParam Parameter Description
 @return xRet Return Description
 @author  -
-@since 27/09/2019
+@since 01/09/2021
 /*/
 //-------------------------------------------------------------
 User Function DOMET115(cNumOP,nQtdEtq,nNumSerie)
@@ -92,14 +92,14 @@ User Function DOMET115(cNumOP,nQtdEtq,nNumSerie)
 			nPos2  := 110
 		Else
 			nPos1  := 0
-			nPos2  := 140
+			nPos2  := 150
 		Endif
 
 		If nEtiq >= 1
 			AADD(_aArq,'^BY42,42^FT51,'+cValtochar(68-nAjLin)+'^BXN,3,200,0,0,1,~'+ CRLF)
 			AADD(_aArq,'^FH\^FD'+cValtoChar(nNumSerie+nNumEt)+'\09'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
 			AADD(_aArq,'^FT22,'+cValtochar(89-nAjLin)+'^A0N,21,24^FB110,1,0,C^FH\^FD'+strzero((nNumSerie+nNumEt),ntam)+'A^FS'+ CRLF)
-			AADD(_aArq,'^FT'+cvaltochar(2+nPos1)+','+cValtochar(115-nAjLin)+'^A0N,21,24^FB'+cvaltochar(nPos2)+',1,0,C^FH\^FD'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
+			AADD(_aArq,'^FT'+cvaltochar(1+nPos1)+','+cValtochar(115-nAjLin)+'^A0N,21,24^FB'+cvaltochar(nPos2)+',1,0,C^FH\^FD'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
 
 			XD4->(dbSetOrder(1))
 			Reclock("XD4", .T.)
@@ -109,7 +109,7 @@ User Function DOMET115(cNumOP,nQtdEtq,nNumSerie)
 			XD4->XD4_OP	   	:= cNumOP
 			XD4->XD4_NOMUSR	:= cUserSis
 			XD4->XD4_DOC    := _cPrxDoc
-			XD4->XD4_KEY 	:= "S"+Alltrim(cNumOP)+Alltrim(cValtoChar(nNumSerie+nNumEt))
+			XD4->XD4_KEY 	:= cvaltochar(nNumSerie+nNumEt) + cCodFuruk
 			XD4->(MsUnlock())
 
 		Endif
@@ -118,7 +118,7 @@ User Function DOMET115(cNumOP,nQtdEtq,nNumSerie)
 			AADD(_aArq,'^BY42,42^FT233,'+cValtochar(68-nAjLin)+'^BXN,3,200,0,0,1,~'+ CRLF)
 			AADD(_aArq,'^FH\^FD'+cValtoChar(nNumSerie+(nNumEt+1))+'\09'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
 			AADD(_aArq,'^FT204,'+cValtochar(89-nAjLin)+'^A0N,21,24^FB110,1,0,C^FH\^FD'+strzero((nNumSerie+(nNumEt+1)),ntam)+'A^FS'+ CRLF)
-			AADD(_aArq,'^FT'+cvaltochar(184+nPos1)+','+cValtochar(115-nAjLin)+'^A0N,21,24^FB'+cvaltochar(nPos2)+',1,0,C^FH\^FD'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
+			AADD(_aArq,'^FT'+cvaltochar(183+nPos1)+','+cValtochar(115-nAjLin)+'^A0N,21,24^FB'+cvaltochar(nPos2)+',1,0,C^FH\^FD'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
 
 			XD4->(dbSetOrder(1))
 			Reclock("XD4", .T.)
@@ -128,7 +128,7 @@ User Function DOMET115(cNumOP,nQtdEtq,nNumSerie)
 			XD4->XD4_OP	   	:= cNumOP
 			XD4->XD4_NOMUSR	:= cUserSis
 			XD4->XD4_DOC    := _cPrxDoc
-			XD4->XD4_KEY 	:= "S"+Alltrim(cNumOP)+Alltrim(cValtoChar(nNumSerie+nNumEt+1))
+			XD4->XD4_KEY 	:= cvaltochar(nNumSerie+nNumEt+1) + cCodFuruk
 			XD4->(MsUnlock())
 		Endif
 
@@ -136,7 +136,7 @@ User Function DOMET115(cNumOP,nQtdEtq,nNumSerie)
 			AADD(_aArq,'^BY42,42^FT415,'+cValtochar(68-nAjLin)+'^BXN,3,200,0,0,1,~'+ CRLF)
 			AADD(_aArq,'^FH\^FD'+cValtoChar(nNumSerie+(nNumEt+2))+'\09'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
 			AADD(_aArq,'^FT388,'+cValtochar(89-nAjLin)+'^A0N,21,24^FB110,1,0,C^FH\^FD'+strzero((nNumSerie+(nNumEt+2)),ntam)+'A^FS'+ CRLF)
-			AADD(_aArq,'^FT'+cvaltochar(368+nPos1)+','+cValtochar(115-nAjLin)+'^A0N,21,24^FB'+cvaltochar(nPos2)+',1,0,C^FH\^FD'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
+			AADD(_aArq,'^FT'+cvaltochar(367+nPos1)+','+cValtochar(115-nAjLin)+'^A0N,21,24^FB'+cvaltochar(nPos2)+',1,0,C^FH\^FD'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
 
 			XD4->(dbSetOrder(1))
 			Reclock("XD4", .T.)
@@ -146,7 +146,7 @@ User Function DOMET115(cNumOP,nQtdEtq,nNumSerie)
 			XD4->XD4_OP	   	:= cNumOP
 			XD4->XD4_NOMUSR	:= cUserSis
 			XD4->XD4_DOC    := _cPrxDoc
-			XD4->XD4_KEY 	:= "S"+Alltrim(cNumOP)+Alltrim(cValtoChar(nNumSerie+nNumEt+2))
+			XD4->XD4_KEY 	:= cvaltochar(nNumSerie+nNumEt+2) + cCodFuruk
 			XD4->(MsUnlock())
 		Endif
 
@@ -154,7 +154,7 @@ User Function DOMET115(cNumOP,nQtdEtq,nNumSerie)
 			AADD(_aArq,'^BY42,42^FT600,'+cValtochar(68-nAjLin)+'^BXN,3,200,0,0,1,~'+ CRLF)
 			AADD(_aArq,'^FH\^FD'+cValtoChar(nNumSerie+(nNumEt+3))+'\09'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
 			AADD(_aArq,'^FT570,'+cValtochar(89-nAjLin)+'^A0N,21,24^FB110,1,0,C^FH\^FD'+strzero((nNumSerie+(nNumEt+3)),ntam)+'A^FS'+ CRLF)
-			AADD(_aArq,'^FT'+cvaltochar(550+nPos1)+','+cValtochar(115-nAjLin)+'^A0N,21,24^FB'+cvaltochar(nPos2)+',1,0,C^FH\^FD'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
+			AADD(_aArq,'^FT'+cvaltochar(549+nPos1)+','+cValtochar(115-nAjLin)+'^A0N,21,24^FB'+cvaltochar(nPos2)+',1,0,C^FH\^FD'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
 
 			XD4->(dbSetOrder(1))
 			Reclock("XD4", .T.)
@@ -164,7 +164,7 @@ User Function DOMET115(cNumOP,nQtdEtq,nNumSerie)
 			XD4->XD4_OP	   	:= cNumOP
 			XD4->XD4_NOMUSR	:= cUserSis
 			XD4->XD4_DOC    := _cPrxDoc
-			XD4->XD4_KEY 	:= "S"+Alltrim(cNumOP)+Alltrim(cValtoChar(nNumSerie+nNumEt+3))
+			XD4->XD4_KEY 	:= cvaltochar(nNumSerie+nNumEt+3) + cCodFuruk
 			XD4->(MsUnlock())
 		Endif
 
