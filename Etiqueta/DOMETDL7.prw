@@ -369,7 +369,7 @@ Static Function ValidaEtiq(lTeste)
 								cOPnSerie := PADR(SubsTr(cEtiqOrig,1,5),6)+SubsTr(cEtiqOrig,6,2)+nItOP
 							EndIf
 						EndIf
-						
+
 					Else
 						cOPnSerie := Subs(cEtiqOrig,2,11)
 						If U_VALIDACAO() .Or. .T.  // validacao.Helio   26/07/21 - Producao 25/08/21
@@ -390,7 +390,7 @@ Static Function ValidaEtiq(lTeste)
 					cOPnSerie := Subs(cEtiqOrig,2,11)
 				EndIf
 			EndIf
-			
+
 			If !U_VALIDACAO() .And. .F.   // validacao.Helio   26/07/21   Retirar esse trecho todo - Producao 25/08/21
 				If SC2->(dbSeek(xFilial("SC2")+cOPnSerie))
 					If SC2->C2_EMISSAO >= StoD('20170101')
@@ -409,7 +409,7 @@ Static Function ValidaEtiq(lTeste)
 					lSerial   := .F.
 				EndIf
 			EndIf
-			
+
 		Else
 			if lOkFuruka
 				//XD4_FILIAL, XD4_KEY, R_E_C_N_O_, D_E_L_E_T_
@@ -3013,10 +3013,15 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			Else
 				U_DOMETQ99(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
 			endif
+		ElseIf cLayout == "116"
+				U_DOMET87B(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
+		ElseIf cLayout == "117"
+				U_DOMET87B(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
 		Else
 			MsgInfo("Layout não encontrado para este Cliente/Grupo de Produtos.")
 			_Retorno := .F.
 		EndIf
+
 
 		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 		//³Imprime a etiqueta da OI S/A											 			³
