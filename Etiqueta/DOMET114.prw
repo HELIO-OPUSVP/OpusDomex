@@ -1,6 +1,16 @@
 #include "protheus.ch"
 #include "rwmake.ch"
 
+//--------------------------------------------------------------
+/*/{Protheus.doc} DOMET114 (NOVA ETIQUETA PARA SUBSTITUIR LAYOUT002)
+Description  
+@param xParam Parameter Description
+@return xRet Return Description
+@author  -
+@since 01/09/2021
+/*/
+//-------------------------------------------------------------
+
 User Function DOMET114(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
 
 	Local nVar       := 0

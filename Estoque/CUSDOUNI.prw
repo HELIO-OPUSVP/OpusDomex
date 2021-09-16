@@ -99,11 +99,13 @@ If !ZZB->(DBSeek(xFilial("ZZB")+cPerAtu))
 			TCQUERY cQuery NEW ALIAS TMPZZB
 			While TMPZZB->(!EOF()) .AND. TMPZZB->ZZB_PERIOD==cPerAnt
 				Reclock("ZZB",.T.)
-				ZZB->ZZB_LOG 	    := "Item nao processado"
+				ZZB->ZZB_FILIAL    := xFilial("ZZB")
+				ZZB->ZZB_LOG 	   := "Item nao processado"
 				ZZB->ZZB_PERIOD    := cPerAtu       
 				ZZB->ZZB_ROTINA    := TMPZZB->ZZB_ROTINA  
 				ZZB->ZZB_DESCRI    := TMPZZB->ZZB_DESCRI       
 				ZZB->SEQPROC       := TMPZZB->SEQPROC 
+				ZZB->ZZB_STATUS    := IF(TMPZZB->SEQPROC == 1, 'F','')
 				ZZB->(MSUNLOCK()) 
 				TMPZZB->(DBSkip())
 			Enddo	

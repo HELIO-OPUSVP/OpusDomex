@@ -17,6 +17,7 @@ Private cBody		:=""
 Private cEmail		:= "claudia.silvestre@rdt.com.br;stephanie.gamt@rosenberdomex.com.br;aline.maciel@rosenbergerdomex.com.br;wagnerlima1@hotmail.com;" 
 
 
+
 If !IsInCallStack('PONA161TRFALL')
 	For i:=len(aCols) To len(aCols)
 		if (Empty(aCols[i][12]))//inclusão

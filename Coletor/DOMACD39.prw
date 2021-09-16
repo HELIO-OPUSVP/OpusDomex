@@ -433,9 +433,11 @@ Static Function ColetaProd(cCodProdut,cGrupoProd,dData,nQtdEmp,nQtdasep,aEnderec
 	Local aOpsApagar 	:= {}
 
 	Private nQtJaSepar		:= 0
-
-	cSemaforo := cGrupoProd + cCodProdut
-
+	If U_Validacao()
+		cSemaforo := __cFilial+cGrupoProd + cCodProdut
+	else
+		cSemaforo := cGrupoProd + cCodProdut
+	EndIf
 	If !LockByName(cSemaforo, .F., .F.)
 		U_msgcoletor( "Produto já está sendo separado por outro usuário " )
 		nOpcSel	:= 3
