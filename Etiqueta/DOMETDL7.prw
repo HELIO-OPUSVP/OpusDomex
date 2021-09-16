@@ -2475,7 +2475,8 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 
 	if  U_VALIDACAO() // RODA 16/09/2021
 		lGloboG := .F.
-		If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))
+		
+		If Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  //("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))
 			lGlobal := .T.
 		EndIf
 
