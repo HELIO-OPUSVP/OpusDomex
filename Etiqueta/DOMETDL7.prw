@@ -101,6 +101,7 @@ User Function DOMETDL7()
 	Private cCelula:= ""
 	Private lOkFlex   := SuperGetMv("MV_XVRFLEX",.F.,.F.)
 	Private lOkFuruka := SuperGetMv("MV_XVRFURU",.F.,.T.)
+	Private lGloboG  := SuperGetMv("MV_XGLOBOG",.F.,.T.)
 	Private lEhFuruka := .F.
 	Private lComTravR := IIF(ISINCALLSTACK('U_DL7STRVR'),.T.,.F.)
 
@@ -581,7 +582,6 @@ Static Function ValidaEtiq(lTeste)
 				If ("FURUKAWA" $ Upper(SA1->A1_NOME)) .Or. ("FURUKAWA" $ Upper(SA1->A1_NREDUZ))
 					lEhFuruka := .T.
 				EndIf
-
 
 				cProdBip  := SB1->B1_COD
 				cDescBip  := SB1->B1_DESC
@@ -1398,6 +1398,7 @@ Static Function ValidaEtiq(lTeste)
 					lEhFuruka := .T.
 				EndIf
 
+
 				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 				//³Verifica Etique HUAWEI
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
@@ -1475,7 +1476,7 @@ Static Function ValidaEtiq(lTeste)
 							If ("FURUKAWA" $ Upper(SA1->A1_NOME)) .Or. ("FURUKAWA" $ Upper(SA1->A1_NREDUZ))
 								lEhFuruka := .T.
 							EndIf
-
+				
 
 							cProdBip  := SB1->B1_COD
 							cDescBip  := SB1->B1_DESC
@@ -2472,6 +2473,17 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		EndIf
 	EndIf
 
+	if  U_VALIDACAO() // RODA 16/09/2021
+		lGloboG := .F.
+		If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))
+			lGlobal := .T.
+		EndIf
+
+		If lGloboG
+			MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) })
+		Endif
+	Endif
+
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 	//³Executa rotina de impressao									³
 	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
@@ -3014,9 +3026,9 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 				U_DOMETQ99(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
 			endif
 		ElseIf cLayout == "116"
-				U_DOMET87B(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
+			U_DOMET87B(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
 		ElseIf cLayout == "117"
-				U_DOMET87B(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
+			U_DOMET87B(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
 		Else
 			MsgInfo("Layout não encontrado para este Cliente/Grupo de Produtos.")
 			_Retorno := .F.
