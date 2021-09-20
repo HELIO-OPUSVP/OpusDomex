@@ -108,7 +108,7 @@ for _i := 1 to nPrint
 	AADD(_aArq,'q831'+ CRLF)
 	AADD(_aArq,'rN'+ CRLF)
 	AADD(_aArq,'S2'+ CRLF)
-	AADD(_aArq,'D15'+ CRLF)
+	AADD(_aArq,'D10'+ CRLF)
 	AADD(_aArq,'ZT'+ CRLF)
 	AADD(_aArq,'JF'+ CRLF)
 	AADD(_aArq,'O'+ CRLF)
@@ -121,7 +121,7 @@ for _i := 1 to nPrint
 		AADD(_aArq,'A707,60,2,1,1,1,N,"'+cDescSer+'"'+ CRLF)
 		AADD(_aArq,'A728,10,1,2,1,1,N,"'+SUBSTRING(cNumOP,7,5)+'"'+ CRLF)
 		AADD(_aArq,'A750,10,1,2,1,1,N,"'+SUBSTRING(cNumOP,1,6)+'"'+ CRLF)
-		AADD(_aArq,'b547,14,D,h3,"'+cNSerie+cValtoChar(nNumSerie+nNumEt)+SPACE(5-LEN(cValtoChar(nNumSerie+nNumEt)))+'"'+ CRLF)
+		AADD(_aArq,'b547,14,D,h2,"'+cNSerie+cValtoChar(nNumSerie+nNumEt)+SPACE(5-LEN(cValtoChar(nNumSerie+nNumEt)))+'"'+ CRLF)
 		AADD(_aArq,'A624,5,1,1,2,2,N,"'+cLinha+'"'+ CRLF)
 		
 	Endif
@@ -131,7 +131,7 @@ for _i := 1 to nPrint
 		AADD(_aArq,'A447,60,2,1,1,1,N,"'+cDescSer+'"'+ CRLF)
 		AADD(_aArq,'A468,10,1,2,1,1,N,"'+SUBSTRING(cNumOP,7,5)+'"'+ CRLF)
 		AADD(_aArq,'A491,10,1,2,1,1,N,"'+SUBSTRING(cNumOP,1,6)+'"'+ CRLF)
-		AADD(_aArq,'b287,14,D,h3,"'+cNSerie+cValtoChar(nNumSerie+(nNumEt+1))+SPACE(5-LEN(cValtoChar(nNumSerie+nNumEt+1)))+'"'+ CRLF)
+		AADD(_aArq,'b287,14,D,h2,"'+cNSerie+cValtoChar(nNumSerie+(nNumEt+1))+SPACE(5-LEN(cValtoChar(nNumSerie+nNumEt+1)))+'"'+ CRLF)
 		AADD(_aArq,'A366,5,1,1,2,2,N,"'+cLinha+'"'+ CRLF)
 	Endif
 	
@@ -140,7 +140,7 @@ for _i := 1 to nPrint
 		AADD(_aArq,'A182,60,2,1,1,1,N,"'+cDescSer+'"'+ CRLF)
 		AADD(_aArq,'A210,10,1,2,1,1,N,"'+SUBSTRING(cNumOP,7,5)+'"'+ CRLF)
 		AADD(_aArq,'A232,10,1,2,1,1,N,"'+SUBSTRING(cNumOP,1,6)+'"'+ CRLF)
-		AADD(_aArq,'b23,14,D,h3,"'+cNSerie+cValtoChar(nNumSerie+(nNumEt+2))+SPACE(5-LEN(cValtoChar(nNumSerie+nNumEt+2)))+'"'+ CRLF)
+		AADD(_aArq,'b23,14,D,h2,"'+cNSerie+cValtoChar(nNumSerie+(nNumEt+2))+SPACE(5-LEN(cValtoChar(nNumSerie+nNumEt+2)))+'"'+ CRLF)
 		AADD(_aArq,'A107,5,1,1,2,2,N,"'+cLinha+'"'+ CRLF)
 
 	Endif
