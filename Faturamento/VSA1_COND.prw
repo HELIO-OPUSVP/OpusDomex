@@ -5,17 +5,17 @@
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
-ฑฑบPrograma  ณVSA1_XVALCOD บAutor  ณOsmar Ferreira    บ Data ณ  15/06/2021 บฑฑ
+ฑฑบPrograma  ณVSA1_COND  บ Autor  ณOsmar Ferreira    บ Data ณ  15/09/2021 บฑฑ
 ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
 ฑฑบDesc.     ณ  Valida o usuแrio que pode alterar este campo no cadastro  บฑฑ
-ฑฑบ          ณ  do cliente                                                บฑฑ
+ฑฑบ          ณ  do cliente  - Condi็ใo de Pagamento                       บฑฑ
 ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
 ฑฑบUso       ณ Domex                                                      บฑฑ
 ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
 ฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
 */
 
-User Function VSA1_XVALCOD()
+User Function VSA1_COND()
 Local lRet := .t.
 
 If  __cUserID <> "000084"  // Somente a Dayse pode dar esta permissใo
