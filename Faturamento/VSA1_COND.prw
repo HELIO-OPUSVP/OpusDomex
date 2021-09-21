@@ -16,12 +16,13 @@
 */
 
 User Function VSA1_COND()
-Local lRet := .t.
+Local lRet := .T.
 
-If  __cUserID <> "000084"  // Somente a Dayse pode dar esta permissão
-    MsgInfo("Você não tem permissão para alterar o campo 'Valida o Código do Cliente'.")  
-    lRet := .f.
+If __CUSERID $ getmv("MV_XALCOND")
+    lRet := .T.
+Else    
+    MsgInfo("Você não tem permissão para alterar o campo 'Condição de Pagamento'.")  
+    lRet := .F.
 EndIf        
-
 
 Return(lRet)
