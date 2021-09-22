@@ -1168,8 +1168,15 @@ Static function TRANSSZA(_cProd, _cLocal, _cEndereco,_cLoteCtl, _cZADOC, _cPeca,
 	local lChkMov := .f.
 	Local _aItem	     := {}
 	Local _nOpcAuto      := 3 // Indica qual tipo de ação será tomada (Inclusão/Exclusão)
-	Local _cDoc	         := GetSxENum("SD3","D3_DOC",1)
+	Local _cDoc	         := U_NEXTDOC()  //GetSxENum("SD3","D3_DOC",1) //JONAS 21/09/2021
 	Local _lRetorno      := .f.
+
+
+	
+	_cDoc:=_cDoc+SPACE(09)
+	_cDoc:=SUBSTR(_cDoc,1,9)
+		
+		
 
 	_aAuto := {}
 	aadd(_aAuto,{_cDoc,dDataBase})
