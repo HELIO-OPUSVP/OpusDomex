@@ -274,7 +274,7 @@ _aCols:={}
 
 //Seleciona o ultimo inventario ciclico gerado
 cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE D_E_L_E_T_='' AND ZZR_DTREAL='' " 
-cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' and ZZR_SEQ>"ZZR->ZZR_SEQ" "
+cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' and ZZR_SEQ>"+ZZR->ZZR_SEQ+" "
 cQuery += " ORDER BY R_E_C_N_O_ "
 
 If Select("TMP") <> 0
@@ -308,9 +308,6 @@ If nRecZZR == ZZR->(RECNO())
 	_cEndereco :=""
 	_cEtiqueta
 
-	Private oTxtEnd,oGetEnd,oTxtEtiq,oGetEtiq,oTxtProd,oGetProd,oTxtQtd,oGetQtd,oMark,oTxtQTDETQ
-
-
 
     _aCols:={}
 
@@ -318,7 +315,16 @@ If nRecZZR == ZZR->(RECNO())
 	_oCodPro:Refresh	
 	_oDescPro:Refresh
     oGetDt:Refresh
+	oGetEnd:Refresh
+	oTxtEtiq:Refresh
+	oGetEtiq:Refresh
+	oTxtProd:Refresh
+	oGetProd:Refresh
+	oTxtQtd:Refresh
+	oGetQtd:Refresh
+	oTxtQTDETQ:Refresh
 
+EndIf
 
 
 
