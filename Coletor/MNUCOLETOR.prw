@@ -234,7 +234,7 @@ Static Function ColetorMenu(cDep)
 // Rotina 20
 	If aScan(aAcessos,20) <> 0
 		Private oBtn03 := Nil
-		@ nLin, nCol BUTTON oBtn03 PROMPT "Endereçamento Recebimento" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW01(), U_DOMACD01())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn03 PROMPT "Endereçamento Recebimento" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW01(), U_())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 := "QPushButton{background-image: url(rpo:armazem.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:armazem.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:armazem.png);"+cHover

@@ -669,6 +669,8 @@ Static function fProcInv()
 					ZZR->ZZR_LOCAL   := aLstFinal[Nz][5]
 					ZZR->ZZR_CLASSI  := aLstFinal[Nz][6]
 					ZZR->ZZR_TIPO    := aLstFinal[Nz][8]
+					ZZR->ZZR_PERIOD  := SUBSTR(cPeriodo,1,6)
+					ZZR->ZZR_SEQ     := STRZERO(Nx,4)
 					ZZR->ZZR_STATUS  := "G"
 					ZZR->(MsUnlock())			
 					aLSTDias[Nx][2] := aLSTDias[Nx][2] - 1
@@ -683,6 +685,8 @@ Static function fProcInv()
 				ZZR->ZZR_LOCAL   := aLstFinal[Nz][5]
 				ZZR->ZZR_CLASSI  := aLstFinal[Nz][6]
 				ZZR->ZZR_TIPO    := aLstFinal[Nz][8]
+				ZZR->ZZR_PERIOD  := SUBSTR(cPeriodo,1,6)
+				ZZR->ZZR_SEQ     := STRZERO(Nx,4)
 				ZZR->ZZR_STATUS  := "G"
 				ZZR->(MsUnlock())	
 				aLSTDias[Nx][2] := aLSTDias[Nx][2] - 1
