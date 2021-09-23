@@ -27,7 +27,8 @@ Local nVar       := 0
 Local cRotacao   := "N"      //(N,R,I,B)
 Local mv_par02   := 1         //Qtd Embalagem
 Local mv_par03   := 1         //Qtd Etiquetas
-
+Local nQ 		 := 0
+Local x
 Local aRetAnat   := {}        //Codigos Anatel, Array
 Local aCodAnat   := {}        //Codigos Anatel, Array
 
@@ -152,7 +153,7 @@ For nQ := 1 To nQtdEtq		// nQtdEtq = Quantidade de Etiquetas no parametro de imp
 	
 	cIL := ""
 	AADD( aLado1, { "RDT ", ;
-						  " "+ALLTRIM(nSerie), ;
+						  ALLTRIM(nSerie), ;
 						  Alltrim(Transform(SB1->B1_XXMETIQ,cMasc))+"M", ;
 						  "", ;
 					     "", ;
@@ -313,7 +314,7 @@ Return ( .T. )
 Static Function fTestaAnatel(cCodPA,cNumOp,cNumSenf,lMostra)
 
 LOCAL lAchou := .T.
-
+Local x
 //旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커
 //쿎onsiste codigo ANATEL do componente									 �
 //읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커

@@ -56,8 +56,8 @@ User Function DOMET113(cNumOP,nQtdEtq,nNumSerie)
 		cLocImp := ALLTRIM(aRetPar[1])
 
 		IF !CB5SetImp(cLocImp,.F.)
-			U_MsgColetor("Local de impressao invalido!")
-			Return
+			MsgAlert("Local de impressao invalido!","Aviso")
+			Return .F.
 		EndIf
 
 		dbSelectArea("P10")
@@ -112,15 +112,15 @@ User Function DOMET113(cNumOP,nQtdEtq,nNumSerie)
 				AADD(_aArq,'A624,5,1,1,2,2,N,"'+cLinha+'"'+ CRLF)
 
 				XD4->(dbSetOrder(1))
-				 Reclock("XD4", .T.)
-				 XD4->XD4_FILIAL	:= xFilial("XD4")
-				 XD4->XD4_SERIAL	:= (nNumSerie+nNumEt)
-				 XD4->XD4_STATUS	:= '6'
-				 XD4->XD4_OP	   	:= cNumOP
-				 XD4->XD4_NOMUSR	:= cUserSis
-				 XD4->XD4_DOC    := _cPrxDoc
-				 XD4->XD4_KEY 	:= "S"+Alltrim(cNumOP)+Alltrim(cValtoChar(nNumSerie+nNumEt))
-				 XD4->(MsUnlock())
+				Reclock("XD4", .T.)
+				XD4->XD4_FILIAL	:= xFilial("XD4")
+				XD4->XD4_SERIAL	:= (nNumSerie+nNumEt)
+				XD4->XD4_STATUS	:= '6'
+				XD4->XD4_OP	   	:= cNumOP
+				XD4->XD4_NOMUSR	:= cUserSis
+				XD4->XD4_DOC    := _cPrxDoc
+				XD4->XD4_KEY 	:= "S"+Alltrim(cNumOP)+Alltrim(cValtoChar(nNumSerie+nNumEt))
+				XD4->(MsUnlock())
 
 
 			Endif
@@ -132,17 +132,17 @@ User Function DOMET113(cNumOP,nQtdEtq,nNumSerie)
 				AADD(_aArq,'A491,10,1,2,1,1,N,"'+SUBSTRING(cNumOP,1,6)+'"'+ CRLF)
 				AADD(_aArq,'b287,14,D,h2,"'+cNSerie+cValtoChar(nNumSerie+(nNumEt+1))+SPACE(5-LEN(cValtoChar(nNumSerie+nNumEt+1)))+'"'+ CRLF)
 				AADD(_aArq,'A366,5,1,1,2,2,N,"'+cLinha+'"'+ CRLF)
-				
+
 				XD4->(dbSetOrder(1))
-				 Reclock("XD4", .T.)
-				 XD4->XD4_FILIAL	:= xFilial("XD4")
-				 XD4->XD4_SERIAL	:= (nNumSerie+(nNumEt+1))
-				 XD4->XD4_STATUS	:= '6'
-				 XD4->XD4_OP	   	:= cNumOP
-				 XD4->XD4_NOMUSR	:= cUserSis
-				 XD4->XD4_DOC    := _cPrxDoc
-				 XD4->XD4_KEY 	:= "S"+Alltrim(cNumOP)+Alltrim(cValtoChar(nNumSerie+(nNumEt+1)))
-				 XD4->(MsUnlock())
+				Reclock("XD4", .T.)
+				XD4->XD4_FILIAL	:= xFilial("XD4")
+				XD4->XD4_SERIAL	:= (nNumSerie+(nNumEt+1))
+				XD4->XD4_STATUS	:= '6'
+				XD4->XD4_OP	   	:= cNumOP
+				XD4->XD4_NOMUSR	:= cUserSis
+				XD4->XD4_DOC    := _cPrxDoc
+				XD4->XD4_KEY 	:= "S"+Alltrim(cNumOP)+Alltrim(cValtoChar(nNumSerie+(nNumEt+1)))
+				XD4->(MsUnlock())
 
 			Endif
 
@@ -153,17 +153,17 @@ User Function DOMET113(cNumOP,nQtdEtq,nNumSerie)
 				AADD(_aArq,'A232,10,1,2,1,1,N,"'+SUBSTRING(cNumOP,1,6)+'"'+ CRLF)
 				AADD(_aArq,'b23,14,D,h2,"'+cNSerie+cValtoChar(nNumSerie+(nNumEt+2))+SPACE(5-LEN(cValtoChar(nNumSerie+nNumEt+2)))+'"'+ CRLF)
 				AADD(_aArq,'A107,5,1,1,2,2,N,"'+cLinha+'"'+ CRLF)
-				
+
 				XD4->(dbSetOrder(1))
-				 Reclock("XD4", .T.)
-				 XD4->XD4_FILIAL	:= xFilial("XD4")
-				 XD4->XD4_SERIAL	:= (nNumSerie+(nNumEt+2))
-				 XD4->XD4_STATUS	:= '6'
-				 XD4->XD4_OP	   	:= cNumOP
-				 XD4->XD4_NOMUSR	:= cUserSis
-				 XD4->XD4_DOC    := _cPrxDoc
-				 XD4->XD4_KEY 	:= "S"+Alltrim(cNumOP)+Alltrim(cValtoChar(nNumSerie+(nNumEt+2)))
-				 XD4->(MsUnlock())
+				Reclock("XD4", .T.)
+				XD4->XD4_FILIAL	:= xFilial("XD4")
+				XD4->XD4_SERIAL	:= (nNumSerie+(nNumEt+2))
+				XD4->XD4_STATUS	:= '6'
+				XD4->XD4_OP	   	:= cNumOP
+				XD4->XD4_NOMUSR	:= cUserSis
+				XD4->XD4_DOC    := _cPrxDoc
+				XD4->XD4_KEY 	:= "S"+Alltrim(cNumOP)+Alltrim(cValtoChar(nNumSerie+(nNumEt+2)))
+				XD4->(MsUnlock())
 
 			Endif
 
