@@ -259,7 +259,7 @@ Static Function ColetorMenu(cDep)
 		nLin += nSkipLin
 	EndIf
 
-	If 'JONAS.OPUS' $ Upper(GetEnvServer())
+	If 'JONAS.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
 		If aScan(aAcessos,22) <> 0
 			Private oBtn04 := Nil
 			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW45(), U_DOMACD45())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01

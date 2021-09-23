@@ -506,6 +506,7 @@ Static function fProcInv()
 	local dDiaIni   := ctod("  /  /  ")
 	local dDiaFim   := LastDate(DDATABASE)
 	Local dPriDiaAno := STOD(str(YEAR(DATE()))+'0101') 
+	Local nCount     := 0
 	
 
 //SELECIONA ULTIMO INVENTARIO CICLICO GERADO
@@ -660,7 +661,8 @@ Static function fProcInv()
 	For Nz := 1 to Len(aLstFinal)
 		For Nx := 1 To Len(aLSTDias)
 			If Nx < Len(aLSTDias)
-				If aLSTDias[Nx][2] != 0 					
+				If aLSTDias[Nx][2] != 0 	
+				    nCount	+= 1			
 					Reclock("ZZR",.t.)
 					ZZR->ZZR_FILIAL  := aLstFinal[Nz][1]
 					ZZR->ZZR_DTPLAN  := aLSTDias[Nx][1]
@@ -670,13 +672,14 @@ Static function fProcInv()
 					ZZR->ZZR_CLASSI  := aLstFinal[Nz][6]
 					ZZR->ZZR_TIPO    := aLstFinal[Nz][8]
 					ZZR->ZZR_PERIOD  := SUBSTR(cPeriodo,1,6)
-					ZZR->ZZR_SEQ     := STRZERO(Nx,4)
+					ZZR->ZZR_SEQ     := STRZERO(nCount,4)
 					ZZR->ZZR_STATUS  := "G"
 					ZZR->(MsUnlock())			
 					aLSTDias[Nx][2] := aLSTDias[Nx][2] - 1
 					Exit
 				EndIf
 			ElseIf  Nx == Len(aLSTDias)
+				nCount	+= 1
 				Reclock("ZZR",.t.)
 				ZZR->ZZR_FILIAL  := aLstFinal[Nz][1]
 				ZZR->ZZR_DTPLAN  := aLSTDias[Nx][1]
@@ -686,7 +689,7 @@ Static function fProcInv()
 				ZZR->ZZR_CLASSI  := aLstFinal[Nz][6]
 				ZZR->ZZR_TIPO    := aLstFinal[Nz][8]
 				ZZR->ZZR_PERIOD  := SUBSTR(cPeriodo,1,6)
-				ZZR->ZZR_SEQ     := STRZERO(Nx,4)
+				ZZR->ZZR_SEQ     := STRZERO(nCount,4)
 				ZZR->ZZR_STATUS  := "G"
 				ZZR->(MsUnlock())	
 				aLSTDias[Nx][2] := aLSTDias[Nx][2] - 1

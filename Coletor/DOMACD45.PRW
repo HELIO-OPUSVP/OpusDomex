@@ -66,6 +66,8 @@ Private _DescPro   := ""
 Private _DT        := ""
 Private _oCodPro
 Private _oDescPro
+Private lNext      := .t.
+Private cSeq       := ""
 
 Private _aCols:={}
 
@@ -146,9 +148,9 @@ Static Function fOkTela()
 
 
 if cFilAnt == "01"
-	cTitulo:= "Inventário Cíclico"
+	cTitulo:= "Inventário Cíclico - Armazem "+cAlmoxarifado
 ElseIf cFilAnt == '02'
-	cTitulo:= "Inventário Cíclico MG"
+	cTitulo:= "Inventário Cíclico MG - Armazem "+cAlmoxarifado
 Endif
 
 
@@ -185,6 +187,7 @@ If nRecZZR == ZZR->(RECNO())
     _pro      := ZZR->ZZR_PRODUT
 	_Despro   := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
 	_DT       := DTOC(ZZR->ZZR_DTPLAN)
+	cSeq      := ZZR->ZZR_SEQ
     
     Define MsDialog oInv Title OemToAnsi(cTitulo) From 0,0 To 293,233 Pixel of oMainWnd PIXEL
 
@@ -230,8 +233,8 @@ If nRecZZR == ZZR->(RECNO())
     @ 135,095 Say oTxtQTDETQ Var Transform(nTxtQTDETQ,"@E 999,999") Pixel Of oInv
     oTxtQTDETQ:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
 
-    @ 132,073  BITMAP oBmp1 ResName "LEFT"   Of oInv Size 070,20 ON CLICK fnext() NoBorder  Pixel
-	@ 132,087  BITMAP oBmp2 ResName "RIGHT"  Of oInv Size 070,20 ON CLICK  NoBorder  Pixel
+    @ 132,073  BITMAP oBmp1 ResName "LEFT"   Of oInv Size 070,20 WHEN lNext ON CLICK fante() NoBorder  Pixel
+	@ 132,087  BITMAP oBmp2 ResName "RIGHT"  Of oInv Size 070,20 ON CLICK fnext() NoBorder  Pixel
     @ 130,003 Button "Confirma" Size 27,15 Action fOkProc() Pixel Of oInv
     @ 130,035 Button "Cancelar" Size 27,15 Action Close(oInv) Pixel Of oInv
 
@@ -270,6 +273,7 @@ _cLoteEti      := CriaVar("BF_LOTECTL",.F.)
  _nVALAJU       :=0
  _nQTDTOT       :=0
 
+lNext := .t.
 _aCols:={}
 
 //Seleciona o ultimo inventario ciclico gerado
@@ -308,7 +312,98 @@ If nRecZZR == ZZR->(RECNO())
 	_cEndereco :=""
 	_cEtiqueta
 
+	
+    _aCols:={}
 
+	fGetDados()
+	_oCodPro:Refresh	
+	_oDescPro:Refresh
+    oGetDt:Refresh
+	oGetEnd:Refresh
+	oTxtEtiq:Refresh
+	oGetEtiq:Refresh
+	oTxtProd:Refresh
+	oGetProd:Refresh
+	oTxtQtd:Refresh
+	oGetQtd:Refresh
+	oTxtQTDETQ:Refresh
+
+EndIf
+
+
+
+
+Return
+
+
+Static function fante()
+
+_nTamEtiq      := 21
+_cEndereco     := Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
+_cEtiqueta     := Space(_nTamEtiq)
+_nQtd          := CriaVar("XD1_QTDATU",.F.)
+_cLoteEti      := CriaVar("BF_LOTECTL",.F.)
+ _aCols         := {}
+ _aLog          := {}
+ _aEnder        := {}
+ nTxtQTDETQ     := 0
+ _lCALC         := .T.
+ _nTotItem      := 0
+ _cDocInv       := ""
+ aEmpSB2
+ lInvOK         :=.F.
+ lRetTelaBE     :=.F.
+ _nVLUNIT       :=0
+ _nQTDATU       :=0
+ _nQTDAJU       :=0
+ _nVALAJU       :=0
+ _nQTDTOT       :=0
+
+
+
+_aCols:={}
+
+
+//Seleciona o ultimo inventario ciclico gerado
+cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE D_E_L_E_T_='' AND ZZR_DTREAL='' " 
+cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' and ZZR_SEQ<"+ZZR->ZZR_SEQ+" "
+cQuery += " ORDER BY R_E_C_N_O_ DESC "
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+TCQUERY cQuery NEW ALIAS "TMP"
+
+If  TMP->(!EOF())
+	nRecZZR :=TMP->REC
+    TMP->(dbskip())
+Else
+//não ha itens a serem inventariados no almoxarifado
+    U_MsgColetor("Primeiro item da lista.")
+    Return
+EndIf
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+ZZR->(DBSETORDER(1))
+ZZR->(DBGOTO(nRecZZR))
+
+If nRecZZR == ZZR->(RECNO())
+
+    _cProduto  := ZZR->ZZR_PRODUT
+    _pro       := ZZR->ZZR_PRODUT
+	_Despro    := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
+	_DT        := DTOC(ZZR->ZZR_DTPLAN)
+	_cEndereco :=""
+	_cEtiqueta
+	If cSeq == ZZR->ZZR_SEQ
+		U_MsgColetor("Primeiro item da lista.")
+		lNext := .F.
+	EndIf
+	
     _aCols:={}
 
 	fGetDados()
