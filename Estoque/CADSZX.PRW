@@ -156,7 +156,8 @@ MSCBEnd()
 MSCBClosePrinter()
 
 RestArea(_aAreaGER)
-
+//teste
+//teste2
 
 /*
 MSCBPrinter("TLP 2844",_cPorta,,,.F.)
