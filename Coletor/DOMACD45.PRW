@@ -5,6 +5,9 @@
 #include "Protheus.ch"
 #Include "ap5mail.ch"
 
+
+#DEFINE ENTER CHAR(13) + CHAR(10)
+
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
@@ -55,6 +58,17 @@ Private cAlmoxarifado  :=""
 Private cPerInv := ""
 Private aRecSB7 := {}
 
+
+Private cTitulo    :=  ""
+Private nRecZZR    := 0
+Private _pro       := ""
+Private _DescPro   := ""
+Private _DT        := ""
+Private _oCodPro
+Private _oDescPro
+
+Private _aCols:={}
+
 If! Empty(_cCtrNum)
     fAlmoxinv()
 Else
@@ -98,7 +112,7 @@ Define MsDialog oInvSel Title OemToAnsi("Inventário Cíclico") From 0,0 To 293,23
 
 @ 020,010	SAY oTexto1 Var '   Abaixo lista de almorarifados'    SIZE 100,10 PIXEL
 @ 030,010	SAY oTexto1 Var ' pendentes, para realização do inventário '    SIZE 100,10 PIXEL
-@ 040,010	SAY oTexto1 Var ' cíclicono período de '+cPerInv+ ', selecione:'    SIZE 100,10 PIXEL
+@ 040,010	SAY oTexto1 Var ' cíclicono período de '+SUBSTR(cPerInv,5,2)+ '-'+SUBSTR(cPerInv,1,4)+', selecione:'    SIZE 100,10 PIXEL
 
 
 @ 060, 030	SAY oTexto2 Var 'Almoxarifado'    SIZE 50,10 PIXEL
@@ -129,10 +143,6 @@ Return lRetAlmox
 Static Function fOkTela()
 *---------------------------------------------------------------------------------------------
 
-Local cTitulo:=  ""
-Local nRecZZR:= 0
-Local _pro   := ""
-_aCols:={}
 
 
 if cFilAnt == "01"
@@ -173,37 +183,57 @@ If nRecZZR == ZZR->(RECNO())
 
     _cProduto := ZZR->ZZR_PRODUT
     _pro      := ZZR->ZZR_PRODUT
+	_Despro   := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
+	_DT       := DTOC(ZZR->ZZR_DTPLAN)
     
     Define MsDialog oInv Title OemToAnsi(cTitulo) From 0,0 To 293,233 Pixel of oMainWnd PIXEL
 
-    @ 005,005 Say oTxtProd   Var "Produto "  Pixel Of oInv
-    @ 005,045 MsGet oGetProd Var _pro When .F. Size 70,10  Pixel Of oInv
-    oTxtProd:oFont:= TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
-    oGetProd:oFont:= TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
+   // @ 005,005 Say oTxtProd   Var "Produto "  Pixel Of oInv
+    //@ 005,045 MsGet oGetProd Var _pro When .F. Size 70,10  Pixel Of oInv
+  //  oTxtProd:oFont:= TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
+   // oGetProd:oFont:= TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 
-    @ 020,005 Say oTxtEnd    Var "Endereço " Pixel Of oInv
-    @ 020,045 MsGet oGetEnd  Var _cEndereco Valid fValEnd() Size 70,10 Pixel Of oInv
-    oTxtEnd:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
-    oGetEnd:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 
-    @ 035,005 Say oTxtEtiq   Var "Etiqueta " Pixel Of oInv
-    @ 035,045 MsGet oGetEtiq Var _cEtiqueta  Size 70,10 Valid fValEtiq() Pixel Of oInv
-    oTxtEtiq:oFont:= TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
-    oGetEtiq:oFont:= TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
+	@ 000, 005	SAY _oCodPro   VAR "Produto: " + _pro  PIXEL SIZE 160, 13
+	_oCodPro:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
+
+	@ 010, 005	SAY _oDescPro   VAR _Despro  PIXEL SIZE 160, 20
+	_oDescPro:oFont := TFont():New('Arial',,15,,.T.,,,,.T.,.F.)
+
+	//@ 084*nWebPx, 008	SAY _oDescPro  VAR "Desc.:   " + _cDesPro  PIXEL SIZE 100*nWebPx,20*nWebPx
+	//_oDescPro:oFont := TFont():New('Arial',,19*nWebPx,,.T.,,,,.T.,.F.)
+
+	@ 033,005 Say oTxtDt    Var "Dt. Planejada " Pixel Of oInv
+    @ 033,045 MsGet oGetDt  Var _DT When .F. Size 70,08 Pixel Of oInv
+    oTxtDt:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
+    oGetDt:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
+
+
+    @ 045,005 Say oTxtEnd    Var "Endereço " Pixel Of oInv
+    @ 045,045 MsGet oGetEnd  Var _cEndereco Valid fValEnd() Size 70,08 Pixel Of oInv
+    oTxtEnd:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
+    oGetEnd:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
+
+    @ 057,005 Say oTxtEtiq   Var "Etiqueta " Pixel Of oInv
+    @ 057,045 MsGet oGetEtiq Var _cEtiqueta  Size 70,08 Valid fValEtiq() Pixel Of oInv
+    oTxtEtiq:oFont:= TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
+    oGetEtiq:oFont:= TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
 
 
     fGetDados()
 
-    @ 050,005 Say oTxtQtd    Var "Quantidade " Pixel Of oInv
-    @ 050,045 MsGet oGetQtd  Var _nQtd Valid fOkQtd() Picture "@E 999,999.9999" Size 70,10  Pixel Of oInv
-    oTxtQtd:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
-    oGetQtd:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
+    @ 069,005 Say oTxtQtd    Var "Quantidade " Pixel Of oInv
+    @ 069,045 MsGet oGetQtd  Var _nQtd Valid fOkQtd() Picture "@E 999,999.9999" Size 70,08  Pixel Of oInv
+    oTxtQtd:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
+    oGetQtd:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
 
-    @ 130,070 Say oTxtQTDETQ Var Transform(nTxtQTDETQ,"@E 999,999") Pixel Of oInv
-    oTxtQTDETQ:oFont := TFont():New('Arial',,22,,.T.,,,,.T.,.F.)
+    @ 135,095 Say oTxtQTDETQ Var Transform(nTxtQTDETQ,"@E 999,999") Pixel Of oInv
+    oTxtQTDETQ:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
 
-    @ 130,005 Button "Confirma" Size 40,15 Action fOkProc() Pixel Of oInv
-    //@ 130,070 Button "Cancelar" Size 40,15 Action Close(oInv) Pixel Of oInv
+    @ 132,073  BITMAP oBmp1 ResName "LEFT"   Of oInv Size 070,20 ON CLICK fnext() NoBorder  Pixel
+	@ 132,087  BITMAP oBmp2 ResName "RIGHT"  Of oInv Size 070,20 ON CLICK  NoBorder  Pixel
+    @ 130,003 Button "Confirma" Size 27,15 Action fOkProc() Pixel Of oInv
+    @ 130,035 Button "Cancelar" Size 27,15 Action Close(oInv) Pixel Of oInv
 
     Activate MsDialog oInv
 
@@ -213,6 +243,85 @@ ELSE
     RETURN
 
 EndIf
+
+Return
+
+
+Static function fnext()
+
+_nTamEtiq      := 21
+_cEndereco     := Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
+_cEtiqueta     := Space(_nTamEtiq)
+_nQtd          := CriaVar("XD1_QTDATU",.F.)
+_cLoteEti      := CriaVar("BF_LOTECTL",.F.)
+ _aCols         := {}
+ _aLog          := {}
+ _aEnder        := {}
+ nTxtQTDETQ     := 0
+ _lCALC         := .T.
+ _nTotItem      := 0
+ _cDocInv       := ""
+ aEmpSB2
+ lInvOK         :=.F.
+ lRetTelaBE     :=.F.
+ _nVLUNIT       :=0
+ _nQTDATU       :=0
+ _nQTDAJU       :=0
+ _nVALAJU       :=0
+ _nQTDTOT       :=0
+
+_aCols:={}
+
+//Seleciona o ultimo inventario ciclico gerado
+cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE D_E_L_E_T_='' AND ZZR_DTREAL='' " 
+cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' and ZZR_SEQ>"ZZR->ZZR_SEQ" "
+cQuery += " ORDER BY R_E_C_N_O_ "
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+TCQUERY cQuery NEW ALIAS "TMP"
+
+If  TMP->(!EOF())
+	nRecZZR :=TMP->REC
+    TMP->(dbskip())
+Else
+//não ha itens a serem inventariados no almoxarifado
+    U_MsgColetor("Não há itens a serem inventáriados.")
+    Return
+EndIf
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+ZZR->(DBSETORDER(1))
+ZZR->(DBGOTO(nRecZZR))
+
+If nRecZZR == ZZR->(RECNO())
+
+    _cProduto  := ZZR->ZZR_PRODUT
+    _pro       := ZZR->ZZR_PRODUT
+	_Despro    := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
+	_DT        := DTOC(ZZR->ZZR_DTPLAN)
+	_cEndereco :=""
+	_cEtiqueta
+
+	Private oTxtEnd,oGetEnd,oTxtEtiq,oGetEtiq,oTxtProd,oGetProd,oTxtQtd,oGetQtd,oMark,oTxtQTDETQ
+
+
+
+    _aCols:={}
+
+	fGetDados()
+	_oCodPro:Refresh	
+	_oDescPro:Refresh
+    oGetDt:Refresh
+
+
+
+
 
 Return
 
@@ -930,7 +1039,7 @@ _aCampos := {}
 AADD(_aCampos,{"ETQ"     ,"" ,"Etiqueta"    ,"@R"              } )
 AADD(_aCampos,{"QTD"     ,"" ,"Quant."      ,"@E 999,999.9999" } )
 
-oMark:= MsSelect():New("TMP",,,_aCampos,Nil,Nil,{64,00,127,117})
+oMark:= MsSelect():New("TMP",,,_aCampos,Nil,Nil,{82,00,127,117}) //64,00,127,117
 oMark:oFont:= TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 oMark:oBrowse:oFont:= TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 oMark:oBrowse:Refresh()
