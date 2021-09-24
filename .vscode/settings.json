@@ -1,5 +1,6 @@
 {
     "totvsLanguageServer.welcomePage": false,
     "git.autofetch": true,
-    "git.fetchOnPull": true
+    "git.fetchOnPull": true,
+    "totvsLanguageServer.askCompileResult": true
 }

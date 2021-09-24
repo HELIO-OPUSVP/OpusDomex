@@ -418,9 +418,8 @@ Static Function fVldEti(cEtiqOfc)
 			Endif
 		Endif
 
-		/*/Etiq. Furukawa/*/
-	Elseif Substring(cEtiqOfc,LEN(alltrim(cEtiqOfc)),1) == "X"
-
+		/*/Etiq. Furukawa/*/ 
+	Elseif Substring(cEtiqOfc,LEN(alltrim(cEtiqOfc)),1) == "X" .OR. "DOM-" $ alltrim(cEtiqOfc)  
 		If Empty(cCodOp)
 
 			XD4->(DBSETORDER(3))
