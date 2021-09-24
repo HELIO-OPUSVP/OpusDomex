@@ -124,26 +124,41 @@ USER FUNCTION MT103FIM()
 
 				SF4->(dbSetOrder(1))
 				If SF4->(dbSeek( xFilial("SF4") + SD1->D1_TES))
-
 					If SF4->F4_ESTOQUE == 'S'
-
 						SB1->( dbSetOrder(1))
 						SB1->( dbSeek( xFilial() + SD1->D1_COD ))
 						If SB1->B1_LOCALIZ == 'S'
-
 							If fwfilial() == "02"
-
 								SDA->(dbSetOrder(RetOrder("SDA","DA_FILIAL+DA_NUMSEQ")))  // DA_FILIAL + DA_NUMSEQ
 								If SDA->(dbSeek( xFilial() + SD1->D1_NUMSEQ ))
 									If SDA->DA_SALDO != 0
 
-										AADD(aEndereca, {SDA->DA_PRODUTO, SDA->DA_NUMSEQ, '0001', SPACE(1), "01RECEBIMENTO", SDA->DA_DATA, SDA->DA_SALDO} )
+										If U_Validacao() // 23/09/21
 
-									EndIf
+											// Tem que melhorar isso. Vai ficar lento no futuro  (tem mais um Seek desse pra baixo)
+											XD1->(DBSETORDER(8))
+											If XD1->(DbSeek(cFilFiltro + SD1->D1_COD + "95" + "9" )) //ARMAZEM 95 // STATUS 9
+
+												While XD1->(!Eof()) .AND. XD1->XD1_FILIAL == cFilFiltro  .AND. XD1->XD1_COD == SD1->D1_COD .AND. XD1->XD1_LOCAL == "95" .AND. XD1->XD1_OCORRE == "9"
+													If XD1->XD1_ZYNOTA  == SF1->F1_DOC .and. XD1->XD1_ZYSERIE == SF1->F1_SERIE .and. XD1->XD1_ZYDTNF  == SF1->F1_EMISSAO .AND. StrZero(VAL(XD1->XD1_ZYITNF),4) == SD1->D1_ITEM	//.AND. XD1->XD1_QTDATU  == SD1->D1_QUANT
+														If Empty(XD1->XD1_OP)
+															AADD(aEndereca, {SDA->DA_PRODUTO, SDA->DA_NUMSEQ, '0001', SPACE(1), "01RECEBIMENTO", SDA->DA_DATA, SDA->DA_SALDO} )
+															Exit
+														Else
+														    Exit
+														EndIf
+													EndIf
+													XD1->( dbSkip() )
+												End
+											EndIf
+										Else
+											AADD(aEndereca, {SDA->DA_PRODUTO, SDA->DA_NUMSEQ, '0001', SPACE(1), "01RECEBIMENTO", SDA->DA_DATA, SDA->DA_SALDO} )
+										EndIf
+									EndIF
 								EndIf
 							EndIf
-						EndIF
-					EndIF
+						EndIf
+					EndIf
 				EndIf
 				SD1->(dbSkip())
 			Enddo
@@ -184,17 +199,14 @@ USER FUNCTION MT103FIM()
 				If lMsErroAuto .AND. .F.
 					MostraErro("\UTIL\LOG\Classificacao\")
 					MsgInfo("Erro no endereçamento automático.","A T E N Ç Ã O")
-
 				EndIf
 
 			Next Ne
-
 
 			SD1->(DBSETORDER(1))
 			If SD1->(dbSeek(xFilial('SD1') + SF1->F1_DOC + SF1->F1_SERIE + SF1->F1_FORNECE + SF1->F1_LOJA ))
 
 				While SD1->(!EOF()) .AND. SD1->D1_DOC==SF1->F1_DOC  .AND. SD1->D1_SERIE==SF1->F1_SERIE .AND. SD1->D1_FORNECE==SF1->F1_FORNECE .AND. SD1->D1_LOJA==SF1->F1_LOJA
-
 
 					aXD1Recno := {}
 					XD1->(DBSETORDER(8))
@@ -231,20 +243,26 @@ USER FUNCTION MT103FIM()
 									If U_VALIDACAO()  // Helio  16/08/21
 										lTransfere := .F.
 										If SB1->B1_APROPRI == 'I'
-											lTransfere := .T.
-											cAlmoxDest := "99"
-											cLocalDest := "99PROCESSO"
+											// Definido em 23/09/21 com Sergio e Denis que materiais de apropriação indireta não devem ser endereçado
+											// e não se deve reaproveitar suas etiquetas
+											lTransfere := .F.  // .T.
+											cAlmoxDest := "01" //"99"
+											cLocalDest := "01RECEBIMENTO" //"99PROCESSO"
 											cLoteDest  := "LOTE1308"
 											cOcorre    := "5"
-											a260Processa(XD1->XD1_COD,"01",XD1->XD1_QTDATU,_cDoc,dDataBase,0,,XD1->XD1_LOTECTL,StoD("20491231"),,"01RECEBIMENTO",XD1->XD1_COD,cAlmoxDest,cLocalDest,.F.,Nil,Nil,"MATA260",,,,,,,,,,,,,,,,,cLoteDest,StoD("20491231"))
+											//a260Processa(XD1->XD1_COD,"01",XD1->XD1_QTDATU,_cDoc,dDataBase,0,,XD1->XD1_LOTECTL,StoD("20491231"),,"01RECEBIMENTO",XD1->XD1_COD,cAlmoxDest,cLocalDest,.F.,Nil,Nil,"MATA260",,,,,,,,,,,,,,,,,cLoteDest,StoD("20491231"))
+											AADD(aXD1Recno, {XD1->( Recno() ), cAlmoxDest, cLocalDest, cOcorre, cLoteDest, SD1->D1_ITEM } )
 										Else
-											If  ALLTRIM(SB1->B1_GRUPO)=='FO' .OR. ALLTRIM(SB1->B1_GRUPO)=='FOFS'
-												lTransfere := .T.
+											If ALLTRIM(SB1->B1_GRUPO)=='FO' .OR. ALLTRIM(SB1->B1_GRUPO)=='FOFS'
+												// Definido em 23/09/21 com Sergio e Denis que fibras não devem ser endereçadas
+												// e não se deve reaproveitar suas etiquetas
+												lTransfere := .F.   // .T.
 												cAlmoxDest := "01"
-												cLocalDest := "01CORTE"
+												cLocalDest := "01RECEBIMENTO" // "01CORTE"
 												cLoteDest  := "LOTE1308"
-												cOcorre    := "4"
-												a260Processa(XD1->XD1_COD,"01",XD1->XD1_QTDATU,_cDoc,dDataBase,0,,XD1->XD1_LOTECTL,StoD("20491231"),,"01RECEBIMENTO",XD1->XD1_COD,cAlmoxDest,cLocalDest,.F.,Nil,Nil,"MATA260",,,,,,,,,,,,,,,,,cLoteDest,StoD("20491231"))
+												cOcorre    := "5"
+												//a260Processa(XD1->XD1_COD,"01",XD1->XD1_QTDATU,_cDoc,dDataBase,0,,XD1->XD1_LOTECTL,StoD("20491231"),,"01RECEBIMENTO",XD1->XD1_COD,cAlmoxDest,cLocalDest,.F.,Nil,Nil,"MATA260",,,,,,,,,,,,,,,,,cLoteDest,StoD("20491231"))
+												AADD(aXD1Recno, {XD1->( Recno() ), cAlmoxDest, cLocalDest, cOcorre, cLoteDest, SD1->D1_ITEM } )
 											Else
 												If !Empty(XD1->XD1_OP)
 													lTransfere := .T.
@@ -254,12 +272,13 @@ USER FUNCTION MT103FIM()
 													cOcorre    := "8"
 													a260Processa(XD1->XD1_COD,"01",XD1->XD1_QTDATU,_cDoc,dDataBase,0,,"LOTE1308",StoD("20491231"),,"01RECEBIMENTO",XD1->XD1_COD,cAlmoxDest,cLocalDest,.F.,Nil,Nil,"MATA260",,,,,,,,,,,,,,,,,cLoteDest,StoD("20491231"))
 												Else
-													// Se OP estiver vazio, deixa o material no 01RECEBIMENTO
+													// Definido em 23/09/21 com Sergio e Denis que todo material que não estiver destinado a uma OP, ou seja,
+													// XD1_OP em branco, não deve ser endereçado e não se deve reaproveitar suas etiquetas
 													lTransfere := .F.
 													cAlmoxDest := "01"
 													cLocalDest := "01RECEBIMENTO"
 													cLoteDest  := 'LOTE1308'
-													cOcorre    := "4"
+													cOcorre    := "5"  // "4"
 													AADD(aXD1Recno, {XD1->( Recno() ), cAlmoxDest, cLocalDest, cOcorre, cLoteDest, SD1->D1_ITEM } )
 												EndIf
 											EndIf
