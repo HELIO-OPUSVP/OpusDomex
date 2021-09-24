@@ -5,6 +5,9 @@
 #include "Protheus.ch"
 #Include "ap5mail.ch"
 
+
+#DEFINE ENTER CHAR(13) + CHAR(10)
+
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
@@ -55,6 +58,19 @@ Private cAlmoxarifado  :=""
 Private cPerInv := ""
 Private aRecSB7 := {}
 
+
+Private cTitulo    :=  ""
+Private nRecZZR    := 0
+Private _pro       := ""
+Private _DescPro   := ""
+Private _DT        := ""
+Private _oCodPro
+Private _oDescPro
+Private lNext      := .t.
+Private cSeq       := ""
+
+Private _aCols:={}
+
 If! Empty(_cCtrNum)
     fAlmoxinv()
 Else
@@ -98,7 +114,7 @@ Define MsDialog oInvSel Title OemToAnsi("Inventário Cíclico") From 0,0 To 293,23
 
 @ 020,010	SAY oTexto1 Var '   Abaixo lista de almorarifados'    SIZE 100,10 PIXEL
 @ 030,010	SAY oTexto1 Var ' pendentes, para realização do inventário '    SIZE 100,10 PIXEL
-@ 040,010	SAY oTexto1 Var ' cíclicono período de '+cPerInv+ ', selecione:'    SIZE 100,10 PIXEL
+@ 040,010	SAY oTexto1 Var ' cíclicono período de '+SUBSTR(cPerInv,5,2)+ '-'+SUBSTR(cPerInv,1,4)+', selecione:'    SIZE 100,10 PIXEL
 
 
 @ 060, 030	SAY oTexto2 Var 'Almoxarifado'    SIZE 50,10 PIXEL
@@ -107,7 +123,7 @@ oTexto2:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
 @ 070, 040 COMBOBOX oCombo2  VAR cAlmoxarifado ITEMS aLstAlmox    SIZE 25,10 PIXEL //VALID VLDCONT() PIXEL
 oCombo1:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
 
-@ 130,005 Button "Confirma" Size 40,15 Action fOkTela() VALID VLDALMOX() Pixel Of oInvSel
+@ 130,005 Button "Confirma" Size 40,15 Action fOkTela() Pixel Of oInvSel
 
 Activate MsDialog oInvSel
 
@@ -129,16 +145,12 @@ Return lRetAlmox
 Static Function fOkTela()
 *---------------------------------------------------------------------------------------------
 
-Local cTitulo:=  ""
-Local nRecZZR:= 0
-Local _pro   := ""
-_aCols:={}
 
 
 if cFilAnt == "01"
-	cTitulo:= "Inventário Cíclico"
+	cTitulo:= "Inventário Cíclico - Armazem "+cAlmoxarifado
 ElseIf cFilAnt == '02'
-	cTitulo:= "Inventário Cíclico MG"
+	cTitulo:= "Inventário Cíclico MG - Armazem "+cAlmoxarifado
 Endif
 
 
@@ -173,37 +185,58 @@ If nRecZZR == ZZR->(RECNO())
 
     _cProduto := ZZR->ZZR_PRODUT
     _pro      := ZZR->ZZR_PRODUT
+	_Despro   := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
+	_DT       := DTOC(ZZR->ZZR_DTPLAN)
+	cSeq      := ZZR->ZZR_SEQ
     
     Define MsDialog oInv Title OemToAnsi(cTitulo) From 0,0 To 293,233 Pixel of oMainWnd PIXEL
 
-    @ 005,005 Say oTxtProd   Var "Produto "  Pixel Of oInv
-    @ 005,045 MsGet oGetProd Var _pro When .F. Size 70,10  Pixel Of oInv
-    oTxtProd:oFont:= TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
-    oGetProd:oFont:= TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
+   // @ 005,005 Say oTxtProd   Var "Produto "  Pixel Of oInv
+    //@ 005,045 MsGet oGetProd Var _pro When .F. Size 70,10  Pixel Of oInv
+  //  oTxtProd:oFont:= TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
+   // oGetProd:oFont:= TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 
-    @ 020,005 Say oTxtEnd    Var "Endereço " Pixel Of oInv
-    @ 020,045 MsGet oGetEnd  Var _cEndereco Valid fValEnd() Size 70,10 Pixel Of oInv
-    oTxtEnd:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
-    oGetEnd:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 
-    @ 035,005 Say oTxtEtiq   Var "Etiqueta " Pixel Of oInv
-    @ 035,045 MsGet oGetEtiq Var _cEtiqueta  Size 70,10 Valid fValEtiq() Pixel Of oInv
-    oTxtEtiq:oFont:= TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
-    oGetEtiq:oFont:= TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
+	@ 000, 005	SAY _oCodPro   VAR "Produto: " + _pro  PIXEL SIZE 160, 13
+	_oCodPro:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
+
+	@ 010, 005	SAY _oDescPro   VAR _Despro  PIXEL SIZE 160, 20
+	_oDescPro:oFont := TFont():New('Arial',,15,,.T.,,,,.T.,.F.)
+
+	//@ 084*nWebPx, 008	SAY _oDescPro  VAR "Desc.:   " + _cDesPro  PIXEL SIZE 100*nWebPx,20*nWebPx
+	//_oDescPro:oFont := TFont():New('Arial',,19*nWebPx,,.T.,,,,.T.,.F.)
+
+	@ 033,005 Say oTxtDt    Var "Dt. Planejada " Pixel Of oInv
+    @ 033,045 MsGet oGetDt  Var _DT When .F. Size 70,08 Pixel Of oInv
+    oTxtDt:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
+    oGetDt:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
+
+
+    @ 045,005 Say oTxtEnd    Var "Endereço " Pixel Of oInv
+    @ 045,045 MsGet oGetEnd  Var _cEndereco Valid fValEnd() Size 70,08 Pixel Of oInv
+    oTxtEnd:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
+    oGetEnd:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
+
+    @ 057,005 Say oTxtEtiq   Var "Etiqueta " Pixel Of oInv
+    @ 057,045 MsGet oGetEtiq Var _cEtiqueta  Size 70,08 Valid fValEtiq() Pixel Of oInv
+    oTxtEtiq:oFont:= TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
+    oGetEtiq:oFont:= TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
 
 
     fGetDados()
 
-    @ 050,005 Say oTxtQtd    Var "Quantidade " Pixel Of oInv
-    @ 050,045 MsGet oGetQtd  Var _nQtd Valid fOkQtd() Picture "@E 999,999.9999" Size 70,10  Pixel Of oInv
-    oTxtQtd:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
-    oGetQtd:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
+    @ 069,005 Say oTxtQtd    Var "Quantidade " Pixel Of oInv
+    @ 069,045 MsGet oGetQtd  Var _nQtd Valid fOkQtd() Picture "@E 999,999.9999" Size 70,08  Pixel Of oInv
+    oTxtQtd:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
+    oGetQtd:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
 
-    @ 130,070 Say oTxtQTDETQ Var Transform(nTxtQTDETQ,"@E 999,999") Pixel Of oInv
-    oTxtQTDETQ:oFont := TFont():New('Arial',,22,,.T.,,,,.T.,.F.)
+    @ 135,095 Say oTxtQTDETQ Var Transform(nTxtQTDETQ,"@E 999,999") Pixel Of oInv
+    oTxtQTDETQ:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
 
-    @ 130,005 Button "Confirma" Size 40,15 Action fOkProc() Pixel Of oInv
-    //@ 130,070 Button "Cancelar" Size 40,15 Action Close(oInv) Pixel Of oInv
+    @ 132,073  BITMAP oBmp1 ResName "LEFT"   Of oInv Size 070,20 WHEN lNext ON CLICK fante() NoBorder  Pixel
+	@ 132,087  BITMAP oBmp2 ResName "RIGHT"  Of oInv Size 070,20 ON CLICK fnext() NoBorder  Pixel
+    @ 130,003 Button "Confirma" Size 27,15 Action fOkProc() Pixel Of oInv
+    @ 130,035 Button "Cancelar" Size 27,15 Action Close(oInv) Pixel Of oInv
 
     Activate MsDialog oInv
 
@@ -213,6 +246,183 @@ ELSE
     RETURN
 
 EndIf
+
+Return
+
+
+Static function fnext()
+
+_nTamEtiq      := 21
+_cEndereco     := Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
+_cEtiqueta     := Space(_nTamEtiq)
+_nQtd          := CriaVar("XD1_QTDATU",.F.)
+_cLoteEti      := CriaVar("BF_LOTECTL",.F.)
+ _aCols         := {}
+ _aLog          := {}
+ _aEnder        := {}
+ nTxtQTDETQ     := 0
+ _lCALC         := .T.
+ _nTotItem      := 0
+ _cDocInv       := ""
+ aEmpSB2
+ lInvOK         :=.F.
+ lRetTelaBE     :=.F.
+ _nVLUNIT       :=0
+ _nQTDATU       :=0
+ _nQTDAJU       :=0
+ _nVALAJU       :=0
+ _nQTDTOT       :=0
+
+lNext := .t.
+_aCols:={}
+
+//Seleciona o ultimo inventario ciclico gerado
+cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE D_E_L_E_T_='' AND ZZR_DTREAL='' " 
+cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' and ZZR_SEQ>"+ZZR->ZZR_SEQ+" "
+cQuery += " ORDER BY R_E_C_N_O_ "
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+TCQUERY cQuery NEW ALIAS "TMP"
+
+If  TMP->(!EOF())
+	nRecZZR :=TMP->REC
+    TMP->(dbskip())
+Else
+//não ha itens a serem inventariados no almoxarifado
+    U_MsgColetor("Não há itens a serem inventáriados.")
+    Return
+EndIf
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+ZZR->(DBSETORDER(1))
+ZZR->(DBGOTO(nRecZZR))
+
+If nRecZZR == ZZR->(RECNO())
+
+    _cProduto  := ZZR->ZZR_PRODUT
+    _pro       := ZZR->ZZR_PRODUT
+	_Despro    := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
+	_DT        := DTOC(ZZR->ZZR_DTPLAN)
+	_cEndereco :=""
+	_cEtiqueta
+
+	
+    _aCols:={}
+
+	fGetDados()
+	_oCodPro:Refresh	
+	_oDescPro:Refresh
+    oGetDt:Refresh
+	oGetEnd:Refresh
+	oTxtEtiq:Refresh
+	oGetEtiq:Refresh
+	oTxtProd:Refresh
+	oGetProd:Refresh
+	oTxtQtd:Refresh
+	oGetQtd:Refresh
+	oTxtQTDETQ:Refresh
+
+EndIf
+
+
+
+
+Return
+
+
+Static function fante()
+
+_nTamEtiq      := 21
+_cEndereco     := Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
+_cEtiqueta     := Space(_nTamEtiq)
+_nQtd          := CriaVar("XD1_QTDATU",.F.)
+_cLoteEti      := CriaVar("BF_LOTECTL",.F.)
+ _aCols         := {}
+ _aLog          := {}
+ _aEnder        := {}
+ nTxtQTDETQ     := 0
+ _lCALC         := .T.
+ _nTotItem      := 0
+ _cDocInv       := ""
+ aEmpSB2
+ lInvOK         :=.F.
+ lRetTelaBE     :=.F.
+ _nVLUNIT       :=0
+ _nQTDATU       :=0
+ _nQTDAJU       :=0
+ _nVALAJU       :=0
+ _nQTDTOT       :=0
+
+
+
+_aCols:={}
+
+
+//Seleciona o ultimo inventario ciclico gerado
+cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE D_E_L_E_T_='' AND ZZR_DTREAL='' " 
+cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' and ZZR_SEQ<"+ZZR->ZZR_SEQ+" "
+cQuery += " ORDER BY R_E_C_N_O_ DESC "
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+TCQUERY cQuery NEW ALIAS "TMP"
+
+If  TMP->(!EOF())
+	nRecZZR :=TMP->REC
+    TMP->(dbskip())
+Else
+//não ha itens a serem inventariados no almoxarifado
+    U_MsgColetor("Primeiro item da lista.")
+    Return
+EndIf
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+ZZR->(DBSETORDER(1))
+ZZR->(DBGOTO(nRecZZR))
+
+If nRecZZR == ZZR->(RECNO())
+
+    _cProduto  := ZZR->ZZR_PRODUT
+    _pro       := ZZR->ZZR_PRODUT
+	_Despro    := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
+	_DT        := DTOC(ZZR->ZZR_DTPLAN)
+	_cEndereco :=""
+	_cEtiqueta
+	If cSeq == ZZR->ZZR_SEQ
+		U_MsgColetor("Primeiro item da lista.")
+		lNext := .F.
+	EndIf
+	
+    _aCols:={}
+
+	fGetDados()
+	_oCodPro:Refresh	
+	_oDescPro:Refresh
+    oGetDt:Refresh
+	oGetEnd:Refresh
+	oTxtEtiq:Refresh
+	oGetEtiq:Refresh
+	oTxtProd:Refresh
+	oGetProd:Refresh
+	oTxtQtd:Refresh
+	oGetQtd:Refresh
+	oTxtQTDETQ:Refresh
+
+EndIf
+
+
+
 
 Return
 
@@ -283,6 +493,10 @@ Static Function fOkGrava()
 *---------------------------------------------------------------------------------------------
 Local _cNumSerie  :=Space(Len(CriaVar("B7_NUMSERI",.F.)))
 Local _nTamEtiq   :=Len(CriaVar("XD1_XXPECA",.F.))
+Local aDadosINV   :={}
+Local aDadosZZR   :={}
+Local nPos        :=0
+
 
 Private lMsHelpAuto := .T.
 Private lMsErroAuto := .F.
@@ -349,7 +563,7 @@ While _nI <= Len(_aCols)
 	//5-Lote Etiqueta
 	//6-Documento Inventário
 	
-	_cDocInv := "INV"+cPerInv//Soma1(GetMV(_cParametro))
+	_cDocInv := "INI"+cPerInv//Soma1(GetMV(_cParametro))
 	//PUTMV(_cParametro,_cDocInv )
 	
 	_cChave := _aCols[_nI][2]
@@ -392,6 +606,7 @@ For _nI := 1 To Len(_aCols)
 		//ENDIF
 		Aadd(_aInvent,{"B7_TIPO"    ,SB1->B1_TIPO         ,Nil})
 		Aadd(_aInvent,{"B7_DOC"     ,_aCols[_nI][6]       ,Nil})
+		Aadd(_aInvent,{"B7_NUMDOC"  ,_aCols[_nI][6]       ,Nil})
 		Aadd(_aInvent,{"B7_QUANT"   ,_aCols[_nI][4]       ,Nil})
 		Aadd(_aInvent,{"B7_DATA"    ,dDataBase            ,Nil})
 		Aadd(_aInvent,{"B7_LOTECTL" ,_aCols[_nI][5]       ,Nil})
@@ -482,7 +697,10 @@ If !lMsErroAuto
 			If SB7->(DBSeek(xFilial("SB7")+DTOS(DDATABASE)+_aCols[_nI][2]+_cLocInv+_cEndInv))  //lMsErroAuto
 				//MostraErro("\UTIL\Inventario\Execucao\")				
 				If SB7->B7_STATUS=='2'       
-                    aadd(aRecSB7,{SB7->(RECNO())})             
+					nPos  := aScan(aRecSB7,{|x| x[1]==SB7->(RECNO())})					        
+					If Empty(nPos)
+                    	aadd(aRecSB7,{SB7->(RECNO())})             
+					EndIf
 					If lPrimeira
 						lPrimeira := .F.
 						XD1->( dbSetOrder(4))
@@ -538,12 +756,6 @@ If !lMsErroAuto
 	Next
 EndIf
 
-IF lInvOK == .T.
-	U_MsgColetor("Inventário processado SEM alteração da quantidade total em estoque.")
-ELSE
-	U_MsgColetor("Inventário processado COM alteração da quantidade total em estoque.")
-	//lRetTelaBE :=.F.
-ENDIF
 
 
 SB7->(DBSETORDER(1))
@@ -551,15 +763,15 @@ SD3->(DBSETORDER(2))
 For x := 1 to len(aRecSB7)
     SB7->(DBGOTO(aRecSB7[x][1]))
     If aRecSB7[x][1] == SB7->(RECNO())
-        If SD3->(DBSeek(xFilial("SD3")+SB7->B7_DOC+SB7->B7_PRODUTO))
-            While SD3->(!EOF()) .AND. SB7->B7_DOC == SD3->D3_DOC .AND. SB7->B7_PRODUTO == SD3->D3_COD
+        If SD3->(DBSeek(xFilial("SD3")+SB7->B7_DOC+SB7->B7_COD))
+            While SD3->(!EOF()) .AND. SB7->B7_DOC == SD3->D3_DOC .AND. SB7->B7_COD== SD3->D3_COD
                 If SD3->D3_EMISSAO == SB7->B7_DATA .AND. SD3->D3_LOCAL == SB7->B7_LOCAL
                     AADD(aDadosINV, {SD3->D3_COD, SD3->D3_LOCAL, SD3->D3_NUMSEQ, SD3->D3_TM, SD3->D3_QUANT, SD3->D3_CUSTO1} )
                 EndIf
             SD3->(DBSKIP())
             Enddo
         Else
-            AADD(aDadosINV, {SB7->B7_PRODUTO, SB7->B7_LOCAL, '', '', '', ''} )    
+            AADD(aDadosINV, {SB7->B7_COD, SB7->B7_LOCAL, '', '', '', ''} )    
         EndIf
     EndIf
 Next x
@@ -567,7 +779,7 @@ Next x
 
 For x := 1 to len(aDadosINV)
 
-    nPos  := aScan(aDadosZZR,{|x| Alltrim(x[1])==alltrim(aDadosINV[x][1] .AND. Alltrim(x[2])==alltrim(aDadosINV[x][2] })
+    nPos  := aScan(aDadosZZR,{|x| Alltrim(x[1])==alltrim(aDadosINV[x][1]) .AND. Alltrim(x[2])==alltrim(aDadosINV[x][2]) })
 
     If !Empty(nPos)
         If aDadosINV[x][4] == '999'
@@ -592,14 +804,30 @@ For x := 1 to len(aDadosINV)
 
 Next x
 
+ZZR->(DbsetOrder(3))
+For x := 1 to len(aDadosZZR)
+	If ZZR->(Dbseek(xFilial("ZZR") + cPerInv + aDadosZZR[x][1] + aDadosZZR[x][2]))
+		Reclock("ZZR",.F.)		
+		ZZR->ZZR_DTREAL := DDATABASE		
+		ZZR->ZZR_QTDAJU += aDadosZZR[x][6] - aDadosZZR[x][4]
+		ZZR->ZZR_VALAJU += aDadosZZR[x][7] - aDadosZZR[x][5]
+		ZZR->ZZR_STATUS := "P"
+		ZZR->ZZR_QTDREQ +=  aDadosZZR[x][4]
+		ZZR->ZZR_VALREQ +=  aDadosZZR[x][5]
+		ZZR->ZZR_QTDDEV +=  aDadosZZR[x][6]
+		ZZR->ZZR_VALDEV +=  aDadosZZR[x][7]
+		ZZR->ZZR_NUMSEQ :=  ZZR->ZZR_NUMSEQ+''+aDadosZZR[x][3]
+		ZZR->(MsUnLock())
+	EndIF
+Next x
 
+IF lInvOK == .T.
+	U_MsgColetor("Inventário processado SEM alteração da quantidade total em estoque.")
+ELSE
+	U_MsgColetor("Inventário processado COM alteração da quantidade total em estoque.")
+	//lRetTelaBE :=.F.
+ENDIF
 
-//If! Empty(_aLog)
-//	IF _nTotItem <> _aCols[_nI][7]
-//	  fOkEmail()
-//	  //lRetTelaBE :=.F.
-//	ENDIF
-//EndIf
 
 Return
 
@@ -641,6 +869,9 @@ RETURN
 *---------------------------------------------------------------------------------------------
 Static Function fOkBloq()
 *---------------------------------------------------------------------------------------------
+Local aRecSB7    := {}
+Local aDadosINV  := {}
+Local aDadosZZR  := {}
 Close(oDlgBE)
 //nQtdNaoZero := 0
 _aEndBlq :={}
@@ -654,7 +885,7 @@ Do While.Not.Eof()
 	If Marked("MARCA")
 		SB1->(dbSetOrder(1))
 		If SB1->(dbSeek(xFilial("SB1")+TRB->PRODUTO))
-			_cDocInv := "INV"+cPerInv//Soma1(GetMV(_cParametro))
+			_cDocInv := "INZ"+cPerInv//Soma1(GetMV(_cParametro))
 			//PUTMV(_cParametro,_cDocInv )
 			
 			_aInvent:={}
@@ -664,6 +895,7 @@ Do While.Not.Eof()
 			Aadd(_aInvent,{"B7_LOCAL"   ,TRB->LOC             ,Nil})
 			Aadd(_aInvent,{"B7_TIPO"    ,SB1->B1_TIPO         ,Nil})
 			Aadd(_aInvent,{"B7_DOC"     ,_cDocInv             ,Nil})
+			Aadd(_aInvent,{"B7_NUMDOC"  ,_cDocInv             ,Nil})
 			Aadd(_aInvent,{"B7_QUANT"   ,0                    ,Nil})
 			Aadd(_aInvent,{"B7_DATA"    ,dDataBase            ,Nil})
 			Aadd(_aInvent,{"B7_LOTECTL" ,TRB->LOTE            ,Nil})
@@ -736,6 +968,10 @@ Do While.Not.Eof()
 						
 						U_MsgColetor("Erro bloqueio do endereco.(D3)")
 					Else
+						nPos  := aScan(aRecSB7,{|x| x[1]==SB7->(RECNO())})					        
+						If Empty(nPos)
+                    		aadd(aRecSB7,{SB7->(RECNO())})             
+						EndIf
 						aAdd(_aEndBlq,{TRB->LOC,TRB->ENDERECO})
 					EndIf
 				Else
@@ -761,6 +997,70 @@ lRetTelaBE := .F.  //MLS 28/10/15
 If lNaoZero
 	U_MsgColetor("O produto dever ser inventariado ou zerado em todos os endereços com saldo.")
 EndIf
+
+
+SB7->(DBSETORDER(1))
+SD3->(DBSETORDER(2))
+For x := 1 to len(aRecSB7)
+    SB7->(DBGOTO(aRecSB7[x][1]))
+    If aRecSB7[x][1] == SB7->(RECNO())
+        If SD3->(DBSeek(xFilial("SD3")+SB7->B7_DOC+SB7->B7_COD))
+            While SD3->(!EOF()) .AND. SB7->B7_DOC == SD3->D3_DOC .AND. SB7->B7_COD== SD3->D3_COD
+                If SD3->D3_EMISSAO == SB7->B7_DATA .AND. SD3->D3_LOCAL == SB7->B7_LOCAL
+                    AADD(aDadosINV, {SD3->D3_COD, SD3->D3_LOCAL, SD3->D3_NUMSEQ, SD3->D3_TM, SD3->D3_QUANT, SD3->D3_CUSTO1} )
+                EndIf
+            SD3->(DBSKIP())
+            Enddo
+        Else
+            AADD(aDadosINV, {SB7->B7_COD, SB7->B7_LOCAL, '', '', '', ''} )    
+        EndIf
+    EndIf
+Next x
+
+
+For x := 1 to len(aDadosINV)
+
+    nPos  := aScan(aDadosZZR,{|x| Alltrim(x[1])==alltrim(aDadosINV[x][1]) .AND. Alltrim(x[2])==alltrim(aDadosINV[x][2]) })
+
+    If !Empty(nPos)
+        If aDadosINV[x][4] == '999'
+           aDadosZZR[nPos][3] += "','"+aDadosINV[x][3] 
+           aDadosZZR[nPos][4] += aDadosINV[x][5] 
+           aDadosZZR[nPos][5] += aDadosINV[x][6] 
+        ElseIf aDadosINV[x][4] == '499'
+          aDadosZZR[nPos][3] += "','"+aDadosINV[x][3] 
+          aDadosZZR[nPos][6] += aDadosINV[x][5] 
+          aDadosZZR[nPos][7] += aDadosINV[x][6]         
+        EndiF
+    Else
+        If aDadosINV[x][4] == '999'
+            //                Produto         Local           NUMSEQ            QTD REQ          VLR REQ         QTD DEV   VLR DEV
+            aadd(aDadosZZR, {aDadosINV[x][1], aDadosINV[x][2], aDadosINV[x][3], aDadosINV[x][5],aDadosINV[x][6], 0, 0 })
+        ElseIf aDadosINV[x][4] == '499'
+            aadd(aDadosZZR, {aDadosINV[x][1], aDadosINV[x][2], aDadosINV[x][3], 0, 0, aDadosINV[x][5], aDadosINV[x][6] })
+        Else
+            aadd(aDadosZZR, {aDadosINV[x][1], aDadosINV[x][2], '',0, 0, 0, 0 })
+        EndiF
+    EndiF
+
+Next x
+
+ZZR->(DbsetOrder(3))
+For x := 1 to len(aDadosZZR)
+	If ZZR->(Dbseek(xFilial("ZZR") + cPerInv + aDadosZZR[x][1] + aDadosZZR[x][2]))
+		Reclock("ZZR",.F.)		
+		ZZR->ZZR_DTREAL := DDATABASE		
+		ZZR->ZZR_QTDAJU += aDadosZZR[x][6] - aDadosZZR[x][4]
+		ZZR->ZZR_VALAJU += aDadosZZR[x][7] - aDadosZZR[x][5]
+		ZZR->ZZR_STATUS := "P"
+		ZZR->ZZR_QTDREQ +=  aDadosZZR[x][4]
+		ZZR->ZZR_VALREQ +=  aDadosZZR[x][5]
+		ZZR->ZZR_QTDDEV +=  aDadosZZR[x][6]
+		ZZR->ZZR_VALDEV +=  aDadosZZR[x][7]
+		ZZR->ZZR_NUMSEQ :=  aDadosZZR[x][3]
+		ZZR->(MsUnLock())
+	EndIF
+Next x
 
 Return
 
@@ -840,7 +1140,7 @@ _aCampos := {}
 AADD(_aCampos,{"ETQ"     ,"" ,"Etiqueta"    ,"@R"              } )
 AADD(_aCampos,{"QTD"     ,"" ,"Quant."      ,"@E 999,999.9999" } )
 
-oMark:= MsSelect():New("TMP",,,_aCampos,Nil,Nil,{64,00,127,117})
+oMark:= MsSelect():New("TMP",,,_aCampos,Nil,Nil,{82,00,127,117}) //64,00,127,117
 oMark:oFont:= TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 oMark:oBrowse:oFont:= TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 oMark:oBrowse:Refresh()
@@ -1068,9 +1368,9 @@ Local _cPassAut  := AllTrim(GetMv("MV_RELAPSW",,_cPassword))
 Local _cServer   := AllTrim(GetMv('MV_RELSERV'))
 PRIVATE _nEND    :=0
 
-_cPara := "luciano.silva@rdt.com.br,denis.vieira@rosenbergerdomex.com.br,sergio.santos@rosenbergerdomex.com.br"
-_cPara += ",carlos.sepinho@rosenbergerdomex.com.br,eder.augusto@rosenbergerdomex.com.br" //mls 27/08/2015
-_cPara += "helio@opusvp.com.br"
+//_cPara := "luciano.silva@rdt.com.br,denis.vieira@rosenbergerdomex.com.br,sergio.santos@rosenbergerdomex.com.br"
+//_cPara += ",carlos.sepinho@rosenbergerdomex.com.br,eder.augusto@rosenbergerdomex.com.br" //mls 27/08/2015
+_cPara := "jonas@opusvp.com.br"
 
 _cSubject:="ERP Protheus - Inventario Coletor "
 

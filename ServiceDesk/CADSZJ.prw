@@ -46,7 +46,7 @@ User Function CADSZJ(__cTipo)
 		cCodTec := AllTrim(GetMv("MV_XUSRMAN")) // USUARIOS MANUTENÇÃO
 	ElseIf cTipoHlp == "3"
 		cCodTec := AllTrim(GetMv("MV_XUSRENG")) // USUARIOS ENGENHARIA
-	Else
+	ElseiF cTipoHlp == "4"
 		cCodTec := AllTrim(GetMv("MV_XUSRQLD")) // USUARIOS QUALIDADE
 	EndIf
 
@@ -884,6 +884,7 @@ Static Function fCriaSX3()
 	Local aCampos    := {}
 	Local i          := 0
 	Local j          := 0
+	Local x 		 := 0
 	Local lCriaPerg  := .F.
 
 	Local cStatus    := "P=Chamado Novo;A=Em Atendimento;F=Fechado"
@@ -1320,7 +1321,7 @@ Static Function fGDInter(hcOpc,nPosFolder,oGdInter)
 	Local aCpoItem       := {}                                              // Array com os campos que deverão ser tratados quando rotina de inclusão
 	Local aHead          := {}                                              // Array do aHeader
 	Local aCols          := {}                                              // Array do aCols
-
+	Local x    			 := 0
 //============================================================
 //Monta MsNewGetDados
 //============================================================
@@ -1398,7 +1399,7 @@ Static Function fGDAnexo(hcOpc,nPosFolder,oGdAnexo)
 	Local aCpoItem       := {}                                              // Array com os campos que deverão ser tratados quando rotina de inclusão
 	Local aHead          := {}                                              // Array do aHeader
 	Local aCols          := {}                                              // Array do aCols
-
+	Local x				 := 0
 //============================================================
 //Monta MsNewGetDados
 //============================================================
@@ -2254,6 +2255,7 @@ User Function fEnviaWf(cChamado,nOpc)
 	Local aEmails  := {}
 	Local aTecEng  := {}
 	Local n 	   := 0
+	Local x		   := 0
 	Default nOpc   := 0
 	
 	PRIVATE cTipoHlp  :='1' // MLS ERRO SCHEDULER variable does not exist CTIPOHLP on U_FENVIAWF(CADSZJ.PRW) 01/03/2021 16:08:46 line : 2276
@@ -2711,7 +2713,8 @@ Return
 
 Static Function BotaoOK()
 	Local aVetorIn := {}
-
+	Local n			:=0
+	Local x			:= 0
 	If "'" $ cDescricao
 		MsgStop("Não é possível abrir chamados com o caracter aspas simples (')")
 	Else

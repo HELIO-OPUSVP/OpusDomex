@@ -83,7 +83,7 @@ User Function DOMEST03()
 	SA2->(dbSeek(xFilial("SA2")+SD1->D1_FORNECE+SD1->D1_LOJA))
 
 	nQtdSD1 := SD1->D1_QUANT
-
+  
 	@ 001,001 To 400,400 Dialog oDlg Title "Impressao das Etiquetas Pre-Nota: "+SD1->D1_DOC+"-"+SD1->D1_SERIE
 	@ 005,010 Say "Codigo: "+SD1->D1_COD        Pixel
 	@ 015,010 Say "Descricao: "+SB1->B1_DESC    Pixel

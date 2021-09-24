@@ -17,6 +17,8 @@
 
 User Function AfterLogin()
 
+//ALERT("Teste Jonas")
+
 //Corrigi estornos no SD5
 U_DOMESTD5()   // Não pode retirar. Este programa deleta os registros no SD5 que estejam com D5_ESTORNO = 'S'
 

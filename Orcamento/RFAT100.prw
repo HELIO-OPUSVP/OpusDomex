@@ -176,6 +176,7 @@ If (SCK->(DbSeek(xFilial("SCK")+SCJ->CJ_NUM)))
 		//Else
 		//	nPag:= Int(nCalcPag) + 1	
 		//EndIf
+		//Osmar Chamado 027054
 		nCalcPag := Int((cAliasSCK)->QTDE  / 6,0) 
 		If (nCalcPag * 6) = (cAliasSCK)->QTDE
 			nPag := nCalcPag + 1

@@ -1,22 +1,29 @@
+
+
 #include "protheus.ch"
 #include "rwmake.ch"
 
+
+User Function DOMET117(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
 //--------------------------------------------------------------
-/*/{Protheus.doc} DOMET116 (COPIA DOMETI06 -LAYOUT 004 PARA IMPRESSÃO NA ROTINA PA2)
-Description ETIQUETA TELEFÔNICA 
+/*/{Protheus.doc} DOMET117 
+Description ETIQUETA TELECOM ARGENTINA - EM ESPANHOL
 @param xParam Parameter Description
 @return xRet Return Description
 @author  -
-@since 06/09/2021
+@since 07/09/2021
 /*/
 //-------------------------------------------------------------
-User Function DOMET116(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
 
 	Local aPar       := {}
 	Local aRet       := {}
 	Local nVar       := 0
+
+	Local cRotacao   := "N"      //(N,R,I,B)
+
 	Local mv_par02   := 1         //Qtd Embalagem
 	Local MVPAR03   := 1         //Qtd Etiquetas
+
 	Local aRetAnat   := {}        //Codigos Anatel, Array
 	Local aCodAnat   := {}        //Codigos Anatel, Array
 	Local cCdAnat1   := ""        //Codigo Anatel 1
@@ -47,6 +54,7 @@ User Function DOMET116(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	Endif
 
 	If !Empty(cNumOP)
+
 		//Localiza SC2
 		SC2->(DbSetOrder(1))
 		If lAchou .And. SC2->(!DbSeek(xFilial("SC2")+cNumOP))
@@ -136,6 +144,8 @@ User Function DOMET116(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			Alert("Cliente "+SC5->C5_CLIENTE+"/"+SC5->C5_LOJACLI+" não localizado!")
 			lAchou := .F.
 		EndIf
+
+
 	EndIf
 
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
@@ -164,7 +174,9 @@ User Function DOMET116(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	cSemana := WEEK->SEMANA
 	cYY     := SUBSTR(cSemana,3,2)
 	cWW     := StrZero(Val(SubStr(cSemana,5,2)),2)
+
 	WEEK->(dbCloseArea())
+
 
 	If lAchou
 		aRetAnat := U_fCodNat(SB1->B1_COD)
@@ -224,7 +236,7 @@ User Function DOMET116(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		lAchou := .F.
 	EndIf
 
-	//Valida se Campo PN está preenchido
+	//Valida se Campo PN HUAWEI está preenchido
 	If !Empty(SC2->C2_PEDIDO)
 		If lAchou .And. Empty(SC6->C6_SEUCOD)
 			Alert("Campo PN não está preenchido no Item do Pedido de Vendas! "+Chr(13)+Chr(10)+"[C6_SEUCOD]")
@@ -244,6 +256,7 @@ User Function DOMET116(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	If !lAchou
 		Return(.f.)
 	EndIf
+
 
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄxÔ[¿
 	//³Busca último número de série							³
@@ -285,6 +298,7 @@ User Function DOMET116(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		Next _nX
 
 		For __nEtq := 1 To MVPAR03
+
 
 			If __nEtq > 1
 				_cProxPeca := U_IXD1PECA()
@@ -343,50 +357,45 @@ User Function DOMET116(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 
 			SB1->(dbSeek(xFilial("SB1")+cProdOP))
 
-			MSCBBEGIN(1,5)
+
 			AADD(_aArq,'CT~~CD,~CC^~CT~'+ CRLF)
-			//	AADD(_aArq,'^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR2,2~SD28^JUS^LRN^CI0^XZ'+ CRLF)
+			AADD(_aArq,'^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR6,6^JUS^LRN^CI0^XZ'+ CRLF)
 			AADD(_aArq,'^XA'+ CRLF)
 			AADD(_aArq,'^MMT'+ CRLF)
 			AADD(_aArq,'^PW945'+ CRLF)
 			AADD(_aArq,'^LL0709'+ CRLF)
 			AADD(_aArq,'^LS0'+ CRLF)
-			AADD(_aArq,'^FO384,64^GFA,01536,01536,00016,:Z64:'+ CRLF)
-			AADD(_aArq,'eJzN1DFuwyAUBuBYDGylB6jCRSxzpY4ZIuFMPUYuEjWOPGTMEYqVwaNTdXFlK688avDDatNEXcLkbwD+9wDPZnc6dBuRA+TUCsBQAwCdwKzPxNIa4unRgkgoAhPncQPufAoWzuOGqtWRtZvRB7duxRAoMW7HYG6TaBLwYUjs/TTYB34cIpAC3IZTF8TsChvi5D9uYwubjFrZL2psHXGCrSNm2CpiLI3ateKCsXUFMR5+wWKbC8ajOU3Nb7S40fIPq/H8frT+3a4+8gDQFTFutZu4JMaoL+RBTY2lC2I8P0nuO56vovd/iBesvuOF92PvT+TZcxL78mArc1oAfBqfb1VZN8FiV5kemm70e9VLwbxlaT2XrPDxyu44cdlnc+6tS9hvMll7d/vtYZOqOh/8UW8PaZrx3LejXq/7ZSqoz6PZsRGv2SIVvpyyEZtsoQ/D/4ZbL63f4j/mdeMLGRXtbA==:BDC0'+ CRLF)
-			AADD(_aArq,'^FO32,64^GFA,03456,03456,00036,:Z64:'+ CRLF)
-			AADD(_aArq,'eJztlDFr20AUx9/JEgVBsQM+NHrXHjzqDPoAMlhDh0I+ggMx3srhDIEsnTpXaDruSzRfokM3hw4dm9JFaYOu750tWwZdlLFDng77nvz81+/+73QAr/Ea/0XEumhloeyq4XzcygKHju7V8dO0nbl0Wv918MC8lbFuHRn36vj2AoQSOPxU0NTHxBf2VqOji1DLWHtah1p5uojjuCxiFTbWceCMjzh+jYNgHPAR4zAe8zPgo4AfeTZaodtab0iHpGJt87BZsQ+pL1IESH20aj+lifAJrvEnLHXslTrc2Cl+7e/dNjp8vmAi48CyYJbxQCw4LHLI2CwLWHbwWYUyjqVXhJsipikoHF5ZhLdF4w89Gx9tvfHRKwRM0SMhDjiWB/+sS63LnY7WVkfrgw6HHL0J0CQeAA3OR2MYM5sf/bmVMehSqb2O2vEodeQhArwEdWjHAzse27GWjofr8Lz9ugBlQ8zDIw+ZAmyeARPcWgUZzM9mlB900Af0uVDWnwJXiTzYLxWe8KBF1CjrE3UqJTzKjzpN34mH9g/plNT3Fs9uq+AH+WT3D7AZ7aejP7gW6WkIFekgA25JAGyfOujsmPb7ucmAtraAdng0mosGlF5h58/F6OCNO+L2y+sIP+0tQZ3+GjZ69uek7kfh+V1vTWKq3prp+uoFOnU/D8v7dcBADUU1lINtsu3WPIcVW7HLdXTBr/ismy2B5Nrc/zXmIamH37vXSC9KPsvzPMu/4lHi0vn485cxpqqTm98PnTVTiCJ2eRXNlg/RYH3RrSOTz/LxaSKranhtti6eT/ANX9c5nmy5cPF8kY/VRD4ac2ekg2cawWrJ4XK1EuvOkj0P2lz90dLcOXjwYHuPPO/w5HDymInlqSpv4FjXlK3Rn2UEyyUM1stuHYNt+kU89fDmR7fPPF9gv5Any/O3rn6ZamDuiScxrr6frwTuH/Rn+cz+QW9rRjzDKpFPnTWnsei8653MP7xAx9GwUzrZX8NFf81k21/z5qK/ZvgCnaC7YafP6j+MYNC9gV7jEP8A2BorUg==:0F0C'+ CRLF)
-			AADD(_aArq,'^FT337,228^A0N,46,48^FH\^FD'+StrZero(MVPAR02,4)+' Unidade(s)^FS'+ CRLF)
+			AADD(_aArq,'^FO768,640^GFA,01280,01280,00020,:Z64:'+ CRLF)
+			AADD(_aArq,'eJzt0TFuwkAQheFZAt5IQcF0g7RRlBuYziW5ybpKa3cUEUzEJXKc2SOkT2H6FCndwe4sFhbZE0Cmsj49/ZJtgP+75tMJywbPU0B9oIEphndYXxjBj+rgbtjzu2+FYsOd78FIbOK4NorfOrFMbNay3X7QycbSy2tuvhxVBMabib3cVrQPFnb30dC+UsUVi512nXXw0u9QerprHDR9r5DdFIsdLPtdNMT5Dpq+Z8VyXKhzz0qv8EZ+F3sr2ZXlg6KW27hjMbOegeN97Klg+vD8+Qhb2lh5X/91gmnM4AmMrUNPnf/D30sZJqxM2G/COGG3fkeZk0f8:BCE4'+ CRLF)
+			AADD(_aArq,'^FO0,640^GFA,03328,03328,00052,:Z64:'+ CRLF)
+			AADD(_aArq,'eJzt1D9vEzEYBvDXsoqX4mPM4Ob4CJUYuOFI+QCsXSF8AyMklCEQRwwdkMrKwIdxxJABqYIBiaGDESMSum4Zqprntc+XMhYkBhSr6p/r/fTksd87ot36X5Z69Admc3OzN7u5+dvVjElTS8ILL12MYUKGxrjekXL8pck2VMVVoIBrvalprGLHpr6I8Xv8ZKgm3EWLS1KeFt62bDoK4prR6uOGzVEH86PL5q2fX1HlKfqcA0Nl61o2NGdj71CQ3hq6T6RFsDXdxtWHyNEkOOfrkONgxmwCwbjG0D0YClbRPjpyH5gNzLtiDvxYUQ2z8iSQ0xp6js8mLMyBV8lUJM5FEO+3BjkqG84ZwaTtstKZoKjPOcf/imlNYLMsxhtDz3wyypkpm9Tn7JppkpGDcTBPS85oOuSw0UOOHfem4z5sLjwacJ/GDn3WIqjxkDNDjlgO+4Y+33zaNwkz7NuagtrmzNms+HxSH+w1PqXGnwpZwvd91i4oNeS0xcxTDs4UiRq/aDpscJY554Pj3sWYcW9q7rPqDDfDvNkD3C5e9jO6WoVqa3TJwXQFGb0RLlB1RYsNTUd05JJZ+hD2Ua7vUxWz1/UGzaonftHR1GC081zDGOVKjir7Rmxee4Mq6ONnGDFD0uc+3gYjt6b0oRn6LDsjI/qIzhoRLzHQnJNMHX0x8jSfqaeG943NJp2PpniFrexzmq1pjTgrxuTnRx3P0uxo8eUxRiefjzfhwfGQk4zzwiXjDg1mJplbwms2TW8a8ZtR/OSQ4e8zGJPnTXiVTZWM3Rr6qXARCTTKz6mG0TS1SjqYaZ+jg8Uroe9DLxQudvh3m+ctm9Cb0PdR08Eg55XC3ZjIvG9sdJ5r6eR231SYIrPkTJSY07wWn21+fvilWPFco+eJ8H0fic9mbcmZqDcdTVoRA/VG4/3mrDwheRKdPYpV/AYTyG5KDt6jnupLEX1+H2DI0lzDiDV+ZiPYDDmaX5CC3wGcs28aGIkb5CkffzEUMCh3abd2a7d261+vX2Mriew=:66FE'+ CRLF)
+			AADD(_aArq,'^FO32,32^GFA,05376,05376,00056,:Z64:'+ CRLF)
+			AADD(_aArq,'eJztVrGO4kgQrQYhnywhzQQjR/4B/wDRSL5oUwKgIyT2DwjQOPWsdMn+w0nWRlZ/BRdMzgYrEdC79wmXXHjSvVc2xp71wizBRhTQlLvb/fz6VZVb5GY3u9nNbvarLciyrK/f9PaeLHTOFX0DLj9739h7f+jD8+fvI567Ao/8+qi8hV/v0m/g57c9eG/hV/w8XmBhaQ+ePXsb8PC9Am/sQWXXg3eRH5a+Ai+ATtlaog0lS3G9YW+Wmux3KoghkdFK1dRxCTp4iaNbsskBhR73gYjoCsuwGOBKBpxXJPmRnyx3hhouPX2Pixe/N/5P0B6ha3xYbmP/cpAYgRx/rnlXeANqqIHjgOA+Hhuom4clQNwnh2fCr6h5B9DJTqHi1FBIODM6CzYziaxdBXObskfQyMTaNr9QYbD4gNnh6qYkRBGWrjj25Mkn1/Az/u8YSWj8vx5E/vOGIWs0L0F5jwj+y+s4NuHxS4cf1nUDbmPosKHuBFokJZ5F8XQ8OSZPkM1tlmabKIOS2TramMwwJQ18NGm0QYa+z1bZk45Pjsla5V9SqkLYuJLqlWGFLdxNzACpEHgcdw0/mCr4B9SDI2CzG/lnv2Ujo69jenl8iKHeLvbSwpMmPpJCo4Vc8jpIQnrACxk6ybEWMf+mYlfGvrOIRbsS+96mQ2vYBAsJFlCY30U0lWg6mbXwyIl4peIxJBRPjnho+K94ZX3fuBJrayjSPxQMznYIajnjFDY+IEzxjSni477NL6+SoFatjQdr8PhkDV5QiZUi5eDwB7XSIbqQb+94GTwxSYOnCP5msm7wEIS6OLUpzuAlHbwxHx2MhLHpdyT0uZffQfnFJ35SL85cOIf3ip9FqYRi0AvZNmUpNZV++Id+mLFo9BOZTE94QgSpqgn0E2nrVz+RaLxA3xY/Sgf9tojO/XLL0omrZzYassqP8Ulqj7suXqF4SQdv0MLLX+Np/VxlqyHzKlqzXppKvzRgSmpFRTJmTyyx0taP0lUVkqWriU90DejpjGpfO/HJpFtCHYgU7+N9zfbZI9fAdPwV/LTY1OMtPKZxwsVRTDTfFQ9drHTlEY/jRVs/1E/UycXQztWxtX5aMud2RhF5EdjMph39Eq2fLJ10Gryqfioe67WOv+KH98Be6+PomI3PcPZMxx344dXw4qv6uevgDbr1usEL9RE460Ndrzv6rVEyV8KDDJx1rV+ELmRnyjei2SALs+ypqx+LJsIldMqkqPE+ogvwOkOqEC1P8TK6F3m4ExRHRCEe/gHx+iDmHp9vGF4iOO903kHPAfd30jVEp/wm31te/wOvd/ysmbkEs8vTvje+J664DYrGfYfUy3inQPkpg7Try7N68H5wCL9ky94z6mUL+8/EFy2wF46jP7CBu2o7oeB1t93sZr/e/gcZY+J3:2C5E'+ CRLF)
+			
+			AADD(_aArq,'^FT71,222^A0N,37,36^FH\^FDIDENTIFICACI\E3N ID:^FS'+ CRLF)
+			AADD(_aArq,'^FT406,262^A0N,42,38^FH\^FD'+alltrim(SC6->C6_SEUCOD)+'^FS'+ CRLF)
+			AADD(_aArq,'^BY2,3,48^FT406,217^BCN,,N,N'+ CRLF)
+			AADD(_aArq,'^FD>:'+alltrim(SC6->C6_SEUCOD)+'^FS'+ CRLF)
 
-			lTelefonic := If ((("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))),.T.,.F.)
-			if !Empty(SB1->B1_XMODELO) .AND. lTelefonic
+			AADD(_aArq,'^FT71,413^A0N,37,36^FH\^FDN\E9MERO OE/NPA: '+SC2->C2_PEDIDO+'^FS'+ CRLF)
+			AADD(_aArq,'^FT71,327^A0N,37,36^FH\^FDMARCA Y MODELO: ROSENBERGER Y '+Alltrim(SB1->B1_COD)+'^FS'+ CRLF)
 
-				XD6->(dbSetOrder(1))
-				If XD6->(dbSeek(xFilial()+SB1->B1_XMODELO))
-					AADD(_aArq,'^FT715,579^BQN,2,3'+ CRLF)
-					AADD(_aArq,'^FDMA,'+alltrim(XD6->XD6_LINK)+'^FS'+ CRLF)
-				Else
-					msginfo("Não existe Link para o produto Cadastrado na XD6. O código DATAMATRIX não será impresso.", "Atenção")
-				Endif
-			Endif
+			AADD(_aArq,'^FT71,531^A0N,37,36^FH\^FDCANTIDAD:^FS'+ CRLF)
+			AADD(_aArq,'^FT406,561^A0N,42,38^FH\^FD'+cValtochar(MVPAR02)+'^FS'+ CRLF)
+			AADD(_aArq,'^BY2,3,48^FT406,516^BCN,,N,N'+ CRLF)
+			AADD(_aArq,'^FD>:'+cValtochar(MVPAR02)+'^FS'+ CRLF)
 
-			AADD(_aArq,'^FO22,37^GB901,631,2^FS'+ CRLF)
-			AADD(_aArq,'^BY3,2,69^FT590,126^BEN,,Y,N'+ CRLF)
-			AADD(_aArq,'^FD'+XD1->XD1_XXPECA+'^FS'+ CRLF)
-
-			AADD(_aArq,'^FT40,267^A0N,29,28^FH\^FD'+U_fTratTxt(SB1->B1_DESC)+'^FS'+ CRLF)
-			AADD(_aArq,'^FT40,304^A0N,29,28^FH\^FDPN RDT: '+SB1->B1_COD+'^FS'+ CRLF)
-			AADD(_aArq,'^FT40,341^A0N,29,28^FH\^FD'+U_fTratTxt(SA1->A1_NREDUZ)+" - "+U_fTratTxt(SC6->C6_SEUCOD)+'^FS'+ CRLF)
-			AADD(_aArq,'^FT40,379^A0N,29,28^FH\^FDPED.CLIENTE: '+U_fTratTxt(SC5->C5_ESP1)+'^FS'+ CRLF)
-			AADD(_aArq,'^FT40,416^A0N,29,28^FH\^FDITEM DO PEDIDO: '+U_fTratTxt(SC6->C6_SEUDES)+'^FS'+ CRLF)
-
-			AADD(_aArq,'^FT715,446^A0N,29,28^FH\^FDSEMANA: '+cWW+'/'+cYY+'^FS'+ CRLF)
-
-			If !Empty(SC6->C6_XXSITE)
-				AADD(_aArq,'^FT59,611^A0N,29,28^FH\^FDSITE:' + SC6->C6_XXSITE+'^FS'+ CRLF)
-			Endif
-			AADD(_aArq,'^FT55,653^A0N,29,28^FH\^FDINDUSTRIA BRASILEIRA^FS'+ CRLF)
-			AADD(_aArq,'^FT766,651^A0N,29,28^FH\^FDLayout 116^FS'+ CRLF)
 			AADD(_aArq,'^PQ1,0,1,Y^XZ'+ CRLF)
+
+
+			// AADD(_aArq,'^FT337,228^A0N,46,48^FH\^FD'+StrZero(MVPAR02,4)+' Unidade(s)^FS'+ CRLF)
+			// AADD(_aArq,'^FD'+U_fTratTxt(XD1->XD1_XXPECA)+'^FS'+ CRLF)
+			// AADD(_aArq,'^FT40,267^A0N,29,28^FH\^FD'+U_fTratTxt(SB1->B1_DESC)+'^FS'+ CRLF)
+			// AADD(_aArq,'^FT40,304^A0N,29,28^FH\^FDPN RDT: '+SB1->B1_COD+'^FS'+ CRLF)
+			// AADD(_aArq,'^FT40,341^A0N,29,28^FH\^FD'+U_fTratTxt(SA1->A1_NREDUZ)+" - "+U_fTratTxt(SC6->C6_SEUCOD)+'^FS'+ CRLF)
+			// AADD(_aArq,'^FT40,379^A0N,29,28^FH\^FDPED.CLIENTE: '+U_fTratTxt(SC5->C5_ESP1)+'^FS'+ CRLF)
+			// AADD(_aArq,'^FT40,416^A0N,29,28^FH\^FDITEM DO PEDIDO: '+U_fTratTxt(SC6->C6_SEUDES)+'^FS'+ CRLF)
+			// AADD(_aArq,'^FT715,446^A0N,29,28^FH\^FDSEMANA: '+cWW+'/'+cYY+'^FS'+ CRLF)
 
 			AaDd(aCodEtq,_aArq)
 
@@ -406,7 +415,6 @@ User Function DOMET116(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		Next __nEtq
 
 		MSCBCLOSEPRINTER()
-
 
 	EndIf
 
