@@ -216,7 +216,7 @@ User Function EICFLWUP()
 	nUsado	:= len(aHeader)
 	aAdd(aCols,Array(nUsado+1))
 
-	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V2.0")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
+	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V2.3")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
 
 	@ 032, 003 GROUP oGroup1 TO 092, 649 PROMPT "Filtros" OF oDlg COLOR 0, 16777215 PIXEL
 
@@ -845,6 +845,32 @@ Static Function Atu_aCols2()
 			ENDIF
 		ENDIF
 
+		//------------------
+	 /*
+	 SELECT TOP 3 * FROM TRANSIT_TIME
+
+     YR_ORIGEM YR_VIA YQ_COD_DI       YR_TRANS_T
+     --------- ------ --------------- ----------------------
+     BOM       03     1-Maritimo      45
+     BUS       03     1-Maritimo      60
+     GOT       03     1-Maritimo      45
+     */
+		cQRYTIME :=" SELECT YR_TRANS_T FROM TRANSIT_TIME "
+		cQRYTIME +=" WHERE YR_ORIGEM='"+alltrim(TRB->W2_ORIGEM)+"' AND  SUBSTRING(YQ_COD_DI,1,1)='"+SUBSTR(cMODAL,1,1)+"' "
+		If Select("TR8") > 0
+			TR8->(dbCloseArea())
+		EndIf
+		dbUseArea( .T.,"TOPCONN", TcGenQry( ,,cQRYTIME ), "TR8", .F., .T. )
+		nTRSTIME:=TR8->YR_TRANS_T
+		If Select("TR8") > 0
+			TR8->(dbCloseArea())
+		EndIf
+		//IF cHAWB=='IMP 4690/21'
+		//  MSGALERT(TRB->W2_ORIGEM +' '+ cMODAL+ '  '+STR(nTRSTIME))
+		//  MSGALERT(cQRYTIME)
+		//ENDIF
+		//------------------
+
 		IF !EMPTY(cimp) .and. lGRAVA==.T.
 			IF ALLTRIM(CIMP)$ALLTRIM(cHAWB)
 				lGRAVA:=.T.
@@ -959,6 +985,41 @@ Static Function Atu_aCols2()
 			EndIf
 		ENDIF
 
+
+//------------Data coleta pelo embarque SW6-----------------------------
+		cQRYTIME :=" SELECT YR_TRANS_T FROM TRANSIT_TIME "
+		cQRYTIME +=" WHERE YR_ORIGEM='"+alltrim(TRB->W2_ORIGEM)+"' AND  SUBSTRING(YQ_COD_DI,1,1)='"+SUBSTR(cMODAL,1,1)+"' "
+		If Select("TR8") > 0
+			TR8->(dbCloseArea())
+		EndIf
+		dbUseArea( .T.,"TOPCONN", TcGenQry( ,,cQRYTIME ), "TR8", .F., .T. )
+		nTRSTIME:=TR8->YR_TRANS_T
+		If Select("TR8") > 0
+			TR8->(dbCloseArea())
+		EndIf
+
+		IF !EMPTY(cHAWB)
+			SW6->( dbSetOrder(RetOrder("SW6","W6_FILIAL+W6_HAWB")) )
+			If SW6->( dbSeek( xFilial() + cHAWB ) )
+				dTEMB   := SW6->W6_DT_EMB
+
+				dDTPCOL := DaySum((SW6->W6_DT_EMB), nTRSTIME)
+				dDTPCOL := DataValida(dDTPCOL,.T.)
+
+				IF nTRSTIME<=0
+					MSGALERT('Transit Time Origem '+TRB->W2_ORIGEM+' Modal '+cMODAL+' = '+STR(nTRSTIME))
+				endif
+
+			EndIf
+		ENDIF
+
+
+		//IF alltrim(cHAWB)=='IMP 4690/21'
+		//  MSGALERT(TRB->W2_ORIGEM +' '+ cMODAL+ '  '+STR(nTRSTIME))
+		//  MSGALERT(cQRYTIME)
+		//ENDIF
+		//-----------------------------------------------------------------------
+
 		nSLDIMP:=0
 
 		cQRYIMP := " SELECT SUM(W5_QTDE) AS XQTDIMP FROM "+RETSQLNAME('SW5')+"  "
@@ -990,8 +1051,6 @@ Static Function Atu_aCols2()
 			dPRVRDT := DaySum(STOD(TRB->W3_XPRALER) , 3)
 			dPRVRDT := DataValida(dPRVRDT,.T.)
 		ENDIF
-
-
 
 //SELECT W5_QTDE,* FROM SW5010  WHERE W5_HAWB='IMP 4612/21' AND W5_PO_NUM='I0011310' AND W5_COD_I='121F0304L' AND W5_POSICAO='0001'
 //W5_PO_NUM=W2_PO_NUM AND W5_COD_I=W3_COD_I  AND W5_HAWB<>'' AND W5_POSICAO=W3_POSICAO
@@ -1842,3 +1901,5 @@ CASE WHEN ZZT010.ZZT_DTNF='' THEN  '' ELSE (CONVERT(CHAR(10),CONVERT(datetime,ZZ
 FROM Protheus12.dbo.ZZT010 ZZT010
 WHERE (ZZT010.D_E_L_E_T_='')-- AND ZZT010.ZZT_DT_PO>=? And ZZT010.ZZT_DT_PO<=?
 ORDER BY ZZT010.ZZT_PO_NUM
+*/
+

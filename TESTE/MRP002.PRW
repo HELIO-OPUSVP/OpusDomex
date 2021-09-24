@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------------//
 //Empresa...:
-//Funcao....: 
+//Funcao....:  
 //Autor.....: 
 //Data......:
 //Uso.......:
@@ -55,6 +55,7 @@ USER FUNCTION MRP002() //GERACAO DE SC  MRP OFICIAL Filial 01
 	Private cDESCRI  :=SPACE(40)
 	Private cIDMRP   :=SPACE(09)
 	Private dDATA    :=DATE()
+	Private cALTER   :=SPACE(40)
 
 	Private nSALDOI  :=0
 	Private nSALDOF  :=0
@@ -71,7 +72,9 @@ USER FUNCTION MRP002() //GERACAO DE SC  MRP OFICIAL Filial 01
 	Private oDESCRI
 	Private oIDMRP
 	Private oDATA
-
+	
+	Private oAlter // alternativo
+	
 	Private onSLDATU
 	Private oSALDOI
 	Private oSALDOF
@@ -254,7 +257,7 @@ USER FUNCTION MRP002() //GERACAO DE SC  MRP OFICIAL Filial 01
 	DEFINE FONT oFontBRW4 NAME "Arial" SIZE 0,-19 BOLD
 	DEFINE FONT oFontBRW5 NAME "Courier New" SIZE 0,-12 BOLD
 
-	DEFINE MSDIALOG oDlg FROM aSizeAut[7],0 TO aSizeAut[6],aSizeAut[5]  TITLE OemToAnsi("CENTRAL MRP DOMEX V4.5 Filial 01") OF oMainWnd PIXEL
+	DEFINE MSDIALOG oDlg FROM aSizeAut[7],0 TO aSizeAut[6],aSizeAut[5]  TITLE OemToAnsi("CENTRAL MRP DOMEX V4.6 Filial 01") OF oMainWnd PIXEL
 	oDlg:oFont:=oFontBRW3
 //��������������������������������������������������������������Ŀ
 //�Define o cabecalho da rotina                                  �
@@ -279,7 +282,9 @@ USER FUNCTION MRP002() //GERACAO DE SC  MRP OFICIAL Filial 01
 
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*01) SAY OemToAnsi("Data")                                   OF oDlg PIXEL SIZE 040,010 FONT oFontBRW3
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*06) MSGET oData    VAR dData     WHEN(.T.)                  OF oDlg PIXEL SIZE 070,005 FONT oFontBRW3
-
+    // ALTERNATIVO
+	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*17) SAY oAlter  VAR cAlter  OF oDlg PIXEL SIZE 180,010 FONT oFontBRW3 COLOR CLR_RED //180   070
+	
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*46) SAY OemToAnsi("GrpMRP")                                 OF oDlg PIXEL SIZE 040,010 FONT oFontBRW3
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*51) combobox oFilMRP var cFilMRP items aFilMRP              OF oDlg PIXEL SIZE 060,005 FONT oFontBRW3 Valid MRPVAL1('F')
 
@@ -826,10 +831,15 @@ USER FUNCTION MRPCHG01(oGetNEC,oGetSAI,oGetENT)
 		oGetSAI:ACOLS:=aCOLSSAI
 		oGetSAI:forceRefresh( )
 
+        cALTER:=''
 		cPRODUTO:=oGetNEC:ACOLS[nLIN][01]
 		cDESCRI:=POSICIONE('SB1',1,xFILIAL('SB1')+oGetNEC:ACOLS[nLIN][01],'B1_DESC')
 		cIDMRP:=oGetNEC:ACOLS[nLIN][06] //mls
 		dData :=ctod(oGetNEC:ACOLS[nLIN][02] )
+		cALTER:=POSICIONE('SB1',1,xFILIAL('SB1')+oGetNEC:ACOLS[nLIN][01],'B1_ALTER')
+		IF !EMPTY(cALTER)
+		   cALTER :='Alternativo: '+ AllTrim(cALTER)
+		ENDIF   
 
 		//------------------------------------------necessidade total
 		nTSALDOF :=0
@@ -1013,6 +1023,7 @@ USER FUNCTION MRPCHG01(oGetNEC,oGetSAI,oGetENT)
 		oDESCRI :REFRESH()
 		oIDMRP  :REFRESH()
 		oDATA   :REFRESH()
+		oAlter  :REFRESH()
 		oENTRADA:REFRESH()
 		oSAIDA  :REFRESH()
 		oSALDOF :REFRESH()
