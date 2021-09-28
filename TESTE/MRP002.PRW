@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------------//
 //Empresa...:
-//Funcao....:  
-//Autor.....: 
-//Data......:
+//Funcao....:   
+//Autor.....:   
+//Data......:   
 //Uso.......:
 //Versao....:
 //------------------------------------------------------------------------------------//
@@ -72,9 +72,9 @@ USER FUNCTION MRP002() //GERACAO DE SC  MRP OFICIAL Filial 01
 	Private oDESCRI
 	Private oIDMRP
 	Private oDATA
-	
+
 	Private oAlter // alternativo
-	
+
 	Private onSLDATU
 	Private oSALDOI
 	Private oSALDOF
@@ -140,6 +140,47 @@ USER FUNCTION MRP002() //GERACAO DE SC  MRP OFICIAL Filial 01
 	private oMSG4  :=''
 	private oMSG4B :=''
 
+	private cMSG11   :=''
+	private cMSG11B  :=''
+	private cMSG11C  :=''
+	
+	private oMSG11
+	private oMSG11B
+	private oMSG11C
+
+	private	oMSG21 
+	private oMSG21b
+
+	private cMSG21   :=''
+	private cMSG21B  :=''
+
+	private cMSG31  :=''
+	private cMSG31B :=''
+	private oMSG31
+	private oMSG31B 
+
+    private cMSG12   :=''
+	private cMSG12B  :=''
+	private cMSG12C  :=''
+	
+	private oMSG12
+	private oMSG12B
+	private oMSG12C
+
+	private	oMSG22 
+	private oMSG22b
+
+	private cMSG22   :=''
+	private cMSG22B  :=''
+
+	private cMSG32  :=''
+	private cMSG32B :=''
+	private oMSG32
+	private oMSG32B 
+
+
+
+
 	Private cEOL    := "CHR(13)+CHR(10)"
 	Private nQTDITEM :=0
 	Private oQTDITEM
@@ -153,7 +194,7 @@ USER FUNCTION MRP002() //GERACAO DE SC  MRP OFICIAL Filial 01
 		MSGALERT('MRP OFICIAL FILIAL 02 ')
 		U_MRP002C()  // FILIAL 02 OFICIAL
 		RETURN
-    ENDIF
+	ENDIF
 	*----------------------------------------------------------------------------*
 
 	If Empty(cEOL)
@@ -182,18 +223,20 @@ USER FUNCTION MRP002() //GERACAO DE SC  MRP OFICIAL Filial 01
 	private aFilMRP   := {'              ','1 - Estamparia' }
 	private _cTIPOP   :=SPACE(02)
 
-	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||U_MRP002SC()           ,'Aguarde','(F2)Gerar Solicitacao de Compras'  })  },"(F2)Gerar Solicitacao de Compras"  }) //
-	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||MATA110()              ,'Aguarde','Solicitacao de Compras SC'         })  },'Solicitacao de Compras SC'  }) //
-	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||MATA121()              ,'Aguarde','Pedido de Compras PC'              })  },'Pedido de Compras PC'  }) //
-	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||U_MRPSCPC()            ,'Aguarde','(F8)Saldo SCs e PCs'               })  },'(F8)Saldo SCs e PCs'  }) //
-	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||MRPZPRV(oGetSAI,cPRODUTO)       ,'Aguarde','(F9)Zerar Previsao Vendas'         })  },'(F9)Zerar Previsao Vendas'  }) //
+	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||U_MRP002SC()              ,'Aguarde','(F2)Gerar Solicitacao de Compras'  })  },"(F2)Gerar Solicitacao de Compras"  }) //
+	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||MATA110()                 ,'Aguarde','Solicitacao de Compras SC'         })  },'Solicitacao de Compras SC'  }) //
+	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||MATA121()                 ,'Aguarde','Pedido de Compras PC'              })  },'Pedido de Compras PC'  }) //
+	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||U_MRPSCPC()               ,'Aguarde','(F8)Saldo SCs e PCs'               })  },'(F8)Saldo SCs e PCs'  }) //
+	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||MRPZPRV(oGetSAI,cPRODUTO) ,'Aguarde','(F9)Zerar Previsao Vendas'         })  },'(F9)Zerar Previsao Vendas'  }) //
+	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||U_MRPALTER(oGetSAI,cPRODUTO) ,'Aguarde','(F10)Alternativo'                  })  },'(F10)Alternativo'  }) //
 
-	SetKey( VK_F2 , { || U_MRP002SC() } )
-	SetKey( VK_F4 , { || U_MRP002EN() } )
-	SetKey( VK_F6 , { || U_MRP002SA() } )
-	SetKey( VK_F7 , { || U_MRPCHK01(oGetNEC)  } )
-	SetKey( VK_F8 , { || U_MRPSCPC()  } )
-	SetKey( VK_F9 , { || MRPZPRV(oGetSAI,cPRODUTO)     } )
+	SetKey( VK_F2  , { || U_MRP002SC() } )
+	SetKey( VK_F4  , { || U_MRP002EN() } )
+	SetKey( VK_F6  , { || U_MRP002SA() } )
+	SetKey( VK_F7  , { || U_MRPCHK01(oGetNEC)  } )
+	SetKey( VK_F8  , { || U_MRPSCPC()  } )
+	SetKey( VK_F9  , { || MRPZPRV(oGetSAI,cPRODUTO)     } )
+	SetKey( VK_F10 , { || U_MRPALTER(oGetSAI,cPRODUTO)  } )
 
 //----------------------------------------------------------------------------------------------------------------------------
 //NECESSIDADE
@@ -282,9 +325,9 @@ USER FUNCTION MRP002() //GERACAO DE SC  MRP OFICIAL Filial 01
 
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*01) SAY OemToAnsi("Data")                                   OF oDlg PIXEL SIZE 040,010 FONT oFontBRW3
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*06) MSGET oData    VAR dData     WHEN(.T.)                  OF oDlg PIXEL SIZE 070,005 FONT oFontBRW3
-    // ALTERNATIVO
+	// ALTERNATIVO
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*17) SAY oAlter  VAR cAlter  OF oDlg PIXEL SIZE 180,010 FONT oFontBRW3 COLOR CLR_RED //180   070
-	
+
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*46) SAY OemToAnsi("GrpMRP")                                 OF oDlg PIXEL SIZE 040,010 FONT oFontBRW3
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*51) combobox oFilMRP var cFilMRP items aFilMRP              OF oDlg PIXEL SIZE 060,005 FONT oFontBRW3 Valid MRPVAL1('F')
 
@@ -463,6 +506,10 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 				TRS->( dbGoTop() )
 				_nNEC2 :=TRS->FINAL
 				TRS->(DBCLOSEAREA())
+				cALTER:=POSICIONE('SB1',1,xFILIAL('SB1')+ALLTRIM(TR1->ZHA_PRODUT),'B1_ALTER')
+		        IF !EMPTY(cALTER)
+			       cALTER :='Alternativo: '+ AllTrim(cALTER)
+		        ENDIF
 			ENDIF
 			//---------------------------------
 
@@ -724,6 +771,14 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 		oGetNEC:oBrowse:Refresh()
 		oQTDITEM:Refresh()
 	ENDIF
+	cALTER:=POSICIONE('SB1',1,xFILIAL('SB1')+ALLTRIM(cProduto),'B1_ALTER')
+    IF !EMPTY(cALTER)
+	    cALTER :='Alternativo: '+ AllTrim(cALTER)
+		ELSE
+		cALTER:=''
+    ENDIF
+	oAlter:Refresh()
+
 RETURN
 
 	*----------------------------------------------------------------------------*
@@ -831,15 +886,15 @@ USER FUNCTION MRPCHG01(oGetNEC,oGetSAI,oGetENT)
 		oGetSAI:ACOLS:=aCOLSSAI
 		oGetSAI:forceRefresh( )
 
-        cALTER:=''
+		cALTER:=''
 		cPRODUTO:=oGetNEC:ACOLS[nLIN][01]
 		cDESCRI:=POSICIONE('SB1',1,xFILIAL('SB1')+oGetNEC:ACOLS[nLIN][01],'B1_DESC')
 		cIDMRP:=oGetNEC:ACOLS[nLIN][06] //mls
 		dData :=ctod(oGetNEC:ACOLS[nLIN][02] )
 		cALTER:=POSICIONE('SB1',1,xFILIAL('SB1')+oGetNEC:ACOLS[nLIN][01],'B1_ALTER')
 		IF !EMPTY(cALTER)
-		   cALTER :='Alternativo: '+ AllTrim(cALTER)
-		ENDIF   
+			cALTER :='Alternativo: '+ AllTrim(cALTER)
+		ENDIF
 
 		//------------------------------------------necessidade total
 		nTSALDOF :=0
@@ -1933,7 +1988,7 @@ Static Function MRPZPRV5() // PROCESSAMENTO ZERAR PREVISAO DE VENDAS
 
 	IF MSGYESNO('Zerar previsao dos itens marcado ?')
 		For i := 1 To Len(aDados)
- 
+
 			If aDados[i,1] == .T.    .AND.   aDados[i,2] == oIn
 				aDados[i,1] := .F.
 				aDados[i,2] := oNor
@@ -1950,4 +2005,277 @@ Static Function MRPZPRV5() // PROCESSAMENTO ZERAR PREVISAO DE VENDAS
 	oLbx:Refresh
 
 Return
+
+
+	*----------------------------------------------------------------------------*
+USER FUNCTION MRPALTERC()
+	*----------------------------------------------------------------------------*
+	Local aSizeAut    := MsAdvSize(,.F.,400)
+
+
+	IF alltrim(cAlter)<>''
+		DEFINE MSDIALOG oDlg5 FROM aSizeAut[4],aSizeAut[4] TO aSizeAut[3]*3,aSizeAut[3]+aSizeAut[4]  TITLE OemToAnsi("MRP DOMEX ALTERNATIVO") OF oMainWnd PIXEL
+
+		@ 05,10 SAY ALLTRIM(cPRODUTO)+' - '+posicione('SB1',1,xFILIAL('SB1')+cPRODUTO,'B1_DESC')  OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4
+
+		//oGetSC:= (MsNewGetDados():New( 025,015,095,300,/*GD_UPDATE */,/*"U_FAT002LOK()"*/  ,/*REQ_OPSD3()*/,/*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,/*Ffieldok*/,/*superdel*/,/*delok*/,oDlg2,aHEADSC,aCOLSSC))
+		//oGetSC:oBrowse:Refresh()
+
+		//oGetPC:= (MsNewGetDados():New( 105,015,175,300,/*GD_UPDATE*/ ,/*"U_FAT002LOK()"*/  ,/*REQ_OPSD3()*/,/*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,/*Ffieldok*/,/*superdel*/,/*delok*/,oDlg2,aHEADPC,aCOLSPC))
+		//oGetPC:oBrowse:Refresh()
+
+		//oGetMV:= (MsNewGetDados():New( 185,015,255,300,/*GD_UPDATE*/ ,/*"U_FAT002LOK()"*/  ,/*REQ_OPSD3()*/,/*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,/*Ffieldok*/,/*superdel*/,/*delok*/,oDlg2,aHEADMV,aCOLSMV))
+		//oGetMV:oBrowse:Refresh()
+		nLin:=35
+		@ nLin,aPosGet[1,1] SAY oMSG11  VAR cMSG11   OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_HBLUE FONT oFontBRW5
+		@ nLin,aPosGet[1,1] SAY oMSG11B VAR cMSG11B  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_RED   FONT oFontBRW5
+		@ nLin,aPosGet[1,1] SAY oMSG11C VAR cMSG11C  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_GREEN FONT oFontBRW5
+        nLin:=60
+		@ nLin,aPosGet[1,1] SAY oMSG21  VAR cMSG21   OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
+		@ nLin,aPosGet[1,1] SAY oMSG21B VAR cMSG21B  OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
+
+		@ nLin,aPosGet[1,1] SAY oMSG31  VAR cMSG31   OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
+		@ nLin,aPosGet[1,1] SAY oMSG31B VAR cMSG31B  OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
+        cPRALTER := ALLTRIM(SUBSTR(cAlter+SPACE(15),14,15)) 
+		cPRALTER := cPRALTER+' - '+posicione('SB1',1,xFILIAL('SB1')+cPRALTER,'B1_DESC') 
+        @ 85,10 SAY cPRALTER OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4 //+' - '+ALLTRIM(cDESCRI) OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4
+		nLin:=110
+		@ nLin,aPosGet[1,1] SAY oMSG12  VAR cMSG12   OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_HBLUE FONT oFontBRW5
+		@ nLin,aPosGet[1,1] SAY oMSG12B VAR cMSG12B  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_RED   FONT oFontBRW5
+		@ nLin,aPosGet[1,1] SAY oMSG12C VAR cMSG12C  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_GREEN FONT oFontBRW5
+        nLin:=135
+		@ nLin,aPosGet[1,1] SAY oMSG22  VAR cMSG22   OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
+		@ nLin,aPosGet[1,1] SAY oMSG22B VAR cMSG22B  OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
+
+		@ nLin,aPosGet[1,1] SAY oMSG32  VAR cMSG32   OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
+		@ nLin,aPosGet[1,1] SAY oMSG32B VAR cMSG32B  OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
+
+		MRPCALC1()
+
+		ACTIVATE MSDIALOG oDlg5  CENTERED
+	ELSE
+		MSGALERT('Produto: '+alltrim(cPRODUTO)+' não possui alternativo')
+	ENDIF
+
+RETURN
+
+//--------------------------------------------------------------------------------------
+STATIC FUNCTION  MRPCALC1() 
+	//------------------------------------------MLS QUERY
+	_nEST  :=0
+	_nSC   :=0
+	_nPC   :=0
+	_nEMP  :=0
+	_nOP   :=0
+	_nPV   :=0
+	_nPREV :=0
+	_nSAES :=0
+	_nNEC1 :=0
+
+	cQUERYSLD:="	SELECT ZHA_PRODUT , "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHA_PRODUT  AND D_E_L_E_T_='' AND B2_FILIAL='"+xFILIAL('SB2')+"' ) AS  EST, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHA.ZHA_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND  C1_QUANT > C1_QUJE) AS  SOL, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHA.ZHA_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND  C7_QUANT > C7_QUJE) AS  PC, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHA_PRODUT  AND D_E_L_E_T_='' ) AS  EMP, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHA_XQTDE),0)  FROM ZHA010 (NOLOCK) WHERE ZHA_FILIAL='"+xFILIAL('ZHA')+"' AND   ZHA_TIPO IN ('06-Ordem Producao') AND ZHA_PRODUT=ZHA.ZHA_PRODUT) AS  OP, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHA.ZHA_PRODUT AND C6_BLQ<>'R')  AS  PV, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHA_XQTDE),0)  FROM ZHA010 (NOLOCK) WHERE ZHA_FILIAL='"+xFILIAL('ZHA')+"' AND  ZHA_TIPO IN ('09-Previsao Venda')  AND ZHA_PRODUT=ZHA.ZHA_PRODUT) AS  PREV, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHA_XQTDE),0)  FROM ZHA010 (NOLOCK) WHERE ZHA_FILIAL='"+xFILIAL('ZHA')+"' AND  ZHA_TIPO IN ('08-Saida Estrutura') AND ZHA_PRODUT=ZHA.ZHA_PRODUT) AS  SAES, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHA_PRODUT  AND D_E_L_E_T_='') + "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHA.ZHA_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND C1_QUANT > C1_QUJE) + "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHA.ZHA_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND C7_QUANT > C7_QUJE ) - "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHA_PRODUT  AND D_E_L_E_T_='' ) + "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHA_XQTDE),0)  FROM ZHA010 (NOLOCK) WHERE ZHA_FILIAL='"+xFILIAL('ZHA')+"' AND  ZHA_TIPO IN ('06-Ordem Producao') AND ZHA_PRODUT=ZHA.ZHA_PRODUT) - "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHA.ZHA_PRODUT  AND C6_BLQ<>'R') - "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHA_XQTDE),0)  FROM ZHA010 (NOLOCK) WHERE ZHA_FILIAL='"+xFILIAL('ZHA')+"' AND  ZHA_TIPO IN ('09-Previsao Venda')  AND ZHA_PRODUT=ZHA.ZHA_PRODUT) AS FINAL "// -       "
+
+	cQUERYSLD+="	FROM ZHA010 (NOLOCK) ZHA "
+	cQUERYSLD+="	WHERE ZHA_PRODUT='"+ALLTRIM(cPRODUTO)+"'  AND ZHA.D_E_L_E_T_='' "
+	cQUERYSLD+="	GROUP BY ZHA_PRODUT "
+	cQUERYSLD+="	ORDER BY ZHA_PRODUT "
+
+	TCQUERY cQUERYSLD NEW ALIAS "TRS"
+	TRS->( dbGoTop() )
+	_nEST  :=TRS->EST
+	_nSC   :=TRS->SOL
+	_nPC   :=TRS->PC
+	_nEMP  :=TRS->EMP
+	_nOP   :=TRS->OP
+	_nPV   :=TRS->PV
+	_nPREV :=TRS->PREV
+	_nSAES :=TRS->SAES
+	_nNEC1 :=TRS->FINAL
+	TRS->(DBCLOSEAREA())   //_nEMP-_nSAES
+
+	//nENTRADA:=nTotEnt
+	//nSAIDA  :=nTotSai
+	//nSALDOF :=(nSALDOI+nTotEnt)-nTotSai
+
+	//nWON   :=nTWON
+	//nBEST  :=nTBEST
+	//nIN    :=nTIN
+
+	IF _nNEC1<0
+		cMSG11  :=''
+		cMSG11B :='Saldo SC+PC Menor que Necessidade: '+cEOL   //+TRANSFORM(_nNEC1,"@E 999,999.99")
+		cMSG11B +='+EST:' +TRANSFORM(_nEST ,"@E 9,999,999.99") +' +SC: '+TRANSFORM(_nSC  ,"@E 9,999,999.99")+' +PC :'+TRANSFORM(_nPC  ,"@E 9,999,999.99")+cEOL
+		cMSG11B +='-EMP:' +TRANSFORM(_nEMP ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPV  ,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREV,"@E 9,999,999.99")+cEOL
+		IF _nSAES-_nEMP>0
+			cMSG11B +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAES-_nEMP,"@E 9,999,999.99")
+		ELSE
+			cMSG11B +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99")
+		ENDIF
+		cMSG11C :=''
+	ELSE
+		cMSG11 :='Saldo SC+PC Maior que Necessidade: '+cEOL   //+TRANSFORM(_nNEC1,"@E 999,999.99")
+		cMSG11b:=''
+		cMSG11C :=''
+
+		cMSG11 +='+EST:' +TRANSFORM(_nEST ,"@E 9,999,999.99") +' +SC: '+TRANSFORM(_nSC,"@E 9,999,999.99")+' +PC :'+TRANSFORM(_nPC  ,"@E 9,999,999.99")+cEOL
+		cMSG11 +='-EMP:' +TRANSFORM(_nEMP ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPV,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREV,"@E 9,999,999.99")+cEOL
+		IF _nSAES-_nEMP>0
+			cMSG11 +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAES-_nEMP,"@E 9,999,999.99")
+		ELSE
+			cMSG11 +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99")
+		ENDIF
+
+	ENDIF
+	//IF nSALDOF>=0
+	//	cMSG11 :=''
+	//	cMSG11b:=''
+	//	cMSG11C:='Item com Saldo'
+	//ENDIF
+	//MLS
+	//cQuerySI := " SELECT  * "
+	//cQuerySI += " FROM ZHA010 (NOLOCK)  "
+	//cQuerySI += " WHERE ZHA_FILIAL = '"+xFILIAL('ZHA')+"' AND ZHA_IDMRP='"+ALLTRIM(oGetNEC:ACOLS[nLIN][06])+"' AND ZHA010.D_E_L_E_T_='' "
+
+	//TCQUERY cQuerySI NEW ALIAS "TR2"
+	//TR2->( dbGoTop() )
+	//IF !EMPTY(TR2->ZHA_NUMSC)
+	//	cMSG21 :='SC: '+TR2->ZHA_NUMSC+' Qtde: '+Transform(TR2->ZHA_QTDSC,"@E 9,999,999.99")+" Data: "+SUBSTR(TR2->ZHA_DATASC,7,2)+'/'+SUBSTR(TR2->ZHA_DATASC,5,2)+'/'+SUBSTR(TR2->ZHA_DATASC,1,4)
+	//	cMSG21b:=''
+	//ELSE
+	//	cMSG21 :=''
+	//	cMSG21b:=''
+	//ENDIF
+	//TR2->(DBCLOSEAREA())
+	oMSG11 :refresh()
+	oMSG11b:refresh()
+	oMSG11c:refresh()
+
+	oMSG21 :refresh()
+	oMSG21b:refresh()
+
+*-----------------------------------------------------------------------------------------
+	//------------------------------------------MLS QUERY alternativo
+	_nEST  :=0
+	_nSC   :=0
+	_nPC   :=0
+	_nEMP  :=0
+	_nOP   :=0
+	_nPV   :=0
+	_nPREV :=0
+	_nSAES :=0
+	_nNEC1 :=0
+    //ALTERNATIVO: '
+	cAlter :=cAlter+SPACE(15)
+	cCODALT :=SUBSTR(cAlter,14,15)
+
+	cQUERYSLD:="	SELECT ZHA_PRODUT , "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHA_PRODUT  AND D_E_L_E_T_='' AND B2_FILIAL='"+xFILIAL('SB2')+"' ) AS  EST, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHA.ZHA_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND  C1_QUANT > C1_QUJE) AS  SOL, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHA.ZHA_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND  C7_QUANT > C7_QUJE) AS  PC, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHA_PRODUT  AND D_E_L_E_T_='' ) AS  EMP, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHA_XQTDE),0)  FROM ZHA010 (NOLOCK) WHERE ZHA_FILIAL='"+xFILIAL('ZHA')+"' AND   ZHA_TIPO IN ('06-Ordem Producao') AND ZHA_PRODUT=ZHA.ZHA_PRODUT) AS  OP, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHA.ZHA_PRODUT AND C6_BLQ<>'R')  AS  PV, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHA_XQTDE),0)  FROM ZHA010 (NOLOCK) WHERE ZHA_FILIAL='"+xFILIAL('ZHA')+"' AND  ZHA_TIPO IN ('09-Previsao Venda')  AND ZHA_PRODUT=ZHA.ZHA_PRODUT) AS  PREV, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHA_XQTDE),0)  FROM ZHA010 (NOLOCK) WHERE ZHA_FILIAL='"+xFILIAL('ZHA')+"' AND  ZHA_TIPO IN ('08-Saida Estrutura') AND ZHA_PRODUT=ZHA.ZHA_PRODUT) AS  SAES, "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHA_PRODUT  AND D_E_L_E_T_='') + "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHA.ZHA_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND C1_QUANT > C1_QUJE) + "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHA.ZHA_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND C7_QUANT > C7_QUJE ) - "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHA_PRODUT  AND D_E_L_E_T_='' ) + "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHA_XQTDE),0)  FROM ZHA010 (NOLOCK) WHERE ZHA_FILIAL='"+xFILIAL('ZHA')+"' AND  ZHA_TIPO IN ('06-Ordem Producao') AND ZHA_PRODUT=ZHA.ZHA_PRODUT) - "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHA.ZHA_PRODUT  AND C6_BLQ<>'R') - "
+	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHA_XQTDE),0)  FROM ZHA010 (NOLOCK) WHERE ZHA_FILIAL='"+xFILIAL('ZHA')+"' AND  ZHA_TIPO IN ('09-Previsao Venda')  AND ZHA_PRODUT=ZHA.ZHA_PRODUT) AS FINAL "// -       "
+
+	cQUERYSLD+="	FROM ZHA010 (NOLOCK) ZHA "
+	cQUERYSLD+="	WHERE ZHA_PRODUT='"+ALLTRIM(cCODALT)+"'  AND ZHA.D_E_L_E_T_='' "
+	cQUERYSLD+="	GROUP BY ZHA_PRODUT "
+	cQUERYSLD+="	ORDER BY ZHA_PRODUT "
+
+	TCQUERY cQUERYSLD NEW ALIAS "TRS"
+	TRS->( dbGoTop() )
+	_nEST  :=TRS->EST
+	_nSC   :=TRS->SOL
+	_nPC   :=TRS->PC
+	_nEMP  :=TRS->EMP
+	_nOP   :=TRS->OP
+	_nPV   :=TRS->PV
+	_nPREV :=TRS->PREV
+	_nSAES :=TRS->SAES
+	_nNEC1 :=TRS->FINAL
+	TRS->(DBCLOSEAREA())   //_nEMP-_nSAES
+
+	//nENTRADA:=nTotEnt
+	//nSAIDA  :=nTotSai
+	//nSALDOF :=(nSALDOI+nTotEnt)-nTotSai
+
+	//nWON   :=nTWON
+	//nBEST  :=nTBEST
+	//nIN    :=nTIN
+
+	IF _nNEC1<0
+		cMSG12  :=''
+		cMSG12B :='Saldo SC+PC Menor que Necessidade: '+cEOL   //+TRANSFORM(_nNEC1,"@E 999,999.99")
+		cMSG12B +='+EST:' +TRANSFORM(_nEST ,"@E 9,999,999.99") +' +SC: '+TRANSFORM(_nSC  ,"@E 9,999,999.99")+' +PC :'+TRANSFORM(_nPC  ,"@E 9,999,999.99")+cEOL
+		cMSG12B +='-EMP:' +TRANSFORM(_nEMP ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPV  ,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREV,"@E 9,999,999.99")+cEOL
+		IF _nSAES-_nEMP>0
+			cMSG12B +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAES-_nEMP,"@E 9,999,999.99")
+		ELSE
+			cMSG12B +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99")
+		ENDIF
+		cMSG12C :=''
+	ELSE
+		cMSG12 :='Saldo SC+PC Maior que Necessidade: '+cEOL   //+TRANSFORM(_nNEC1,"@E 999,999.99")
+		cMSG12b:=''
+		cMSG12C :=''
+
+		cMSG12 +='+EST:' +TRANSFORM(_nEST ,"@E 9,999,999.99") +' +SC: '+TRANSFORM(_nSC,"@E 9,999,999.99")+' +PC :'+TRANSFORM(_nPC  ,"@E 9,999,999.99")+cEOL
+		cMSG12 +='-EMP:' +TRANSFORM(_nEMP ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPV,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREV,"@E 9,999,999.99")+cEOL
+		IF _nSAES-_nEMP>0
+			cMSG12 +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAES-_nEMP,"@E 9,999,999.99")
+		ELSE
+			cMSG12 +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99")
+		ENDIF
+
+	ENDIF
+	//IF nSALDOF>=0
+	//	cMSG11 :=''
+	//	cMSG11b:=''
+	//	cMSG11C:='Item com Saldo'
+	//ENDIF
+	//MLS
+	//cQuerySI := " SELECT  * "
+	//cQuerySI += " FROM ZHA010 (NOLOCK)  "
+	//cQuerySI += " WHERE ZHA_FILIAL = '"+xFILIAL('ZHA')+"' AND ZHA_IDMRP='"+ALLTRIM(oGetNEC:ACOLS[nLIN][06])+"' AND ZHA010.D_E_L_E_T_='' "
+
+	//TCQUERY cQuerySI NEW ALIAS "TR2"
+	//TR2->( dbGoTop() )
+	//IF !EMPTY(TR2->ZHA_NUMSC)
+	//	cMSG22 :='SC: '+TR2->ZHA_NUMSC+' Qtde: '+Transform(TR2->ZHA_QTDSC,"@E 9,999,999.99")+" Data: "+SUBSTR(TR2->ZHA_DATASC,7,2)+'/'+SUBSTR(TR2->ZHA_DATASC,5,2)+'/'+SUBSTR(TR2->ZHA_DATASC,1,4)
+	//	cMSG22b:=''
+	//ELSE
+	//	cMSG22 :=''
+	//	cMSG22b:=''
+	//ENDIF
+	//TR2->(DBCLOSEAREA())
+	oMSG12 :refresh()
+	oMSG12b:refresh()
+	oMSG12c:refresh()
+
+	oMSG22 :refresh()
+	oMSG22b:refresh()
+
+RETURN
 
