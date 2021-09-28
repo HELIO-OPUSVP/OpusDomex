@@ -216,7 +216,7 @@ User Function EICFLWUP()
 	nUsado	:= len(aHeader)
 	aAdd(aCols,Array(nUsado+1))
 
-	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V2.3")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
+	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V2.4")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
 
 	@ 032, 003 GROUP oGroup1 TO 092, 649 PROMPT "Filtros" OF oDlg COLOR 0, 16777215 PIXEL
 
@@ -1562,19 +1562,20 @@ RETURN nil
 
 
 
+//STATIC FUNCTION fGRAVAZZT()
+
+	//startjob("U_GRAVAZZT",getenvserver(), .F. , cEmpAnt, cFilAnt, aCols1)
+
+//Return
+
+//User Function GRAVAZZT(_cEmpresa, _cFilial, aCols1)
 STATIC FUNCTION fGRAVAZZT()
-
-	startjob("U_GRAVAZZT",getenvserver(), .F. , cEmpAnt, cFilAnt, aCols1)
-
-Return
-
-User Function GRAVAZZT(_cEmpresa, _cFilial, aCols1)
 	Local nX:=0
 	Local cQRDEL1:=''
 
-	aAbreTab := {}
-	RPCSetType(3)
-	RpcSetEnv(_cEmpresa, _cFilial,,,,,aAbreTab)
+//	aAbreTab := {}
+//	RPCSetType(3)
+//	RpcSetEnv(_cEmpresa, _cFilial,,,,,aAbreTab)
 
 	For nX := 1 to len (aCols1)
 		cQRDEL1:=" DELETE FROM ZZT010 WHERE ZZT_PO_NUM ='"+acols1[nX][04]+"' "
