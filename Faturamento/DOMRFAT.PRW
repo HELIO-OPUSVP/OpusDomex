@@ -118,7 +118,8 @@ cQuery += "       AND SC6.C6_NUM      >='"+MV_PAR01+"' AND SC6.C6_NUM     <='"+M
 cQuery += "       AND SC6.C6_CLI      >='"+MV_PAR03+"' AND SC6.C6_CLI     <='"+MV_PAR04+"'    "
 cQuery += "       AND SC6.C6_PRODUTO  >='"+MV_PAR05+"' AND SC6.C6_PRODUTO <='"+MV_PAR06+"'    "
 cQuery += "       AND SC6.C6_XXDTDEF  >='"+DTOS(MV_PAR07)+"' AND SC6.C6_XXDTDEF <='"+DTOS(MV_PAR08)+"'    "
-cQuery += "       AND SC6.D_E_L_E_T_ = ''    "
+cQuery += "       AND SC6.C6_FILIAL='"+xFILIAL('SC6')+"' AND SC5.C5_FILIAL='"+xFILIAL('SC5')+"'  "
+cQuery += "       AND SC6.D_E_L_E_T_ = ''  AND SC5.D_E_L_E_T_ = ''   "
 cQuery += "ORDER BY SC6.C6_XXDTDEF, SC6.C6_NUM, SC6.C6_ITEM "
 
 If Select("TR1") <> 0

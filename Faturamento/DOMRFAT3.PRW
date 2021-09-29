@@ -93,6 +93,7 @@ cQuery += "       AND SC5.C5_CLIENTE BETWEEN '"+MV_PAR03+"' AND '"+MV_PAR04+"'  
 cQuery += "       AND SZY.ZY_PRODUTO BETWEEN '"+MV_PAR05+"' AND '"+MV_PAR06+"'  "   
 cQuery += "       AND SZY.ZY_DTOTD   BETWEEN '"+DTOS(MV_PAR07)+"' AND '"+DTOS(MV_PAR08)+"'   "  
 cQuery += "       AND SZY.ZY_BLQ <> 'R'   "			// Desconsidera Itens com Residuos Eliminados  
+cQuery += "       AND SZY.ZY_FILIAL='"+xFILIAL('SZY')+"' AND SC5.C5_FILIAL='"+xFILIAL('SC5')+"'  "
 cQuery += "       AND SC5.D_E_L_E_T_ = ''    "  
 cQuery += "       AND SZY.D_E_L_E_T_ = ''    "
 //cQuery += "	   --AND C6_XXDTDEF <> ZY_DTOTD "
