@@ -143,12 +143,12 @@ USER FUNCTION MRP002() //GERACAO DE SC  MRP OFICIAL Filial 01
 	private cMSG11   :=''
 	private cMSG11B  :=''
 	private cMSG11C  :=''
-	
+
 	private oMSG11
 	private oMSG11B
 	private oMSG11C
 
-	private	oMSG21 
+	private	oMSG21
 	private oMSG21b
 
 	private cMSG21   :=''
@@ -157,17 +157,17 @@ USER FUNCTION MRP002() //GERACAO DE SC  MRP OFICIAL Filial 01
 	private cMSG31  :=''
 	private cMSG31B :=''
 	private oMSG31
-	private oMSG31B 
+	private oMSG31B
 
-    private cMSG12   :=''
+	private cMSG12   :=''
 	private cMSG12B  :=''
 	private cMSG12C  :=''
-	
+
 	private oMSG12
 	private oMSG12B
 	private oMSG12C
 
-	private	oMSG22 
+	private	oMSG22
 	private oMSG22b
 
 	private cMSG22   :=''
@@ -176,7 +176,29 @@ USER FUNCTION MRP002() //GERACAO DE SC  MRP OFICIAL Filial 01
 	private cMSG32  :=''
 	private cMSG32B :=''
 	private oMSG32
-	private oMSG32B 
+	private oMSG32B
+
+	//-------------------------
+	private cMSG13   :=''
+	private cMSG13B  :=''
+	private cMSG13C  :=''
+
+	private oMSG13
+	private oMSG13B
+	private oMSG13C
+
+	private	oMSG23
+	private oMSG23b
+
+	private cMSG23   :=''
+	private cMSG23B  :=''
+
+	private cMSG33  :=''
+	private cMSG33B :=''
+	private oMSG33
+	private oMSG33B
+
+	//-------------------------
 
 
 
@@ -300,7 +322,7 @@ USER FUNCTION MRP002() //GERACAO DE SC  MRP OFICIAL Filial 01
 	DEFINE FONT oFontBRW4 NAME "Arial" SIZE 0,-19 BOLD
 	DEFINE FONT oFontBRW5 NAME "Courier New" SIZE 0,-12 BOLD
 
-	DEFINE MSDIALOG oDlg FROM aSizeAut[7],0 TO aSizeAut[6],aSizeAut[5]  TITLE OemToAnsi("CENTRAL MRP DOMEX V4.6 Filial 01") OF oMainWnd PIXEL
+	DEFINE MSDIALOG oDlg FROM aSizeAut[7],0 TO aSizeAut[6],aSizeAut[5]  TITLE OemToAnsi("CENTRAL MRP DOMEX V4.7 Filial 01") OF oMainWnd PIXEL
 	oDlg:oFont:=oFontBRW3
 //��������������������������������������������������������������Ŀ
 //�Define o cabecalho da rotina                                  �
@@ -507,9 +529,9 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 				_nNEC2 :=TRS->FINAL
 				TRS->(DBCLOSEAREA())
 				cALTER:=POSICIONE('SB1',1,xFILIAL('SB1')+ALLTRIM(TR1->ZHA_PRODUT),'B1_ALTER')
-		        IF !EMPTY(cALTER)
-			       cALTER :='Alternativo: '+ AllTrim(cALTER)
-		        ENDIF
+				IF !EMPTY(cALTER)
+					cALTER :='Alternativo: '+ AllTrim(cALTER)
+				ENDIF
 			ENDIF
 			//---------------------------------
 
@@ -772,11 +794,11 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 		oQTDITEM:Refresh()
 	ENDIF
 	cALTER:=POSICIONE('SB1',1,xFILIAL('SB1')+ALLTRIM(cProduto),'B1_ALTER')
-    IF !EMPTY(cALTER)
-	    cALTER :='Alternativo: '+ AllTrim(cALTER)
-		ELSE
+	IF !EMPTY(cALTER)
+		cALTER :='Alternativo: '+ AllTrim(cALTER)
+	ELSE
 		cALTER:=''
-    ENDIF
+	ENDIF
 	oAlter:Refresh()
 
 RETURN
@@ -2014,7 +2036,8 @@ USER FUNCTION MRPALTERC()
 
 
 	IF alltrim(cAlter)<>''
-		DEFINE MSDIALOG oDlg5 FROM aSizeAut[4],aSizeAut[4] TO aSizeAut[3]*3,aSizeAut[3]+aSizeAut[4]  TITLE OemToAnsi("MRP DOMEX ALTERNATIVO") OF oMainWnd PIXEL
+		//DEFINE MSDIALOG oDlg5 FROM aSizeAut[4],aSizeAut[4] TO aSizeAut[3]*3,aSizeAut[3]+aSizeAut[4]  TITLE OemToAnsi("MRP DOMEX ALTERNATIVO") OF oMainWnd PIXEL
+		DEFINE MSDIALOG oDlg5 FROM aSizeAut[4],aSizeAut[4] TO aSizeAut[3]*1.2,aSizeAut[3]+aSizeAut[4]  TITLE OemToAnsi("MRP DOMEX ALTERNATIVO") OF oMainWnd PIXEL
 
 		@ 05,10 SAY ALLTRIM(cPRODUTO)+' - '+posicione('SB1',1,xFILIAL('SB1')+cPRODUTO,'B1_DESC')  OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4
 
@@ -2030,25 +2053,42 @@ USER FUNCTION MRPALTERC()
 		@ nLin,aPosGet[1,1] SAY oMSG11  VAR cMSG11   OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_HBLUE FONT oFontBRW5
 		@ nLin,aPosGet[1,1] SAY oMSG11B VAR cMSG11B  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_RED   FONT oFontBRW5
 		@ nLin,aPosGet[1,1] SAY oMSG11C VAR cMSG11C  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_GREEN FONT oFontBRW5
-        nLin:=60
+		nLin:=60
 		@ nLin,aPosGet[1,1] SAY oMSG21  VAR cMSG21   OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
 		@ nLin,aPosGet[1,1] SAY oMSG21B VAR cMSG21B  OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
 
 		@ nLin,aPosGet[1,1] SAY oMSG31  VAR cMSG31   OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
 		@ nLin,aPosGet[1,1] SAY oMSG31B VAR cMSG31B  OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
-        cPRALTER := ALLTRIM(SUBSTR(cAlter+SPACE(15),14,15)) 
-		cPRALTER := cPRALTER+' - '+posicione('SB1',1,xFILIAL('SB1')+cPRALTER,'B1_DESC') 
-        @ 85,10 SAY cPRALTER OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4 //+' - '+ALLTRIM(cDESCRI) OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4
+
+		cPRALTER := ALLTRIM(SUBSTR(cAlter+SPACE(15),14,15))
+		cPRALTER := cPRALTER+' - '+posicione('SB1',1,xFILIAL('SB1')+cPRALTER,'B1_DESC')
+		@ 85,10 SAY cPRALTER OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4 //+' - '+ALLTRIM(cDESCRI) OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4
 		nLin:=110
 		@ nLin,aPosGet[1,1] SAY oMSG12  VAR cMSG12   OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_HBLUE FONT oFontBRW5
 		@ nLin,aPosGet[1,1] SAY oMSG12B VAR cMSG12B  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_RED   FONT oFontBRW5
 		@ nLin,aPosGet[1,1] SAY oMSG12C VAR cMSG12C  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_GREEN FONT oFontBRW5
-        nLin:=135
+		nLin:=135
 		@ nLin,aPosGet[1,1] SAY oMSG22  VAR cMSG22   OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
 		@ nLin,aPosGet[1,1] SAY oMSG22B VAR cMSG22B  OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
 
 		@ nLin,aPosGet[1,1] SAY oMSG32  VAR cMSG32   OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
 		@ nLin,aPosGet[1,1] SAY oMSG32B VAR cMSG32B  OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
+
+		//-------------------------------------------------
+		nLin:=155
+		@ nLin,10 SAY 'RESUMO' OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4 //+' - '+ALLTRIM(cDESCRI) OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4
+		nLin:=175
+		@ nLin,aPosGet[1,1] SAY oMSG13  VAR cMSG13   OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_HBLUE FONT oFontBRW5
+		@ nLin,aPosGet[1,1] SAY oMSG13B VAR cMSG13B  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_RED   FONT oFontBRW5
+		@ nLin,aPosGet[1,1] SAY oMSG13C VAR cMSG13C  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_GREEN FONT oFontBRW5
+		nLin:=135
+		@ nLin,aPosGet[1,1] SAY oMSG23  VAR cMSG23   OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
+		@ nLin,aPosGet[1,1] SAY oMSG23B VAR cMSG23B  OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
+
+		@ nLin,aPosGet[1,1] SAY oMSG33  VAR cMSG33   OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
+		@ nLin,aPosGet[1,1] SAY oMSG33B VAR cMSG33B  OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
+
+		//-------------------------------------------------
 
 		MRPCALC1()
 
@@ -2060,7 +2100,7 @@ USER FUNCTION MRPALTERC()
 RETURN
 
 //--------------------------------------------------------------------------------------
-STATIC FUNCTION  MRPCALC1() 
+STATIC FUNCTION  MRPCALC1()
 	//------------------------------------------MLS QUERY
 	_nEST  :=0
 	_nSC   :=0
@@ -2071,6 +2111,19 @@ STATIC FUNCTION  MRPCALC1()
 	_nPREV :=0
 	_nSAES :=0
 	_nNEC1 :=0
+
+	_nESTX  :=0
+	_nSCX   :=0
+	_nPCX   :=0
+	_nEMPX  :=0
+	_nOPX   :=0
+	_nPVX   :=0
+	_nPREVX :=0
+	_nSAESX :=0
+	_nNEC1X :=0
+
+	_nSAESTOT :=0
+
 
 	cQUERYSLD:="	SELECT ZHA_PRODUT , "
 	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHA_PRODUT  AND D_E_L_E_T_='' AND B2_FILIAL='"+xFILIAL('SB2')+"' ) AS  EST, "
@@ -2105,6 +2158,17 @@ STATIC FUNCTION  MRPCALC1()
 	_nPREV :=TRS->PREV
 	_nSAES :=TRS->SAES
 	_nNEC1 :=TRS->FINAL
+
+	_nESTX  :=_nEST
+	_nSCX   :=_nSC
+	_nPCX   :=_nPC
+	_nEMPX  :=_nEMP
+	_nOPX   :=_nOP
+	_nPVX   :=_nPV
+	_nPREVX :=_nPREV
+	_nSAESX :=_nSAES
+	_nNEC1X :=_nNEC1
+
 	TRS->(DBCLOSEAREA())   //_nEMP-_nSAES
 
 	//nENTRADA:=nTotEnt
@@ -2135,6 +2199,7 @@ STATIC FUNCTION  MRPCALC1()
 		cMSG11 +='-EMP:' +TRANSFORM(_nEMP ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPV,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREV,"@E 9,999,999.99")+cEOL
 		IF _nSAES-_nEMP>0
 			cMSG11 +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAES-_nEMP,"@E 9,999,999.99")
+			_nSAESTOT:=_nSAESTOT+(_nSAES-_nEMP)
 		ELSE
 			cMSG11 +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99")
 		ENDIF
@@ -2167,7 +2232,7 @@ STATIC FUNCTION  MRPCALC1()
 	oMSG21 :refresh()
 	oMSG21b:refresh()
 
-*-----------------------------------------------------------------------------------------
+	*-----------------------------------------------------------------------------------------
 	//------------------------------------------MLS QUERY alternativo
 	_nEST  :=0
 	_nSC   :=0
@@ -2178,7 +2243,7 @@ STATIC FUNCTION  MRPCALC1()
 	_nPREV :=0
 	_nSAES :=0
 	_nNEC1 :=0
-    //ALTERNATIVO: '
+	//ALTERNATIVO: '
 	cAlter :=cAlter+SPACE(15)
 	cCODALT :=SUBSTR(cAlter,14,15)
 
@@ -2215,15 +2280,17 @@ STATIC FUNCTION  MRPCALC1()
 	_nPREV :=TRS->PREV
 	_nSAES :=TRS->SAES
 	_nNEC1 :=TRS->FINAL
+
+	_nESTX  :=_nESTX  + _nEST
+	_nSCX   :=_nSCX   + _nSC
+	_nPCX   :=_nPCX   + _nPC
+	_nEMPX  :=_nEMPX  + _nEMP
+	_nOPX   :=_nOPX   + _nOP
+	_nPVX   :=_nPVX   + _nPV
+	_nPREVX :=_nPREVX + _nPREV
+	_nSAESX :=_nSAESX + _nSAES
+	_nNEC1X :=_nNEC1X + _nNEC1
 	TRS->(DBCLOSEAREA())   //_nEMP-_nSAES
-
-	//nENTRADA:=nTotEnt
-	//nSAIDA  :=nTotSai
-	//nSALDOF :=(nSALDOI+nTotEnt)-nTotSai
-
-	//nWON   :=nTWON
-	//nBEST  :=nTBEST
-	//nIN    :=nTIN
 
 	IF _nNEC1<0
 		cMSG12  :=''
@@ -2245,6 +2312,7 @@ STATIC FUNCTION  MRPCALC1()
 		cMSG12 +='-EMP:' +TRANSFORM(_nEMP ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPV,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREV,"@E 9,999,999.99")+cEOL
 		IF _nSAES-_nEMP>0
 			cMSG12 +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAES-_nEMP,"@E 9,999,999.99")
+			_nSAESTOT:=_nSAESTOT+(_nSAES-_nEMP)
 		ELSE
 			cMSG12 +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99")
 		ENDIF
@@ -2276,6 +2344,59 @@ STATIC FUNCTION  MRPCALC1()
 
 	oMSG22 :refresh()
 	oMSG22b:refresh()
+
+	//-------------------RESUMO---------------------------------
+	IF _nNEC1X<0
+		cMSG13  :=''
+		cMSG13B :='Saldo SC+PC Menor que Necessidade: '+cEOL   //+TRANSFORM(_nNEC1,"@E 999,999.99")
+		cMSG13B +='+EST:' +TRANSFORM(_nESTX ,"@E 9,999,999.99") +' +SC: '+TRANSFORM(_nSCX  ,"@E 9,999,999.99")+' +PC :'+TRANSFORM(_nPCX  ,"@E 9,999,999.99")+cEOL
+		cMSG13B +='-EMP:' +TRANSFORM(_nEMPX ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPVX  ,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREVX,"@E 9,999,999.99")+cEOL
+		IF _nSAESX-_nEMPX>0
+			cMSG13B +='=SLD:' +TRANSFORM(_nNEC1X,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAESX-_nEMPX,"@E 9,999,999.99")
+		ELSE
+			cMSG13B +='=SLD:' +TRANSFORM(_nNEC1X,"@E 9,999,999.99")
+		ENDIF
+		cMSG13C :=''
+	ELSE
+		cMSG13 :='Saldo SC+PC Maior que Necessidade: '+cEOL   //+TRANSFORM(_nNEC1,"@E 999,999.99")
+		cMSG13b:=''
+		cMSG13C :=''
+
+		cMSG13 +='+EST:' +TRANSFORM(_nESTX ,"@E 9,999,999.99") +' +SC: '+TRANSFORM(_nSCX,"@E 9,999,999.99")+' +PC :'+TRANSFORM(_nPCX  ,"@E 9,999,999.99")+cEOL
+		cMSG13 +='-EMP:' +TRANSFORM(_nEMPX ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPVX,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREVX,"@E 9,999,999.99")+cEOL
+		IF _nSAESX-_nEMPX>0
+			cMSG13 +='=SLD:' +TRANSFORM(_nNEC1X,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAESTOT,"@E 9,999,999.99")
+		ELSE
+			cMSG13 +='=SLD:' +TRANSFORM(_nNEC1X,"@E 9,999,999.99")
+		ENDIF
+
+	ENDIF
+	//IF nSALDOF>=0
+	//	cMSG11 :=''
+	//	cMSG11b:=''
+	//	cMSG11C:='Item com Saldo'
+	//ENDIF
+	//MLS
+	//cQuerySI := " SELECT  * "
+	//cQuerySI += " FROM ZHA010 (NOLOCK)  "
+	//cQuerySI += " WHERE ZHA_FILIAL = '"+xFILIAL('ZHA')+"' AND ZHA_IDMRP='"+ALLTRIM(oGetNEC:ACOLS[nLIN][06])+"' AND ZHA010.D_E_L_E_T_='' "
+
+	//TCQUERY cQuerySI NEW ALIAS "TR2"
+	//TR2->( dbGoTop() )
+	//IF !EMPTY(TR2->ZHA_NUMSC)
+	//	cMSG22 :='SC: '+TR2->ZHA_NUMSC+' Qtde: '+Transform(TR2->ZHA_QTDSC,"@E 9,999,999.99")+" Data: "+SUBSTR(TR2->ZHA_DATASC,7,2)+'/'+SUBSTR(TR2->ZHA_DATASC,5,2)+'/'+SUBSTR(TR2->ZHA_DATASC,1,4)
+	//	cMSG22b:=''
+	//ELSE
+	//	cMSG22 :=''
+	//	cMSG22b:=''
+	//ENDIF
+	//TR2->(DBCLOSEAREA())
+	oMSG13 :refresh()
+	oMSG13b:refresh()
+	oMSG13c:refresh()
+
+	oMSG23 :refresh()
+	oMSG23b:refresh()
 
 RETURN
 
