@@ -101,7 +101,7 @@ User Function DOMETDL7()
 	Private cCelula:= ""
 	Private lOkFlex   := SuperGetMv("MV_XVRFLEX",.F.,.F.)
 	Private lOkFuruka := SuperGetMv("MV_XVRFURU",.F.,.T.)
-	Private lGloboG  := SuperGetMv("MV_XGLOBOG",.F.,.T.)
+	Private lGlobal  := .F.
 	Private lEhFuruka := .F.
 	Private lComTravR := IIF(ISINCALLSTACK('U_DL7STRVR'),.T.,.F.)
 
@@ -2474,13 +2474,13 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	EndIf
 
 	if  U_VALIDACAO() // RODA 16/09/2021
-		lGloboG := .F.
+		lGlobal := .F.
 		
-		If Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  // ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))
+		If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))  //Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  // 
 			lGlobal := .T.
 		EndIf
 
-		If lGloboG
+		If lGlobal
 			MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) })
 		Endif
 	Endif

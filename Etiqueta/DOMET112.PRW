@@ -4,8 +4,8 @@
 /*/Protheus.doc DOMET111
 description Etiqueta amazon
 function
-author Ricardo Roda
-since 29/03/2021
+	author Ricardo Roda
+	since 29/03/2021
 /*/ 
 User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,cVolumeAtu,lColetor,cNumSerie,cNumPeca)
 
@@ -109,7 +109,7 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 
 	While ZZU->(!eof()) .AND. ZZU->ZZU_PEDIDO == SC2->C2_PEDIDO .AND. ZZU->ZZU_ITEM == SC2->C2_ITEMPV
 
-		IF LEN (alltrim(ZZU->ZZU_LABEL1)) > 21 .OR. LEN (alltrim(ZZU->ZZU_LABEL4)) > 24
+	/*	IF LEN (alltrim(ZZU->ZZU_LABEL1)) > 21 .OR. LEN (alltrim(ZZU->ZZU_LABEL4)) > 24
 			lRetrato:= .F.
 		Endif
 
@@ -130,6 +130,7 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			AADD(_aArq,'^FT'+cValToChar(nIniLin-(nLinInc*4)) +',12^A0R,14,14^FH\^FD'+alltrim(ZZU->ZZU_LABEL4)+'^FS'+ CRLF)
 			AADD(_aArq,'^FT'+cValToChar(nIniLin-(nLinInc*5)) +',56^A0R,17,16^FH\^FD'+alltrim(ZZU->ZZU_LABEL5)+'^FS'+ CRLF)
 			AADD(_aArq,'^FT'+cValToChar(nIniLin-(nLinInc*6)) +',15^A0R,17,16^FH\^FD'+alltrim(ZZU->ZZU_LABEL6)+'^FS'+ CRLF)
+	
 		ELSE
 
 			nIniLin:= 10//43
@@ -140,15 +141,44 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			AADD(_aArq,'^FT26,'+cValToChar(nIniLin+(nLinInc*4)) +'^A0N,17,14^FH\^FD'+alltrim(ZZU->ZZU_LABEL4)+'^FS'+ CRLF)
 			AADD(_aArq,'^FT26,'+cValToChar(nIniLin+(nLinInc*5)) +'^A0N,17,16^FH\^FD'+alltrim(ZZU->ZZU_LABEL5)+'^FS'+ CRLF)
 			AADD(_aArq,'^FT26,'+cValToChar(nIniLin+(nLinInc*6)) +'^A0N,17,16^FH\^FD'+alltrim(ZZU->ZZU_LABEL6)+'^FS'+ CRLF)
-		ENDIF
+		ENDIF	
 
 		AADD(_aArq,'^PQ2,0,1,Y^XZ'+ CRLF)
 
+*/
+		AADD(_aArq,'CT~~CD,~CC^~CT~'+ CRLF)
+		AADD(_aArq,'^XA'+ CRLF)
+		AADD(_aArq,'~TA000'+ CRLF)
+		AADD(_aArq,'~JSN'+ CRLF)
+		AADD(_aArq,'^LT0'+ CRLF)
+		AADD(_aArq,'^MNW'+ CRLF)
+		AADD(_aArq,'^MTT'+ CRLF)
+		AADD(_aArq,'^PON'+ CRLF)
+		AADD(_aArq,'^PMN'+ CRLF)
+		AADD(_aArq,'^LH0,0'+ CRLF)
+		AADD(_aArq,'^JMA'+ CRLF)
+		AADD(_aArq,'^PR8,8'+ CRLF)
+	//	AADD(_aArq,'~SD15'+ CRLF)
+		AADD(_aArq,'^JUS'+ CRLF)
+		AADD(_aArq,'^LRN'+ CRLF)
+		AADD(_aArq,'^CI27'+ CRLF)
+		AADD(_aArq,'^PA0,1,1,0'+ CRLF)
+		AADD(_aArq,'^XZ'+ CRLF)
+		AADD(_aArq,'^XA'+ CRLF)
+		AADD(_aArq,'^MMT'+ CRLF)
+		AADD(_aArq,'^PW400'+ CRLF)
+		AADD(_aArq,'^LL400'+ CRLF)
+		AADD(_aArq,'^LS0'+ CRLF)
+		AADD(_aArq,'^FT85,33^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL1)+'^FS^CI27'+ CRLF)
+		AADD(_aArq,'^FT85,56^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL2)+'^FS^CI27'+ CRLF)
+		AADD(_aArq,'^FT85,79^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL3)+'^FS^CI27'+ CRLF)
+		AADD(_aArq,'^FT85,102^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL4)+'^FS^CI27'+ CRLF)
+		AADD(_aArq,'^FT85,125^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL5)+'^FS^CI27'+ CRLF)
+		AADD(_aArq,'^FT85,149^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL6)+'^FS^CI27'+ CRLF)
+		AADD(_aArq,'^PQ2,0,1,Y'+ CRLF)
+		AADD(_aArq,'^XZ'+ CRLF)
+
 		AaDd(aCodEtq,_aArq)
-
-
-
-
 
 		For nY:=1 To Len(aCodEtq)
 			For nP:=1 To Len(aCodEtq[nY])
