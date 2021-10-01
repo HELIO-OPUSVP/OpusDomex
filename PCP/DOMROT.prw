@@ -322,7 +322,7 @@ Static Function fVldEti(cEtiqOfc)
 			montatela()
 			_nSerie:= val(Subs(cEtiqOfc,13,Len(cEtiqOfc)))
 			lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-			//fVldXd1St(cCodOp)
+			fVldXd1St(cCodOp)
 			fStatus()
 
 			IF lContinua
@@ -366,7 +366,7 @@ Static Function fVldEti(cEtiqOfc)
 				montatela()
 				_nSerie:= val(Subs(cEtiqOfc,13,Len(cEtiqOfc)))
 				lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-				//fVldXd1St(cCodOp)
+				fVldXd1St(cCodOp)
 				fStatus()
 
 
@@ -398,7 +398,7 @@ Static Function fVldEti(cEtiqOfc)
 		ElseIf !empty(cCodOp) .and. alltrim(Subs(cEtiqOfc,2,11)) == cCodOp
 			_nSerie:= Subs(cEtiqOfc,13,Len(cEtiqOfc))
 			lContinua:= fVldXd4St(cCodOp,_nSerie)
-			//fVldXd1St(cCodOp)
+			fVldXd1St(cCodOp)
 			fStatus()
 
 
@@ -442,7 +442,7 @@ Static Function fVldEti(cEtiqOfc)
 			montatela()
 			_nSerie:= XD4->XD4_SERIAL
 			lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-			//fVldXd1St(cCodOp)
+			fVldXd1St(cCodOp)
 			fStatus()
 
 			IF lContinua
@@ -487,7 +487,7 @@ Static Function fVldEti(cEtiqOfc)
 					montatela()
 					_nSerie:= XD4->XD4_SERIAL
 					lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-					//fVldXd1St(cCodOp)
+					fVldXd1St(cCodOp)
 					fStatus()
 
 
@@ -519,7 +519,7 @@ Static Function fVldEti(cEtiqOfc)
 			ElseIf ALLTRIM(XD4->XD4_OP)  == ALLTRIM(cCodOp)
 				_nSerie:= XD4->XD4_SERIAL
 				lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-				//fVldXd1St(cCodOp)
+				fVldXd1St(cCodOp)
 				fStatus()
 
 				IF lContinua
@@ -1032,18 +1032,18 @@ Static function fVldXd4St(cCodOp,_nSerie)
 		Return .F.
 	Endif
 
-
-	cQuery:=" SELECT XD4_STATUS, R_E_C_N_O_ REC
-	cQuery+=" 		,(SELECT COUNT(*)
-	cQuery+=" 		FROM "+RETSQLNAME("XD4")+" XD4
-	cQuery+=" 		 WHERE XD4_OP =  '"+cCodOp+"'"
-	cQuery+=" 		 AND XD4_STATUS = '2'
-	cQuery+=" 		 AND XD4.D_E_L_E_T_ = '') QTDLID
-	cQuery+=" FROM "+RetSqlName("XD4")+" XD4 "
-	cQuery+=" WHERE XD4_OP =  '"+cCodOp+"'"
-	cQuery+=" AND XD4_SERIAL = "+_nSerie+" 	"
-	cQuery+=" AND XD4_FILIAL = '"+xFilial("XD4")+"' "
-	cQuery+=" AND XD4.D_E_L_E_T_ = ''
+	cEol:= chr(10)+chr(13)
+	cQuery:=" SELECT XD4_STATUS, R_E_C_N_O_ REC " +cEol
+	cQuery+=" 		,(SELECT COUNT(*) " +cEol
+	cQuery+=" 		FROM "+RETSQLNAME("XD4")+" XD4 " +cEol
+	cQuery+=" 		 WHERE XD4_OP =  '"+cCodOp+"'"  +cEol
+	cQuery+=" 		 AND XD4_STATUS = '2' " +cEol
+	cQuery+=" 		 AND XD4.D_E_L_E_T_ = '') QTDLID " +cEol
+	cQuery+=" FROM "+RetSqlName("XD4")+" XD4 "  +cEol
+	cQuery+=" WHERE XD4_OP =  '"+cCodOp+"'"  +cEol
+	cQuery+=" AND XD4_SERIAL = "+_nSerie+" 	"  +cEol
+	cQuery+=" AND XD4_FILIAL = '"+xFilial("XD4")+"' "  +cEol
+	cQuery+=" AND XD4.D_E_L_E_T_ = '' " +cEol
 	dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"QRY",.T.,.T.)
 
 	If QRY->(Eof())
@@ -1056,8 +1056,10 @@ Static function fVldXd4St(cCodOp,_nSerie)
 	Endif
 
 	nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
-	oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
-
+	if nPos > 0 
+		oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
+	Endif
+	
 	if lRet
 		dbSelectArea("XD4")
 		dbGoto(QRY->REC)

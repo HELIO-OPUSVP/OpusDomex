@@ -41,11 +41,7 @@ User Function DOMET116(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	cProdFilho := ""
 	cProOp:= ""
 
-	if !U_VALIDACAO()
-		Alert("Layout em desenvolvimento")
-		Return .F.
-	Endif
-
+	
 	If !Empty(cNumOP)
 		//Localiza SC2
 		SC2->(DbSetOrder(1))
