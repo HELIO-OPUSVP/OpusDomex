@@ -262,7 +262,7 @@ Static Function ColetorMenu(cDep)
 	If 'JONAS.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
 		If aScan(aAcessos,22) <> 0
 			Private oBtn04 := Nil
-			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW45(), U_DOMACD45())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACD45(), U_DOMACD45())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
 				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
 				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover

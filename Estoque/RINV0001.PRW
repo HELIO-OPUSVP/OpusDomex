@@ -18,7 +18,7 @@
 */
 
 User Function RINV0001()
-Private _cPerg  := "RINV0001"
+Private _cPerg  := "RINV0001  "
 Private oReport
 Private cFilterUser
 Private oSection1
@@ -43,15 +43,9 @@ cTitulo:= "Relatório de Planejado x Realizado"
 oFontN :=TFont():New("Times New Roman",08,08,,.T.,,,,.T.,.F.) // Negrito
 oFont  :=TFont():New("Times New Roman",08,08,,.F.,,,,.F.,.F.)
 
-oReport   :=TReport():New("RINV0001",cTitulo,cPerg,{|oReport| ReportPrin(oReport)},"Relatório de Planejado x Realizado - Inventario Ciclico.")
+oReport   :=TReport():New("RINV0001",cTitulo,_cPerg,{|oReport| ReportPrin(oReport)},"Relatório de Planejado x Realizado - Inventario Ciclico.")
 
 oReport:SetLandScape()
-
-/*
-oSection1:Cell("C4_PRODUTO"):SetHeaderAlign("LEFT")
-oSection1:Cell("C4_PRODUTO"):SetAlign("LEFT")
-oSection1:Cell("C4_PRODUTO"):SetSize(15)
-*/
 
 Return oReport
 
@@ -59,7 +53,6 @@ Return oReport
 
 Static Function ReportPrin(oReport)
 Local oSection1 	:= oReport:Section(1)
-Local nOrdem    	:= oSection1:GetOrder()
 Local _cFilial  	:= "%"+cFilAnt+"%"
 
 
@@ -83,19 +76,31 @@ TRCell():New(oSection1,"ESTOQUE"        ,,"ESTOQUE"         , ,010              
 oSection1:SetHeaderPage(.T.)
 
 Private _cAlias    := GetNextAlias()              
-
+Private cPerFil    := mv_par02+''+mv_par01
 
 BeginSql Alias _cAlias
 
-	SELECT ZZR_DTPLAN, ZZR_DTREAL, ZZR_PRODUT, ZZR_DESCRI, ZZR_TIPO, ZZR_LOCAL, ZZR_CLASSI, 0 AS ZZR_QTD, '20210924' AS ZZR_ULT 
-	FROM ZZR010 (NOLOCK)
+	SELECT ZZR_DTPLAN, ZZR_DTREAL, ZZR_PRODUT, ZZR_DESCRI, ZZR_TIPO, ZZR_LOCAL, ZZR_CLASSI, 
+
+	( SELECT COUNT(*) FROM ZZR010  (NOLOCK) ZZRA 
+	WHERE D_E_L_E_T_ = '' AND ZZRA.ZZR_PRODUT= ZZR.ZZR_PRODUT
+	AND ZZRA.ZZR_LOCAL= ZZR.ZZR_LOCAL AND ZZR_DTREAL<> ''	
+	AND LEFT(ZZRA.ZZR_DTPLAN,4)=LEFT(ZZR.ZZR_DTPLAN,4) ) AS ZZR_QTD, 
+	
+	( SELECT MAX(ZZR_DTREAL) FROM ZZR010  (NOLOCK) ZZRA 
+	WHERE D_E_L_E_T_ = '' AND ZZRA.ZZR_PRODUT= ZZR.ZZR_PRODUT
+	AND ZZRA.ZZR_LOCAL= ZZR.ZZR_LOCAL 
+	AND LEFT(ZZRA.ZZR_DTPLAN,4)=LEFT(ZZR.ZZR_DTPLAN,4) ) AS ZZR_ULT
+
+
+	FROM ZZR010 (NOLOCK) ZZR
 	WHERE D_E_L_E_T_ = ''
-	AND ZZR_PERIOD == %Exp:mv_par02% ++ %Exp:mv_par01% 
+	AND ZZR_PERIOD =  %Exp:cPerFil% 
 	AND ZZR_PRODUT >= %Exp:mv_par03%
-	AND ZZR_PRODUT >= %Exp:mv_par04%                                                                                  
+	AND ZZR_PRODUT <= %Exp:mv_par04%                                                                                  
 	AND ZZR_LOCAL  >= %Exp:mv_par05%
 	AND ZZR_LOCAL  <= %Exp:mv_par06%
-	AND ZZR_FILIAL == %Exp:_cFilial% 
+	AND ZZR_FILIAL =  %Exp:_cFilial% 
 	
 	
 EndSql
@@ -114,6 +119,8 @@ oReport:SetMeter(nRecnos)
 
 (_cAlias)->(dbGoTop())
 
+
+
 dbSelectArea(_cAlias)
 While !oReport:Cancel() .And. (_cAlias)->(!Eof())
 	
@@ -125,16 +132,15 @@ While !oReport:Cancel() .And. (_cAlias)->(!Eof())
 	//SZB->( dbSeek( xFilial() + (_cAlias)->ZD_ESCOLA  ) )
 	//SB1->( dbSeek( xFilial() + (_cAlias)->ZD_PRODUTO ) )
 	                          
-	oSection1:Cell("ZZR_DTPLAN")  :SetValue((_cAlias)->ZZR_DTPLAN   )
-	oSection1:Cell("ZZR_DTREAL")  :SetValue((_cAlias)->ZZR_DTREAL   )
-	oSection1:Cell("ZZR_PRODUT")  :SetValue((_cAlias)->ZZR_PRODUT   )	
-	oSection1:Cell("ZZR_DESCRI")  :SetValue((_cAlias)->ZZR_DESCRI   )
-	oSection1:Cell("ZZR_TIPO")    :SetValue((_cAlias)->ZZR_TIPO     )
-	oSection1:Cell("ZZR_LOCAL")   :SetValue((_cAlias)->ZZR_LOCAL    )
-	oSection1:Cell("ZZR_CLASSI")  :SetValue((_cAlias)->ZZR_CLASSI   )                               		
-	oSection1:Cell("ZZR_QTD")     :SetValue((_cAlias)->ZZR_QTD      )
-	oSection1:Cell("ZZR_ULT")     :SetValue((_cAlias)->ZZR_ULT      )
-	
+	oSection1:Cell("ZZR_DTPLAN")  :SetValue(SubStr((_cAlias)->ZZR_DTPLAN,7,2)+"/"+SubStr((_cAlias)->ZZR_DTPLAN,5,2)+"/"+SubStr((_cAlias)->ZZR_DTPLAN,1,4))
+	oSection1:Cell("ZZR_DTREAL")  :SetValue(SubStr((_cAlias)->ZZR_DTREAL,7,2)+"/"+SubStr((_cAlias)->ZZR_DTREAL,5,2)+"/"+SubStr((_cAlias)->ZZR_DTREAL,1,4))
+	oSection1:Cell("ZZR_PRODUT")  :SetValue((_cAlias)->ZZR_PRODUT             )	
+	oSection1:Cell("ZZR_DESCRI")  :SetValue((_cAlias)->ZZR_DESCRI             )
+	oSection1:Cell("ZZR_TIPO")    :SetValue((_cAlias)->ZZR_TIPO               )
+	oSection1:Cell("ZZR_LOCAL")   :SetValue((_cAlias)->ZZR_LOCAL              )
+	oSection1:Cell("ZZR_CLASSI")  :SetValue((_cAlias)->ZZR_CLASSI             )                               		
+	oSection1:Cell("ZZR_QTD")     :SetValue((_cAlias)->ZZR_QTD                )
+	oSection1:Cell("ZZR_ULT")     :SetValue(SubStr((_cAlias)->ZZR_ULT,7,2)+"/"+SubStr((_cAlias)->ZZR_ULT,5,2)+"/"+SubStr((_cAlias)->ZZR_ULT,1,4))
 	
 	
 	oSection1:PrintLine()
