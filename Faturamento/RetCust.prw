@@ -61,11 +61,11 @@ Static Function ExplCusSG1(cProduto,cCod,nQtde,nCusTotal)
 	SG1->(DbSeek(xFilial() + cProduto))
 
 	While xFilial("SG1") == SG1->G1_FILIAL .and. AllTrim(cProduto) == AllTrim(SG1->G1_COD) .And. SG1->(!Eof())
-		//If  (SG1->G1_INI <= dDataBase .And. SG1->G1_FIM >= dDataBase)
 
 		aAreaSG1    := SG1->(GetArea())
 		cComponente := SG1->G1_COMP
 		nG1_QTDE    := SG1->G1_QUANT
+
 		If !SG1->( DbSeek( xFilial() + cComponente ) )
 
 			SG1->(RestArea(aAreaSG1))
