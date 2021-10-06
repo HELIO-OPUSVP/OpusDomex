@@ -33,6 +33,7 @@ User Function MNUCOLETOR(cDep, cFilDOM) // MostraFunc(OK)
 	Private nAltuBut := 16
 	Private aAcessos := {}
 	Private cStartPath := GetSrvProfString('Startpath','')
+	Private cImgFundo:= ""
 	Private oBtn
 	Public cUsuario
 
@@ -115,15 +116,29 @@ User Function MNUCOLETOR(cDep, cFilDOM) // MostraFunc(OK)
 //AADD(aUsuarios,'Denis')
 //AADD(aUsuarios,'Helio')
 
+
 	IF cAmbiente $ U_WEBCOL()
-		oTBitmap := TBitmap():New(0,0,450,302,,cStartPath+"Coletor01.jpg",.T.,oDlgMenu02,{|| nLinUsr := 0},,.F.,.F.,,,.F.,,.T.,,.F.)
+		if Alltrim(cAmbiente) =="WEBCOL" .and. cFilDOM == '01'
+			cImgFundo:= "Coletor01.jpg"
+		elseif Alltrim(cAmbiente) =="WEBCOL_VALIDACAO"
+			cImgFundo:= "Coletor01V.jpg"
+		elseif Alltrim(cAmbiente) =="WEBCOL" .and. cFilDOM == '02'
+			cImgFundo:= "Coletor02.jpg"
+		elseif Alltrim(cAmbiente) =="WEBCOLMG_VALIDACAO" 
+			cImgFundo:= "Coletor02V.jpg"
+		Endif
+		
+
+		oTBitmap := TBitmap():New(0,0,450,302,,cStartPath+cImgFundo,.T.,oDlgMenu02,{|| nLinUsr := 0},,.F.,.F.,,,.F.,,.T.,,.F.)
 		oTBitmap:lAutoSize := .T.
+
+
 	Else
 		oTBitmap := TBitmap():New(-13,30,260,184,,cStartPath+"LGMID01.png",.T.,oDlgMenu02,{|| nLinUsr := 0},,.F.,.F.,,,.F.,,.T.,,.F.)
 		oTBitmap:lAutoSize := .T.
 	EndIf
 
-	nLin := 20
+	nLin := 35
 //@ nLin, 020	SAY oTexto1 Var 'Login Coletor:'    SIZE 100,10 PIXEL
 //oTexto1:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 
@@ -234,7 +249,7 @@ Static Function ColetorMenu(cDep)
 // Rotina 20
 	If aScan(aAcessos,20) <> 0
 		Private oBtn03 := Nil
-		@ nLin, nCol BUTTON oBtn03 PROMPT "Endereçamento Recebimento" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW01(), U_())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn03 PROMPT "Endereçamento Recebimento" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW01(), U_DOMACD01())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 := "QPushButton{background-image: url(rpo:armazem.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:armazem.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:armazem.png);"+cHover
@@ -973,8 +988,10 @@ Return _Retorno
 //Sleep(nSeg*1000)
 //Return
 
-// User function WEBCOL()
+ User function WEBCOL()
 
-// Local cAmbiente:= "WEBCOL" 
+ Local cAmbiente:= "WEBCOL" 
+ cAmbiente+= ",WEBCOLMG_VALIDACAO"
+  cAmbiente+= ",WEBCOL_VALIDACAO"
 
-// Return cAmbiente
+ Return cAmbiente

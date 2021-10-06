@@ -419,7 +419,7 @@ Static Function fVldEti(cEtiqOfc)
 		Endif
 
 		/*/Etiq. Furukawa/*/ 
-	Elseif Substring(cEtiqOfc,LEN(alltrim(cEtiqOfc)),1) == "X" .OR. "DOM-" $ alltrim(cEtiqOfc)  
+	Elseif Substring(cEtiqOfc,LEN(alltrim(cEtiqOfc)),1) == "X" .OR. "DOM-" $ alltrim(cEtiqOfc)
 		If Empty(cCodOp)
 
 			XD4->(DBSETORDER(3))
@@ -1056,10 +1056,10 @@ Static function fVldXd4St(cCodOp,_nSerie)
 	Endif
 
 	nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
-	if nPos > 0 
+	if nPos > 0
 		oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
 	Endif
-	
+
 	if lRet
 		dbSelectArea("XD4")
 		dbGoto(QRY->REC)
@@ -1187,7 +1187,7 @@ Return
 
 /*/Protheus.doc fVldXd1St
 	description
-	type function
+type function
 	version
 	author Ricardo Roda
 	since 06/08/2020
@@ -1221,16 +1221,18 @@ Static function fVldXd1St(cCodOp)
 	if QRY->(!Eof())
 		WHILE QRY->(!EOF())
 			nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosComp]) == alltrim(XD1_COD) })
-			oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
 
-			if	oGetDados:aCols[nPos,nPQtdent] == oGetDados:aCols[nPos,nPQtdOp]
-				oGetDados:aCols[nPos,nPosFlag] := oOk
-			Elseif oGetDados:aCols[nPos,nPQtdent] == 0
-				oGetDados:aCols[nPos,nPosFlag] := oNo
-			Elseif oGetDados:aCols[nPos,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
-				oGetDados:aCols[nPos,nPosFlag] := oIn
+			if nPos > 0
+				oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
+				if	oGetDados:aCols[nPos,nPQtdent] == oGetDados:aCols[nPos,nPQtdOp]
+					oGetDados:aCols[nPos,nPosFlag] := oOk
+				Elseif oGetDados:aCols[nPos,nPQtdent] == 0
+					oGetDados:aCols[nPos,nPosFlag] := oNo
+				Elseif oGetDados:aCols[nPos,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
+					oGetDados:aCols[nPos,nPosFlag] := oIn
+				Endif
 			Endif
-
+  
 			QRY->(DbSkip())
 		End
 	Endif
