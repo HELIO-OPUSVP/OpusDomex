@@ -54,14 +54,14 @@ Return oReport
 Static Function ReportPrin(oReport)
 Local oSection1 	:= oReport:Section(1)
 Local _cFilial  	:= "%"+cFilAnt+"%"
-
+Local lFirst := .t.
 
 oSection1:=TRSection():New(oReport,"","ZZR",{},.F./*aOrder*/,.F./*lLoadCells*/,""/*cTotalText*/,.F./*lTotalInCol*/,.F./*lHeaderPage*/,.F./*lHeaderBreak*/)
                                                           
 
-TRCell():New(oSection1,"ZZR_DTPLAN"       ,,"Dt. Planejada"       , ,008                               ,.F.,)
-TRCell():New(oSection1,"ZZR_DTREAL"       ,,"Dt. Realizada"       , ,008                               ,.F.,)
-TRCell():New(oSection1,"ZZR_PRODUT"       ,,"Produto"             , ,015                               ,.F.,)
+TRCell():New(oSection1,"ZZR_DTPLAN"       ,,"Dt. Planejada"       , ,020                               ,.F.,)
+TRCell():New(oSection1,"ZZR_DTREAL"       ,,"Dt. Realizada"       , ,020                               ,.F.,)
+TRCell():New(oSection1,"ZZR_PRODUT"       ,,"Produto"             , ,020                               ,.F.,)
 TRCell():New(oSection1,"ZZR_DESCRI"       ,,"Descrição"           , ,050                               ,.F.,)
 TRCell():New(oSection1,"ZZR_TIPO"         ,,"Tipo"                , ,002                               ,.F.,)
 TRCell():New(oSection1,"ZZR_LOCAL"        ,,"Almoxarifado"        , ,002                               ,.F.,)
@@ -70,7 +70,7 @@ TRCell():New(oSection1,"ZZR_QTD"          ,,"Inventários Periodo" , ,010        
 TRCell():New(oSection1,"ZZR_ULT"          ,,"Ultimo Inventário"   , ,008                               ,.F.,)
 
 
-TRCell():New(oSection1,"ESTOQUE"        ,,"ESTOQUE"         , ,010                               ,.F.,)
+//TRCell():New(oSection1,"ESTOQUE"        ,,"ESTOQUE"         , ,010                               ,.F.,)
 
 
 oSection1:SetHeaderPage(.T.)
@@ -78,7 +78,34 @@ oSection1:SetHeaderPage(.T.)
 Private _cAlias    := GetNextAlias()              
 Private cPerFil    := mv_par02+''+mv_par01
 
+
 BeginSql Alias _cAlias
+
+
+	SELECT CAST(DEMA_TOT AS VARCHAR)  AS ZZR_DTPLAN, CAST(DEMA_ATU AS VARCHAR) AS ZZR_DTREAL, CAST(DEMA_REA AS VARCHAR) AS ZZR_PRODUT, 
+	CAST(ROUND(((DEMA_REA *100)/DEMA_ATU),2) AS VARCHAR)  AS ZZR_DESCRI,  '' AS ZZR_TIPO, '' AS ZZR_LOCAL, '' AS ZZR_CLASSI, 0 AS ZZR_QTD, '' AS ZZR_ULT
+	FROM
+
+
+	(
+	SELECT COUNT(*) AS DEMA_TOT,
+
+		( SELECT COUNT(*) FROM ZZR010  (NOLOCK) ZZRA 
+		  WHERE D_E_L_E_T_ = ''  AND ZZR_DTPLAN<= CONVERT(VARCHAR(10), GETDATE()+800, 112)  AND ZZR_PERIOD= %Exp:cPerFil% ) AS DEMA_ATU,
+
+
+			( SELECT COUNT(*) FROM ZZR010  (NOLOCK) ZZRA 
+			WHERE D_E_L_E_T_ = ''  AND ZZR_DTREAL<> '' AND ZZR_PERIOD= %Exp:cPerFil% ) AS DEMA_REA
+
+
+	FROM ZZR010 (NOLOCK) ZZR
+	WHERE D_E_L_E_T_ = '' AND ZZR_PERIOD= %Exp:cPerFil% 
+
+	) AS FINAL
+
+
+	UNION ALL
+
 
 	SELECT ZZR_DTPLAN, ZZR_DTREAL, ZZR_PRODUT, ZZR_DESCRI, ZZR_TIPO, ZZR_LOCAL, ZZR_CLASSI, 
 
@@ -131,6 +158,53 @@ While !oReport:Cancel() .And. (_cAlias)->(!Eof())
 	//SZ1->( dbSeek( xFilial() + (_cAlias)->ZC_REQUISI ) )
 	//SZB->( dbSeek( xFilial() + (_cAlias)->ZD_ESCOLA  ) )
 	//SB1->( dbSeek( xFilial() + (_cAlias)->ZD_PRODUTO ) )
+	If lFirst
+		lFirst := .f.
+		
+		oSection1:Cell("ZZR_DTPLAN")  :SetValue('')	
+		oSection1:Cell("ZZR_DTREAL")  :SetValue('')	
+		oSection1:Cell("ZZR_PRODUT")  :SetValue('')	
+		oSection1:Cell("ZZR_DESCRI")  :SetValue('')
+		oSection1:Cell("ZZR_QTD")     :SetValue('')
+
+		oSection1:PrintLine()
+		oReport:SkipLine()
+
+		oSection1:Cell("ZZR_DTPLAN")  :SetValue('')	
+		oSection1:Cell("ZZR_DTREAL")  :SetValue('')	
+		oSection1:Cell("ZZR_PRODUT")  :SetValue('')	
+		oSection1:Cell("ZZR_DESCRI")  :SetValue('')
+		oSection1:Cell("ZZR_QTD")     :SetValue('')
+
+		oSection1:PrintLine()
+		oReport:SkipLine()
+	
+		
+		
+
+		oSection1:Cell("ZZR_DTPLAN")  :SetValue('TOTAL ITENS'              )	
+		oSection1:Cell("ZZR_DTREAL")  :SetValue('DEMANDA ATÉ '+DTOC(DDATABASE) )	
+		oSection1:Cell("ZZR_PRODUT")  :SetValue('Itens Inventariados'           		    )	
+		oSection1:Cell("ZZR_DESCRI")  :SetValue('Percentual'								)
+		oSection1:Cell("ZZR_QTD")     :SetValue('')
+
+		oSection1:PrintLine()
+		oReport:SkipLine()
+	
+
+		oSection1:Cell("ZZR_DTPLAN")  :SetValue((_cAlias)->ZZR_DTPLAN             )	
+		oSection1:Cell("ZZR_DTREAL")  :SetValue((_cAlias)->ZZR_DTREAL             )	
+		oSection1:Cell("ZZR_PRODUT")  :SetValue((_cAlias)->ZZR_PRODUT             )	
+		oSection1:Cell("ZZR_DESCRI")  :SetValue(((_cAlias)->ZZR_DESCRI) + '%'     )
+		oSection1:Cell("ZZR_QTD")     :SetValue('')
+
+		oSection1:PrintLine()
+		oReport:SkipLine()
+
+		
+		(_cAlias)->(dbSkip())
+
+	EndIF
 	                          
 	oSection1:Cell("ZZR_DTPLAN")  :SetValue(SubStr((_cAlias)->ZZR_DTPLAN,7,2)+"/"+SubStr((_cAlias)->ZZR_DTPLAN,5,2)+"/"+SubStr((_cAlias)->ZZR_DTPLAN,1,4))
 	oSection1:Cell("ZZR_DTREAL")  :SetValue(SubStr((_cAlias)->ZZR_DTREAL,7,2)+"/"+SubStr((_cAlias)->ZZR_DTREAL,5,2)+"/"+SubStr((_cAlias)->ZZR_DTREAL,1,4))
