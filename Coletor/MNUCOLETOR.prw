@@ -235,6 +235,8 @@ Static Function ColetorMenu(cDep)
 		AADD(aAcessos, 10)
 		AADD(aAcessos, 11)
 		AADD(aAcessos, 12)
+		AADD(aAcessos, 13)
+		
 	EndIf
 
 //U_MostraFunc(ProcName(),'MNU01COLETOR')
@@ -745,6 +747,16 @@ Static Function ColetorMenu(cDep)
 			"QPushButton:pressed {background-image: url(rpo:destinos_mdi.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:destinos_mdi.png);"+cHover
 		oBtn16:SetCSS( cCSSBtN1 )
+		nLin += nSkipLin
+	EndIf
+
+	If aScan(aAcessos,13) <> 0
+		Private oBtn17 := Nil
+		@ nLin, nCol BUTTON oBtn17 PROMPT "Paletização MG" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW22(), U_DOMACD22())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:armimg32.png);"+cPush+;
+			"QPushButton:pressed {background-image: url(rpo:armimg32.png);"+cPressed+;
+			"QPushButton:hover {background-image: url(rpo:armimg32.png);"+cHover
+		oBtn17:SetCSS( cCSSBtN1 )
 		nLin += nSkipLin
 	EndIf
 

@@ -106,7 +106,7 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	EndIf
 
 	lRetrato:= .T.
-
+	aCodEtq:= {}
 	While ZZU->(!eof()) .AND. ZZU->ZZU_PEDIDO == SC2->C2_PEDIDO .AND. ZZU->ZZU_ITEM == SC2->C2_ITEMPV
 
 	/*	IF LEN (alltrim(ZZU->ZZU_LABEL1)) > 21 .OR. LEN (alltrim(ZZU->ZZU_LABEL4)) > 24
@@ -141,7 +141,7 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		AADD(_aArq,'^PQ2,0,1,Y^XZ'+ CRLF)
 
 */
-		//AADD(_aArq,'CT~~CD,~CC^~CT~'+ CRLF)
+		AADD(_aArq,'CT~~CD,~CC^~CT~'+ CRLF)
 		AADD(_aArq,'^XA'+ CRLF)
 		AADD(_aArq,'~TA000'+ CRLF)
 		AADD(_aArq,'~JSN'+ CRLF)
@@ -153,13 +153,12 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		AADD(_aArq,'^LH0,0'+ CRLF)
 		AADD(_aArq,'^JMA'+ CRLF)
 		AADD(_aArq,'^PR8,8'+ CRLF)
-	//	AADD(_aArq,'~SD15'+ CRLF)
 		AADD(_aArq,'^JUS'+ CRLF)
 		AADD(_aArq,'^LRN'+ CRLF)
 		AADD(_aArq,'^CI27'+ CRLF)
 		AADD(_aArq,'^PA0,1,1,0'+ CRLF)
 		AADD(_aArq,'^XZ'+ CRLF)
-	
+
 		AADD(_aArq,'^XA'+ CRLF)
 		AADD(_aArq,'^MMT'+ CRLF)
 		AADD(_aArq,'^PW400'+ CRLF)
@@ -174,25 +173,25 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		AADD(_aArq,'^PQ2,0,1,Y'+ CRLF)
 		AADD(_aArq,'^XZ'+ CRLF)
 
-		aCodEtq:= {}
+
 		AaDd(aCodEtq,_aArq)
 		_aArq:= {}
 
-		For nY:=1 To Len(aCodEtq)
-			For nP:=1 To Len(aCodEtq[nY])
-				MSCBWrite(aCodEtq[nY][nP])
-			Next nP
-		Next nY
-
-	
-
-		MSCBEND()
 		ZZU->(dbSkip())
 	End
 
+	For nY:=1 To Len(aCodEtq)
+		For nP:=1 To Len(aCodEtq[nY])
+			MSCBWrite(aCodEtq[nY][nP])
+		Next nP
+	Next nY
+
+	MSCBEND()
 	MSCBCLOSEPRINTER()
 	//Finaliza impressão da etiqueta
 
 
 Return(.T.)
+
+
 

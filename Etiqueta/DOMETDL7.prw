@@ -1,4 +1,5 @@
 #include "protheus.ch"
+#include "protheus.ch"
 #include "rwmake.ch"
 #include "topconn.ch"
 #include "Tbiconn.ch"
@@ -2475,13 +2476,17 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 
 	if  U_VALIDACAO() // RODA 16/09/2021
 		lGlobal := .F.
-		
-		If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))  //Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  // 
-			lGlobal := .T.
-		EndIf
 
-		If lGlobal
-			MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) })
+		if !empty(SB1->B1_BASE)
+			_BaseCod := Subs(SC2->C2_PRODUTO,1,2)
+			_UltDig:= Subs(SC2->C2_PRODUTO,LEN(ALLTRIM(SC2->C2_PRODUTO))-1,1)
+			IF _BaseCod+_UltDig  $ "CH9|CM9|CO9|DPB|FXE|MDB|MSB|PB9|TE9"
+				//If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))  //Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  //
+				lGlobal := .T.
+			EndIf
+			If lGlobal
+				MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) })
+			Endif
 		Endif
 	Endif
 

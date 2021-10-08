@@ -2192,7 +2192,7 @@ static Function fButtCel()
 	oCelCort6:setCSS(cCSSBtN1)
 	@ 210, 040 BUTTON oCelCort7 PROMPT "TRUNK 1" SIZE 150, 053 OF oDlgBtC ACTION (nCelula := 7, oDlgBtc:end() ) FONT oFont1 PIXEL
 	
-	If U_VALIDACAO() //Roda 30/09/2021
+	If U_VALIDACAO() .or. .T. //Roda 30/09/2021
 		oCelCort7:setCSS(cCSSBtN1)
 		@ 210, 212 BUTTON oCelCort7 PROMPT "PRECON 1" SIZE 150, 053 OF oDlgBtC ACTION (nCelula := 8, oDlgBtc:end() ) FONT oFont1 PIXEL
 	Else
@@ -2237,11 +2237,10 @@ Static function  ftelaOp (nCelTrab)
 			mymsg( "Não há programações para 'TRUNK 1' ",1 )
 		ElseIF nCelTrab == 6
 			mymsg( "Não há programações para 'DROP 1' ",1 )
-		ElseIF nCelTrab == 8 .AND. U_VALIDACAO() //RODA 30/09/2021
+		ElseIF nCelTrab == 8 .AND. (U_VALIDACAO() .OR. .T.) //RODA 30/09/2021
 			mymsg( "Não há programações para 'PRECON 1' ",1 )
-		ElseIF nCelTrab == 8 .AND. !(U_VALIDACAO()) //RODA 30/09/2021
-			mymsg( "Não há programações para 'PRECON' ",1 )
-		
+		// ElseIF nCelTrab == 8 .AND. !(U_VALIDACAO()) //RODA 30/09/2021
+		// 	mymsg( "Não há programações para 'PRECON' ",1 )
 		Endif
 		Return .T.
 	Endif
@@ -2349,10 +2348,10 @@ Static Function fLocImp(nCel)
 		cMaq:= "'TRUNK 1'"
 	Elseif nCel == 6
 		cMaq:= "'DROP 1'"
-	Elseif nCel == 8 .AND.  U_VALIDACAO() //RODA 30/09/2021
+	Elseif nCel == 8 .AND.  (U_VALIDACAO() .OR. .T.) //RODA 30/09/2021
 		cMaq:= "'PRECON 1'"	
-	Elseif nCel == 8 .AND.  !(U_VALIDACAO()) //RODA 30/09/2021
-		cMaq:= "'PRECON'"	
+	// Elseif nCel == 8 .AND.  !(U_VALIDACAO()) //RODA 30/09/2021
+	// 	cMaq:= "'PRECON'"	
 	Endif
 
 
