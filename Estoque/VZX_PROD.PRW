@@ -14,8 +14,10 @@
 */
 
 User Function VZX_PROD()
-Local _Retorno := .T.
-
+Local _Retorno 	:= .T.
+Local lAutoria 	:= .F.
+Local cUserAut 	:= SuperGetMV("MV_USZXAUT",.F.,"000288/000646/000622")
+Local cMensErro := ""
 If !Empty(M->ZX_PRODUTO)
 	SB1->( dbSetOrder(1) )
 	If SB1->( dbSeek( xFilial() + M->ZX_PRODUTO ) )
@@ -47,12 +49,22 @@ If !Empty(M->ZX_PRODUTO)
 			
 		EndIf
 	*/
-		// Adicionado por MAURESI en 09/03/2020
-		if Alltrim(SB1->B1_TIPO)  $ "PA/PR/MP/"   // Produto Acabado / Produto Revenda / Materia Prima
-			MsgStop("Produtos dos tipos [ PA / PR / MP ] não podem ser solicitados por esta rotina.")
-			_Retorno := .F.
-		endif
-
+		//If Adicionado Por Jackson Santos em 14/09/21
+		lAutoria := Alltrim(__cUserID) $ Alltrim(cUserAut)
+		If lAutoria			
+			MsgAlert("Usuário Autorizado a Fazer a Movimentação","Movimento [ PA / PR / MP ]")
+			_Retorno := .T.		
+		Else
+			// Adicionado por MAURESI en 09/03/2020
+			if Alltrim(SB1->B1_TIPO)  $ "PA/PR/MP/"   // Produto Acabado / Produto Revenda / Materia Prima
+				cMensErro := "Produtos dos tipos [ PA / PR / MP ] não podem ser solicitados por esta rotina." 
+				cMensErro += Char(13) + Char(10) + "Caso necessitar solicite ao administrador cadastra seu código"
+				cMensErro += Char(13) + Char(10) + "de usuário no parâmetro: MV_USZXAUT"
+				
+				MsgStop(cMensErro)
+				_Retorno := .F.
+			endif
+		Endif
 	Else
 		MsgStop("Produto inválido.")
 	EndIf
