@@ -217,11 +217,13 @@ User Function DOMETDLG()
 				U_DOMET114(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie)
 			ElseIf mv_par06 == "115"  // Layout 115 - (ID CORTE FURUKAWA - AVULSA))
 				U_DOMET115(mv_par02,mv_par05,mv_par07)
-			ElseIf mv_par06 == "116" .and. U_VALIDACAO() // Layout 116 - (novo Layout 004)
+			ElseIf mv_par06 == "116"  // Layout 116 - (novo Layout 004)
 				U_DOMET116(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie) 
-			ElseIf mv_par06 == "117" .and. U_VALIDACAO() // Layout 117 - (TELECOM ARGENTINA )
+			ElseIf mv_par06 == "117"  // Layout 117 - (TELECOM ARGENTINA )
 				U_DOMET117(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie) 
-			EndIf
+			ElseIf mv_par06 == "118"  // Layout 117 - (TELECOM ARGENTINA )
+				U_DOMET118(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie) 
+			EndIf 
 
 
 		EndIf

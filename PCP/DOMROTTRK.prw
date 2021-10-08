@@ -262,7 +262,7 @@ Static Function fVldEti(cEtiqOfc)
 			montatela()
 			_nSerie:= val(Subs(cEtiqOfc,13,Len(cEtiqOfc)))
 			lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-			//fVldXd1St(cCodOp)
+			fVldXd1St(cCodOp)
 			fStatus()
 
 			IF lContinua
@@ -306,7 +306,7 @@ Static Function fVldEti(cEtiqOfc)
 				montatela()
 				_nSerie:= val(Subs(cEtiqOfc,13,Len(cEtiqOfc)))
 				lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-				//fVldXd1St(cCodOp)
+				fVldXd1St(cCodOp)
 				fStatus()
 
 
@@ -338,7 +338,7 @@ Static Function fVldEti(cEtiqOfc)
 		ElseIf !empty(cCodOp) .and. alltrim(Subs(cEtiqOfc,2,8)) == cCodOp
 			_nSerie:= Subs(cEtiqOfc,13,Len(cEtiqOfc))
 			lContinua:= fVldXd4St(cCodOp,_nSerie)
-			//fVldXd1St(cCodOp)
+			fVldXd1St(cCodOp)
 			fStatus()
 
 
@@ -383,7 +383,7 @@ Static Function fVldEti(cEtiqOfc)
 			montatela()
 			_nSerie:= XD4->XD4_SERIAL
 			lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-			//fVldXd1St(cCodOp)
+			fVldXd1St(cCodOp)
 			fStatus()
 
 			IF lContinua
@@ -428,7 +428,7 @@ Static Function fVldEti(cEtiqOfc)
 					montatela()
 					_nSerie:= XD4->XD4_SERIAL
 					lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-					//fVldXd1St(cCodOp)
+					fVldXd1St(cCodOp)
 					fStatus()
 
 
@@ -460,7 +460,7 @@ Static Function fVldEti(cEtiqOfc)
 			ElseIf ALLTRIM(XD4->XD4_OP)  == ALLTRIM(cCodOp)
 				_nSerie:= XD4->XD4_SERIAL
 				lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-				//fVldXd1St(cCodOp)
+				fVldXd1St(cCodOp)
 				fStatus()
 
 				IF lContinua

@@ -71,7 +71,7 @@ User Function DOMCEI()
 	Private oGetDados2
 	Private oButton3
 	Private oOpcoes
-	Private cOpcoes:= CriaVar("B1_COD")
+	Private cOpcoes:= CriaVar("B1_DESC")
 
 //Private lFirst:= .T.
 	Private oDlg
@@ -301,7 +301,16 @@ Static Function MontaTela2()
 	cQuery+= " FROM "+RETSQLNAME("ZZA")+" ZZA"
 	cQuery+= " WHERE ZZA_FILIAL = '"+xFilial("ZZA")+"' "
 	cQuery+= " AND ZZA_BASE = '"+cVar1+cVar2+"' "
-	cQuery+= " AND ZZA_PN LIKE '"+ALLTRIM(cOpcoes)+"%' "
+	IF U_VALIDACAO() //RODA 01/10/2021
+		cQuery+= " AND (ZZA_PN LIKE '"+ALLTRIM(cOpcoes)+"%' "
+		cQuery+= " OR ZZA_DESCR LIKE '"+ALLTRIM(cOpcoes)+"%') "
+	ELSE
+		cQuery+= " AND ZZA_PN LIKE '"+ALLTRIM(cOpcoes)+"%' "
+	
+	ENDIF
+
+
+
 	cQuery+= " AND ZZA.D_E_L_E_T_ = '' "
 	dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"QRY",.T.,.T.)
 

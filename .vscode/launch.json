@@ -7,7 +7,7 @@
 			"name": "Depuração do idioma TOTVS",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
-			"smartclientBin": "C:/totvs/bin/smartclient/smartclient.exe",
+			"smartclientBin": "C:/Totvs/smartclient64_DOMEX/smartclient.exe",
 			"isMultiSession": true,
 			"enableTableSync": true
 		}
@@ -27,7 +27,54 @@
 			"args": [],
 			"label": "u_mnucoletor",
 			"description": ""
+		},
+		{
+			"label": "u_mnucoletor",
+			"description": "<nil>"
+		},
+		{
+			"args": [],
+			"label": "u_LayGrid",
+			"description": ""
+		},
+		{
+			"label": "sigaadv",
+			"description": "<nil>"
+		},
+		{
+			"label": "SIGAESP",
+			"description": "<nil>"
+		},
+		{
+			"args": [],
+			"label": "u_LayLinear",
+			"description": ""
+		},
+		{
+			"args": [],
+			"label": "U_WMSA033",
+			"description": ""
+		},
+		{
+			"label": "VTDEBUG",
+			"description": "<nil>"
+		},
+		{
+			"label": "SIGA",
+			"description": "<nil>"
+		},
+		{
+			"label": "u_WEBCOL",
+			"description": "<nil>"
+		},
+		{
+			"label": "SIGAEST",
+			"description": "<nil>"
+		},
+		{
+			"label": "SIGApcp",
+			"description": "<nil>"
 		}
 	],
-	"lastProgramExecuted": "u_mnucoletor"
+	"lastProgramExecuted": "sigaadv"
 }
