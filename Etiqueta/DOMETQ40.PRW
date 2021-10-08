@@ -2,7 +2,7 @@
 #include "rwmake.ch"
 
 //--------------------------------------------------------------
-/*/{Protheus.doc} DOMET116 (COPIA DOMETI06 -LAYOUT 004 PARA IMPRESSÃO NA ROTINA PA2)
+/*/{Protheus.doc} DOMETQ40 (COPIA DOMETI06 -LAYOUT 004 PARA IMPRESSÃO NA ROTINA PA2)
 Description ETIQUETA TELEFÔNICA 
 @param xParam Parameter Description
 @return xRet Return Description
@@ -10,7 +10,7 @@ Description ETIQUETA TELEFÔNICA
 @since 06/09/2021
 /*/
 //-------------------------------------------------------------
-User Function DOMET116(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
+User Function DOMETQ40(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
 
 	Local aPar       := {}
 	Local aRet       := {}
@@ -381,7 +381,7 @@ User Function DOMET116(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 				AADD(_aArq,'^FT59,611^A0N,29,28^FH\^FDSITE:' + SC6->C6_XXSITE+'^FS'+ CRLF)
 			Endif
 			AADD(_aArq,'^FT55,653^A0N,29,28^FH\^FDINDUSTRIA BRASILEIRA^FS'+ CRLF)
-			AADD(_aArq,'^FT766,651^A0N,29,28^FH\^FDLayout 116^FS'+ CRLF)
+			AADD(_aArq,'^FT766,651^A0N,29,28^FH\^FDLayout 040^FS'+ CRLF)
 			AADD(_aArq,'^PQ1,0,1,Y^XZ'+ CRLF)
 
 			AaDd(aCodEtq,_aArq)

@@ -112,7 +112,6 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	/*	IF LEN (alltrim(ZZU->ZZU_LABEL1)) > 21 .OR. LEN (alltrim(ZZU->ZZU_LABEL4)) > 24
 			lRetrato:= .F.
 		Endif
-
 		AADD(_aArq,'CT~~CD,~CC^~CT~'+ CRLF)
 		AADD(_aArq,'^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR2,2~SD20^JUS^LRN^CI0^XZ'+ CRLF)
 		AADD(_aArq,'^XA'+ CRLF)
@@ -120,7 +119,6 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		AADD(_aArq,'^PW406'+ CRLF)
 		AADD(_aArq,'^LL0196'+ CRLF)
 		AADD(_aArq,'^LS0'+ CRLF)
-
 		iF lRetrato
 			nIniLin:= 380
 			nLinInc:= 22
@@ -130,9 +128,7 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			AADD(_aArq,'^FT'+cValToChar(nIniLin-(nLinInc*4)) +',12^A0R,14,14^FH\^FD'+alltrim(ZZU->ZZU_LABEL4)+'^FS'+ CRLF)
 			AADD(_aArq,'^FT'+cValToChar(nIniLin-(nLinInc*5)) +',56^A0R,17,16^FH\^FD'+alltrim(ZZU->ZZU_LABEL5)+'^FS'+ CRLF)
 			AADD(_aArq,'^FT'+cValToChar(nIniLin-(nLinInc*6)) +',15^A0R,17,16^FH\^FD'+alltrim(ZZU->ZZU_LABEL6)+'^FS'+ CRLF)
-	
 		ELSE
-
 			nIniLin:= 10//43
 			nLinInc:= 22
 			AADD(_aArq,'^FT26,'+cValToChar(nIniLin+(nLinInc*1)) +'^A0N,17,16^FH\^FD'+alltrim(ZZU->ZZU_LABEL1)+'^FS'+ CRLF)
@@ -142,11 +138,10 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			AADD(_aArq,'^FT26,'+cValToChar(nIniLin+(nLinInc*5)) +'^A0N,17,16^FH\^FD'+alltrim(ZZU->ZZU_LABEL5)+'^FS'+ CRLF)
 			AADD(_aArq,'^FT26,'+cValToChar(nIniLin+(nLinInc*6)) +'^A0N,17,16^FH\^FD'+alltrim(ZZU->ZZU_LABEL6)+'^FS'+ CRLF)
 		ENDIF	
-
 		AADD(_aArq,'^PQ2,0,1,Y^XZ'+ CRLF)
 
 */
-		AADD(_aArq,'CT~~CD,~CC^~CT~'+ CRLF)
+		//AADD(_aArq,'CT~~CD,~CC^~CT~'+ CRLF)
 		AADD(_aArq,'^XA'+ CRLF)
 		AADD(_aArq,'~TA000'+ CRLF)
 		AADD(_aArq,'~JSN'+ CRLF)
@@ -164,21 +159,24 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		AADD(_aArq,'^CI27'+ CRLF)
 		AADD(_aArq,'^PA0,1,1,0'+ CRLF)
 		AADD(_aArq,'^XZ'+ CRLF)
+	
 		AADD(_aArq,'^XA'+ CRLF)
 		AADD(_aArq,'^MMT'+ CRLF)
 		AADD(_aArq,'^PW400'+ CRLF)
 		AADD(_aArq,'^LL400'+ CRLF)
 		AADD(_aArq,'^LS0'+ CRLF)
-		AADD(_aArq,'^FT85,33^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL1)+'^FS^CI27'+ CRLF)
-		AADD(_aArq,'^FT85,56^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL2)+'^FS^CI27'+ CRLF)
-		AADD(_aArq,'^FT85,79^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL3)+'^FS^CI27'+ CRLF)
-		AADD(_aArq,'^FT85,102^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL4)+'^FS^CI27'+ CRLF)
-		AADD(_aArq,'^FT85,125^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL5)+'^FS^CI27'+ CRLF)
-		AADD(_aArq,'^FT85,149^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL6)+'^FS^CI27'+ CRLF)
+		AADD(_aArq,'^FT15,33^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL1)+'^FS^CI27'+ CRLF)
+		AADD(_aArq,'^FT15,56^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL2)+'^FS^CI27'+ CRLF)
+		AADD(_aArq,'^FT15,79^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL3)+'^FS^CI27'+ CRLF)
+		AADD(_aArq,'^FT15,102^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL4)+'^FS^CI27'+ CRLF)
+		AADD(_aArq,'^FT15,125^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL5)+'^FS^CI27'+ CRLF)
+		AADD(_aArq,'^FT15,149^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL6)+'^FS^CI27'+ CRLF)
 		AADD(_aArq,'^PQ2,0,1,Y'+ CRLF)
 		AADD(_aArq,'^XZ'+ CRLF)
 
+		aCodEtq:= {}
 		AaDd(aCodEtq,_aArq)
+		_aArq:= {}
 
 		For nY:=1 To Len(aCodEtq)
 			For nP:=1 To Len(aCodEtq[nY])
@@ -186,10 +184,9 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			Next nP
 		Next nY
 
-		_aArq:= {}
-		aCodEtq:= {}
-		MSCBEND()
+	
 
+		MSCBEND()
 		ZZU->(dbSkip())
 	End
 
