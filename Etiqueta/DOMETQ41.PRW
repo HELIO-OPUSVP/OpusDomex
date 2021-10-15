@@ -5,7 +5,7 @@
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
 ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
-ฑฑบPrograma  ณ DOMETQ94 บAutor  ณ RICARDO RODA       บ Data ณ  17/09/2021 บฑฑ
+ฑฑบPrograma  ณ DOMETQ41 บAutor  ณ RICARDO RODA       บ Data ณ  17/09/2021 บฑฑ
 ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
 ฑฑบDesc.     ณ     Nova Etiqueta padrใo Ericsson (nใo grava XD1)          บฑฑ
 ฑฑบ          ณ           Para padrใo ZEBRA                                บฑฑ
@@ -14,7 +14,7 @@
 ฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
 */
 
-User Function DOMET118(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
+User Function DOMETQ41(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
 
 	Local aPar       := {}
 	Local aRet       := {}
@@ -54,9 +54,9 @@ User Function DOMET118(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 
 	If cNivel == '2'
 		If Empty(aFilhas)
-			cAssunto  := "Chamada da etiqueta layout 002 com o afilhas vazio."
+			cAssunto  := "Chamada da etiqueta layout 041"
 			cTexto    := "OP: " + cNumOP
-			cPara     := "denis.vieira@rdt.com.br;michel@opusvp.com.br;helio@opusvp.com.br"
+			cPara     := "denis.vieira@rdt.com.br;helio@opusvp.com.br;ricardo.roda@opusvp.com.br"
 			cCC       := ""
 			cArquivo  := ""
 
