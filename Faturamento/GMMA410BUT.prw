@@ -35,8 +35,9 @@ User Function GMMA410BUT()
 	Aadd(aButCustom , {'AREA_MDI' ,{|| U_RFATA02() }	,"Previsão de Faturamento"		,"Prev. Fat."    		} )
 	Aadd(aButCustom , {'AREA_MDI' ,{|| U_RFATA03("V") }	,"Importação Planilha"    		,"Importar Itens"		} )
 	Aadd(aButCustom , {'AREA_MDI' ,{|| U_IMPZZU() }		,"Importação Etiqueta Amazon"   ,"Importar Etq.Amazon"	} )
-	Aadd(aButCustom , {'AREA_MDI' ,{|| U_DOMIMPOF() }	,"Impressao de OF"    			,"Impressao de OF"		} )
 	Aadd(aButCustom , {'AREA_MDI' ,{|| U_VLDMARGE() }	,"Valida Margem"    			,"Valida Margem"		} )
+	Aadd(aButCustom , {'AREA_MDI' ,{|| U_DOMIMPOF() }	,"Impressao de OF"    			,"Impressao de OF"		} )
+
 //Aadd(aButCustom , {'AREA_MDI' ,{|| U_RFATA03("V") },"Importação Planilha Validacao"         ,"Importar Itens Validacao"} )
 
 //aRecnoSE1 := FPedAdtPed( "R", {M->C5_NUM},,nLAutoAdt )
