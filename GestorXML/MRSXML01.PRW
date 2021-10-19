@@ -240,6 +240,7 @@ Return(nRet)
 "Gestor XML  -  V4.25 / 04.08.21" - Rotinas para DOMEX no recebimento ( workflow, desabilitador gravação de ZZ3/ZZ6)   
 "Gestor XML  -  V4.26 / 16.08.21" - Ajuste de Rotinas no recebimento ( workflow, desabilitador gravação de ZZ3/ZZ6)   
 "Gestor XML  -  V5.00 / 23.08.21" - Habilitadas rotinas de Pre Nota no Recebimento em Producao   
+"Gestor XML  -  V5.01 / 22.09.21" - Entrada de DOMEX Filial sem Pedido de Compra   
 
 */
 
@@ -260,7 +261,7 @@ Static Function GerXmlNF()
 
 	Private _lTESOK   	:= .T.
 
-	Private cTitCad  		:= "Gestor XML  -  V5.00 / 23.08.21"
+	Private cTitCad  		:= "Gestor XML  -  V5.01 / 22.09.21"
 	Private cStrCad  		:= ""
 	Private cCadastro		:= ""
 	Private aRotina  		:= fMenu()
@@ -2133,6 +2134,18 @@ Static Function fGerVldNFe(nRecTab1,oXmlTab1)
 		nD1VALFRE  := aScan(aItens[1] , { |k| Alltrim(k[1]) == "D1_VALFRE"  })
 	EndIf
 
+
+	_lDmxFilial := .F.
+	IF U_VALIDACAO()  // MAURESI 21/09/2021 - NAO PEDE PC PARA FILIAL ROSENBERGER
+
+		if cCodCliFor $ "004500"		// Rosenberger MG (Filial)
+			_lDmxFilial := .T.		
+		endif
+
+	Endif
+
+
+
 //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 //³Efetua Relacionamento do Pedido de Compra³
 //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
@@ -2953,6 +2966,10 @@ Static Function fLinkNFxPC(aCabec,aItens,aUnidMed,aPrdDesc,aPrdXML)
 			// Se Pedido de Compra não for amarrado, Nao permitte Gravar
 			if Empty(oXXGetDad:aCols[x][nXXPEDIDO])
 				_lPCOMOk := .F.
+
+				IF 	_lDmxFilial  .and. U_VALIDACAO()  // MAURESI - 21/09/2021
+					_lPCOMOk := .T.
+				endif
 			endif
 
 
@@ -2994,7 +3011,7 @@ Static Function fLinkNFxPC(aCabec,aItens,aUnidMed,aPrdDesc,aPrdXML)
 		Endif
 
 		
-		// Trata Quantidade da NF superior a quantiade do Pedido de compras. Existe tolerância para Fibras
+		// Trata Quantidade da NF superior a quantidade do Pedido de compras. Existe tolerância para Fibras
 		If !_lQtdOk
 			MsgAlert("Existe Item da NF com quantidade superior ao Pedido de Compras")
 			lRet := .F.

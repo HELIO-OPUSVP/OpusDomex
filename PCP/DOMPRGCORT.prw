@@ -534,7 +534,7 @@ Static Function MontaMsGet()
 					oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'LEG1' 		})] := oLegOk
 				ElseIF QRY->D3_QUANT > 0 .and. QRY->D3_QUANT < QRY->D4_QUANT
 					oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'LEG1' 		})] := oLegIni
-				ElseIF QRY->D3_QUANT >= QRY->D4_QUANT
+				ElseIF QRY->D3_QUANT >= QRY->D4_QUANT 
 					oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'LEG1' 		})] := oLegFim
 				Endif
 			Else

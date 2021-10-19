@@ -977,11 +977,12 @@ Static Function ValidaEtiq()
 
 Return _Retorno
 
-USER Function fRetQry39(cTipoCon,cGrupoProd,dData,cCodProdut,cNumOpCon,__cFilial)
+
+User Function RetQry39(cTipoCon,cGrupoProd,dData,cCodProdut,cNumOpCon,__cFilial)
 	Local cRet := ""
 	Default cTipoCon := '1' //1-Produto,2-OP's
 	Default cNumOpCon := ""
-	//If (Upper(GetEnvServ()) == 'HOMOLOGACAO') .OR. .T.
+	
 
 	If cTipoCon == '1'
 		cRet :=         " SELECT EMPOP.*,ISNULL(SB2.B2_QATU,0) QTDEST , ISNULL(B2_RESERVA + B2_QEMP + B2_QEMPSA,0) RESERVAS FROM ( "
@@ -1012,7 +1013,7 @@ USER Function fRetQry39(cTipoCon,cGrupoProd,dData,cCodProdut,cNumOpCon,__cFilial
 		cRet += ENTER + " 	 GROUP BY C2_FILIAL,C2_NUM+C2_ITEM+C2_SEQUEN "
 		cRet += ENTER + " 	 ) SC2T ON SC2T.OP = SD4.D4_OP  AND SC2T.C2_FILIAL = SD4.D4_FILIAL"
 		cRet += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ = '' AND SB1.R_E_C_D_E_L_= 0 AND SB1.B1_FILIAL ='" + xFilial("SB1") + "' AND SB1.B1_COD  = SD4.D4_COD "
-		cRet += ENTER + " JOIN ( "
+		cRet += ENTER + " LEFT JOIN ( "
 		cRet += ENTER + " 	SELECT BF_FILIAL,BF_PRODUTO,MIN(BF_LOCALIZ)BF_LOCALIZ,BF_LOCAL,MAX(BF_QUANT) QTD "
 		cRet += ENTER + " 	FROM " + RetSqlName("SBF") + " SBF WHERE SBF.BF_FILIAL = '"+xFilial("SBF")+"' "
 		cRet += ENTER + " 	GROUP BY BF_FILIAL,BF_PRODUTO,BF_LOCAL "
@@ -1060,7 +1061,7 @@ USER Function fRetQry39(cTipoCon,cGrupoProd,dData,cCodProdut,cNumOpCon,__cFilial
 		cRet += ENTER + " 	 GROUP BY C2_FILIAL,C2_NUM+C2_ITEM+C2_SEQUEN,C2_XETQIMP "
 		cRet += ENTER + " 	 ) SC2T ON SC2T.OP = SD4.D4_OP AND SC2T.C2_FILIAL = SD4.D4_FILIAL "
 		cRet += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ = '' AND SB1.R_E_C_D_E_L_= 0 AND SB1.B1_FILIAL ='" + xFilial("SB1") + "' AND SB1.B1_COD  = SD4.D4_COD "
-		cRet += ENTER + " JOIN ( "
+		cRet += ENTER + " LEFT JOIN ( "
 		cRet += ENTER + " 	SELECT BF_FILIAL,BF_PRODUTO,MIN(BF_LOCALIZ)BF_LOCALIZ,BF_LOCAL,MAX(BF_QUANT) QTD "
 		cRet += ENTER + " 	FROM " + RetSqlName("SBF") + " SBF WHERE SBF.BF_FILIAL = '"+xFilial("SBF")+"' "
 		cRet += ENTER + " 	GROUP BY BF_FILIAL,BF_PRODUTO,BF_LOCAL "

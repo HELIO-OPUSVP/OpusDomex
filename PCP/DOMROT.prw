@@ -322,7 +322,7 @@ Static Function fVldEti(cEtiqOfc)
 			montatela()
 			_nSerie:= val(Subs(cEtiqOfc,13,Len(cEtiqOfc)))
 			lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-			//fVldXd1St(cCodOp)
+			fVldXd1St(cCodOp)
 			fStatus()
 
 			IF lContinua
@@ -366,7 +366,7 @@ Static Function fVldEti(cEtiqOfc)
 				montatela()
 				_nSerie:= val(Subs(cEtiqOfc,13,Len(cEtiqOfc)))
 				lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-				//fVldXd1St(cCodOp)
+				fVldXd1St(cCodOp)
 				fStatus()
 
 
@@ -398,7 +398,7 @@ Static Function fVldEti(cEtiqOfc)
 		ElseIf !empty(cCodOp) .and. alltrim(Subs(cEtiqOfc,2,11)) == cCodOp
 			_nSerie:= Subs(cEtiqOfc,13,Len(cEtiqOfc))
 			lContinua:= fVldXd4St(cCodOp,_nSerie)
-			//fVldXd1St(cCodOp)
+			fVldXd1St(cCodOp)
 			fStatus()
 
 
@@ -418,9 +418,8 @@ Static Function fVldEti(cEtiqOfc)
 			Endif
 		Endif
 
-		/*/Etiq. Furukawa/*/
-	Elseif Substring(cEtiqOfc,LEN(alltrim(cEtiqOfc)),1) == "X"
-
+		/*/Etiq. Furukawa/*/ 
+	Elseif Substring(cEtiqOfc,LEN(alltrim(cEtiqOfc)),1) == "X" .OR. "DOM-" $ alltrim(cEtiqOfc)
 		If Empty(cCodOp)
 
 			XD4->(DBSETORDER(3))
@@ -443,7 +442,7 @@ Static Function fVldEti(cEtiqOfc)
 			montatela()
 			_nSerie:= XD4->XD4_SERIAL
 			lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-			//fVldXd1St(cCodOp)
+			fVldXd1St(cCodOp)
 			fStatus()
 
 			IF lContinua
@@ -488,7 +487,7 @@ Static Function fVldEti(cEtiqOfc)
 					montatela()
 					_nSerie:= XD4->XD4_SERIAL
 					lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-					//fVldXd1St(cCodOp)
+					fVldXd1St(cCodOp)
 					fStatus()
 
 
@@ -520,7 +519,7 @@ Static Function fVldEti(cEtiqOfc)
 			ElseIf ALLTRIM(XD4->XD4_OP)  == ALLTRIM(cCodOp)
 				_nSerie:= XD4->XD4_SERIAL
 				lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
-				//fVldXd1St(cCodOp)
+				fVldXd1St(cCodOp)
 				fStatus()
 
 				IF lContinua
@@ -1033,18 +1032,18 @@ Static function fVldXd4St(cCodOp,_nSerie)
 		Return .F.
 	Endif
 
-
-	cQuery:=" SELECT XD4_STATUS, R_E_C_N_O_ REC
-	cQuery+=" 		,(SELECT COUNT(*)
-	cQuery+=" 		FROM "+RETSQLNAME("XD4")+" XD4
-	cQuery+=" 		 WHERE XD4_OP =  '"+cCodOp+"'"
-	cQuery+=" 		 AND XD4_STATUS = '2'
-	cQuery+=" 		 AND XD4.D_E_L_E_T_ = '') QTDLID
-	cQuery+=" FROM "+RetSqlName("XD4")+" XD4 "
-	cQuery+=" WHERE XD4_OP =  '"+cCodOp+"'"
-	cQuery+=" AND XD4_SERIAL = "+_nSerie+" 	"
-	cQuery+=" AND XD4_FILIAL = '"+xFilial("XD4")+"' "
-	cQuery+=" AND XD4.D_E_L_E_T_ = ''
+	cEol:= chr(10)+chr(13)
+	cQuery:=" SELECT XD4_STATUS, R_E_C_N_O_ REC " +cEol
+	cQuery+=" 		,(SELECT COUNT(*) " +cEol
+	cQuery+=" 		FROM "+RETSQLNAME("XD4")+" XD4 " +cEol
+	cQuery+=" 		 WHERE XD4_OP =  '"+cCodOp+"'"  +cEol
+	cQuery+=" 		 AND XD4_STATUS = '2' " +cEol
+	cQuery+=" 		 AND XD4.D_E_L_E_T_ = '') QTDLID " +cEol
+	cQuery+=" FROM "+RetSqlName("XD4")+" XD4 "  +cEol
+	cQuery+=" WHERE XD4_OP =  '"+cCodOp+"'"  +cEol
+	cQuery+=" AND XD4_SERIAL = "+_nSerie+" 	"  +cEol
+	cQuery+=" AND XD4_FILIAL = '"+xFilial("XD4")+"' "  +cEol
+	cQuery+=" AND XD4.D_E_L_E_T_ = '' " +cEol
 	dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"QRY",.T.,.T.)
 
 	If QRY->(Eof())
@@ -1057,7 +1056,9 @@ Static function fVldXd4St(cCodOp,_nSerie)
 	Endif
 
 	nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
-	oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
+	if nPos > 0
+		oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
+	Endif
 
 	if lRet
 		dbSelectArea("XD4")
@@ -1186,7 +1187,7 @@ Return
 
 /*/Protheus.doc fVldXd1St
 	description
-	type function
+type function
 	version
 	author Ricardo Roda
 	since 06/08/2020
@@ -1220,16 +1221,18 @@ Static function fVldXd1St(cCodOp)
 	if QRY->(!Eof())
 		WHILE QRY->(!EOF())
 			nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosComp]) == alltrim(XD1_COD) })
-			oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
 
-			if	oGetDados:aCols[nPos,nPQtdent] == oGetDados:aCols[nPos,nPQtdOp]
-				oGetDados:aCols[nPos,nPosFlag] := oOk
-			Elseif oGetDados:aCols[nPos,nPQtdent] == 0
-				oGetDados:aCols[nPos,nPosFlag] := oNo
-			Elseif oGetDados:aCols[nPos,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
-				oGetDados:aCols[nPos,nPosFlag] := oIn
+			if nPos > 0
+				oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
+				if	oGetDados:aCols[nPos,nPQtdent] == oGetDados:aCols[nPos,nPQtdOp]
+					oGetDados:aCols[nPos,nPosFlag] := oOk
+				Elseif oGetDados:aCols[nPos,nPQtdent] == 0
+					oGetDados:aCols[nPos,nPosFlag] := oNo
+				Elseif oGetDados:aCols[nPos,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
+					oGetDados:aCols[nPos,nPosFlag] := oIn
+				Endif
 			Endif
-
+  
 			QRY->(DbSkip())
 		End
 	Endif

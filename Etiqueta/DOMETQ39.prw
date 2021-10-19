@@ -2,7 +2,7 @@
 #include "rwmake.ch"
 
 //--------------------------------------------------------------
-/*/{Protheus.doc} DOMET114 (NOVA ETIQUETA PARA SUBSTITUIR LAYOUT002)
+/*/{Protheus.doc} DOMETQ39 (NOVA ETIQUETA PARA SUBSTITUIR LAYOUT002)
 Description  
 @param xParam Parameter Description
 @return xRet Return Description
@@ -11,7 +11,7 @@ Description
 /*/
 //-------------------------------------------------------------
 
-User Function DOMET114(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
+User Function DOMETQ39(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
 
 	Local nVar       := 0
 	Local cRotacao   := "N"      //(N,R,I,B)
@@ -372,7 +372,7 @@ User Function DOMET114(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 					AADD(_aArq,'^FT40,621^A0N,29,28^FH\^FDSITE:'+alltrim( SC6->C6_XXSITE)+'^FS'+ CRLF)
 				Endif
 				AADD(_aArq,'^FT40,658^A0N,29,28^FH\^FDINDUSTRIA BRASILEIRA^FS'+ CRLF)
-				AADD(_aArq,'^FT766,651^A0N,29,28^FH\^FDLayout 114^FS'+ CRLF)
+				AADD(_aArq,'^FT766,651^A0N,29,28^FH\^FDLayout 039^FS'+ CRLF)
 
 				AADD(_aArq,'^PQ1,0,1,Y^XZ'+ CRLF)
 

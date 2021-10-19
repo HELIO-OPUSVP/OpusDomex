@@ -46,7 +46,7 @@ User Function CADSZJ(__cTipo)
 		cCodTec := AllTrim(GetMv("MV_XUSRMAN")) // USUARIOS MANUTENÇÃO
 	ElseIf cTipoHlp == "3"
 		cCodTec := AllTrim(GetMv("MV_XUSRENG")) // USUARIOS ENGENHARIA
-	Else
+	ElseiF cTipoHlp == "4"
 		cCodTec := AllTrim(GetMv("MV_XUSRQLD")) // USUARIOS QUALIDADE
 	EndIf
 
@@ -331,7 +331,7 @@ Static Function fFiltroSZJ()
 			Case SubStr(mv_par02,1,1) == "2"
 				cRet += IIf(Empty(cRet),""," AND ")
 				cRet += "(ZJ_COD_SOL='"+__cUserID+"' OR ZJ_COD_TEC='"+__cUserID+"')"
-
+	
 				// Classificacao
 				// 0=Todas Classific.
 			Case SubStr(mv_par03,1,1) == "0"
@@ -464,7 +464,7 @@ Return
 User Function MtSZJEnv()
 
 	If __cUserID $ cCodTec
-		U_fEnviaWf(SZJ->ZJ_NUMCHAM)
+		U_fEnviaWf(SZJ->ZJ_NUMCHAM,,cTipoHlp)
 	Else
 		Alert("Somente o técnico pode forçar envio do chamado por e-mail!")
 	EndIf
@@ -499,7 +499,7 @@ User Function MtSZJCan()
 			SZJ->(MsUnLock())
 
 			//Envia Email
-			U_fEnviaWf(SZJ->ZJ_NUMCHAM,4)
+			U_fEnviaWf(SZJ->ZJ_NUMCHAM,4,cTipoHlp)
 		EndIf
 	Else
 		Alert("Somente o solicitante do chamado poderá cancelar o mesmo!")
@@ -534,7 +534,7 @@ User Function MtSZJFec()
 			SZJ->(MsUnLock())
 
 			//Envia Email
-			U_fEnviaWf(SZJ->ZJ_NUMCHAM,4)
+			U_fEnviaWf(SZJ->ZJ_NUMCHAM,4,cTipoHlp)
 		EndIf
 	Else
 		Alert("Somente o solicitante do chamado poderá confirmar solução do mesmo!")
@@ -569,7 +569,7 @@ User Function MtSZJRea()
 			SZJ->(MsUnLock())
 
 			//Envia Email
-			U_fEnviaWf(SZJ->ZJ_NUMCHAM,4)
+			U_fEnviaWf(SZJ->ZJ_NUMCHAM,4,cTipoHlp)
 		EndIf
 	Else
 		Alert("Somente um tecnico poderá reabrir o chamado!")
@@ -884,6 +884,7 @@ Static Function fCriaSX3()
 	Local aCampos    := {}
 	Local i          := 0
 	Local j          := 0
+	Local x 		 := 0
 	Local lCriaPerg  := .F.
 
 	Local cStatus    := "P=Chamado Novo;A=Em Atendimento;F=Fechado"
@@ -1276,12 +1277,12 @@ User Function MtCadSZJ(cAlias,nReg,nOpc)
 		//Se for inclusao e foi confirmado
 	Case nOpc == 3 .And. nOpcao == 1
 		fSalvaTudo(nOpc,cAlias)
-		U_fEnviaWf(SZJ->ZJ_NUMCHAM,nOpc)
+		U_fEnviaWf(SZJ->ZJ_NUMCHAM,nOpc,cTipoHlp)
 
 		//Se for alteracao e foi confirmado
 	Case nOpc == 4 .And. nOpcao == 1
 		fSalvaTudo(nOpc,cAlias)
-		U_fEnviaWf(SZJ->ZJ_NUMCHAM,nOpc)
+		U_fEnviaWf(SZJ->ZJ_NUMCHAM,nOpc,cTipoHlp)
 
 		//Se for exclusao e foi confirmado
 	Case nOpc == 5 .And. nOpcao == 1
@@ -1320,7 +1321,7 @@ Static Function fGDInter(hcOpc,nPosFolder,oGdInter)
 	Local aCpoItem       := {}                                              // Array com os campos que deverão ser tratados quando rotina de inclusão
 	Local aHead          := {}                                              // Array do aHeader
 	Local aCols          := {}                                              // Array do aCols
-
+	Local x    			 := 0
 //============================================================
 //Monta MsNewGetDados
 //============================================================
@@ -1398,7 +1399,7 @@ Static Function fGDAnexo(hcOpc,nPosFolder,oGdAnexo)
 	Local aCpoItem       := {}                                              // Array com os campos que deverão ser tratados quando rotina de inclusão
 	Local aHead          := {}                                              // Array do aHeader
 	Local aCols          := {}                                              // Array do aCols
-
+	Local x				 := 0
 //============================================================
 //Monta MsNewGetDados
 //============================================================
@@ -2248,15 +2249,16 @@ Return
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
-User Function fEnviaWf(cChamado,nOpc)
+User Function fEnviaWf(cChamado,nOpc,cTipoHlp)
 
 	Local cContato := ""
 	Local aEmails  := {}
 	Local aTecEng  := {}
 	Local n 	   := 0
+	Local x		   := 0
 	Default nOpc   := 0
 	
-	PRIVATE cTipoHlp  :='1' // MLS ERRO SCHEDULER variable does not exist CTIPOHLP on U_FENVIAWF(CADSZJ.PRW) 01/03/2021 16:08:46 line : 2276
+	Default cTipoHlp  :='1' // MLS ERRO SCHEDULER variable does not exist CTIPOHLP on U_FENVIAWF(CADSZJ.PRW) 01/03/2021 16:08:46 line : 2276
 
 //Se não achar, sair sem enviar WF
 	SZJ->(DbSetOrder(1))
@@ -2283,8 +2285,8 @@ User Function fEnviaWf(cChamado,nOpc)
 		cContato += IIf(Empty(cContato),"",";")+"fulgencio.muniz@rosenbergerdomex.com.br"
 	EndIf
 
-	If cTipoHlp $ "3/4"  //Chamado da engenharia e Qualidade
-		cContato := ""	
+	If Alltrim(cTipoHlp) =="3" .or. Alltrim(cTipoHlp)  == "4"  //Chamado da engenharia e Qualidade
+		//cContato := ""	
 		cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(SZJ->ZJ_COD_SOL))
 		If Empty(SZJ->ZJ_COD_TEC)
 			aTecEng := {}
@@ -2318,7 +2320,15 @@ User Function fEnviaWf(cChamado,nOpc)
 		If !("KAROLYNE" $ Upper(cContato)) .And. cTipoHlp == "2"
 			cContato += IIf(Empty(cContato),"",";")+"karolyne.santos@rdt.com.br"
 		EndIf
-
+		If cTipoHlp == "3"
+			aTecQuali := {}
+			aTecQuali := StrToKArr(cCodTec,"/")
+			For n := 1 To Len(aTecQuali)
+				IF !Alltrim(AllTrim(UsrRetMail(aTecQuali[n]))) $ Alltrim(cContato)
+					cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(aTecQuali[n]))
+				Endif
+			Next n			
+		EndIf
 		If cTipoHlp == "4"
 			aTecQuali := {}
 			aTecQuali := StrToKArr(cCodTec,"/")
@@ -2328,6 +2338,7 @@ User Function fEnviaWf(cChamado,nOpc)
 				Endif
 			Next n			
 		EndIf
+
 
 	EndIf
 
@@ -2636,7 +2647,7 @@ Static Function fEncerrOld()
 			SZK->(MsUnLock())
 
 			//Dispara Workflow
-			U_fEnviaWf(SZJ->ZJ_NUMCHAM)
+			U_fEnviaWf(SZJ->ZJ_NUMCHAM,,cTipoHlp)
 
 			TRB->(DbSkip())
 		End
@@ -2711,7 +2722,8 @@ Return
 
 Static Function BotaoOK()
 	Local aVetorIn := {}
-
+	Local n			:=0
+	Local x			:= 0
 	If "'" $ cDescricao
 		MsgStop("Não é possível abrir chamados com o caracter aspas simples (')")
 	Else
