@@ -49,6 +49,24 @@ User Function  RetCust(cProduto,cGrvSC)
 		AADD(aRetorno,"2") //Há itens com custo zero
 	EndIf
 
+//For w:=1 To Len(aEstruPA)  
+//	RecLock("ZZF",.T.)
+//	ZZF_FILIAL := xFilial("ZZF")
+//	ZZF_ORIGEM := "TST"
+//	ZZF_NUMERO := "051915"
+//	ZZF_ITEM  := "00"
+//	ZZF_COD   := AllTrim(aEstruPA[w,2])
+//	ZZF_DATA  := dDataBase
+//	ZZF_PRCVEN := aEstruPA[w,3]
+//	ZZF_CUSUNI := aEstruPA[w,4]
+//	ZZF_STATUS := '1'
+//	ZZF_PRCNET := aEstruPA[w,3] * aEstruPA[w,4]
+//	ZZF_ZZF_MARGEM := 0
+//	ZZF_OBS   := "Teste"
+//	ZZF->(MsUnLock())
+Next
+
+
 RETURN aRetorno
 
 //
@@ -73,7 +91,7 @@ Static Function ExplCusSG1(cProduto,cCod,nQtde,nCusTotal)
 
 		nCusto :=  U_RetCusB9(cComponente,cGeraSC)
 
-		AADD(aEstruPA,{cProduto,cComponenteP,(nG1_QTDE*nQtde),nCusto})
+		AADD(aEstruPA,{cProduto,cComponente,(nG1_QTDE*nQtde),nCusto})
 
 		SB1->(dbSeek(xFilial()+cComponente))
 		If SB1->B1_TIPO <> "PI"
