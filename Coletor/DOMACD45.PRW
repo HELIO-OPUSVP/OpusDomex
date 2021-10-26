@@ -1209,19 +1209,19 @@ Static Function fValEnd()
 Local _lRet:=.T.
 
 IF EMPTY(_cEndereco)
-	RETURN(.f.)
-    U_MsgColetor('Endereço em branco.')
+	U_MsgColetor('Endereço em branco.')
+	RETURN(.f.)    
 ENDIF
 
 SBE->( dbSetOrder(1) )
 If SBE->( dbSeek( xFilial("SBE") + Subs(_cEndereco,1,17) ) )
 	If SBE->BE_MSBLQL == '1'
-		_lRet := .F.
 		U_MsgColetor('Endereço bloqueado para uso.')
+		_lRet := .F.		
 	EndIf
 Else
-	_lRet := .F.
 	U_MsgColetor('Endereço não encontrado.')
+	_lRet := .F.	
 EndIf
 
 Return(_lRet)
