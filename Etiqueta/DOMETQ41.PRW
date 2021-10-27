@@ -1,11 +1,11 @@
 #include "protheus.ch"
 #include "rwmake.ch"
- 
+
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
-±±ºPrograma  ³ DOMETQ94 ºAutor  ³ RICARDO RODA       º Data ³  17/09/2021 º±±
+±±ºPrograma  ³ DOMETQ41 ºAutor  ³ RICARDO RODA       º Data ³  17/09/2021 º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
 ±±ºDesc.     ³     Nova Etiqueta padrão Ericsson (não grava XD1)          º±±
 ±±º          ³           Para padrão ZEBRA                                º±±
@@ -14,7 +14,7 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function DOMET118(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
+User Function DOMETQ41(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
 
 	Local aPar       := {}
 	Local aRet       := {}
@@ -54,9 +54,9 @@ User Function DOMET118(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 
 	If cNivel == '2'
 		If Empty(aFilhas)
-			cAssunto  := "Chamada da etiqueta layout 002 com o afilhas vazio."
+			cAssunto  := "Chamada da etiqueta layout 041"
 			cTexto    := "OP: " + cNumOP
-			cPara     := "denis.vieira@rdt.com.br;michel@opusvp.com.br;helio@opusvp.com.br"
+			cPara     := "denis.vieira@rdt.com.br;helio@opusvp.com.br;ricardo.roda@opusvp.com.br"
 			cCC       := ""
 			cArquivo  := ""
 
@@ -322,7 +322,7 @@ User Function DOMET118(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		AADD(_aArq,'^LH0,0'+CRLF)
 		AADD(_aArq,'^JMA'+CRLF)
 		AADD(_aArq,'^PR6,6'+CRLF)
-//AADD(_aArq,'~SD15'+CRLF)
+		//AADD(_aArq,'~SD15'+CRLF)
 		AADD(_aArq,'^JUS'+CRLF)
 		AADD(_aArq,'^LRN'+CRLF)
 		AADD(_aArq,'^CI27'+CRLF)
@@ -333,6 +333,7 @@ User Function DOMET118(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		AADD(_aArq,'^PW827'+CRLF)
 		AADD(_aArq,'^LL1394'+CRLF)
 		AADD(_aArq,'^LS0'+CRLF)
+
 		AADD(_aArq,'^FO42,830^GFA,681,3944,8,:Z64:eJztl7FuwjAQhmN58IJkRgaEeQTGDhF5lT5Gh0oYdehrWerQ18gjZGRAuLHvv6QKxA5DVVL1pOYbejn/+H5fkqJASEfUDXH9RFytiLtFmpzH93EdrntvVN77OsE2DFhZoseKZ6JqkmmC004QzGkQfEDaJZ02QeejhqjTnBzP4bLBfQMa7IP+RtdStbSURzFkH+QsYek/ylaR2lFDjdMu0pLV9oWM65fQkeMGFjWFclTXxLoa+lqhtL6HYao6uRnDMPDBGPtfrCyRj4xg1mlKUHFdB1oQOs536UZk/a2ciYka+nk/8/tPurlfvP/mav/pBN69/8jj+yTqcF1dwz9Yl3VP9Q/nXfkHdXkdmdGPudm5oMyQ87Qlqqy/pgXmnCT3tGXpbu1pjJojDUBTnCDjBbJewfJHObs5K/h8gHrQlwp5ezDX9zXY9R/kaZGfMxNjJudmPMiQUtDc0xJz8A1z8f2TqD5Ijz6SviGNGBC695hXF+g+m0h1orklG+7M4o/pnfVzuMQ5GOPIr/39uYznfNmxeSjObi4XFT3QZPdeRDoP3ocnm/BWhcEjT/QJEEwd/sJLTjB0bHdbYRfYXraByxvL/D9Pb8bYevx9QIe/f6ntPkbwNYdt6snnb2Jsw2XZ94/7yf3lfsf+294P7I/OL+wf9lM6vgBVMh7O:683F'+CRLF)
 		AADD(_aArq,'^FO42,152^GFA,629,2048,8,:Z64:eJzNlUFOwzAQRcfywiwQ5gQxR+AAVnIVjsEC0VRdcK0gFl1yhVRcIKwoUqnxzB+3NCUSEiAYqXmqFM98j/84REfRnAhMOhPaFIQuhZbpH33HDN4JK297ZvTmS6z1/bzuII9/RH6XUou6W9WxUV39sdbDuJK8hDojhpQS039gh3KoV2mSMafqWOThRMKwp+ynqdC3unKSP+p+95zok5tDtzLcLcDlEvUekN8tQDOHfqLbacUfdP9+f27kaU0Seov1QfWGuyXoHqR+7bHPOGYwI6pvajBs1TebIHRr+McOXnWcTio8CBzPz/M4LpQ9Pzbou03kmD61AeyajrhNvfQv2JX4vzZPa2Y0L7I8EtqZSeBWuVGulcO32Kgfpvj/ooHwPJ/CMpezlLgjJrWOO2Xzn1kmX2b842FlY0V+N2e4ZF7qmZ1/UgbtzmU6odNu+ITyYY7+Bz2Hiq6FUccjotKv8a/ObapeuVcwtOg1hyliBuX1iPGbgnZz1gpd6gz09Lj3FgNo1sKaboQxTxwYlLiXIrl70K6Uz1hnXiUP0ZuwpZnUGfDhcgPJfOd9e9lyv2sBFXJc8ON877/ix+LP4lfxb7v3c/H3zu/F/2UePo93m6o3sQ==:44B6'+CRLF)
 		AADD(_aArq,'^FO224,1096^GFA,497,1864,8,:Z64:eJzllL1txDAMhWkYOHfRBvYihzijZISULg6Wu6zlDbJCNojLKwwzot5jkAj3WyRNiMN9gCVTj48WRQ6CiBO5gP0KNsoF5UK3gbXO3MkFXfkcG8IambCzDJVOwRg2aSa8lRlncBTZ2faBep6kjFqwHk4xqmoWQ3YKGYmrfM9b8kwMEXnO8Yb4U72pT9DVk7Eg2ylHcrnCl+LcPdmRZf6Stwd8Cmf143NaByg5DlCy7NuC4SKHFhxbVBA7sA/I35K7hk5V7sRtcd0Pd9SdbMkHMlyhO98z71ZwJe/TnQrFKcd6xvuZlerrJHab9cPYLE2uI8zVRjGj8TH/8t/I4vJ6Giu4L1K9/aQ4wykeWOee/nj+lr51gomVdOQvOenK9Sad7wLdM30Q1nWnHb8d1BfYL//eFcLrDfM0vEttG2x2mrFmghljl8Dm5XNiNXFMTicP+pd9dT/cH/fL/XM/3V/32/3/6of3x/t1OT4B9m8CqQ==:3E38'+CRLF)
@@ -341,21 +342,33 @@ User Function DOMET118(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		AADD(_aArq,'^FO379,538^GFA,1237,5648,16,:Z64:eJzVmDtuGzEQhrnYgiVTpgjCHCEHEEwfJUfIAQwvgRQpfYRcZQ0fQFfYwEXKqFSxEEPOg9wZJVrD3gD2FJI+SEsOf85whjLGG2l+UnxUnDTLB2ya5Q+SesCpBzr9QFAP2DSq78UAXZLsUjrI+e2Ss3/9krP/nWQj+ah4UiydNe9XOGzMen4XJYvFlt8rubbmzS2MkpMMyD6dBFsVbzkc4iX2k5zAj15wiG4SbOy2rMbX82v/1taj16/10fqdJfzGluNjVpw0jys8XeB+unIiv0cv8t1F903mq31Ycjjnx0M5VSbBgWXM+5W5q15k/nUoqpOuYQq/J/DyxP7uJzNkxn1ywFkTh8vM/GM05fMAnEfy0RTJHHA+Hj8aUzzsRpogv8BQ12YLC+/gbabRuvQB3Ji/IvcJThg33yDbFMrkfiY9XIL4DDPtqkceKu8hnofdQNPdQbyfdjBMZmcLzzv/XHbIPJ4a3+/Rn131D3QfOAopf+r+Uv54jlrKH8dpQ+XK1iID+5HTKponmY+4r41hPVV/4qo/MesfKPBYf04H1t8RDwuG9ZL+lpj16Skdq5709mQmq/qTnRRX/bN9Mgv9s4H/rH9P62P9HXLVn7jqz/WH9fc48BcePND6Kt+B440t7MeCv2ue/sI3iq8qP+zB35HYP+J+8DGt2f3keETu7yWbET40xqmG9NSAU/bZjIIPopvJ7UJXllqXa4/dacnu2Bc9Zzsh+8xxyZMRnJOv5F/jaPySc1SWfK18e852Sx4UB9wq7V89rjXn9Q1xyccuLdlhPlW2WAcq96ocGtWt5ngdBVuuO0baW+dnG9UrDn+uVywj1SvP5wXVq3q+cL1i5nqVZL1KkSbgemJkvdI888G4zjDeDTfuNP4tC0T16qpELvoHAeFjOw/jIp6oXjXuZbxRvWqM9WrBYJovGOnPRvpXI/2rof5dO0BAb1dPf9Tf16hH/dsdD/UZGoOeQyu/wO2Oh3zqj/9kOF+6yneSUf8Fg/6NUf/GqH9j1L8x6t8Y9W+M98Omf9iY/8/9EAa5btz6U+TWvyK3/hat9b9ogwrA2j+T+7W/piyp/XfgtKJ8Zub+nZntjNV1QvPa9cMptknrJedbZSPbw7fPLzXqr9n030VW3W9X7/vyelnua2KCs/v+C+//+b4p5tP9v4syAuwkKuVafL6UN7dBYq/bGdXu1L6ezJ+x3O5wrzieLjPX0dfCr3s//wAvlnxL:1A90'+CRLF)
 		AADD(_aArq,'^FO409,1068^GFA,521,2088,8,:Z64:eJzVlDFuwzAMRSV40FJAGTMEVo6QsYNhXaXH6NQ4yJBj9CaFgA65Ro7g0UMQ1eIn69SA7RhwgZZA/BaG/PqkpBRHFkBbg5tncL0Gd0/jlDz5n9SRunPDxxgvI2zDMX0FRu54BU09mqYlrWHBksaC95x2G097QOffCs26DNMynbBCXsn5xQQ3zJxpmSYQFvAHm6UrdDCVR5+AgbpgA3Rj1UqVXaBPP8ScV9SxYhvgQOsLsfUJ/SMvjJ+U/YK6Uv8HHZ/b3jGgDfqJj30O9cmG5oi6yueOksvcUP3C4rwd2Y8+zQG6me50BM9n9PtEfXME9QH6lXobVnwfGjfqam44hiWfTXynOjZ+0FzdqaG55LohvaWuSV+hfpf/7l4rj/cu432VPdjHmIzWsSKjswZPWzI3/dJypAtD17mtsEtsP9vEVVd96hmYyyl/l+63VAzplfvMzx4/QoovvyJvKV57nClwmz6rbk4yN5mjzJXmXHVzlz343gvZE9mb8fgCd74qjw==:6262'+CRLF)
 		AADD(_aArq,'^FO409,166^GFA,509,1936,8,:Z64:eJzNlE1OwzAQhR15YVa4B0B2j8ABouQqnISk6oJrBbHoslcIN+iySFDj8bxJSIRpipDoSPGXpPbMm59UqZwVIfREA1rQgzX2VWB5hnegAy2oO6af+Z/zQitxLsfrsfomoQi3iTr4RBN8S7R72xG9NYnO6p5Y2mIRK+yP5yZ+7J79x/62HPcEHe/Q1V+UReC65qhMx3lZZVI8h86XCnqzZP0V6BXr9x3qA/3m9/ofaNGZOY9M8WrH+ivH+kvUc2SmD2aT6ED/tGXudhzvhf2bLbPYcD5KPS7V/9XO9UE+2/oActVi2j3foIwxb34x1NOzvvgCO6XAevosv2O/nBd/8C/xJP6gZ2Ee12fIIM5RosxPE8JRURlaQ6nq+NBE0kdNFw0VFTD9TUYP98S4rImrSQCep3/i3/Xj53A5/x60B96nj8zihPMNWD8z7SvTvDGLD8SZj68HDSjjzLamZTX2RfokfZM+pr62Y5+l78McyFwMk/6tfQKRnjI3:665F'+CRLF)
-		AADD(_aArq,'^FO155,789^GFA,169,4272,8,:Z64:eJzdkEEKwEAMAvv/V/VnWeg9UGHEWi+5yGiceXTPy3stovzq3fiqqFx3f/cOqdzU/hT/r/9SO6R2S+W289Vcyu/u07LD5ldF/UXlpvgtO6ucdr67ZypX5VP+1F9Ursp357p3c/f52l/t/M2viurp7uPmqDscAkLe7w==:F8D6'+CRLF)
-		AADD(_aArq,'^FO155,204^GFA,105,1632,8,:Z64:eJz7/x8MDvwnkmbAAailnlQal/mkAlrbSy3/kuoeWrufVHNINX+g7KW1elrHy0DZO1DupJa/qOV+atlLqntobQ6p4QAAfM0T5A==:48AC'+CRLF)
-		AADD(_aArq,'^FO333,1191^GFA,73,1104,8,:Z64:eJz7/x8MDvwnkmbAAailnlQal/mkAmrZSy13DlT40Dochmv4kGrOQNlL63gEAPHALCc=:6F08'+CRLF)
-		AADD(_aArq,'^FO526,1092^GFA,97,1896,8,:Z64:eJz7/x8MDvwnQDPgANRSTyqNy3xSwVC3l9bhSWv3DFS4DTbzqeWewRYOtHbnUHf/QIUDtcwZKPMHKvzJdQ8AWdTFgw==:169D'+CRLF)
-		AADD(_aArq,'^FO526,105^GFA,121,2424,8,:Z64:eJz7/x8MDvwnQDPgANRSTyqNy3xSAa3tpbU5AxU+1HInrc0fbOEwUO6hlvlDJRyo5U5qmT9Q/qKWvbRWTy3/jrR4GSrhQy3zaW0vtcKTkDkAHw8iPg==:6B43'+CRLF)
 		AADD(_aArq,'^FO655,40^GFA,1621,7376,16,:Z64:eJztl7Fu40YQhodmBAYWEKYxrqSR0in0CMsr0qeIkFKvkC7l8pLG3b0CS0Mp3F5HPoK7q4KwFBIgYeGCEGROZklxd2YlkXewDzZwN5AN//g81O7sz51dgCePGX1SCNJBqxwWG5hvB726g6SG6H7Q2AC2sGizXga4A72DBPc47LlCzlvQjrfEs0JwpE/GOGYK84Fjz0vLM+IFVpyXmmnilbK6T06wHsa/55u9JrjCynHdJS9oGpYnWEWWF11yTMPuI+keHllNyTE2MU1j4PUryQk2c84Jhlb3ySHjTcfRcUr+DYcFIBiYjyvw1vwzIucoFiDsarDns4G7AptkLQucMY7HFmA18LMe2gUwycpbgAI3Sha4jC2npVdYx5b3yU53D29ill8dWYDIK7Djiy45ZgU3fGY5wX2NhgLeh7zA/eq8kQUWC9DuazhoWWBavd6krqCBPlwAr8COQ/cG5JaDtwD965fzBSBtfMp5Flu96l7fyGplOE0zGwpIr/+OhgVDATZw3sD5duCzEoI7gJ+AxWX3+RJf4jOMqzVF7vTSxI9Oo4nGaW30/QSvP10+je5nnk/j/4NzMJtcLfStx1c8v2sCFdcByvyF3R37SPBBPA5xyyXtj3dcz73HJ3bzHb5dpnvfHqPt/l1EiCnXSj6O6icn66WzrXng+SXf/rR83Itbfz/f2Hd9AyfjuovTfDq+Hsdn67XQM88etzgcD/tYofAHrb8wAK2/7e4myD72+GQiMvNnPDaa8cTo0mlldOW09vQhl+8Pttfnov5Ue8055SrOUxoDX18aW+wmFJixR1wTj9rT3KB4godjfOL53fgY1yDGezi/0pvflpZQ1icQ9cH17Zi//fonnvbXN55Y/8DjoecfkK+TOaLKHeICH1Ku5zId4AeBPySycXyVS53wDfCmOwO6WEIg5odZKOavzRsieCz9bSrMdAtHeM254gUL8JC3BeOUv0sEL5q3jNP1spb+1Y30t+BA5+eN8CM5kHP8nS58rEA6QMn/I840+U9y2p5EPlUzkvtzxr+fti/g3PSfmBnKtLeIzZ9uIBnn5jIaMz6n4i4YD6i4rxg/I3d+ww36FTx1+P7T/HiwzkC8APpD/Jdx7vsremr/CX7Mf/Go/1Qj97+P9N8bz3+vPX/9Q1dc7r/3B/7LPP/B4/z3MOq/yPNfOOE/wBs4HzlfPDYu7a/jUVQg5mf6Dx+/OVwITj98/l7/7flOclF/jxvvj/Rf8Puvlz/Zfw0a4eD35wkOx/q3mH/p9e/K6+9UuxWvX9P/DLHadRaxodr8e9m/7xJ5vmoP+3vpdNe/c6f98938SH/n58OuvzNtXiBxgfD7fYLyBjDHbc61OL2YGDtdPz6+M3F5mr/0+4fPl8uL5QW7P0/dTz5JfMv+vs4A3jFN/TNg4w/JfHL/K8UBLMbNHMX+Wc/4/BfYKBT7707z+hXG/6J+D6J+6mPrT+n8Box/F+L+pNMEf2EaqwJvJOevD+0fSty/tTx+mv7dPCv/t5Dz//OvF+1/bYItwLP4fypS9+dVBqK//woXqeyfaiP7a1KK80mmqgMu8guZn07lq/J5v9/Pf/z3v+W89PLXxfb2Jfn3ZP7/JuTBPQ==:F841'+CRLF)
-		AADD(_aArq,'^FO333,204^GFA,93,1632,8,:Z64:eJz7/x8MDvwnkmbAAailnlQal/mkAmrZO1DhMFDhQ2t/Ucv8gXInqWCwmT/YwoFa7qe1O6llPq3tpXV6AAB9/xPk:DE95'+CRLF)
 
-		AADD(_aArq,'^FT152,1329^A0B,58,58^FH\^CI28^FD1P'+PADR(ALLTRIM(SC6->C6_SEUCOD),20)+'^FS^CI27'+CRLF)
-		AADD(_aArq,'^FT152,408^A0B,58,58^FH\^CI28^FD21P'+PADR(SC6->C6_XXRSTAT,7)+'^FS^CI27'+CRLF)
-		AADD(_aArq,'^FT331,1329^A0B,58,58^FH\^CI28^FDQ'+PADR(ALLTRIM(STR(nQtdEmb)),6)+'^FS^CI27'+CRLF)
+		AADD(_aArq,'^BY3,3,65^FT225,1329^BCB,,N,N'+CRLF)
+		AADD(_aArq,'^FH\^FD>:1P'+PADR(ALLTRIM(SC6->C6_SEUCOD),20)+'^FS'+CRLF)
+
+		AADD(_aArq,'^BY2,3,67^FT222,408^BCB,,N,N'+CRLF)
+		AADD(_aArq,'^FH\^FD>:21P'+PADR(SC6->C6_XXRSTAT,7)+'^FS'+CRLF)
+
+		AADD(_aArq,'^BY2,3,70^FT404,1329^BCB,,N,N'+CRLF)
+		AADD(_aArq,'^FH\^FD>:Q'+PADR(ALLTRIM(STR(nQtdEmb)),6)+'^FS'+CRLF)
+
+		AADD(_aArq,'^BY2,3,70^FT596,1323^BCB,,N,N'+CRLF)
+		AADD(_aArq,'^FH\^FD>:1T'+PADR(ALLTRIM(SC2->C2_NUM)+ALLTRIM(SC2->C2_ITEM),14)+'^FS'+CRLF)
+
+		AADD(_aArq,'^BY2,3,70^FT404,408^BCB,,N,N'+CRLF)
+		AADD(_aArq,'^FH\^FD>:1VBG7^FS'+CRLF)
+
+		AADD(_aArq,'^BY2,3,70^FT596,409^BCB,,N,N'+CRLF)
+		AADD(_aArq,'^FH\^FD>:4LBRASIL^FS'+CRLF)
+
+		AADD(_aArq,'^FT152,1329^A0B,58,58^FH\^CI28^FD'+PADR(ALLTRIM(SC6->C6_SEUCOD),20)+'^FS^CI27'+CRLF)
+		AADD(_aArq,'^FT152,408^A0B,58,58^FH\^CI28^FD'+PADR(SC6->C6_XXRSTAT,7)+'^FS^CI27'+CRLF)
+		AADD(_aArq,'^FT331,1329^A0B,58,58^FH\^CI28^FD'+PADR(ALLTRIM(STR(nQtdEmb)),6)+'^FS^CI27'+CRLF)
 		AADD(_aArq,'^FT327,788^A0B,46,46^FH\^CI28^FD'+PADR(cSemana,6)+'^FS^CI27'+CRLF)
-		AADD(_aArq,'^FT519,1329^A0B,58,58^FH\^CI28^FD1T'+PADR(ALLTRIM(SC2->C2_NUM)+ALLTRIM(SC2->C2_ITEM),14)+'^FS^CI27'+CRLF)
-		AADD(_aArq,'^FT331,408^A0B,58,58^FH\^CI28^FD1VBG7^FS^CI27'+CRLF)
-		AADD(_aArq,'^FT519,408^A0B,58,58^FH\^CI28^FD4LBRAZIL^FS^CI27'+CRLF)
+		AADD(_aArq,'^FT519,1329^A0B,58,58^FH\^CI28^FD'+PADR(ALLTRIM(SC2->C2_NUM)+ALLTRIM(SC2->C2_ITEM),14)+'^FS^CI27'+CRLF)
+		AADD(_aArq,'^FT331,408^A0B,58,58^FH\^CI28^FDBG7^FS^CI27'+CRLF)
+		AADD(_aArq,'^FT519,408^A0B,58,58^FH\^CI28^FDBRAZIL^FS^CI27'+CRLF)
 		AADD(_aArq,'^BY7,7^FT776,1358^B7B,7,2,0,0,N'+CRLF)
 		AADD(_aArq,'^FH\^FD'+cPDF417+'^FS'+ CRLF)
 		AADD(_aArq,'^PQ'+cValtochar(MVPAR03)+',0,1,Y'+ CRLF)

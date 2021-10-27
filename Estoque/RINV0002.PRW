@@ -7,9 +7,9 @@
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
-ฑฑบPrograma  RINV0001  บAutor  ณJonas Pereira     บ Data ณ  24/09/2021    บฑฑ
+ฑฑบPrograma  RINV0002  บAutor  ณJonas Pereira     บ Data ณ  06/10/2021    บฑฑ
 ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
-ฑฑบDesc.     ณ Relat๓rio de inventแrio ciclico operacional                บฑฑ
+ฑฑบDesc.     ณ Relat๓rio de inventแrio ciclico gerencial               บฑฑ
 ฑฑบ          ณ                                                            บฑฑ
 ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
 ฑฑบUso       ณ AP                                                         บฑฑ
@@ -17,8 +17,8 @@
 ฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
 */
 
-User Function RINV0001()
-Private _cPerg  := "RINV0001  "
+User Function RINV0002()
+Private _cPerg  := "RINV0002  "
 Private oReport
 Private cFilterUser
 Private oSection1
@@ -43,7 +43,7 @@ cTitulo:= "Relat๓rio de Planejado x Realizado"
 oFontN :=TFont():New("Times New Roman",08,08,,.T.,,,,.T.,.F.) // Negrito
 oFont  :=TFont():New("Times New Roman",08,08,,.F.,,,,.F.,.F.)
 
-oReport   :=TReport():New("RINV0001",cTitulo,_cPerg,{|oReport| ReportPrin(oReport)},"Relat๓rio de Planejado x Realizado - Inventario Ciclico.")
+oReport   :=TReport():New("RINV0002",cTitulo,_cPerg,{|oReport| ReportPrin(oReport)},"Relat๓rio de Gerencial de Inventario Ciclico.")
 
 oReport:SetLandScape()
 

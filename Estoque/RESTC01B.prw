@@ -134,10 +134,10 @@ User Function RESTC01B(cProduto)
 	oDet4:oFont := TFont():New('Courier New',,20,,.T.,,,,.T.,.F.)
 
 
-	IF !EMPTY(cRamo)
+	//IF !EMPTY(cRamo)
 		@ 043+nLinM, 08 SAY oTextoF VAR "Ramo :"+ cRamo PIXEL SIZE 180,15
 		oTextoF:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
-	Endif
+	//Endif
 
 	nLinM += 10
 	@ 045+nLinM, 008	SAY oTextoC   VAR cDesClien  PIXEL SIZE 180,15

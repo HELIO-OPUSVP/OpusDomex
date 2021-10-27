@@ -41,6 +41,7 @@ User Function RetCusB9(cCodigo,cGera)
 
 	dbusearea(.t.,"TOPCONN",TCGenQRY(,,cQry),"CUS",.f.,.t.)
 	nValor := CUS->CustoM
+
 	CUS->(dbCloseArea())
 
 	// Verificar NF de entrada

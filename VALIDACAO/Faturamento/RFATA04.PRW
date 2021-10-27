@@ -351,7 +351,7 @@ Static Function Atu_aCols()
 		cQuery += "AND A1_NREDUZ LIKE '" + AllTrim(cGetNCli) + "%'"
 	EndIf
 	If !Empty(cGetElabo)
-		cQuery += "AND C5_ELABORA LIKE '" + AllTrim(cGetElabo) + "%'"
+		cQuery += "AND UPPER(C5_ELABORA) LIKE '" + AllTrim(Upper(cGetElabo)) + "%'"
 	EndIf
 
 	If cComboBox1 == "Pedido"

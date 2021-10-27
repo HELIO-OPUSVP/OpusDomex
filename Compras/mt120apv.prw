@@ -10,8 +10,9 @@ Esta função tem como objetivo o preenchimento do grupo padrão '000003' devido ao
 
 USER FUNCTION MT120APV
 Local cGrpAprov := '000003'
-If U_Validacao()
+//If U_Validacao()
     cGrpAprov := "000004"
-EndIf
+//EndIf
 
 RETURN cGrpAprov
+
