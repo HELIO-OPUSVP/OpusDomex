@@ -322,7 +322,7 @@ User Function DOMETQ41(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		AADD(_aArq,'^LH0,0'+CRLF)
 		AADD(_aArq,'^JMA'+CRLF)
 		AADD(_aArq,'^PR6,6'+CRLF)
-//AADD(_aArq,'~SD15'+CRLF)
+		//AADD(_aArq,'~SD15'+CRLF)
 		AADD(_aArq,'^JUS'+CRLF)
 		AADD(_aArq,'^LRN'+CRLF)
 		AADD(_aArq,'^CI27'+CRLF)
