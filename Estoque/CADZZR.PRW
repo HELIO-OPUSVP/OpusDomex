@@ -33,7 +33,7 @@ User Function CADZZR()
 	AADD(aRotina,{ "Visualizar"                ,'AxVisual'            , 0, 2  } )
 	AADD(aRotina,{ "Gera Inventário"           ,"U_ZZRGER01"           , 0, 3  } )
 //AADD(aRotina,{ "Classif. Inventário"       ,"U_ZZRCLA"		   	  , 0, 4  } )    
-	AADD(aRotina,{ "Relatorio Conferência"     ,"U_RELINV01"		  , 0, 7  } )
+	AADD(aRotina,{ "Relatorio Conferência"     ,"U_RINV0001"		  , 0, 7  } )
 	AADD(aRotina,{ "Relatorio Gerencial"       ,"U_RELINV02"		  , 0, 7  } )
 	AADD(aRotina,{ "Legenda   "                ,"U_fLeg"+cAlias       , 0, 10 } )
 

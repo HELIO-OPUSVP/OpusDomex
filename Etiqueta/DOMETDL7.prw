@@ -1,4 +1,5 @@
 #include "protheus.ch"
+#include "protheus.ch"
 #include "rwmake.ch"
 #include "topconn.ch"
 #include "Tbiconn.ch"
@@ -101,7 +102,7 @@ User Function DOMETDL7()
 	Private cCelula:= ""
 	Private lOkFlex   := SuperGetMv("MV_XVRFLEX",.F.,.F.)
 	Private lOkFuruka := SuperGetMv("MV_XVRFURU",.F.,.T.)
-	Private lGloboG  := SuperGetMv("MV_XGLOBOG",.F.,.T.)
+	Private lGlobal  := .F.
 	Private lEhFuruka := .F.
 	Private lComTravR := IIF(ISINCALLSTACK('U_DL7STRVR'),.T.,.F.)
 
@@ -774,7 +775,7 @@ Static Function ValidaEtiq(lTeste)
 				SB1->( dbSeek( xFilial() + aRetEmbala[1] ) )
 				cProxEmb    := SB1->B1_DESC
 				If lOkFlex
-					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007/FLEX"
+					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007/FLEX/PCON"
 						nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
 					ElseIf LEFT(ALLTRIM(SB1->B1_GRUPO),3) == "DIO"
 						nQProxEmb := 1 //Sempre 1 para o DIO
@@ -783,7 +784,7 @@ Static Function ValidaEtiq(lTeste)
 						nQProxEmb := aRetEmbala[2]
 					EndIf
 				Else
-					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007"
+					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007/PCON"
 						nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu)//Arredondar para cima sempre
 					ElseIf LEFT(ALLTRIM(SB1->B1_GRUPO),3) == "DIO"
 						nQProxEmb := 1 //Sempre 1 para o DIO
@@ -1209,7 +1210,7 @@ Static Function ValidaEtiq(lTeste)
 					cVerUsoGr := AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO"))
 
 					If lOkFlex
-						If Alltrim(cVerUsoGr) $ "CORD/0007" .Or. cVerUsoGr == "JUMP" .Or. cVerUsoGr == "FLEX"
+						If Alltrim(cVerUsoGr) $ "CORD/0007/PCON" .Or. cVerUsoGr == "JUMP" .Or. cVerUsoGr == "FLEX"
 
 							cProxNiv   := "2"
 							aRetEmbala := U_RetEmbala(SC2->C2_PRODUTO,cProxNiv)
@@ -1289,7 +1290,7 @@ Static Function ValidaEtiq(lTeste)
 
 						EndIf
 					Else
-						If Alltrim(cVerUsoGr) $ "CORD/0007" .Or. cVerUsoGr == "JUMP"
+						If Alltrim(cVerUsoGr) $ "CORD/0007/PCON" .Or. cVerUsoGr == "JUMP"
 
 							cProxNiv   := "2"
 							aRetEmbala := U_RetEmbala(SC2->C2_PRODUTO,cProxNiv)
@@ -1747,9 +1748,9 @@ Static Function ValidaEtiq(lTeste)
 			SB1->( dbSeek( xFilial() + SC2->C2_PRODUTO ) )
 			If SB1->B1_XKITPIG <> "S" .or. !GetMv("MV_XVERKIT")
 
-				If AllTrim(_cGrupoUso) $ "DROP/PCON" .Or. lEhFuruka
+				If AllTrim(_cGrupoUso) $ "DROP" .Or. lEhFuruka
 					cProxNiv := "1"
-				ElseIf AllTrim(_cGrupoUso) $ "CORD/0007" .Or. AllTrim(_cGrupoUso) == "JUMP" .Or.  LEFT(AllTrim(_cGrupoUso),3) == "DIO"
+				ElseIf AllTrim(_cGrupoUso) $ "CORD/0007/PCON" .Or. AllTrim(_cGrupoUso) == "JUMP" .Or.  LEFT(AllTrim(_cGrupoUso),3) == "DIO"
 
 					//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 					//³Se a quantidade de etiquetas nivel 1 for maior que a qtd.embalagem obriga encerrar
@@ -2474,14 +2475,18 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	EndIf
 
 	if  U_VALIDACAO() // RODA 16/09/2021
-		lGloboG := .F.
-		
-		If Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  // ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))
-			lGlobal := .T.
-		EndIf
+		lGlobal := .F.
 
-		If lGloboG
-			MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) })
+		if !empty(SB1->B1_BASE)
+			_BaseCod := Subs(SC2->C2_PRODUTO,1,2)
+			_UltDig:= Subs(SC2->C2_PRODUTO,LEN(ALLTRIM(SC2->C2_PRODUTO))-1,1)
+			IF _BaseCod+_UltDig  $ "CH9|CM9|CO9|DPB|FXE|MDB|MSB|PB9|TE9"
+				//If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))  //Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  //
+				lGlobal := .T.
+			EndIf
+			If lGlobal
+				MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) })
+			Endif
 		Endif
 	Endif
 
@@ -2503,7 +2508,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		//³Verifica se o Cliente é TELEFONICA							³
 		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 		lTelefonic := .F.
-		If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .And. _cGrupoUso <> "PCON"
+		If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) //.And. _cGrupoUso <> "PCON"
 			SC5->(dbSeek(xFilial("SC5")+SC2->C2_PEDIDO))
 			cPedTel := SC5->C5_ESP1
 			U_DOMETQ93(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, __mv_par04, dDataBase, .F., "", 0)

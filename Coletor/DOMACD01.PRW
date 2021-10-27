@@ -31,7 +31,7 @@
 User Function DOMACD01()
 
 	Private cTM         := GetMV("MV_PLTMTMP")
-//Private bFocoBotao:= .F.
+	//Private bFocoBotao:= .F.
 	Private cNumPeca    := Space(12)
 	Private cNumPV      := Space(06)
 	Private cNumItPV    := Space(02)

@@ -67,7 +67,7 @@ User Function DOMEST03()
 	Private oCombo1
 	Private _aArq		:= {}
 	Private aCodEtq 	:= {}
-	Private cLocImp := "000000"
+	Private cLocImp := "Z00001"
 	Private _txt1
 	Private _txt3
 
@@ -138,8 +138,12 @@ Static Function fOkImp()
 		EndIf
 
 		if Substring(cPrinter,1,1) == '2'
+			//CB5->(dbSetOrder(1))
+			//CB5->(dbSeek(xFilial("CB5")+"Z00002"))
+			//cPorta := CB5->CB5_LPT
+			cPorta    := "LPT2"
 			cModelo := "Z4M" // ou "S400"
-			cPorta    := "LPT1"
+			
 			MSCBPrinter(cModelo,cPorta,,,.F.)
 			MSCBChkStatus(.F.)
 

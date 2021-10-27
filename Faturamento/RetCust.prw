@@ -17,7 +17,7 @@
 
 *--------------------------------------------------------------------------*
 User Function  RetCust(cProduto,cGrvSC)
-*--------------------------------------------------------------------------*
+	*--------------------------------------------------------------------------*
 	Local aRetorno   := {}
 	Local nCusTotal  := 0
 
@@ -49,6 +49,24 @@ User Function  RetCust(cProduto,cGrvSC)
 		AADD(aRetorno,"2") //Há itens com custo zero
 	EndIf
 
+//For w:=1 To Len(aEstruPA)  
+//	RecLock("ZZF",.T.)
+//	ZZF_FILIAL := xFilial("ZZF")
+//	ZZF_ORIGEM := "TST"
+//	ZZF_NUMERO := "051915"
+//	ZZF_ITEM  := "00"
+//	ZZF_COD   := AllTrim(aEstruPA[w,2])
+//	ZZF_DATA  := dDataBase
+//	ZZF_PRCVEN := aEstruPA[w,3]
+//	ZZF_CUSUNI := aEstruPA[w,4]
+//	ZZF_STATUS := '1'
+//	ZZF_PRCNET := aEstruPA[w,3] * aEstruPA[w,4]
+//	ZZF_ZZF_MARGEM := 0
+//	ZZF_OBS   := "Teste"
+//	ZZF->(MsUnLock())
+Next
+
+
 RETURN aRetorno
 
 //
@@ -57,39 +75,37 @@ RETURN aRetorno
 Static Function ExplCusSG1(cProduto,cCod,nQtde,nCusTotal)
 
 	Local aAreaSG1
+	Local cComponente  //alteracao
 
-	SG1->(DbSeek(xFilial() + cProduto))
+	SG1->(DbSeek(xFilial() + cCod))
 
-	While xFilial("SG1") == SG1->G1_FILIAL .and. AllTrim(cProduto) == AllTrim(SG1->G1_COD) .And. SG1->(!Eof())
-		//If  (SG1->G1_INI <= dDataBase .And. SG1->G1_FIM >= dDataBase)
+	While xFilial("SG1") == SG1->G1_FILIAL .and. AllTrim(cCod) == AllTrim(SG1->G1_COD) .And. SG1->(!Eof())
 
 		aAreaSG1    := SG1->(GetArea())
 		cComponente := SG1->G1_COMP
 		nG1_QTDE    := SG1->G1_QUANT
-		If !SG1->( DbSeek( xFilial() + cComponente ) )
 
-			SG1->(RestArea(aAreaSG1))
-
-			//Busca o último custo médio
-			//nCusto := fBuscaCusto(SG1->G1_COMP)
-			nCusto :=  U_RetCusB9(SG1->G1_COMP,cGeraSC)
-
-			AADD(aEstruPA,{cProduto,SG1->G1_COMP,(SG1->G1_QUANT*nQtde),nCusto})
-
-			nCusTotal += (nCusto * SG1->G1_QUANT * nQtde)
-
-			//Guarda o produto com custo zerado
-			If nCusto = 0 .And. (cProduto <> SG1->G1_COMP)
-				//AADD(aCustErros,{SG1->G1_COMP,'Componente sem custo!!'})
-				lOk := .F.
-			EndIf
-
-		Else
-			//É um PI
-			ExplCusSG1(SG1->G1_COD,SG1->G1_COMP,(nQtde*nG1_QTDE),@nCusTotal)
+		If SG1->( DbSeek( xFilial() + cComponente ) ) //é PI
+			ExplCusSG1(cProduto,cComponente,(nQtde*nG1_QTDE),@nCusTotal)
 		EndIf
 
-		//EndIf
+		nCusto :=  U_RetCusB9(cComponente,cGeraSC)
+
+		AADD(aEstruPA,{cProduto,cComponente,(nG1_QTDE*nQtde),nCusto})
+
+		SB1->(dbSeek(xFilial()+cComponente))
+		If SB1->B1_TIPO <> "PI"
+			nCusTotal += (nCusto * nG1_QTDE * nQtde)
+		Endif
+
+		//Guarda o produto com custo zerado
+		If nCusto = 0 .And. (cProduto <> SG1->G1_COMP)
+			//AADD(aCustErros,{SG1->G1_COMP,'Componente sem custo!!'})
+			lOk := .F.
+		EndIf
+
+		SG1->(RestArea(aAreaSG1))
+
 		SG1->(DbSkip())
 	EndDo
 
