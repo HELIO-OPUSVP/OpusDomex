@@ -15,8 +15,9 @@ User Function Vserverini()// MostraFunc(OK)
 
 	PutMV("XX_SERVERI","")
 
-	MsgRun("Processando Compilação a Quente (VALIDACAO)...","Favor Aguardar.....",{|| fprocessa() })
-
+	//MsgRun("Processando Compilação a Quente (VALIDACAO)...","Favor Aguardar.....",{|| fprocessa() })
+	MsgRun("Processando Compilação a Quente (VALIDACAO)...","Favor Aguardar.....",{|| U_VCompQuent() })
+	
 	U_msgcoletor(GetMV("XX_SERVERI"))
 
 Return
@@ -24,22 +25,7 @@ Return
 User Function VCompQuent()
 	Local n, x, y, cPutMV
 
-	If Type("cUsuario") == 'U'
-		cRpcEmp    := "01"            // Código da empresa.
-		cRpcFil    := "01"            // Código da filial.
-		cEnvUser   := "Admin"         // Nome do usurio.
-		cEnvPass   := "OpusDomex"     // Senha do usurio.
-		cEnvMod    := "EST"           // 'FAT'  // Cdigo do mdulo.
-		cFunName   := "U_VSERVERINI"  // 'RPC'  // Nome da rotina que ser setada para retorno da funo FunName().
-		aTables    := {}              // {}     // Array contendo as tabelas a serem abertas.
-		lShowFinal := .F.             // .F.    // Alimenta a varivel publica lMsFinalAuto.
-		lAbend     := .T.             // .T.    // Se .T., gera mensagem de erro ao ocorrer erro ao checar a licena para a estao.
-		lOpenSX    := .T.             // .T.    // SE .T. pega a primeira filial do arquivo SM0 quando no passar a filial e realiza a abertura dos SXs.
-		lConnect   := .T.             // .T.    // Se .T., faz a abertura da conexao com servidor As400, SQL Server etc
-
-		//RPCSetType(3)
-		RpcSetEnv(cRpcEmp,cRpcFil,cEnvUser,cEnvPass,cEnvMod,cFunName,aTables,lShowFinal,lAbend,lOpenSX,lConnect) //PREPARE ENVIRONMENT EMPRESA "01" FILIAL "01"
-	EndIf
+	fIniAmbiente()
 
 	Private cArquivo1  := 'D:\TOTVS12\01-Oficial\Protheus\bin\appserver\02_appserver_master\appserver.ini'
 	Private cArquivo2  := 'D:\TOTVS12\01-Oficial\Protheus\bin\appserver\11_appserver_ti\appserver.ini'
@@ -54,7 +40,9 @@ User Function VCompQuent()
 	Private cArquivo11 := 'D:\TOTVS12\01-Oficial\Protheus\bin\appserver\03_appserver_slave01\appserver.ini'
 	Private cArquivo12 := 'D:\TOTVS12\01-Oficial\Protheus\bin\appserver\04_appserver_slave02\appserver.ini'
 	Private cArquivo13 := 'D:\TOTVS12\01-Oficial\Protheus\bin\appserver\05_appserver_slave03\appserver.ini'
-	Private nNumInis   := 13
+	Private cArquivo14 := 'D:\TOTVS12\01-Oficial\Protheus\Bin\appserver\17_appserver_webcol_validacao\appserver.ini'
+	Private cArquivo15 := 'D:\TOTVS12\01-Oficial\Protheus\Bin\appserver\24_appserver_webcolMG_validacao\appserver.ini'
+	Private nNumInis   := 15
 	Private _cOrigem   := 'D:\TOTVS12\01-Oficial\Protheus\apo\Compila_Quente_VALIDACAO\tttp120.rpo'
 	
 	Private nNumRPOs
@@ -87,6 +75,9 @@ User Function VCompQuent()
 
 	cAPOOri  := Subs(c_Buffer,nPosRpoOri,6)
 	cAPODest := StrZero(Val(Subs(c_Buffer,nPosRpoOri,6)) + 1,6)
+
+	cPutMV := '(VALICAÇÃO)'
+	PutMV("XX_SERVERI",GetMv("XX_SERVERI") + cPutMV + Chr(10) )
 
 	cPutMV := '#' + "RPO "+cAPOOri + '=>' + cAPODest
 	PutMV("XX_SERVERI",GetMv("XX_SERVERI") + cPutMV + Chr(10) )
@@ -230,11 +221,11 @@ Static Function fIniAmbiente()
 	EndIf
 Return
 
-Static Function fProcessa()
-	Local cCommand := "D:\TOTVS12\01-Oficial\Protheus\Bin\smartclient\smartclient.exe -q -p=u_VCompQuent -a=R -c=TI -e=compila_quente -m -l"
-	Local lWait    := .T.
-	Local cPath    := "D:\TOTVS12\01-Oficial\Protheus\Bin\smartclient\"
+// Static Function fProcessa()
+// 	Local cCommand := "D:\TOTVS12\01-Oficial\Protheus\Bin\smartclient\smartclient.exe -q -p=u_VCompQuent -a=R -c=TI -e=compila_quente -m -l"
+// 	Local lWait    := .T.
+// 	Local cPath    := "D:\TOTVS12\01-Oficial\Protheus\Bin\smartclient\"
 
-	WaitRunSrv( @cCommand , @lWait , @cPath )
+// 	WaitRunSrv( @cCommand , @lWait , @cPath )
 
-Return
+// Return

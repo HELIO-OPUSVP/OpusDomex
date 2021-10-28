@@ -141,7 +141,7 @@ USER FUNCTION MT103FIM()
 
 												While XD1->(!Eof()) .AND. XD1->XD1_FILIAL == cFilFiltro  .AND. XD1->XD1_COD == SD1->D1_COD .AND. XD1->XD1_LOCAL == "95" .AND. XD1->XD1_OCORRE == "9"
 													If XD1->XD1_ZYNOTA  == SF1->F1_DOC .and. XD1->XD1_ZYSERIE == SF1->F1_SERIE .and. XD1->XD1_ZYDTNF  == SF1->F1_EMISSAO .AND. StrZero(VAL(XD1->XD1_ZYITNF),4) == SD1->D1_ITEM	//.AND. XD1->XD1_QTDATU  == SD1->D1_QUANT
-														If Empty(XD1->XD1_OP)
+														If !Empty(XD1->XD1_OP)
 															AADD(aEndereca, {SDA->DA_PRODUTO, SDA->DA_NUMSEQ, '0001', SPACE(1), "01RECEBIMENTO", SDA->DA_DATA, SDA->DA_SALDO} )
 															Exit
 														Else
