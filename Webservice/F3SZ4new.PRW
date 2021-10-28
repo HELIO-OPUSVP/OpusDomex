@@ -275,6 +275,8 @@ oProcess:Activate()
 Return .T.
 
 Static Function ProcRun()
+
+Local lAdiciona
 aVetor := {}
 
 /*
@@ -336,7 +338,7 @@ nRecN2 := QUERYSZ4_2->R_E_C_N_O_
 */
 // 1=Todos , 2=Todos em aberto, 3=Todos do Consultor, 4=Aberto do Consultor
 If cOpcCombo == '1'
-	cQuery := " SELECT Z4_CODIGO, ISNULL((SELECT R_E_C_N_O_ FROM SZ4010 (NOLOCK) WHERE Z4_CODIGO = SZ4.Z4_SUPN1 AND D_E_L_E_T_ = ''),0) AS RECNO_N1 , "
+	cQuery := " SELECT Z4_CODIGO, Z4_SUPERIO, Z4_SUPN1, ISNULL((SELECT R_E_C_N_O_ FROM SZ4010 (NOLOCK) WHERE Z4_CODIGO = SZ4.Z4_SUPN1 AND D_E_L_E_T_ = ''),0) AS RECNO_N1 , "
 	cQuery += " ISNULL((SELECT R_E_C_N_O_ FROM SZ4010 (NOLOCK) WHERE Z4_CODIGO = SZ4.Z4_SUPERIO AND D_E_L_E_T_ = ''),0) AS RECNO_N2 ,
 	cQuery += " R_E_C_N_O_ AS RECNO_N3 "
 	cQuery += " FROM SZ4010 SZ4 WHERE Z4_CLIENTE = '"+cCodCli+"' "
@@ -345,6 +347,11 @@ If cOpcCombo == '1'
 	cQuery += " AND (SZ4.Z4_SUPN1 IN ('000052','004620','006831','006834','007296') OR  SZ4.Z4_SUPN1 IN (SELECT Z4_CODIGO FROM SZ4010 WHERE Z4_CLIENTE = '000012' AND Z4_DESC LIKE '2021%' AND Z4_NIVEL = '1' AND D_E_L_E_T_ = '' ))"
 	If !Empty(cPesquisa)
 		cQuery += " AND Z4_DESC LIKE '%"+Alltrim(cPesquisa)+"%' "
+	EndIf
+	If Date() == StoD('20211028')
+		//cQuery += " AND Z4_SUPERIO = '008161' "
+		//cQuery += " AND Z4_SUPN1 = '006625' "
+		cQuery += " AND SZ4.Z4_SUPN1 IN ('006625','000052','004620','006831','006834') "  //'007296'
 	EndIf
 	cQuery += "ORDER BY Z4_LINHA "
 EndIf
@@ -391,20 +398,33 @@ EndIf
 
 TCQUERY cQuery NEW ALIAS "QUERYSZ4_3"
 
+
 While !QUERYSZ4_3->( EOF() )
+	
+	If  QUERYSZ4_3->Z4_SUPERIO == '008161'
+		n := 0
+	EndIf
+	If QUERYSZ4_3->Z4_SUPN1 == '006625'
+        n := 0
+	EndIf
+	lAdiciona := .F.	
 	
 	n := aScan(aVetor,{ |aVet| aVet[2] == QUERYSZ4_3->RECNO_N1 } )
 	
 	If Empty(n)
 		AADD(aVetor,{1,QUERYSZ4_3->RECNO_N1})
+		lAdiciona := .T.
 	EndIf
 	
 	n := aScan(aVetor,{ |aVet| aVet[2] == QUERYSZ4_3->RECNO_N2 } )
 	If Empty(n)
 		AADD(aVetor,{2,QUERYSZ4_3->RECNO_N2})
+		lAdiciona := .T.
 	EndIf
 	
-	AADD(aVetor,{3,QUERYSZ4_3->RECNO_N3})
+	If lAdiciona
+		AADD(aVetor,{3,QUERYSZ4_3->RECNO_N3})
+	EndIf
 	
 	QUERYSZ4_3->( dbSkip() )
 End
@@ -555,7 +575,7 @@ For _nX := 1 to Len(aVetor)
 			EndIf
 			
 			// Nivel 2
-			cTxt := SZ4->Z4_LINHA + Space(2) + " : " + Subs(SZ4->Z4_DESC,1,83) //+ RetHrPrj2(SZ4->Z4_CODIGO)    //1,8
+			cTxt := SZ4->Z4_LINHA + Space(2) + " : " + Alltrim(Subs(SZ4->Z4_DESC,1,83)) //+ RetHrPrj2(SZ4->Z4_CODIGO)    //1,8
 			//cTxt := "Nivel " + Str(aVetor[_nX,1]) + " Indice " + StrZero(_nX,4)
 			
 			If !lNovo
