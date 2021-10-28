@@ -348,11 +348,11 @@ If cOpcCombo == '1'
 	If !Empty(cPesquisa)
 		cQuery += " AND Z4_DESC LIKE '%"+Alltrim(cPesquisa)+"%' "
 	EndIf
-	If Date() == StoD('20211028')
+	//If Date() == StoD('20211028')
 		//cQuery += " AND Z4_SUPERIO = '008161' "
 		//cQuery += " AND Z4_SUPN1 = '006625' "
-		cQuery += " AND SZ4.Z4_SUPN1 IN ('006625','000052','004620','006831','006834') "  //'007296'
-	EndIf
+		//cQuery += " AND SZ4.Z4_SUPN1 IN ('006625','000052','004620','006831','006834') "  //'007296'
+	//EndIf
 	cQuery += "ORDER BY Z4_LINHA "
 EndIf
 
