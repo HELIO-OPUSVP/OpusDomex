@@ -16,7 +16,7 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function DMX_C6ZY
+User Function DMX_C6ZY()
 
 cQuery := ""
 cQuery += " UPDATE " + RetSqlName("SZY") + "  SET ZY_PRODUTO=C6_PRODUTO,ZY_DESC=C6_DESCRI "

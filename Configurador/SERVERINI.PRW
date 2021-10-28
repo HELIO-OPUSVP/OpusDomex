@@ -6,17 +6,23 @@
 
 #DEFINE N_BUFFER 15000
 
-User Function serverini()// MostraFunc(OK)
+User Function serverini(cServidor)// MostraFunc(OK)
+Default cServidor := ""
+	
+	// If !Empty(cServidor)
+	// 	MsgYesNo("Rodando de dentro do servidor")
+	// EndIf
 
-	MsgRun("RpcSetEnv()","Favor Aguardar.....",{|| fIniAmbiente() })
-
-	//cRetorno := U_CompQuent()
+	MsgRun("# RpcSetEnv()","Favor Aguardar.....",{|| fIniAmbiente() })
+	
+	//cRetorno := U_CompQuent()   // Não adianta depurar se não foi local no servidor
 	//cRetorno := startjob("U_CompQuent",getenvserver(), .T. , cMensagem)
 
 	PutMV("XX_SERVERI","")
 
-	MsgRun("Processando Compilação a Quente...","Favor Aguardar.....",{|| fprocessa() })
-
+	//MsgRun("Processando Compilação a Quente...","Favor Aguardar.....",{|| fprocessa() })
+	MsgRun("Processando Compilação a Quente...","Favor Aguardar.....",{|| U_CompQuent() })
+	
 	U_msgcoletor(GetMV("XX_SERVERI"))
 
 Return
@@ -24,22 +30,7 @@ Return
 User Function CompQuent()
 	Local n, x, y, cPutMV
 
-	If Type("cUsuario") == 'U'
-		cRpcEmp    := "01"            // Código da empresa.
-		cRpcFil    := "01"            // Código da filial.
-		cEnvUser   := "Admin"         // Nome do usurio.
-		cEnvPass   := "OpusDomex"     // Senha do usurio.
-		cEnvMod    := "EST"           // 'FAT'  // Cdigo do mdulo.
-		cFunName   := "U_SERVERINI"   // 'RPC'  // Nome da rotina que ser setada para retorno da funo FunName().
-		aTables    := {}              // {}     // Array contendo as tabelas a serem abertas.
-		lShowFinal := .F.             // .F.    // Alimenta a varivel publica lMsFinalAuto.
-		lAbend     := .T.             // .T.    // Se .T., gera mensagem de erro ao ocorrer erro ao checar a licena para a estao.
-		lOpenSX    := .T.             // .T.    // SE .T. pega a primeira filial do arquivo SM0 quando no passar a filial e realiza a abertura dos SXs.
-		lConnect   := .T.             // .T.    // Se .T., faz a abertura da conexao com servidor As400, SQL Server etc
-
-		//RPCSetType(3)
-		RpcSetEnv(cRpcEmp,cRpcFil,cEnvUser,cEnvPass,cEnvMod,cFunName,aTables,lShowFinal,lAbend,lOpenSX,lConnect) //PREPARE ENVIRONMENT EMPRESA "01" FILIAL "01"
-	EndIf
+	fIniAmbiente()
 
 	Private cArquivo1  := 'D:\TOTVS12\01-Oficial\Protheus\bin\appserver\02_appserver_master\appserver.ini'
 	Private cArquivo2  := 'D:\TOTVS12\01-Oficial\Protheus\bin\appserver\03_appserver_slave01\appserver.ini'
@@ -81,6 +72,9 @@ User Function CompQuent()
 	cAPOOri  := Subs(c_Buffer,nPosRpoOri,6)
 	cAPODest := StrZero(Val(Subs(c_Buffer,nPosRpoOri,6)) + 1,6)
 
+	cPutMV := '(PRODUÇÃO)'
+	PutMV("XX_SERVERI",GetMv("XX_SERVERI") + cPutMV + Chr(10) )
+
 	cPutMV := '#' + "RPO "+cAPOOri + '=>' + cAPODest
 	PutMV("XX_SERVERI",GetMv("XX_SERVERI") + cPutMV + Chr(10) )
 
@@ -89,7 +83,7 @@ User Function CompQuent()
 	_cDestino += '\tttp120.rpo'
 
 	Copy File &_cOrigem To &_cDestino
-
+	
 	//Rename File &_cOrigem To &_cDestino
 	//FRename( _cOrigem , _cDestino )
 	//MontaDir(StrTran(_cOrigem,'tttp110.rpo',''))
@@ -199,7 +193,7 @@ User Function CompQuent()
 
 	cPutMV := '#' + "FIM"
 	PutMV("XX_SERVERI",GetMv("XX_SERVERI") + cPutMV + Chr(10) )
-
+	//RpcClearEnv()
 Return
 
 Static Function fIniAmbiente()
@@ -219,14 +213,15 @@ Static Function fIniAmbiente()
 
 		//RPCSetType(3)
 		RpcSetEnv(cRpcEmp,cRpcFil,cEnvUser,cEnvPass,cEnvMod,cFunName,aTables,lShowFinal,lAbend,lOpenSX,lConnect) //PREPARE ENVIRONMENT EMPRESA "01" FILIAL "01"
+		_cInternet := Nil
 	EndIf
 Return
 
-Static Function fProcessa()
-	Local cCommand := "D:\TOTVS12\01-Oficial\Protheus\Bin\smartclient\smartclient.exe -q -p=u_CompQuent -a=R -c=TI -e=compila_quente -m -l"
-	Local lWait    := .T.
-	Local cPath    := "D:\TOTVS12\01-Oficial\Protheus\Bin\smartclient\"
+// Static Function fProcessa()
+// 	Local cCommand := "D:\TOTVS12\01-Oficial\Protheus\Bin\smartclient\smartclient_comp_quente_2.exe -q -p=u_CompQuent -a=R -c=TI -e=compila_quente -m -l"
+// 	Local lWait    := .T.
+// 	Local cPath    := "D:\TOTVS12\01-Oficial\Protheus\Bin\smartclient\"
 
-	WaitRunSrv( @cCommand , @lWait , @cPath )
+// 	WaitRunSrv( @cCommand , @lWait , @cPath )
 
-Return
+// Return
