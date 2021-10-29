@@ -36,20 +36,19 @@ Description ETIQUETA TELECOM ARGENTINA - EM ESPANHOL
 	Default cNumOP    := ""
 	Default cNumSenf  := ""
 	Default nQtdEmb   := 0
-	Default nQtdEtq   := 0
+	Default nQtdEtq   := 1
 	Default cNumSerie := "1"
 	Default cNivel    := ""
 	Default cNumSerie := ""
 	Default cNumPeca  := ""
 
 	MVPAR02:= nQtdEmb   //Qtd Embalagem
-	MVPAR03:= nQtdEtq   //Qtd Etiquetas
+	MVPAR03:= if (nQtdEtq == 0,1,nQtdEtq)    //Qtd Etiquetas
 
 	cProdFilho := ""
 	cProOp:= ""
 
 	If !Empty(cNumOP)
-
 		//Localiza SC2
 		SC2->(DbSetOrder(1))
 		If lAchou .And. SC2->(!DbSeek(xFilial("SC2")+cNumOP))
@@ -65,7 +64,6 @@ Description ETIQUETA TELECOM ARGENTINA - EM ESPANHOL
 			__cItem    := SC2->C2_ITEMPV
 			cProdFilho := SC2->C2_PRODUTO
 			cProdOp 	:= SC2->C2_PRODUTO
-
 		Else
 			SC2->(dbSeek(xFilial("SC2")+SUBSTR(cNumOP,1,8)+'001'))
 			__cPedido := SC2->C2_PEDIDO
@@ -351,7 +349,6 @@ Description ETIQUETA TELECOM ARGENTINA - EM ESPANHOL
 			EndIf
 
 			SB1->(dbSeek(xFilial("SB1")+cProdOP))
-
 
 			AADD(_aArq,'CT~~CD,~CC^~CT~'+ CRLF)
 			AADD(_aArq,'^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR6,6^JUS^LRN^CI0^XZ'+ CRLF)

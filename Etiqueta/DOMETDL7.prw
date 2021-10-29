@@ -2338,6 +2338,23 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		EndIf
 	EndIf
 
+	if  U_VALIDACAO() // RODA 16/09/2021
+		lGlobal := .F.
+
+		//if !empty(SB1->B1_BASE)
+			_BaseCod := Subs(SC2->C2_PRODUTO,1,2)
+			_UltDig:= Subs(SC2->C2_PRODUTO,LEN(ALLTRIM(SC2->C2_PRODUTO)),1)
+			IF _BaseCod+_UltDig  $ "CH9|CM9|CO9|DPB|FXE|MDB|MSB|PB9|TE9"
+				//If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))  //Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  //
+				lGlobal := .T.
+			EndIf
+			If lGlobal
+				MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) })
+			Endif
+		//Endif
+	Endif
+
+
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 	//³LAYOUT 87 - HUAWEI LEIAUTE NOVO 50X100 mm								   	³
 	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
@@ -2477,9 +2494,9 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	if  U_VALIDACAO() // RODA 16/09/2021
 		lGlobal := .F.
 
-		if !empty(SB1->B1_BASE)
+		//if !empty(SB1->B1_BASE)
 			_BaseCod := Subs(SC2->C2_PRODUTO,1,2)
-			_UltDig:= Subs(SC2->C2_PRODUTO,LEN(ALLTRIM(SC2->C2_PRODUTO))-1,1)
+			_UltDig:= Subs(SC2->C2_PRODUTO,LEN(ALLTRIM(SC2->C2_PRODUTO)),1)
 			IF _BaseCod+_UltDig  $ "CH9|CM9|CO9|DPB|FXE|MDB|MSB|PB9|TE9"
 				//If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))  //Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  //
 				lGlobal := .T.
@@ -2487,7 +2504,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 			If lGlobal
 				MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) })
 			Endif
-		Endif
+		//Endif
 	Endif
 
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
@@ -2682,6 +2699,22 @@ Return
 		If cDomEtDl36_CancLay == "36"
 			U_DOMETQ36(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie)		//Layout 36 - Por Michel A. Sander
 		EndIf
+		if  U_VALIDACAO() // RODA 16/09/2021
+			lGlobal := .F.
+
+			//if !empty(SB1->B1_BASE)
+				_BaseCod := Subs(SC2->C2_PRODUTO,1,2)
+				_UltDig:= Subs(SC2->C2_PRODUTO,LEN(ALLTRIM(SC2->C2_PRODUTO)),1)
+				IF _BaseCod+_UltDig  $ "CH9|CM9|CO9|DPB|FXE|MDB|MSB|PB9|TE9"
+					//If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))  //Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  //
+					lGlobal := .T.
+				EndIf
+				If lGlobal
+					MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) })
+				Endif
+			//Endif
+		Endif
+
 		If cDomEtDl36_CancLay == "94"
 			If !lSerial
 				// Etiqueta Ericsson Crystal
@@ -3039,6 +3072,22 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			MsgInfo("Layout não encontrado para este Cliente/Grupo de Produtos.")
 			_Retorno := .F.
 		EndIf
+	
+		if  U_VALIDACAO() // RODA 16/09/2021
+			lGlobal := .F.
+
+			//if !empty(SB1->B1_BASE)
+				_BaseCod := Subs(SC2->C2_PRODUTO,1,2)
+				_UltDig:= Subs(SC2->C2_PRODUTO,LEN(ALLTRIM(SC2->C2_PRODUTO)),1)
+				IF _BaseCod+_UltDig  $ "CH9|CM9|CO9|DPB|FXE|MDB|MSB|PB9|TE9"
+					//If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))  //Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  //
+					lGlobal := .T.
+				EndIf
+				If lGlobal																			
+					MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) })
+				Endif
+			//Endif
+		Endif
 
 
 		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿

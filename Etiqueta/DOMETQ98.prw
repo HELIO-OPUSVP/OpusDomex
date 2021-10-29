@@ -123,6 +123,7 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 				EndIf
 
 				//Alert('cSetor '+ cSetor)
+				//If !U_Validacao()
 					If !Empty(cSetor)
 						MSCBSAY(30,01,cSetor,"N","1","1,2")
 					Else
@@ -132,6 +133,7 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 					MSCBSayBar(30,10,AllTrim(XD1->XD1_XXPECA),"N","MB04",10,.F.,.T.,.F.,,3,Nil,Nil,Nil,Nil,Nil)
 					MSCBEnd()
 					MSCBClosePrinter()
+				//EndIf
 				//U_MsgColetor("Impressão concluída")
 			Next
 		EndIf
