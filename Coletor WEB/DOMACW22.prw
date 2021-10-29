@@ -571,7 +571,7 @@ Return ( nPesoBruto )
 Static Function AlertC(cTexto)
 
 	Local aTemp := U_QuebraString(cTexto,20)
-	Local cTemp := ''
+	Local cTemp := '' 
 	Local lRet  := .T.
 
 	For x := 1 to Len(aTemp)

@@ -24,7 +24,7 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 	Local aAreaSC2  := SC2->( GetArea() )
 	Local _nX		:= 0
 	Local nQ 		:= 0
-	local cLocImp	:= if (cfilant == "02","000024","")
+	local cLocImp	:= iif(cfilant == "02","000024","")
 	Default cNumPeca	:= ""
 	Default cSetor   	:= ""
 	Default cEtqHuawei 	:=""
@@ -49,6 +49,8 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 					If !CB5SetImp(cLocImp,.F.)
 						MsgAlert("Local de impressao invalido!","Aviso")
 						Return .F.
+					else
+						MSCBBegin(1,6)	
 					EndIf
 				EndIf
 				//Controla o numero da etiqueta de embalagens
