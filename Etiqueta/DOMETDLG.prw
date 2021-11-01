@@ -220,9 +220,8 @@ User Function DOMETDLG()
 				U_DOMETQ40(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie) 
 			ElseIf mv_par06 == "41"  // Layout Ericsson Zebra
 				U_DOMETQ41(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie) 
-		
-
-
+			ElseIf mv_par06 == "42"
+				U_DOMETQ42(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07) //Layout 85 - Cordão Ericsson Por Michel A. Sander
 			ElseIf mv_par06 == "115"  // Layout 115 - (ID CORTE FURUKAWA - AVULSA))
 				U_DOMET115(mv_par02,mv_par05,mv_par07)
 			ElseIf mv_par06 == "117"  // Layout 117 - (TELECOM ARGENTINA )
