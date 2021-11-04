@@ -1,5 +1,4 @@
 #include "protheus.ch"
-#include "protheus.ch"
 #include "rwmake.ch"
 #include "topconn.ch"
 #include "Tbiconn.ch"
@@ -539,7 +538,7 @@ Static Function ValidaEtiq(lTeste)
 				//³Verifica se o Cliente é TELEFONICA							³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 				lTelefonic := .F.
-				If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .And. _cGrupoUso <> "PCON"
+				If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) //.And. _cGrupoUso <> "PCON"   PCON retirado em 04/11/21 por Helio/Ricardo
 					lTelefonic := .T.
 					SC5->(dbSeek(xFilial("SC5")+SC2->C2_PEDIDO))
 					cPedTel := SC5->C5_ESP1
@@ -636,7 +635,7 @@ Static Function ValidaEtiq(lTeste)
 							//³Verifica se o Cliente é TELEFONICA							³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 							lTelefonic := .F.
-							If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .And. _cGrupoUso <> "PCON"
+							If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) //.And. _cGrupoUso <> "PCON"  PCON retirado em 04/11/21 por Helio/Ricardo
 								lTelefonic := .T.
 								SC5->(dbSeek(xFilial("SC5")+SC2->C2_PEDIDO))
 								cPedTel := SC5->C5_ESP1
@@ -775,7 +774,7 @@ Static Function ValidaEtiq(lTeste)
 				SB1->( dbSeek( xFilial() + aRetEmbala[1] ) )
 				cProxEmb    := SB1->B1_DESC
 				If lOkFlex
-					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007/FLEX/PCON"
+					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007/FLEX"  // PCON retirado em 04/11/21 por Helio/Ricardo
 						nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
 					ElseIf LEFT(ALLTRIM(SB1->B1_GRUPO),3) == "DIO"
 						nQProxEmb := 1 //Sempre 1 para o DIO
@@ -784,7 +783,7 @@ Static Function ValidaEtiq(lTeste)
 						nQProxEmb := aRetEmbala[2]
 					EndIf
 				Else
-					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007/PCON"
+					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007"  // PCON retirado em 04/11/21 por Helio/Ricardo
 						nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu)//Arredondar para cima sempre
 					ElseIf LEFT(ALLTRIM(SB1->B1_GRUPO),3) == "DIO"
 						nQProxEmb := 1 //Sempre 1 para o DIO
@@ -1042,7 +1041,7 @@ Static Function ValidaEtiq(lTeste)
 				//XD1_OCORR == 8 Gerado Pelo PickList,  7=Lido na produção, foi transferido e está validado pelo tela de roteiro.
 
 				//If (GetMv("MV_XVERROT") .or. (GetEnvServ() == 'VALIDACAO')) .And. AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) == "DROP"
-				If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD" .And. cFilAnt <> "02" .And. lComTravR //.And. U_VALIDACAO()
+				If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 					nQtdEmbNv1 :=  Int(U_RetEmbala(SC2->C2_PRODUTO,"1")[2])
 
 					nQTotPklOp  := 0
@@ -1210,7 +1209,7 @@ Static Function ValidaEtiq(lTeste)
 					cVerUsoGr := AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO"))
 
 					If lOkFlex
-						If Alltrim(cVerUsoGr) $ "CORD/0007/PCON" .Or. cVerUsoGr == "JUMP" .Or. cVerUsoGr == "FLEX"
+						If Alltrim(cVerUsoGr) $ "CORD/0007/JUMP/FLEX"  // PCON retirado em 04/11/21 por Helio/Ricardo
 
 							cProxNiv   := "2"
 							aRetEmbala := U_RetEmbala(SC2->C2_PRODUTO,cProxNiv)
@@ -1290,7 +1289,7 @@ Static Function ValidaEtiq(lTeste)
 
 						EndIf
 					Else
-						If Alltrim(cVerUsoGr) $ "CORD/0007/PCON" .Or. cVerUsoGr == "JUMP"
+						If Alltrim(cVerUsoGr) $ "CORD/0007/JUMP"  // PCON retirado em 04/11/21 por Helio/Ricardo
 
 							cProxNiv   := "2"
 							aRetEmbala := U_RetEmbala(SC2->C2_PRODUTO,cProxNiv)
@@ -1519,7 +1518,7 @@ Static Function ValidaEtiq(lTeste)
 			//XD1_OCORR == 8 Gerado Pelo PickList,  7=Lido na produção, foi transferido e está validado pelo tela de roteiro.
 
 			//If (GetMv("MV_XVERROT") .or. (GetEnvServ() == 'VALIDACAO')) .And. AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) == "DROP"
-			If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD" .And. cFilAnt <> "02" .And. lComTravR /*.And. U_VALIDACAO()*/
+			If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR // PCON acrescentado em 04/11/21 por Helio/Ricardo
 				If !Alltrim(SC2->C2_OBS) $ "SEMTRAVAROTEIRO"
 					nQtdEmbNv1 :=  Int(U_RetEmbala(SC2->C2_PRODUTO,"1")[2])
 					
@@ -1748,9 +1747,9 @@ Static Function ValidaEtiq(lTeste)
 			SB1->( dbSeek( xFilial() + SC2->C2_PRODUTO ) )
 			If SB1->B1_XKITPIG <> "S" .or. !GetMv("MV_XVERKIT")
 
-				If AllTrim(_cGrupoUso) $ "DROP" .Or. lEhFuruka
+				If AllTrim(_cGrupoUso) $ "DROP/PCON" .Or. lEhFuruka  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 					cProxNiv := "1"
-				ElseIf AllTrim(_cGrupoUso) $ "CORD/0007/PCON" .Or. AllTrim(_cGrupoUso) == "JUMP" .Or.  LEFT(AllTrim(_cGrupoUso),3) == "DIO"
+				ElseIf AllTrim(_cGrupoUso) $ "CORD/0007/JUMP" .Or. LEFT(AllTrim(_cGrupoUso),3) == "DIO"  // PCON retirado em 04/11/21 por Helio/Ricardo
 
 					//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 					//³Se a quantidade de etiquetas nivel 1 for maior que a qtd.embalagem obriga encerrar
@@ -2572,6 +2571,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	//³Imprime a etiqueta da telefonica								³
 	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	If lTelefonic
+	    // Segunda etiqueta, layout Telefonica
 		U_DOMETQ93(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, __mv_par04, dDataBase, .F., "", 0)
 		lUltTelef := .T.
 	Else
