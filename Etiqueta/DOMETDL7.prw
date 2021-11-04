@@ -2123,7 +2123,12 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		__mv_par03 := Nil
 		__mv_par04 := nQtdKit
 		__mv_par05 := 1
-		__mv_par06 := SZG->ZG_LAYOUT
+		
+		If !U_VALIDACAO()
+			__mv_par06 := SZG->ZG_LAYOUT   // TRATADO
+		Else
+			__mv_par06 := SZG->ZG_LAYVALI
+		EndIf
 
 	EndIf
 
@@ -2153,7 +2158,11 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		__mv_par03 := Nil
 		__mv_par04 := 1
 		__mv_par05 := 1
-		__mv_par06 := SZG->ZG_LAYOUT
+		If !U_VALIDACAO()
+			__mv_par06 := SZG->ZG_LAYOUT  // TRATADO
+		Else
+			__mv_par06 := SZG->ZG_LAYVALI
+		EndIf
 
 	EndIf
 
@@ -2571,7 +2580,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	//쿔mprime a etiqueta da telefonica								�
 	//읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸
 	If lTelefonic
-	    // Segunda etiqueta, layout Telefonica
+		// Segunda etiqueta, layout Telefonica
 		U_DOMETQ93(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, __mv_par04, dDataBase, .F., "", 0)
 		lUltTelef := .T.
 	Else
@@ -3056,7 +3065,12 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			Return(.F.)
 		EndIf
 
-		cLayout   := SZG->ZG_LAYOUT
+		If !U_VALIDACAO()
+			cLayout := SZG->ZG_LAYOUT   // TRATADO
+		Else
+			cLayout := SZG->ZG_LAYVALI
+		EndIf
+
 		_PesoAuto := 0
 		lColetor  := .F.
 		cDomEtDl36_CancLay := cLayout
