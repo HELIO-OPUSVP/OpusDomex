@@ -268,7 +268,7 @@ aAdd(_PARAMIXB2,{'23/01/2019'} )      //-- Datas para tipo de per�odo diversos
 */
 
 
-User Function Djobm712()
+User Function Djobm712()  
 	PRIVATE lCZI    :=.F.
 	PRIVATE lCZJ    :=.F.
 	PRIVATE lCZK    :=.F.
