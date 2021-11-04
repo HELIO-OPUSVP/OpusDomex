@@ -3093,6 +3093,8 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			U_DOMETQ31(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 31 - Por Michel A. Sander
 		ElseIf cLayout == "36"
 			U_DOMETQ36(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
+		ElseIf cLayout == "42"
+			U_DOMETQ42(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie,"","000000") //Layout 42 - Cordão Ericsson Por Ricardo Roda
 		ElseIf cLayout == "80"
 			U_DOMETQ80(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 80 - Serial Datamatrix Por Michel A. Sander
 		ElseIf cLayout == "81"
