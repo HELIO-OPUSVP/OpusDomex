@@ -29,7 +29,7 @@ User Function GD1_NFORI()
 	Local cFornece   := CA100FOR
 	Local cLoj       := CLOJA
 
-	SD2->( dbSetOrder(3) )  // D2_FILIAL+D2_DOC + D2_SERIE  + D2_CLIENTE + D2_LOJA + D2_COD  + D2_ITEM
+   SD2->( dbSetOrder(3) )  // D2_FILIAL+D2_DOC + D2_SERIE  + D2_CLIENTE + D2_LOJA + D2_COD  + D2_ITEM
 	If SD2->( dbSeek( xFilial() + cNFOri + cSerieOri + cFornece + cLoj + cProdut + cItemOri) )
 		SC6->( dbSetOrder(1) )
 		If SC6->( dbSeek( xFilial() + SD2->D2_PEDIDO + SD2->D2_ITEMPV ) )
