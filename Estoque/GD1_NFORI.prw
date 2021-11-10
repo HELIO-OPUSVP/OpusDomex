@@ -18,6 +18,9 @@
 // Validar no MT100LOK:
 // Validar se a TES de entrada está com o F4_XBENEF preenchido. Se não, dar erro e não deixar continuar
 // Validar se a TES tem controle de poder de terceiros = Retorno, se não, dar erro.
+// Apontar a produção na etrada da NF de serviço (depois da nf de retorno)
+// Não deixar apontar a OP manualmente para garantir o lançamento das duas NFs corretamente.
+// Validar a quantidade da NF de serviço igual a NF de retorno
 
 
 User Function GD1_NFORI()
