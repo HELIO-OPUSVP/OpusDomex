@@ -37,7 +37,6 @@ User Function GD1_NFORI()
 				aCols[N,nPD1_OP] := SC6->C6_XXOP
 				SD4->( dbSetOrder(2) )
 				If SD4->( dbSeek( xFilial() + Subs(SC6->C6_XXOP,1,11) + "  " + cProdut ) )
-					//MsgStop("Não foi encontrado empenho deste produto para esta OP.")
 					If aCols[n,nPD1_LOCAL] <> SD4->D4_LOCAL
 						//MsgStop("Almoxarifado da NF ("+aCols[n,nPD1_LOCAL]+") alterado para o mesmo do Empenho da OP ("+SD4->D4_LOCAL+").")
 						aCols[n,nPD1_LOCAL] := SD4->D4_LOCAL
