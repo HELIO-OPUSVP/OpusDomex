@@ -15,6 +15,11 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
+// Validar no MT100LOK:
+// Validar se a TES de entrada está com o F4_XBENEF preenchido. Se não, dar erro e não deixar continuar
+// Validar se a TES tem controle de poder de terceiros = Retorno, se não, dar erro.
+
+
 User Function GD1_NFORI()
 
 	Local aAreaGER   := GetArea()
