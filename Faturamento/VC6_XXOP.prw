@@ -13,6 +13,9 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
+// Validar se a OP está encerrada
+// Validar se a TES atualiza estoque e se está com controle terceiros = Remessa
+
 User Function VC6_XXOP()
 Local _Retorno     := .T.
 Local aAreaGER     := GetArea()
