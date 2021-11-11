@@ -1255,7 +1255,6 @@ Static Function fTrfRolo(cCFibra,nTransf,cEtiq)
 			XD1->XD1_QTDATU := XD1-> XD1_QTDATU -  nTransf
 			XD1->(MsUnlock())
 		Endif
-
 		//Endif
 
 		lcontinua  :=  fSldLcaliz(cProduto,nQtde,cLocOrig,cEndOrig, cLoteCtl)
@@ -1281,23 +1280,23 @@ Static Function fTrfRolo(cCFibra,nTransf,cEtiq)
 			Nil, ;                             	//-- Numero do registro destino no SD3 - Obrigatorio se for Estorno
 			'MATA260', ;                       	//-- Indicacao do programa que originou os lancamentos
 			,,,,,,,,,,,,,,,,U_RETLOTC6(cCodOP),StoD("20491231"))
-		/*Nil,;                              	//-- Estrutura Fisica Padrao
-		Nil,;                              	//-- Servico
-		Nil,;                              	//-- Tarefa
-		Nil,;                              	//-- Atividade
-		Nil,;                              	//-- Anomalia
-		Nil,;                              	//-- Estrutura Fisica Destino
-		cEndDest,;                         	//-- Endereco Destino
-		Nil,;                              	//-- Hora Inicio
-		'S',;                              	//-- Atualiza Estoque
-		Nil,;                              	//-- Numero da Carga
-		Nil,;                              	//-- Numero do Unitizador
-		Nil,;                              	//-- Ordem da Tarefa
-		Nil,;                              	//-- Ordem da Atividade
-		Nil,;                              	//-- Recurso Humano
-		Nil)                               	//-- Recurso Fisico
-		*/
-// 
+			/*Nil,;                              	//-- Estrutura Fisica Padrao
+					Nil,;                              	//-- Servico
+					Nil,;                              	//-- Tarefa
+					Nil,;                              	//-- Atividade
+					Nil,;                              	//-- Anomalia
+					Nil,;                              	//-- Estrutura Fisica Destino
+					cEndDest,;                         	//-- Endereco Destino
+					Nil,;                              	//-- Hora Inicio
+					'S',;                              	//-- Atualiza Estoque
+					Nil,;                              	//-- Numero da Carga
+					Nil,;                              	//-- Numero do Unitizador
+					Nil,;                              	//-- Ordem da Tarefa
+					Nil,;                              	//-- Ordem da Atividade
+					Nil,;                              	//-- Recurso Humano
+					Nil)                               	//-- Recurso Fisico
+					*/
+									//
 
 
 
@@ -2308,6 +2307,7 @@ Static Function fMSNewG2(nCelTrab)
 	Endif
 
 	cQuery+= " AND P10_FIBRA = D4_COD "
+	cQuery+= " AND P10.D_E_L_E_T_ = ''  "
 	cQuery+= " INNER JOIN "+RetSqlName("SC2")+"  SC2 (NOLOCK) "
 	cQuery+= " ON C2_FILIAL = '"+xFilial("SC2")+"' "
 	cQuery+= " AND C2_NUM+C2_ITEM+C2_SEQUEN = D4_OP  "

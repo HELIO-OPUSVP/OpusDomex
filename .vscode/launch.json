@@ -10,6 +10,16 @@
 			"smartclientBin": "C:/Totvs/smartclient64_DOMEX/smartclient.exe",
 			"isMultiSession": true,
 			"enableTableSync": true
+		},
+		{
+			"type": "totvs_language_debug",
+			"request": "launch",
+			"name": "LOCAL",
+			"program": "${command:AskForProgramName}",
+			"cwb": "${workspaceFolder}",
+			"smartclientBin": "C:/Totvs/Protheus/Protheus/bin/smartclient/smartclient.exe",
+			"isMultiSession": true,
+			"enableTableSync": true
 		}
 	],
 	"lastPrograms": [
@@ -74,7 +84,35 @@
 		{
 			"label": "SIGApcp",
 			"description": "<nil>"
+		},
+		{
+			"label": "SIGAfat",
+			"description": "<nil>"
+		},
+		{
+			"label": "U",
+			"description": "<nil>"
+		},
+		{
+			"label": "U_WEB",
+			"description": "<nil>"
+		},
+		{
+			"label": "SIGACFG",
+			"description": "<nil>"
+		},
+		{
+			"label": "APSDU",
+			"description": "<nil>"
+		},
+		{
+			"label": "U_",
+			"description": "<nil>"
+		},
+		{
+			"label": "u_we",
+			"description": "<nil>"
 		}
 	],
-	"lastProgramExecuted": "sigaadv"
+	"lastProgramExecuted": "SIGAADV"
 }
