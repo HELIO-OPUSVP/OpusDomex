@@ -429,7 +429,7 @@ For nQ := 1 To nQtdEtq		// nQtdEtq = Quantidade de Etiquetas no parametro de imp
 			Alltrim(Transform(SB1->B1_XXMETIQ,cMasc))+"M", ;
 			"LADO A:IL:<"+cIL+"dB", ;
 			"LADO:A", ;
-			ETQ->B1_XXANAT1, ;
+			Alltrim(ETQ->B1_XXANAT1)+Space(1), ;
 			"VIA: "+STRZERO(nVia1,2), ;
 			"A" } )
 			
@@ -465,7 +465,7 @@ For nQ := 1 To nQtdEtq		// nQtdEtq = Quantidade de Etiquetas no parametro de imp
 			Alltrim(Transform(SB1->B1_XXMETIQ,cMasc))+"M", ;
 			"LADO B:IL:<"+cIL+"dB", ;
 			"LADO:B", ;
-			ETQ->B1_XXANAT1, ;
+			Alltrim(ETQ->B1_XXANAT1)+Space(1), ;
 			"VIA: "+STRZERO(nVia2,2), ;
 			"B" } )
 			
