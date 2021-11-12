@@ -4,7 +4,7 @@
 		{
 			"type": "totvs_language_debug",
 			"request": "launch",
-			"name": "Depuração do idioma TOTVS",
+			"name": "domex",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
 			"smartclientBin": "C:/Totvs/smartclient64_DOMEX/smartclient.exe",
@@ -112,7 +112,11 @@
 		{
 			"label": "u_we",
 			"description": "<nil>"
+		},
+		{
+			"label": "u_mnu02coletor",
+			"description": "<nil>"
 		}
 	],
-	"lastProgramExecuted": "SIGAADV"
+	"lastProgramExecuted": "u_mnu02coletor"
 }

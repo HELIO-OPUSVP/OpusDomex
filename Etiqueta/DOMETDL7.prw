@@ -2473,7 +2473,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	EndIf
 
 
-	if  U_VALIDACAO() // RODA 16/09/2021  Etiqueta extra
+	if  U_VALIDACAO() .OR. .T. // RODA 16/09/2021  Etiqueta extra
 		lGlobal := .F.
 
 		if !empty(SB1->B1_BASE)
@@ -2829,7 +2829,8 @@ Return
 		If cDomEtDl36_CancLay == "36"
 			U_DOMETQ36(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie)		//Layout 36 - Por Michel A. Sander
 		EndIf
-		if  U_VALIDACAO() // RODA 16/09/2021
+	
+		if  U_VALIDACAO() .OR. .T. // RODA 16/09/2021
 			lGlobal := .F.
 
 			//if !empty(SB1->B1_BASE)
@@ -3213,7 +3214,7 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			_Retorno := .F.
 		EndIf
 
-		if  U_VALIDACAO() // RODA 16/09/2021
+		if  U_VALIDACAO() .OR. .T. // RODA 16/09/2021
 			lGlobal := .F.
 
 			//if !empty(SB1->B1_BASE)

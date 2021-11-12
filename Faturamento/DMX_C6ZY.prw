@@ -26,5 +26,5 @@ cQuery += " SC6.C6_FILIAL = SZY.ZY_FILIAL AND SC6.C6_NUM = SZY.ZY_PEDIDO AND SC6
 cQuery += " WHERE SC6.D_E_L_E_T_ = '' AND SZY.D_E_L_E_T_ = ''  " 
 cQuery += " AND C6_PRODUTO <> ZY_PRODUTO "
 TCSQLEXEC(cQuery) 
-
+ 
 Return
