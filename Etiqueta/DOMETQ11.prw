@@ -30,6 +30,9 @@ Local mv_par03   := 1         //Qtd Etiquetas
 Local x := 1
 Local aRetAnat   := {}        //Codigos Anatel, Array
 Local aCodAnat   := {}        //Codigos Anatel, Array
+Local nLado1	 := 0
+Local nLado2     := 0
+Local nQ		 := 0
 
 Private cCdAnat1   := ""        //Codigo Anatel 1
 Private cCdAnat2   := ""        //Codigo Anatel 2
@@ -428,7 +431,7 @@ For nQ := 1 To nQtdEtq		// nQtdEtq = Quantidade de Etiquetas no parametro de imp
 			Alltrim(Transform(SB1->B1_XXMETIQ,cMasc))+"M", ;
 			"LADO A:IL:<"+cIL+"dB", ;
 			"LADO:A", ;
-			Alltrim(ETQ->B1_XXANAT1), ;
+			Alltrim(ETQ->B1_XXANAT1)+SPACE(1), ;
 			"VIA: "+STRZERO(nVia1,2), ;
 			"A" } )
 			
@@ -464,7 +467,7 @@ For nQ := 1 To nQtdEtq		// nQtdEtq = Quantidade de Etiquetas no parametro de imp
 			Alltrim(Transform(SB1->B1_XXMETIQ,cMasc))+"M", ;
 			"LADO B:IL:<"+cIL+"dB", ;
 			"LADO:B", ;
-			Alltrim(ETQ->B1_XXANAT1), ;
+			Alltrim(ETQ->B1_XXANAT1)+SPACE(1), ;
 			"VIA: "+STRZERO(nVia2,2), ;
 			"B" } )
 			
@@ -820,7 +823,7 @@ Return ( .T. )
 Static Function fTestaAnatel(cCodPA,cNumOp,cNumSenf,lMostra)
 
 LOCAL lAchou := .T.
-
+Local x := 0
 //旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커
 //쿎onsiste codigo ANATEL do componente									 �
 //읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커

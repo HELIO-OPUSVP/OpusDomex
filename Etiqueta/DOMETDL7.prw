@@ -1656,7 +1656,17 @@ Static Function ValidaEtiq(lTeste)
 					cCodHuawei := SPACE(100)//SPACE(Len(XD1->XD1_ETQHUA))
 					cCdHuawei2 := SPACE(100)
 					DEFINE MSDIALOG oDlgHuawei TITLE OemToAnsi("Valida Código de Barras") FROM 0,0 TO 140,350 PIXEL //300,400 PIXEL of oMainWnd PIXEL
-					
+						
+						
+						@ nLin+2, nCol1 SAY oTexto01 Var 'Código PSN' SIZE 100,10 OF oDlgHuawei PIXEL
+						oTexto01:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
+
+						@ nLin, nCol1+35 MSGET oCodHuawei VAR cCodHuawei SIZE 120,10 PICTURE "@!" WHEN .T. VALID VCodHuawei() OF oDlgHuawei PIXEL
+						oCodHuawei:oFont := TFont():New('Courier New',,14,,.T.,,,,.T.,.F.)
+
+						nLin += 15
+
+
 						@ nLin+2, nCol1 SAY oTexto02 Var 'Código SN' SIZE 100,10 OF oDlgHuawei PIXEL
 						oTexto02:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
 					
@@ -1665,13 +1675,7 @@ Static Function ValidaEtiq(lTeste)
 
 						nLin += 15
 											
-						@ nLin+2, nCol1 SAY oTexto01 Var 'Código PSN' SIZE 100,10 OF oDlgHuawei PIXEL
-						oTexto01:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
-
-						@ nLin, nCol1+35 MSGET oCodHuawei VAR cCodHuawei SIZE 120,10 PICTURE "@!" WHEN .T. VALID VCodHuawei() OF oDlgHuawei PIXEL
-						oCodHuawei:oFont := TFont():New('Courier New',,14,,.T.,,,,.T.,.F.)
-
-						nLin += 15
+						
 
 						
 						
@@ -3358,11 +3362,11 @@ Static Function VCodHuawei()
 		oCodHuawei:Refresh()
 		Return .F.
 	EndIf
-
-	If !Empty(cCodHua2ok)
-		cCodHua2ok := ""
+	
+	If _Retorno
+		cCodHua2ok := cCodHuawei
 	EndIf
-	oDlgHuawei:End()
+	
 
 	oEtiqueta:SetFocus()
 
@@ -3435,10 +3439,12 @@ Static Function VCdHuawei2()
 		Return .F.
 	EndIf
 
-	If _Retorno
-		cCodHua2ok := cCdHuawei2
+	
+	If !Empty(cCodHua2ok)
+		cCodHua2ok := ""
 	EndIf
-	//oDlgHuawei:End()
+	oDlgHuawei:End()
+
 	oEtiqueta:SetFocus()
 
 
