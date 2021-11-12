@@ -260,13 +260,22 @@ Static Function ValidaEtiq(lTeste)
 					Return (.f.)
 				Else
 					lAchou := .F.
+					_nLoop:= 0
 					Do While SZY->(!Eof()) .And. AllTrim(SZY->ZY_PEDIDO)==cNumPed
 						If SZY->ZY_PRODUTO == XD1->XD1_COD
 							lAchou := .T.
 							Exit
 						EndIf
-						SZY->(dbSkip())
+					
+						if !lAchou .and. _nLoop < 2
+							U_DMX_C6ZY()
+							_nLoop++
+						Else
+							SZY->(dbSkip())
+						Endif
+					
 					EndDo
+					
 					If !lAchou
 						U_MsgColetor("Produto não corresponde ao pedido.")
 						cEtiqueta := Space(_nTamEtiq)
@@ -361,19 +370,23 @@ Static Function ImpNivelP()
 	__mv_par06 := "92"
 	cVolumeAtu := STRZERO(nPalTot,2)
 
-	If lEhFuruka //.OR. lEhClaro
+SB1->(dbSetOrder(1))
+	SB1->(dbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
+	
+	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) == "DROP" ) //.OR. lEhClaro 
 		lColetor   := .F.
 	Else
 		lColetor   := .T.
 	EndIf
 
-
-	If lEhFuruka
+	//conforme solicitação do Denis em 15/10/2021 quando o cliente for a claro e a filial 02 imprimir este layout  
+	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) == "DROP" )
 		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 		//³LAYOUT 94 - Etiqueta Nivel 3												   	³
 		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 		//lRotValid :=  U_DOMETQ92(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aPalBip,.F.,nPesoBruto,cVolumeAtu,lColetor) 			// Validações de Layout 92 - Palete
 		cProxNiv   := "P"
+		
 		__mv_par02 := AllTrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN)
 		__mv_par03 := Nil
 		__mv_par04 := nQtdCaixa//Len(aPalBip)

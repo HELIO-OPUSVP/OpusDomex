@@ -14,7 +14,7 @@ User Function DOMCORT()
 
 	Private oApont, oBitmap1, oButton1,oButton2,oButton3,oButton4,oButton5,oCFibra, oCodOP, oCodPA, oEtiq, oLoteCtl, oNFibra, oNomePA, oStatus, oQtdOp, oQtdProd, oQtdRest
 	Private oGroup1, oGroup2, oSay1, oSay2, oSay3, oSay4, oSay5, oSay6, oSay7, oSay8, oSay9, oSay10, oSay11, oSay12,oSay13,oSay14,oSay15,oSay16
-	Private oQtdTOp, oTamCort, oTamRolo, oQtdAProd, oTotMtrs, oPrevCort, oEmCort, oSButton1,oNomePA2,oGroup2, oResMtrs,oQtdSD3
+	Private oQtdTOp, oTamCort, oTamRolo, oQtdAProd, oTotMtrs, oPrevCort, oEmCort, oSButton1,oNomePA2, oResMtrs,oQtdSD3
 	Private nQtdOp 	:= 0
 	Private nResMtrs	:= 0
 	Private nQtdProd 	:= 0
@@ -209,8 +209,8 @@ Return
 Static Function fVldOp(nOpc)
 
 	Local cQuery:= ""
-	Local aLbx1:= {}
-	Local oButtonA
+	//Local aLbx1:= {}
+	//Local oButtonA
 	Local lRet:= .F.
 	Local nQtTotOP:= 0
 
@@ -906,7 +906,19 @@ Static Function fVldApont(cCodOp,cCFibra, nApont)
 						// ALTERAÇÃO PARA IMPRIMIR APENAS QUANDO O APONTAMENTO FOR DA PRIMEIRA LINHA DA GETDADOS
 						
 						IF aScan(ogetdados:aCols,{ |x| x[GdFieldPos("FIBRA")] == cCFibra}) >= 2 .AND. Posicione("SB1",1, xFilial("SB1")+cCFibra,"B1_GRUPO")<> "FOFS"
+							
+						//Alteração para verificar se a OP é PRECON
+						if U_VALIDACAO()  
+							If Posicione("SB1",1, xFilial("SB1")+cCodPA,"B1_GRUPO") == "PCON"	
+								lImpEti:= .T.
+							Else	
+								lImpEti:= .F.
+							Endif
+						else
 							lImpEti:= .F.
+						Endif
+						//FIM DA ALTERAÇÃO
+					
 						Endif
 						
 						//) imprimir etiquetas
@@ -929,7 +941,7 @@ Static Function fVldApont(cCodOp,cCFibra, nApont)
 							_nPesoBip    := 0
 							_lColetor    := .F.
 							
-							Len(cvaltochar(nQtdOp))
+							//Len(cvaltochar(nQtdOp))
 							
 							if lFurukawa
 								U_DOMETI02(cCodOP,nApont,_cNumSerie,cLocImp,cCodFuruk,Len(cvaltochar(nQtdOp)))
@@ -1016,7 +1028,19 @@ Static Function fVldApont(cCodOp,cCFibra, nApont)
 				
 				// ALTERAÇÃO PARA IMPRIMIR APENAS QUANDO O APONTAMENTO FOR DA PRIMEIRA LINHA DA GETDADOS
 			IF  aScan(ogetdados:aCols,{ |x| x[GdFieldPos("FIBRA")] == cCFibra}) >= 2 .AND. Posicione("SB1",1, xFilial("SB1")+cCFibra,"B1_GRUPO")<> "FOFS"
+				
+				//Alteração para verificar se a OP é PRECON
+				if U_VALIDACAO()  
+					If Posicione("SB1",1, xFilial("SB1")+cCodPA,"B1_GRUPO") == "PCON"	
+						lImpEti:= .T.
+					Else	
+						lImpEti:= .F.
+					Endif
+				else
 					lImpEti:= .F.
+				Endif
+				//FIM DA ALTERAÇÃO
+			
 			Endif
 				
 				
@@ -1155,8 +1179,8 @@ Static Function MyMsg(cAviso,nOpc)
 
 Static Function fTrfRolo(cCFibra,nTransf,cEtiq)
 
-	Local aVetor      := {}
-	Local aEmpen      := {}
+	//Local aVetor      := {}
+	//Local aEmpen      := {}
 	Local lFimRolo    := .F.
 	Local nFimRolo    := 0
 	Local lMsErroAuto := .F.
@@ -1186,7 +1210,7 @@ Static Function fTrfRolo(cCFibra,nTransf,cEtiq)
 		cDocumento := _cDoC      		    		   //-- Documento                   - Obrigatorio
 		cNumLote   := "" 						       	//-- Sub-Lote                    - Obrigatorio se usa Rastro "S"
 		cLoteCtl   := Alltrim(XD1->XD1_LOTECT)		//-- Lote                        - Obrigatorio se usa Rastro
-		dDtValid   := fBuscaLote(cProduto,cLoteCtl,cLocOrig,nQtde) 	//-- Validade                    - Obrigatorio se usa Rastro
+		dDtValid   := fBuscaLote(cProduto,cLoteCtl,cLocOrig) 	//-- Validade                    - Obrigatorio se usa Rastro
 		cEndOrig   := Alltrim(XD1->XD1_LOCALI)		//-- Localizacao Origem
 		cEndDest   := cLocaliz 						   //-- Endereco Destino            - Obrigatorio p/a Transferencia
 		//lcontinua  :=  fSldLcaliz(cProduto,nQtde,cLocOrig,cEndOrig, cLoteCtl)
@@ -1618,6 +1642,7 @@ Static function fExclEti()
 	Local cQuery:= ""
 	Local nEtiqs:= 0
 	Local _cPrxDoc:= fPrxDoc()
+	Local _i
 
 	if SELECT("QRY") > 0
 		QRY->(dbCloseArea())
@@ -1867,7 +1892,7 @@ Static Function fAnaliPg()
 
 	Local cQuery:= ""
 	Local cLocProd:= cArm
-	Local nQtdeSD3:= 0
+	//Local nQtdeSD3:= 0
 	Local lRet:= .T.
 
 	If SELECT("Qry4") > 0
@@ -2071,7 +2096,7 @@ Return
 Static Function fOK(nOpc)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Local lRet:= .F.
-	Local lUsrRet := .T.
+	//Local lUsrRet := .T.
 	Local aUsrRet := {}
 
 	lAjusteOk := .F.
@@ -2166,6 +2191,7 @@ static Function fButtCel()
 	Local oCelCort5
 	Local oCelCort6
 	Local oCelCort7
+	Local oCelCort8
 
 
 
@@ -2190,15 +2216,9 @@ static Function fButtCel()
 	@ 145, 212 BUTTON oCelCort6 PROMPT "DROP 1" SIZE 150, 053 OF oDlgBtC ACTION (nCelula := 6, oDlgBtc:end() ) FONT oFont1 PIXEL
 	oCelCort6:setCSS(cCSSBtN1)
 	@ 210, 040 BUTTON oCelCort7 PROMPT "TRUNK 1" SIZE 150, 053 OF oDlgBtC ACTION (nCelula := 7, oDlgBtc:end() ) FONT oFont1 PIXEL
-	
-	If U_VALIDACAO() .or. .T. //Roda 30/09/2021
-		oCelCort7:setCSS(cCSSBtN1)
-		@ 210, 212 BUTTON oCelCort7 PROMPT "PRECON 1" SIZE 150, 053 OF oDlgBtC ACTION (nCelula := 8, oDlgBtc:end() ) FONT oFont1 PIXEL
-	Else
-		oCelCort7:setCSS(cCSSBtN1)
-		@ 210, 212 BUTTON oCelCort7 PROMPT "PRECON" SIZE 150, 053 OF oDlgBtC ACTION (nCelula := 8, oDlgBtc:end() ) FONT oFont1 PIXEL
-	Endif
 	oCelCort7:setCSS(cCSSBtN1)
+	@ 210, 212 BUTTON oCelCort8 PROMPT "PRECON 1" SIZE 150, 053 OF oDlgBtC ACTION (nCelula := 8, oDlgBtc:end() ) FONT oFont1 PIXEL
+	oCelCort8:setCSS(cCSSBtN1)
 
 
 	ACTIVATE MSDIALOG oDlgBtC CENTERED
@@ -2207,18 +2227,18 @@ Return nCelula
 
 Static function  ftelaOp (nCelTrab)
  
-	Local cQuery := ""
-	Local oButton1
-	Local oButton2
-	Local oFont1 := TFont():New("Arial Black",,030,,.T.,,,,,.F.,.F.)
-	Local oFont2 := TFont():New("Arial",,020,,.F.,,,,,.F.,.F.)
+	//Local cQuery := "" 
+	//Local oButton1
+	//Local oButton2
+	//Local oFont1 := TFont():New("Arial Black",,030,,.T.,,,,,.F.,.F.)
+	//Local oFont2 := TFont():New("Arial",,020,,.F.,,,,,.F.,.F.)
 	Local oFont4 := TFont():New("Arial",,028,,.T.,,,,,.F.,.F.)
 	Local oOPn    := LoadBitmap( GetResources(), "DBG05" )
 	Local oOPp    := LoadBitmap( GetResources(), "DBG06" )
 
 
-	Local cCabec   := ""
-	Local _cVarTemp:= ""
+	//Local cCabec   := ""
+	//Local _cVarTemp:= ""
 	Local cVar     := Nil
 	Static oDlg2
 	Private aVetor
@@ -2236,10 +2256,8 @@ Static function  ftelaOp (nCelTrab)
 			mymsg( "Não há programações para 'TRUNK 1' ",1 )
 		ElseIF nCelTrab == 6
 			mymsg( "Não há programações para 'DROP 1' ",1 )
-		ElseIF nCelTrab == 8 .AND. (U_VALIDACAO() .OR. .T.) //RODA 30/09/2021
+		ElseIF nCelTrab == 8 
 			mymsg( "Não há programações para 'PRECON 1' ",1 )
-		// ElseIF nCelTrab == 8 .AND. !(U_VALIDACAO()) //RODA 30/09/2021
-		// 	mymsg( "Não há programações para 'PRECON' ",1 )
 		Endif
 		Return .T.
 	Endif
@@ -2298,16 +2316,11 @@ Static Function fMSNewG2(nCelTrab)
 	ElseIf nCelTrab == 6
 		cQuery+= " AND P10_MAQUIN = 'DROP 1' "
 	ElseIf nCelTrab == 8
-
-		If U_VALIDACAO() .or. .T.//Roda 30/07/2021
-			cQuery+= " AND P10_MAQUIN = 'PRECON 1' "		
-		Else	
-			cQuery+= " AND P10_MAQUIN = 'PRECON' "
-		Endif
+		cQuery+= " AND P10_MAQUIN = 'PRECON 1' "		
 	Endif
-
+ 
 	cQuery+= " AND P10_FIBRA = D4_COD "
-	cQuery+= " AND P10.D_E_L_E_T_ = ''  "
+	cQuery+= " AND P10.D_E_L_E_T_ = ''  " 
 	cQuery+= " INNER JOIN "+RetSqlName("SC2")+"  SC2 (NOLOCK) "
 	cQuery+= " ON C2_FILIAL = '"+xFilial("SC2")+"' "
 	cQuery+= " AND C2_NUM+C2_ITEM+C2_SEQUEN = D4_OP  "
@@ -2348,10 +2361,8 @@ Static Function fLocImp(nCel)
 		cMaq:= "'TRUNK 1'"
 	Elseif nCel == 6
 		cMaq:= "'DROP 1'"
-	Elseif nCel == 8 .AND.  (U_VALIDACAO() .OR. .T.) //RODA 30/09/2021
+	Elseif nCel == 8 
 		cMaq:= "'PRECON 1'"	
-	// Elseif nCel == 8 .AND.  !(U_VALIDACAO()) //RODA 30/09/2021
-	// 	cMaq:= "'PRECON'"	
 	Endif
 
 
@@ -2470,7 +2481,7 @@ Return _Retorno
 
 
 Static function fImpEtqFF()
-
+Local _i
 	if Posicione("SB1",1, xFilial("SB1")+cCFibra,"B1_GRUPO") <> "FOFS"
 		myMsg("Informe a fibra falsa para imprimir as etiquetas", 1)
 		Return

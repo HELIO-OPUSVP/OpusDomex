@@ -175,7 +175,7 @@ AADD(aHeader,  {    ""			    	,"COR"   	   	,"@R" 		  	    ,01,0,""    ,"","C","
 
 oGetDados  := (MsNewGetDados():New( 200, 137 , 380 ,620,NIL ,"AlwaysTrue" ,"AlwaysTrue", /*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,"U_Ffieldok()",/*superdel*/,/*delok*/,oDlg,aHeader,aCols))
 oGetDados:oBrowse:lUseDefaultColors := .F.
-oGetDados:oBrowse:SetBlkBackColor({|| CorGd02(oGetDados:nAt,8421376)})
+oGetDados:oBrowse:SetBlkBackColor({|| CorGd02(oGetDados:nAt)})
 
 DEFINE TIMER oTimer INTERVAL 30000 ACTION fAtualiza(oTimer,oGetDados) OF oDlg
 oTimer:Activate()
@@ -387,6 +387,7 @@ Local cQuery:= ""
 Local lRet:= .F.
 Local nPosCor	:= GdFieldPos( "COR" )
 Local nPosFlag	:= GdFieldPos( "FLAG" )
+Local _i
 
 //nPEtiq  := aScan(aHeader,{|aVet| Alltrim(aVet[2]) == "ETIQ"})
 /*IF  aScan(oGetDados:aCols,{|x| Alltrim(x[nPEtiq]) == "" }) > 0
@@ -487,9 +488,9 @@ __________________________________________________________
 Static Function fVldEti(cEtiqOfc)
 Local cLocTemp   := "01CORTE"
 Local nPosFlag	:= GdFieldPos( "FLAG" )
-Local nPosFibra	:= GdFieldPos( "FIBRA" )
+//Local nPosFibra	:= GdFieldPos( "FIBRA" )
 Local lRet:= .T.
-
+Local _i
 if Empty(Alltrim(cEtiqOfc))
 	Return .T.
 Endif
@@ -744,8 +745,11 @@ Local nPosQtRes	:= GdFieldPos( "QTDRES" )
 Local nPosEtiq	:= GdFieldPos( "ETIQ" )
 Local nPosQtRol	:= GdFieldPos( "QTDROLO" )
 Local lEtiq1	:= .T.
-
 Local aDados:={}
+Local _i
+Local _x
+Local _y
+Local _j
 
 For _i := 1 To Len(oGetDados:Acols)
 	IF oGetDados:aCols[_i,nPosFlag] == oOK
@@ -1268,6 +1272,8 @@ Local nPosEtiq	:= GdFieldPos( "ETIQ" )
 Local nPosQtRol	:= GdFieldPos( "QTDROLO" )
 Local nQtdEmCort:= 0
 Local aDados2:={}
+Local _z
+Local _n
 
 For _z := 1 To Len(oGetDados:Acols)
 	IF oGetDados:aCols[_z,nPosFlag] == oOK
@@ -1524,6 +1530,7 @@ Static function fExclEti()
 Local cQuery:= ""
 Local nEtiqs:= 0
 Local _cPrxDoc:= fPrxDoc()
+Local _k
 
 if SELECT("QRY") > 0
 	QRY->(dbCloseArea())
@@ -2175,6 +2182,7 @@ cQuery+= " INNER JOIN "+RetSqlName("P10")+" P10  ON P10_FILIAL = '"+xFilial("P10
 cQuery+= " AND P10_OP = D4_OP  "
 cQuery+= " AND P10_MAQUIN = 'CORTE "+cValToChar(nCelTrab)+"' "
 cQuery+= " AND P10_FIBRA = D4_COD "
+cQuery+= " AND P10.D_E_L_E_T_ = ''  "
 cQuery+= " WHERE D4_FILIAL = '"+xFilial("SD4")+"' "
 cQuery+= " AND SD4.D_E_L_E_T_ = ''  "
 cQuery+= " GROUP BY D4_OP,D4_COD, D3_XXOP,D4_QTDEORI,P10_SQCORT,P10_DTPROG)  "
