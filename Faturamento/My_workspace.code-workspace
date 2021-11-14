@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"name": "OpusDomex",
+			"path": "..\\OpusDomex"
+		}
+	],
+	"settings": {
+		"totvsLanguageServer.welcomePage": false
+	}
+}

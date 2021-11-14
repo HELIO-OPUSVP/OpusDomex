@@ -236,6 +236,7 @@ Static Function ColetorMenu(cDep)
 		AADD(aAcessos, 11)
 		AADD(aAcessos, 12)
 		AADD(aAcessos, 13)
+		//AADD(aAcessos, 14)
 		
 	EndIf
 
@@ -427,7 +428,7 @@ Static Function ColetorMenu(cDep)
 		nLin += nSkipLin
 	EndIf
 
-	If aScan(aAcessos,23) <> 0 ò;
+	If aScan(aAcessos,23) <> 0 ;
 
 		Private oBtn22 := Nil
 		@ nLin, nCol BUTTON oBtn22 PROMPT "Desmonta Embalagem" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW29(), U_DOMACD29())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
@@ -760,7 +761,16 @@ Static Function ColetorMenu(cDep)
 		nLin += nSkipLin
 	EndIf
 
+	If aScan(aAcessos,14) <> 0 ;
 
+		Private oBtn22 := Nil
+		@ nLin, nCol BUTTON oBtn22 PROMPT "Desmonta Embalagem MG" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW29(), U_DOMACD29())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avgarmazem.png);"+cPush+;
+			"QPushButton:pressed {background-image: url(rpo:avgarmazem.png);"+cPressed+;
+			"QPushButton:hover {background-image: url(rpo:avgarmazem.png);"+cHover
+		oBtn22:SetCSS( cCSSBtN1 )
+		nLin += nSkipLin
+	EndIf
 	ACTIVATE MSDIALOG oDlgMenu01 // ON INIT EnchoiceBar( oDlgMenu01,{|| nOpca := 0,oDlgMenu01:End()},{|| nOpca := 0,oDlgMenu01:End()} ) //CENTER
 
 	If nOpca == 20

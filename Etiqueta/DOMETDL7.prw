@@ -1656,7 +1656,17 @@ Static Function ValidaEtiq(lTeste)
 					cCodHuawei := SPACE(100)//SPACE(Len(XD1->XD1_ETQHUA))
 					cCdHuawei2 := SPACE(100)
 					DEFINE MSDIALOG oDlgHuawei TITLE OemToAnsi("Valida Código de Barras") FROM 0,0 TO 140,350 PIXEL //300,400 PIXEL of oMainWnd PIXEL
-					
+						
+						
+						@ nLin+2, nCol1 SAY oTexto01 Var 'Código PSN' SIZE 100,10 OF oDlgHuawei PIXEL
+						oTexto01:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
+
+						@ nLin, nCol1+35 MSGET oCodHuawei VAR cCodHuawei SIZE 120,10 PICTURE "@!" WHEN .T. VALID VCodHuawei() OF oDlgHuawei PIXEL
+						oCodHuawei:oFont := TFont():New('Courier New',,14,,.T.,,,,.T.,.F.)
+
+						nLin += 15
+
+
 						@ nLin+2, nCol1 SAY oTexto02 Var 'Código SN' SIZE 100,10 OF oDlgHuawei PIXEL
 						oTexto02:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
 					
@@ -1665,13 +1675,7 @@ Static Function ValidaEtiq(lTeste)
 
 						nLin += 15
 											
-						@ nLin+2, nCol1 SAY oTexto01 Var 'Código PSN' SIZE 100,10 OF oDlgHuawei PIXEL
-						oTexto01:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
-
-						@ nLin, nCol1+35 MSGET oCodHuawei VAR cCodHuawei SIZE 120,10 PICTURE "@!" WHEN .T. VALID VCodHuawei() OF oDlgHuawei PIXEL
-						oCodHuawei:oFont := TFont():New('Courier New',,14,,.T.,,,,.T.,.F.)
-
-						nLin += 15
+						
 
 						
 						
@@ -2469,7 +2473,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	EndIf
 
 
-	if  U_VALIDACAO() // RODA 16/09/2021  Etiqueta extra
+	if  U_VALIDACAO() .OR. .T. // RODA 16/09/2021  Etiqueta extra
 		lGlobal := .F.
 
 		if !empty(SB1->B1_BASE)
@@ -2825,7 +2829,8 @@ Return
 		If cDomEtDl36_CancLay == "36"
 			U_DOMETQ36(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie)		//Layout 36 - Por Michel A. Sander
 		EndIf
-		if  U_VALIDACAO() // RODA 16/09/2021
+	
+		if  U_VALIDACAO() .OR. .T. // RODA 16/09/2021
 			lGlobal := .F.
 
 			//if !empty(SB1->B1_BASE)
@@ -3209,7 +3214,7 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			_Retorno := .F.
 		EndIf
 
-		if  U_VALIDACAO() // RODA 16/09/2021
+		if  U_VALIDACAO() .OR. .T. // RODA 16/09/2021
 			lGlobal := .F.
 
 			//if !empty(SB1->B1_BASE)
@@ -3358,11 +3363,11 @@ Static Function VCodHuawei()
 		oCodHuawei:Refresh()
 		Return .F.
 	EndIf
-
-	If !Empty(cCodHua2ok)
-		cCodHua2ok := ""
+	
+	If _Retorno
+		cCodHua2ok := cCodHuawei
 	EndIf
-	oDlgHuawei:End()
+	
 
 	oEtiqueta:SetFocus()
 
@@ -3435,10 +3440,12 @@ Static Function VCdHuawei2()
 		Return .F.
 	EndIf
 
-	If _Retorno
-		cCodHua2ok := cCdHuawei2
+	
+	If !Empty(cCodHua2ok)
+		cCodHua2ok := ""
 	EndIf
-	//oDlgHuawei:End()
+	oDlgHuawei:End()
+
 	oEtiqueta:SetFocus()
 
 

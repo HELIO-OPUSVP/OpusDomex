@@ -283,12 +283,20 @@ Static Function ValidaEtiq(lTeste)
 					Return (.f.)
 				Else
 					lAchou := .F.
+					_nLoop:= 0
 					Do While SZY->(!Eof()) .And. AllTrim(SZY->ZY_PEDIDO)==cNumPed
 						If SZY->ZY_PRODUTO == XD1->XD1_COD
 							lAchou := .T.
 							Exit
 						EndIf
-						SZY->(dbSkip())
+	
+						if !lAchou .and. _nLoop < 2
+							U_DMX_C6ZY()
+							_nLoop++
+						Else
+							SZY->(dbSkip())
+						Endif
+					
 					EndDo
 					If !lAchou
 						U_MsgColetor("Produto não corresponde ao pedido.")

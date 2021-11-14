@@ -8,7 +8,7 @@
 
 User Function Vserverini()// MostraFunc(OK)
 
-	MsgRun("RpcSetEnv()","Favor Aguardar.....",{|| fIniAmbiente() })
+	MsgRun("RpcSetEnv() - (Validação)","Favor Aguardar.....",{|| fIniAmbiente() })
 
 	//cRetorno := U_VCompQuent()
 	//cRetorno := startjob("U_VCompQuent",getenvserver(), .T. , cMensagem)
