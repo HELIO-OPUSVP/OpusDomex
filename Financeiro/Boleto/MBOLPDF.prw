@@ -102,6 +102,7 @@ oBol:Gerar()
 cTitulo := 'Boleto Bancário - '
 cTO 	:= Posicione("SA1",1,xFilial("SA1")+SE1->E1_CLIENTE+SE1->E1_LOJA ,"A1_EMAIL" )
 cTO		+= ';juliane.jordao@rosenbergerdomex.com.br'
+//cTO		:= 'jonas@opusvp.com.br'
 cCC		:= ''
 cBCC	:= ''
 
