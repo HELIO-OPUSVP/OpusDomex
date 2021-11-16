@@ -733,19 +733,19 @@ Static Function MontaTela()
 	If select("QRY2") > 0
 		QRY2->(dbClosearea())
 	Endif
-	IF cTipo == "DIO" .and. U_VALIDACAO() // Roda 05/11/2021
-		cQuery:= " SELECT D4_PRODUTO, B1_GRUPO, D4_COD,B1_DESC,SUM(D4_QTDEORI) D4_QTDEORI  "
-	Else
+//	IF cTipo == "DIO" .and. U_VALIDACAO() // Roda 05/11/2021
+//		cQuery:= " SELECT D4_PRODUTO, B1_GRUPO, D4_COD,B1_DESC,SUM(D4_QTDEORI) D4_QTDEORI  "
+//	Else
 		cQuery:= " SELECT * "
-	Endif
+//	Endif
 	cQuery+= " FROM "+RETSQLNAME("SD4")+" SD4 "
 	cQuery+= " INNER JOIN "+RETSQLNAME("SB1")+" SB1 ON B1_COD = D4_COD  "
 	
-	IF cTipo == "DIO" .and. U_VALIDACAO() // Roda 05/11/2021
-		cQuery+= " AND SB1.D_E_L_E_T_ = '' AND B1_TIPO NOT IN ('PA','ME','PI')  AND B1_APROPRI <> 'I'  "
-	ELSE
+//	IF cTipo == "DIO" .and. U_VALIDACAO() // Roda 05/11/2021
+//		cQuery+= " AND SB1.D_E_L_E_T_ = '' AND B1_TIPO NOT IN ('PA','ME','PI')  AND B1_APROPRI <> 'I'  "
+//	ELSE
 		cQuery+= " AND SB1.D_E_L_E_T_ = '' AND B1_TIPO NOT IN ('PA','ME')  AND B1_APROPRI <> 'I'  "
-	ENDIF
+//	ENDIF
 	
 	cQuery+= " WHERE D4_OP ='"+cCodOP+"' "
 	cQuery+= " AND D4_QTDEORI > 0 "

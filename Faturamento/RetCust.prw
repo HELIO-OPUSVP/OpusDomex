@@ -64,7 +64,7 @@ User Function  RetCust(cProduto,cGrvSC)
 //	ZZF_ZZF_MARGEM := 0
 //	ZZF_OBS   := "Teste"
 //	ZZF->(MsUnLock())
-Next
+//Next
 
 
 RETURN aRetorno

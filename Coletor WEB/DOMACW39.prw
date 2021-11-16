@@ -229,7 +229,7 @@ Static Function BuscaEmpOp(__cFilial)
 	If !Empty(Alltrim(cGrupoProd))
 
 		//Imprimir Todas as Etiquetas para o dia
-		cQryOps := U_fRetQry39("2"/*cTipoCon*/,cGrupoProd,dData,"",Nil ,__cFilial)
+		cQryOps := U_fRetQryw39("2"/*cTipoCon*/,cGrupoProd,dData,"",Nil ,__cFilial)
 		If Select("TMPOPS") > 0
 			TMPOPS->(DbCloseArea())
 		Endif
@@ -300,7 +300,7 @@ Static Function BuscaEmpOp(__cFilial)
 			Next ns
 		Endif
 
-		cQryProd := U_fRetQry39("1"/*cTipoCon*/,cGrupoProd,dData,"",Nil,__cFilial)
+		cQryProd := U_fRetQryw39("1"/*cTipoCon*/,cGrupoProd,dData,"",Nil,__cFilial)
 
 		If Select("TEMPS") > 0
 			TEMPS->(DbCloseArea())
@@ -471,7 +471,7 @@ Static Function ColetaProd(cCodProdut,cGrupoProd,dData,nQtdEmp,nQtdasep,aEnderec
 	EndIf
 
 	//Inicia o Pagamento
-	cQryOps := U_RetQry39("2"/*cTipoCon*/,cGrupoProd,dData,cCodProdut,Nil,__cFilial)
+	cQryOps := U_RetQryw39("2"/*cTipoCon*/,cGrupoProd,dData,cCodProdut,Nil,__cFilial)
 
 	If Select("TMPOPS") > 0
 		TMPOPS->(DbCloseArea())
@@ -979,7 +979,7 @@ Static Function ValidaEtiq()
 Return _Retorno
 
 
-User Function RetQry39(cTipoCon,cGrupoProd,dData,cCodProdut,cNumOpCon,__cFilial)
+User Function RetQryw39(cTipoCon,cGrupoProd,dData,cCodProdut,cNumOpCon,__cFilial)
 	Local cRet := ""
 	Default cTipoCon := '1' //1-Produto,2-OP's
 	Default cNumOpCon := ""
