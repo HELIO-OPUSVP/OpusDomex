@@ -29,8 +29,8 @@ Private aCols      := {}
 AADD(aHeader,  {    "Cod. Documento"    ,   "ITEM"    ,"@R" ,50,0,""            ,"","C","","","","",".F."})//01
 AADD(aHeader,  {    "Descrição"         ,   "DESCRI"  ,"@R" ,50,0,""            ,"","C","","","","",".T."})//02
 
-If SZV->( dbSeek( xFilial() + "SB1" + SB1->B1_COD ) )
-	While !SZV->( EOF() ) .and. SZV->ZV_ALIAS == 'SB1' .and. SZV->ZV_CHAVE == SB1->B1_COD
+If SZV->( dbSeek( xFilial() + "SC2" + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN ) )
+	While !SZV->( EOF() ) .and. SZV->ZV_ALIAS == 'SC2' .and. SZV->ZV_CHAVE == SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
 		AADD(aCols,{SZV->ZV_ARQUIVO,SZV->ZV_DESCRI,.F.})
 		SZV->( dbSkip() )
 	End
@@ -40,9 +40,9 @@ EndIf
 
 DEFINE FONT oFontNW  NAME "Arial" SIZE 0,-15 BOLD
 
-Define MsDialog oDlg01 Title OemToAnsi("Documentos amarrados ao produto " + SB1->B1_COD) From 0,0 To 305,750 Pixel of oMainWnd PIXEL
+Define MsDialog oDlg01 Title OemToAnsi("Documentos amarrados a Ordem de Produção " + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN) From 0,0 To 305,750 Pixel of oMainWnd PIXEL
 
-oGetDados  := (MsNewGetDados():New( 10, 09 , 130 ,370,GD_UPDATE+GD_DELETE ,"AlwaysTrue" ,"AlwaysTrue", /*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,"U_Ffieldok()",/*superdel*/,/*delok*/,oDlg01,aHeader,aCols))
+oGetDados  := (MsNewGetDados():New( 10, 09 , 130 ,370,GD_UPDATE+GD_DELETE ,"AlwaysTrue" ,"AlwaysTrue", /*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,"U__Ffieldok()",/*superdel*/,/*delok*/,oDlg01,aHeader,aCols))
 //oGetDados:oBrowse:Refresh()
 //oGetDados:oBrowse:oFont  := oFontNW
 //oGetDados:oBrowse:bChange:={||U_DEV002LOK(oGetDados)}
@@ -74,8 +74,8 @@ Local cExten	:= ""
 Local cGetFile	:= ""
 Local cNewFile	:= ""
 
-Private cChave    := SB1->B1_COD
-Private cAlias    := "SB1"
+Private cChave    := SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
+Private cAlias    := "SC2"
 
 If Empty(cChave)
 	MsgStop("Preencher primeiramente o código do produto.")
@@ -168,7 +168,7 @@ EndIf
 
 n := oGetDados:oBrowse:nAt
 If n > 0
-	If SZV->( dbSeek( xFilial() + "SB1" + SB1->B1_COD + oGetDados:aCols[n,1] ) )
+	If SZV->( dbSeek( xFilial() + "SC2" + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN + oGetDados:aCols[n,1] ) )
 		QDH->( dbSetOrder(1) )
 		If QDH->( dbSeek( xFilial() + Subs(SZV->ZV_ARQUIVO,1,16) ) )
 			
@@ -220,7 +220,7 @@ Local cPathTmp := AllTrim( GetTempPath() )
 n := oGetDados:oBrowse:nAt
 
 If n > 0
-	If SZV->( dbSeek( xFilial() + "SB1" + SB1->B1_COD + oGetDados:aCols[n,1] ) )
+	If SZV->( dbSeek( xFilial() + "SC2" + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN + oGetDados:aCols[n,1] ) )
 		If MsgYesNo("Deseja realmente excluir o arquivo '" + Alltrim(oGetDados:aCols[n,1]) + "' ?")
 			cFileDel := cSlvAnexos + "\" + SZV->ZV_CHAVE + "\" + SZV->ZV_ARQUIVO
 			
@@ -262,9 +262,9 @@ EndIf
 
 Return
 
-User Function Ffieldok()
+User Function _Ffieldok()
 
-If SZV->( dbSeek( xFilial() + "SB1" + SB1->B1_COD + oGetDados:acols[oGetDados:oBrowse:nAt,1] ) )
+If SZV->( dbSeek( xFilial() + "SC2" + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN + oGetDados:acols[oGetDados:oBrowse:nAt,1] ) )
 	//Reclock("SZV",.F.)
 	SZV->ZV_DESCRI := M->DESCRI
 	SZV->( msUnlock() )
