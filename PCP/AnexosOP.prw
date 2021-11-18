@@ -29,8 +29,9 @@ Private aCols      := {}
 AADD(aHeader,  {    "Cod. Documento"    ,   "ITEM"    ,"@R" ,50,0,""            ,"","C","","","","",".F."})//01
 AADD(aHeader,  {    "Descrição"         ,   "DESCRI"  ,"@R" ,50,0,""            ,"","C","","","","",".T."})//02
 
+
 If SZV->( dbSeek( xFilial() + "SC2" + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN ) )
-	While !SZV->( EOF() ) .and. SZV->ZV_ALIAS == 'SC2' .and. SZV->ZV_CHAVE == SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
+	While !SZV->( EOF() ) .and. SZV->ZV_ALIAS == 'SC2' .and. AllTrim(SZV->ZV_CHAVE) == AllTrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN)
 		AADD(aCols,{SZV->ZV_ARQUIVO,SZV->ZV_DESCRI,.F.})
 		SZV->( dbSkip() )
 	End
@@ -168,7 +169,8 @@ EndIf
 
 n := oGetDados:oBrowse:nAt
 If n > 0
-	If SZV->( dbSeek( xFilial() + "SC2" + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN + oGetDados:aCols[n,1] ) )
+
+	If SZV->( dbSeek( xFilial() + "SC2" + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN + Space(15-Len(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN)) +  oGetDados:aCols[n,1] ) )
 		QDH->( dbSetOrder(1) )
 		If QDH->( dbSeek( xFilial() + Subs(SZV->ZV_ARQUIVO,1,16) ) )
 			
@@ -220,7 +222,9 @@ Local cPathTmp := AllTrim( GetTempPath() )
 n := oGetDados:oBrowse:nAt
 
 If n > 0
-	If SZV->( dbSeek( xFilial() + "SC2" + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN + oGetDados:aCols[n,1] ) )
+	//If SZV->( dbSeek( xFilial() + "SC2" + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN + oGetDados:aCols[n,1] ) )
+	If SZV->( dbSeek( xFilial() + "SC2" + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN + Space(15-Len(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN)) +  oGetDados:aCols[n,1] ) )
+
 		If MsgYesNo("Deseja realmente excluir o arquivo '" + Alltrim(oGetDados:aCols[n,1]) + "' ?")
 			cFileDel := cSlvAnexos + "\" + SZV->ZV_CHAVE + "\" + SZV->ZV_ARQUIVO
 			
@@ -254,17 +258,17 @@ If n > 0
 			EndIf
 		EndIf
 	Else
-		MsgStop("O arquivo não foi encontrado para exibição.")
+		MsgStop("O arquivo não foi encontrado para exclusão.")
 	EndIf
 Else
-	MsgStop("Posicione em um arquivo para exibição.")
+	MsgStop("Posicione em um arquivo para exclusão.")
 EndIf
 
 Return
 
 User Function _Ffieldok()
 
-If SZV->( dbSeek( xFilial() + "SC2" + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN + oGetDados:acols[oGetDados:oBrowse:nAt,1] ) )
+If SZV->( dbSeek( xFilial() + "SC2" + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN + Space(15-Len(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN)) +  oGetDados:acols[oGetDados:oBrowse:nAt,1] ) )
 	//Reclock("SZV",.F.)
 	SZV->ZV_DESCRI := M->DESCRI
 	SZV->( msUnlock() )
