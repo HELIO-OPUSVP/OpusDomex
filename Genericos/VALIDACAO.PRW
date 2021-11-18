@@ -19,7 +19,7 @@ User Function VALIDACAO()
 	Local _Retorno := .F.
     Local cEnvironment := Upper(GetEnvserv())
 
-	If cEnvironment == "VALIDACAO" .or. ".OPUS" $ cEnvironment .or. cEnvironment == "MAURESI" .or. cEnvironment == "COMPILA_QUENTE_VALIDACAO"
+	If cEnvironment == "VALIDACAO" .or. cEnvironment =="WEBCOL_VALIDACAO" .or. cEnvironment == "WEBCOLMG_VALIDACAO" .or. ".OPUS" $ cEnvironment .or. cEnvironment == "MAURESI" .or. cEnvironment == "COMPILA_QUENTE_VALIDACAO"
 		_Retorno := .T.
 	EndIf
 

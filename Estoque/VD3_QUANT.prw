@@ -585,7 +585,7 @@ Static Function ProcRun()
 										(cAliasSD4)->(dbSkip())
 										nProcRegua++
 
-										IncProc("Validando pagamento de Materiais... " + Alltrim(Str(nProcRegua)) + "/" + Alltrim(Str(nTotRegProc))+"!")
+										IncProc("Validando pagamento de Materiais... " + Alltrim(Str(nProcRegua)) + "/" + Alltrim(Str(nTotRegProc)))
 
 									EndDo
 

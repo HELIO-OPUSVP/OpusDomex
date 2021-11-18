@@ -6,7 +6,7 @@
 ±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
 ±±ºPrograma  ³DOMETQ98  ºAutor  ³Michel Sander       º Data ³  07/06/17   º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
-±±ºDesc.     ³ Impressão de etiqueta pequena apenas com numeração			  º±±
+±±ºDesc.     ³ Impressão de etiqueta pequena apenas com numeração		  º±±
 ±±º          ³                                                            º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
 ±±ºUso       ³ AP                                                         º±±
@@ -24,13 +24,17 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 	Local aAreaSC2  := SC2->( GetArea() )
 	Local _nX		:= 0
 	Local nQ 		:= 0
-	local cLocImp	:= if (cfilant == "02","000024","")
+	Local cLocImp	:= Iif(cfilant == "02","000024","LPT2")
 	Default cNumPeca	:= ""
 	Default cSetor   	:= ""
 	Default cEtqHuawei 	:=""
 	Default cVolumeAtu 	:= ""
 	Default cNumpedido 	:= ""
 	Default _PesoAuto   := 0
+
+	IF U_VALIDACAO() .AND. cfilant == "02" 
+		cLocImp:= "000005"
+	Endif
 
 
 
@@ -49,6 +53,8 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 					If !CB5SetImp(cLocImp,.F.)
 						MsgAlert("Local de impressao invalido!","Aviso")
 						Return .F.
+					else
+						MSCBBegin(1,6)	
 					EndIf
 				EndIf
 				//Controla o numero da etiqueta de embalagens
@@ -123,6 +129,7 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 				EndIf
 
 				//Alert('cSetor '+ cSetor)
+				//If !U_Validacao()
 					If !Empty(cSetor)
 						MSCBSAY(30,01,cSetor,"N","1","1,2")
 					Else
@@ -132,6 +139,7 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 					MSCBSayBar(30,10,AllTrim(XD1->XD1_XXPECA),"N","MB04",10,.F.,.T.,.F.,,3,Nil,Nil,Nil,Nil,Nil)
 					MSCBEnd()
 					MSCBClosePrinter()
+				//EndIf
 				//U_MsgColetor("Impressão concluída")
 			Next
 		EndIf

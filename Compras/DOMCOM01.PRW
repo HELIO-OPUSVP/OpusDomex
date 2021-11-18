@@ -6,6 +6,7 @@
 //Relatório de compras.                                                                                                                                 //
 //Conversão relatório 'Totvs Report'                                                                                                                    //
 //------------------------------------------------------------------------------------------------------------------------------------------------------//
+//
 #include "Protheus.ch"
 #include "topconn.ch"     
 #include "tbiconn.ch"

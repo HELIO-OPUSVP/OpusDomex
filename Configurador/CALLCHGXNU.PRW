@@ -43,3 +43,4 @@ DbSelectArea("P99")
 //RestArea(aAreaGER)
 
 //Return aArray[5]
+//

@@ -1,5 +1,4 @@
 #include "protheus.ch"
-#include "protheus.ch"
 #include "rwmake.ch"
 #include "topconn.ch"
 #include "Tbiconn.ch"
@@ -539,7 +538,7 @@ Static Function ValidaEtiq(lTeste)
 				//³Verifica se o Cliente é TELEFONICA							³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 				lTelefonic := .F.
-				If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .And. _cGrupoUso <> "PCON"
+				If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) //.And. _cGrupoUso <> "PCON"   PCON retirado em 04/11/21 por Helio/Ricardo
 					lTelefonic := .T.
 					SC5->(dbSeek(xFilial("SC5")+SC2->C2_PEDIDO))
 					cPedTel := SC5->C5_ESP1
@@ -636,7 +635,7 @@ Static Function ValidaEtiq(lTeste)
 							//³Verifica se o Cliente é TELEFONICA							³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 							lTelefonic := .F.
-							If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .And. _cGrupoUso <> "PCON"
+							If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) //.And. _cGrupoUso <> "PCON"  PCON retirado em 04/11/21 por Helio/Ricardo
 								lTelefonic := .T.
 								SC5->(dbSeek(xFilial("SC5")+SC2->C2_PEDIDO))
 								cPedTel := SC5->C5_ESP1
@@ -775,7 +774,7 @@ Static Function ValidaEtiq(lTeste)
 				SB1->( dbSeek( xFilial() + aRetEmbala[1] ) )
 				cProxEmb    := SB1->B1_DESC
 				If lOkFlex
-					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007/FLEX/PCON"
+					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007/FLEX"  // PCON retirado em 04/11/21 por Helio/Ricardo
 						nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
 					ElseIf LEFT(ALLTRIM(SB1->B1_GRUPO),3) == "DIO"
 						nQProxEmb := 1 //Sempre 1 para o DIO
@@ -784,7 +783,7 @@ Static Function ValidaEtiq(lTeste)
 						nQProxEmb := aRetEmbala[2]
 					EndIf
 				Else
-					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007/PCON"
+					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007"  // PCON retirado em 04/11/21 por Helio/Ricardo
 						nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu)//Arredondar para cima sempre
 					ElseIf LEFT(ALLTRIM(SB1->B1_GRUPO),3) == "DIO"
 						nQProxEmb := 1 //Sempre 1 para o DIO
@@ -1042,7 +1041,7 @@ Static Function ValidaEtiq(lTeste)
 				//XD1_OCORR == 8 Gerado Pelo PickList,  7=Lido na produção, foi transferido e está validado pelo tela de roteiro.
 
 				//If (GetMv("MV_XVERROT") .or. (GetEnvServ() == 'VALIDACAO')) .And. AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) == "DROP"
-				If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD" .And. cFilAnt <> "02" .And. lComTravR //.And. U_VALIDACAO()
+				If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 					nQtdEmbNv1 :=  Int(U_RetEmbala(SC2->C2_PRODUTO,"1")[2])
 
 					nQTotPklOp  := 0
@@ -1210,7 +1209,7 @@ Static Function ValidaEtiq(lTeste)
 					cVerUsoGr := AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO"))
 
 					If lOkFlex
-						If Alltrim(cVerUsoGr) $ "CORD/0007/PCON" .Or. cVerUsoGr == "JUMP" .Or. cVerUsoGr == "FLEX"
+						If Alltrim(cVerUsoGr) $ "CORD/0007/JUMP/FLEX"  // PCON retirado em 04/11/21 por Helio/Ricardo
 
 							cProxNiv   := "2"
 							aRetEmbala := U_RetEmbala(SC2->C2_PRODUTO,cProxNiv)
@@ -1290,7 +1289,7 @@ Static Function ValidaEtiq(lTeste)
 
 						EndIf
 					Else
-						If Alltrim(cVerUsoGr) $ "CORD/0007/PCON" .Or. cVerUsoGr == "JUMP"
+						If Alltrim(cVerUsoGr) $ "CORD/0007/JUMP"  // PCON retirado em 04/11/21 por Helio/Ricardo
 
 							cProxNiv   := "2"
 							aRetEmbala := U_RetEmbala(SC2->C2_PRODUTO,cProxNiv)
@@ -1519,7 +1518,7 @@ Static Function ValidaEtiq(lTeste)
 			//XD1_OCORR == 8 Gerado Pelo PickList,  7=Lido na produção, foi transferido e está validado pelo tela de roteiro.
 
 			//If (GetMv("MV_XVERROT") .or. (GetEnvServ() == 'VALIDACAO')) .And. AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) == "DROP"
-			If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD" .And. cFilAnt <> "02" .And. lComTravR /*.And. U_VALIDACAO()*/
+			If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR // PCON acrescentado em 04/11/21 por Helio/Ricardo
 				If !Alltrim(SC2->C2_OBS) $ "SEMTRAVAROTEIRO"
 					nQtdEmbNv1 :=  Int(U_RetEmbala(SC2->C2_PRODUTO,"1")[2])
 					
@@ -1657,7 +1656,17 @@ Static Function ValidaEtiq(lTeste)
 					cCodHuawei := SPACE(100)//SPACE(Len(XD1->XD1_ETQHUA))
 					cCdHuawei2 := SPACE(100)
 					DEFINE MSDIALOG oDlgHuawei TITLE OemToAnsi("Valida Código de Barras") FROM 0,0 TO 140,350 PIXEL //300,400 PIXEL of oMainWnd PIXEL
-					
+						
+						
+						@ nLin+2, nCol1 SAY oTexto01 Var 'Código PSN' SIZE 100,10 OF oDlgHuawei PIXEL
+						oTexto01:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
+
+						@ nLin, nCol1+35 MSGET oCodHuawei VAR cCodHuawei SIZE 120,10 PICTURE "@!" WHEN .T. VALID VCodHuawei() OF oDlgHuawei PIXEL
+						oCodHuawei:oFont := TFont():New('Courier New',,14,,.T.,,,,.T.,.F.)
+
+						nLin += 15
+
+
 						@ nLin+2, nCol1 SAY oTexto02 Var 'Código SN' SIZE 100,10 OF oDlgHuawei PIXEL
 						oTexto02:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
 					
@@ -1666,13 +1675,7 @@ Static Function ValidaEtiq(lTeste)
 
 						nLin += 15
 											
-						@ nLin+2, nCol1 SAY oTexto01 Var 'Código PSN' SIZE 100,10 OF oDlgHuawei PIXEL
-						oTexto01:oFont := TFont():New('Arial',,14,,.T.,,,,.T.,.F.)
-
-						@ nLin, nCol1+35 MSGET oCodHuawei VAR cCodHuawei SIZE 120,10 PICTURE "@!" WHEN .T. VALID VCodHuawei() OF oDlgHuawei PIXEL
-						oCodHuawei:oFont := TFont():New('Courier New',,14,,.T.,,,,.T.,.F.)
-
-						nLin += 15
+						
 
 						
 						
@@ -1748,9 +1751,9 @@ Static Function ValidaEtiq(lTeste)
 			SB1->( dbSeek( xFilial() + SC2->C2_PRODUTO ) )
 			If SB1->B1_XKITPIG <> "S" .or. !GetMv("MV_XVERKIT")
 
-				If AllTrim(_cGrupoUso) $ "DROP" .Or. lEhFuruka
+				If AllTrim(_cGrupoUso) $ "DROP/PCON" .Or. lEhFuruka  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 					cProxNiv := "1"
-				ElseIf AllTrim(_cGrupoUso) $ "CORD/0007/PCON" .Or. AllTrim(_cGrupoUso) == "JUMP" .Or.  LEFT(AllTrim(_cGrupoUso),3) == "DIO"
+				ElseIf AllTrim(_cGrupoUso) $ "CORD/0007/JUMP" .Or. LEFT(AllTrim(_cGrupoUso),3) == "DIO"  // PCON retirado em 04/11/21 por Helio/Ricardo
 
 					//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 					//³Se a quantidade de etiquetas nivel 1 for maior que a qtd.embalagem obriga encerrar
@@ -1909,16 +1912,33 @@ Static Function ValidaEtiq(lTeste)
 							//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 							If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX" ) .And. lEricsson
-								U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-								Sleep(3000)		// Delay de 5 segundos para buffer
+								
+								if U_VALIDACAO()// ricardo roda 04/11/2021
+									U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+								Else
+									U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+									Sleep(3000)		// Delay de 5 segundos para buffer
+								Endif
+
 								U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
 							Else
 								ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .F. )
 							EndIf
 						Else
-							U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-							Sleep(3000)		// Delay de 5 segundos para buffer
+						if U_VALIDACAO()
+							U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+						Else	
+						
+							if U_VALIDACAO()// ricardo roda 04/11/2021
+								U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+							Else
+								U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+								Sleep(3000)		// Delay de 5 segundos para buffer
+							Endif
+						
+						Endif
 							U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
+						
 						EndIf
 					
 					EndIf
@@ -1954,8 +1974,14 @@ Static Function ValidaEtiq(lTeste)
 						//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
 						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 						If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .OR. SubStr(AllTrim(_cGrupoUso),1,4)=="FLEX")  .And. lEricsson
-							U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-							Sleep(3000)		// Delay de 5 segundos para buffer
+							
+							if U_VALIDACAO()// ricardo roda 04/11/2021
+								U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+							Else
+								U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+								Sleep(3000)		// Delay de 5 segundos para buffer
+							Endif
+
 							U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
 						Else
 							ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .F. )
@@ -1999,13 +2025,17 @@ Static Function ValidaEtiq(lTeste)
 					//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
 					//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 
-
 					ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T.,.T. )
 
-
 				Else
-					U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQtdBip,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-					Sleep(3000)		// Delay de 5 segundos para buffer
+					if U_VALIDACAO()// ricardo roda 04/11/2021
+						U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+					Else
+						U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQtdBip,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+						Sleep(3000)		// Delay de 5 segundos para buffer
+					Endif
+				
+					
 					U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQtdBip,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
 				EndIf
 				aSerial := {}
@@ -2085,6 +2115,7 @@ Return ( nPerdas )
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
+	Local cLayoutEnt := ''
 
 	DEFAULT cPecaBip  := ""
 	DEFAULT cOP       := ""
@@ -2123,7 +2154,12 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		__mv_par03 := Nil
 		__mv_par04 := nQtdKit
 		__mv_par05 := 1
-		__mv_par06 := SZG->ZG_LAYOUT
+
+		If !U_VALIDACAO()
+			__mv_par06 := SZG->ZG_LAYOUT   // TRATADO
+		Else
+			__mv_par06 := SZG->ZG_LAYVALI
+		EndIf
 
 	EndIf
 
@@ -2153,7 +2189,11 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		__mv_par03 := Nil
 		__mv_par04 := 1
 		__mv_par05 := 1
-		__mv_par06 := SZG->ZG_LAYOUT
+		If !U_VALIDACAO()
+			__mv_par06 := SZG->ZG_LAYOUT  // TRATADO
+		Else
+			__mv_par06 := SZG->ZG_LAYVALI
+		EndIf
 
 	EndIf
 
@@ -2174,7 +2214,9 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 	//³LAYOUT 01 - HUAWEI UNIFICADA												   	³
 	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	cLayoutEnt := ""
 	If __mv_par06 == "01"
+		cLayoutEnt := "01"
 		lRotValid :=  U_DOMETQ04(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) 			// Validações de Layout 01
 		If !lRotValid
 			MsgStop("A OP não será apontada. Verifique os problemas com o layout da etiqueta e repita a operação.")
@@ -2199,6 +2241,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		EndIf
 	EndIf
 	If __mv_par06 == "02"
+		cLayoutEnt := "02"
 		lRotValid :=  U_DOMETQ03(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL,lFinalOP) 			// Validações de Layout 02
 		If !lRotValid
 			MsgStop("A OP não será apontada. Verifique os problemas com o layout da etiqueta e repita a operação.")
@@ -2222,6 +2265,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		EndIf
 	EndIf
 	If __mv_par06 == "03"
+		cLayoutEnt := "03"
 		lRotValid := U_DOMETQ05(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) //Layout 03
 		If !lRotValid
 			MsgStop("A OP não será apontada. Verifique os problemas com o layout da etiqueta e repita a operação.")
@@ -2245,6 +2289,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		EndIf
 	EndIf
 	If __mv_par06 == "04"
+		cLayoutEnt := "04"
 		lRotValid := U_DOMETQ06(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) //Layout 04 - Por Michel A. Sander
 		If !lRotValid
 			MsgStop("A OP não será apontada. Verifique os problemas com o layout da etiqueta e repita a operação.")
@@ -2268,6 +2313,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		EndIf
 	EndIf
 	If __mv_par06 == "05"
+		cLayoutEnt := "05"
 		lRotValid :=  U_DOMETQ07(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) 			// Validações de Layout 05
 		If !lRotValid
 			MsgStop("A OP não será apontada. Verifique os problemas com o layout da etiqueta e repita a operação.")
@@ -2291,30 +2337,39 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		EndIf
 	EndIf
 	If __mv_par06 == "06"
+		cLayoutEnt := "06"
 		MsgRun("Imprimindo etiqueta Layout 06","Aguarde...",{|| lRetEtq := U_DOMETQ08(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) }) //Layout 06 - Por Michel A. Sander
 	EndIf
 	If __mv_par06 == "07"
+		cLayoutEnt := "07"
 		MsgRun("Imprimindo etiqueta Layout 07","Aguarde...",{|| lRetEtq := U_DOMETQ09(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) }) //Layout 07 - Por Michel A. Sander
 	EndIf
 	If __mv_par06 == "10"
+		cLayoutEnt := "10"
 		MsgRun("Imprimindo etiqueta Layout 10","Aguarde...",{|| lRetEtq := U_DOMETQ10(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) }) //Layout 10 - Por Michel A. Sander
 	EndIf
 	If __mv_par06 == "11"
+		cLayoutEnt := "11"
 		MsgRun("Imprimindo etiqueta Layout 11","Aguarde...",{|| lRetEtq := U_DOMETQ11(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) }) //Layout 11 - Por Michel A. Sander
 	EndIf
 	If __mv_par06 == "12"
+		cLayoutEnt := "12"
 		MsgRun("Imprimindo etiqueta Layout 12","Aguarde...",{|| lRetEtq := U_DOMETQ12(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) }) //Layout 12 - Por MLS
 	EndIf
 	If __mv_par06 == "13"
+		cLayoutEnt := "13"
 		MsgRun("Imprimindo etiqueta Layout 13","Aguarde...",{|| lRetEtq := U_DOMETQ13(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) }) //Layout 13 - Por Michel A. Sander
 	EndIf
 	If __mv_par06 == "14"
+		cLayoutEnt := "14"
 		MsgRun("Imprimindo etiqueta Layout 14","Aguarde...",{|| lRetEtq := U_DOMETQ14(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) }) //Layout 13 - Por Michel A. Sander
 	EndIf
 	If __mv_par06 == "31"
+		cLayoutEnt := "31"
 		MsgRun("Imprimindo etiqueta Layout 31","Aguarde...",{|| lRetEtq := U_DOMETQ31(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) }) //Layout 31 - Por Michel A. Sander
 	EndIf
 	If __mv_par06 == "36"
+		cLayoutEnt := "36"
 		lRotValid := U_DOMETQ36(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) //Layout 36 - Por Michel A. Sander
 		If !lRotValid
 			MsgStop("A OP não será apontada. Verifique os problemas com o layout da etiqueta e repita a operação.")
@@ -2337,11 +2392,109 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 			EndIf
 		EndIf
 	EndIf
+	If __mv_par06 == "39" .and. U_VALIDACAO() // HELIO/RICARDO 03/11/21  // layout criado a partir do 02
+		cLayoutEnt := "39"
+		lRotValid :=  U_DOMETQ39(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL,lFinalOP) 			// Validações de Layout 02
+		If !lRotValid
+			MsgStop("A OP não será apontada. Verifique os problemas com o layout da etiqueta e repita a operação.")
+			Return
+		Else
+			// Apontamento de OP NOVO MODELO DOMEX
+			cNumPeca := U_IXD1PECA()
+			If lApontaOP
+				If !U_ETQMTA250("010",SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,SC2->C2_PRODUTO,SC2->C2_LOCAL,nQtdKit,"P",cNumPeca)
+					MsgAlert("Erro no apontamento da OP")
+					oImprime:Disable()
+					Return
+				Else
+					MsgRun("Imprimindo etiqueta Layout 39","Aguarde...",{|| lRetEtq := U_DOMETQ39(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca,lFinalOP) })  // Impressão de Etiqueta Layout 02
+					cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
+				EndIf
+			Else
+				MsgRun("Imprimindo etiqueta Layout 39","Aguarde...",{|| lRetEtq := U_DOMETQ39(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) })  // Impressão de Etiqueta Layout 02
+				cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
+			EndIf
+		EndIf
+	EndIf
+
+	If __mv_par06 == "40" .and. U_VALIDACAO() // HELIO/RICARDO 03/11/21 // layout criado a partir do 04
+		cLayoutEnt := "40"
+		lRotValid := U_DOMETQ40(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL)
+		If !lRotValid
+			MsgStop("A OP não será apontada. Verifique os problemas com o layout da etiqueta e repita a operação.")
+			Return
+		Else
+			// Apontamento de OP
+			cNumPeca := U_IXD1PECA()
+			If lApontaOP
+				If !U_ETQMTA250("010",SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,SC2->C2_PRODUTO,SC2->C2_LOCAL,nQtdKit,"P",cNumPeca)
+					MsgStop("Erro no apontamento da OP")
+					oImprime:Disable()
+					Return
+				Else
+					MsgRun("Imprimindo etiqueta Layout 40","Aguarde...",{|| lRetEtq := U_DOMETQ40(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) })  //Layout 04 - Por Michel A. Sander
+					cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
+				EndIf
+			Else
+				MsgRun("Imprimindo etiqueta Layout 40","Aguarde...",{|| lRetEtq := U_DOMETQ40(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) })  //Layout 04 - Por Michel A. Sander
+				cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
+			EndIf
+		EndIf
+	EndIf
+
+	If __mv_par06 == "41" .and. U_VALIDACAO() // Ricardo Roda 04/11/21  // layout criado a partir do 94
+		cLayoutEnt := "41"
+		lRotValid := U_DOMETQ41(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL,"","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+		If !lRotValid
+			MsgStop("A OP não será apontada. Verifique os problemas com o layout da etiqueta e repita a operação.")
+			Return
+		Else
+			// Apontamento de OP
+			cNumPeca := U_IXD1PECA()
+			If lApontaOP
+				If !U_ETQMTA250("010",SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,SC2->C2_PRODUTO,SC2->C2_LOCAL,nQtdKit,"P",cNumPeca)
+					MsgStop("Erro no apontamento da OP")
+					oImprime:Disable()
+					Return
+				Else
+					MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
+					MsgRun("Imprimindo etiqueta Layout 41   2/2","Aguarde...",{||            U_DOMETQ41(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,Nil,"","000000"     ) }) // Layout 094 Crystal Ericsson
+					Sleep(5000)		// Delay de 5 segundos para buffer
+					cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
+				EndIF
+			Else
+				MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
+				MsgRun("Imprimindo etiqueta Layout 41   2/2","Aguarde...",{||            U_DOMETQ41(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,Nil,"","000000"     ) }) // Layout 094 Crystal Ericsson
+
+				cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
+			EndIf
+
+		EndIf
+	EndIf
+
+
+	if  U_VALIDACAO() .OR. .T. // RODA 16/09/2021  Etiqueta extra
+		lGlobal := .F.
+
+		if !empty(SB1->B1_BASE)
+			_BaseCod := Subs(SC2->C2_PRODUTO,1,2)
+			_UltDig:= Subs(SC2->C2_PRODUTO,LEN(ALLTRIM(SC2->C2_PRODUTO)),1)
+			IF _BaseCod+_UltDig  $ "CH9|CM9|CO9|DPB|FXE|MDB|MSB|PB9|TE9"
+				//If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))  //Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  //
+				lGlobal := .T.
+			EndIf
+			If lGlobal
+				MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) })
+			Endif
+		Endif
+	Endif
+
 
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 	//³LAYOUT 87 - HUAWEI LEIAUTE NOVO 50X100 mm								   	³
 	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	If __mv_par06 == "87"
+		cLayoutEnt := "87"
 
 		//              U_DOMETQ99(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,Nil ,1 ,1 ,cProxNiv,aSerial, .F. ,0        ,.F.     ,cEtiqOrig,NIL)	// Validações de Layout 99
 		//lRotValid   :=  U_DOMETQ87(__mv_par02                             ,Nil ,1 ,1 ,"1"     ,{}     , .F. ,nPesoBip ,lColetor,cEtiqOrig,NIL) // Validações de Layout 87
@@ -2386,9 +2539,11 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	EndIf
 
 	If __mv_par06 == "90"
+		cLayoutEnt := "90"
 		MsgRun("Imprimindo etiqueta Layout 90","Aguarde...",{|| lRetEtq := U_DOMETQ90(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,Nil,Nil) }) //Layout 90 - Por Michel A. Sander
 	EndIf
 	If __mv_par06 == "94"
+		cLayoutEnt := "94"
 		lRotValid := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) //Layout 002 Crystal Ericsson - Por Michel A. Sander
 		If !lRotValid
 			MsgStop("A OP não será apontada. Verifique os problemas com o layout da etiqueta e repita a operação.")
@@ -2418,6 +2573,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	EndIf
 
 	If __mv_par06 == "98"
+		cLayoutEnt := "98"
 		cNumPeca := U_IXD1PECA()
 		If lApontaOP
 			If !U_ETQMTA250("010",SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,SC2->C2_PRODUTO,SC2->C2_LOCAL,nQtdKit,"P",cNumPeca)
@@ -2436,7 +2592,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	//³LAYOUT 99 - HUAWEI LEIAUTE NOVO   								   	³
 	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	If __mv_par06 == "99"
-
+		cLayoutEnt := "99"
 		IF U_VALIDACAO() .Or. .T. // RODA 20/08/2021
 			lRotValid :=  U_DOMET87B(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) 			// Validações de Layout 01
 		Else
@@ -2474,21 +2630,11 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		EndIf
 	EndIf
 
-	if  U_VALIDACAO() // RODA 16/09/2021
-		lGlobal := .F.
-
-		if !empty(SB1->B1_BASE)
-			_BaseCod := Subs(SC2->C2_PRODUTO,1,2)
-			_UltDig:= Subs(SC2->C2_PRODUTO,LEN(ALLTRIM(SC2->C2_PRODUTO))-1,1)
-			IF _BaseCod+_UltDig  $ "CH9|CM9|CO9|DPB|FXE|MDB|MSB|PB9|TE9"
-				//If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))  //Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  //
-				lGlobal := .T.
-			EndIf
-			If lGlobal
-				MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie) })
-			Endif
-		Endif
-	Endif
+	If U_VALIDACAO() // HELIO 03/11/21
+		If Empty(cLayoutEnt)
+			MsgStop("Layout " + __mv_par06 + " não preparado para esta rotina.")
+		EndIf
+	EndIf
 
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 	//³Executa rotina de impressao									³
@@ -2497,6 +2643,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	//³Imprime a etiqueta da telefonica								³
 	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	If lTelefonic
+		// Segunda etiqueta, layout Telefonica
 		U_DOMETQ93(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, __mv_par04, dDataBase, .F., "", 0)
 		lUltTelef := .T.
 	Else
@@ -2682,6 +2829,23 @@ Return
 		If cDomEtDl36_CancLay == "36"
 			U_DOMETQ36(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie)		//Layout 36 - Por Michel A. Sander
 		EndIf
+	
+		if  U_VALIDACAO() .OR. .T. // RODA 16/09/2021
+			lGlobal := .F.
+
+			//if !empty(SB1->B1_BASE)
+			_BaseCod := Subs(SC2->C2_PRODUTO,1,2)
+			_UltDig:= Subs(SC2->C2_PRODUTO,LEN(ALLTRIM(SC2->C2_PRODUTO)),1)
+			IF _BaseCod+_UltDig  $ "CH9|CM9|CO9|DPB|FXE|MDB|MSB|PB9|TE9"
+				//If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))  //Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  //
+				lGlobal := .T.
+			EndIf
+			If lGlobal
+				MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie) })
+			Endif
+			//Endif
+		Endif
+
 		If cDomEtDl36_CancLay == "94"
 			If !lSerial
 				// Etiqueta Ericsson Crystal
@@ -2965,7 +3129,12 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			Return(.F.)
 		EndIf
 
-		cLayout   := SZG->ZG_LAYOUT
+		If !U_VALIDACAO()
+			cLayout := SZG->ZG_LAYOUT   // TRATADO
+		Else
+			cLayout := SZG->ZG_LAYVALI
+		EndIf
+
 		_PesoAuto := 0
 		lColetor  := .F.
 		cDomEtDl36_CancLay := cLayout
@@ -3002,6 +3171,11 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			U_DOMETQ31(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 31 - Por Michel A. Sander
 		ElseIf cLayout == "36"
 			U_DOMETQ36(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
+		ElseIf cLayout == "41"
+			U_DOMETQ98(cOp,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 98 - Etiqueta Somente com CODBAR
+			U_DOMETQ41(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie ,"","000000") //Layout 41 - Por Ricardo Roda
+		ElseIf cLayout == "42"
+			U_DOMETQ42(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie,"","000000") //Layout 42 - Cordão Ericsson Por Ricardo Roda
 		ElseIf cLayout == "80"
 			U_DOMETQ80(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 80 - Serial Datamatrix Por Michel A. Sander
 		ElseIf cLayout == "81"
@@ -3039,6 +3213,22 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			MsgInfo("Layout não encontrado para este Cliente/Grupo de Produtos.")
 			_Retorno := .F.
 		EndIf
+
+		if  U_VALIDACAO() .OR. .T. // RODA 16/09/2021
+			lGlobal := .F.
+
+			//if !empty(SB1->B1_BASE)
+			_BaseCod := Subs(SC2->C2_PRODUTO,1,2)
+			_UltDig:= Subs(SC2->C2_PRODUTO,LEN(ALLTRIM(SC2->C2_PRODUTO)),1)
+			IF _BaseCod+_UltDig  $ "CH9|CM9|CO9|DPB|FXE|MDB|MSB|PB9|TE9"
+				//If ("GLOBO GROUP S.A." $ Upper(SA1->A1_NOME)) .Or. ("GLOBO GROUP S.A." $ Upper(SA1->A1_NREDUZ))  //Subs(SC2->C2_PRODUTO,15,1) $ GetMV("MV_XLAY117")  //
+				lGlobal := .T.
+			EndIf
+			If lGlobal
+				MsgRun("Imprimindo etiqueta Layout 117","Aguarde...",{|| lRetEtq := U_DOMET117(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) })
+			Endif
+			//Endif
+		Endif
 
 
 		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
@@ -3173,11 +3363,11 @@ Static Function VCodHuawei()
 		oCodHuawei:Refresh()
 		Return .F.
 	EndIf
-
-	If !Empty(cCodHua2ok)
-		cCodHua2ok := ""
+	
+	If _Retorno
+		cCodHua2ok := cCodHuawei
 	EndIf
-	oDlgHuawei:End()
+	
 
 	oEtiqueta:SetFocus()
 
@@ -3250,10 +3440,12 @@ Static Function VCdHuawei2()
 		Return .F.
 	EndIf
 
-	If _Retorno
-		cCodHua2ok := cCdHuawei2
+	
+	If !Empty(cCodHua2ok)
+		cCodHua2ok := ""
 	EndIf
-	//oDlgHuawei:End()
+	oDlgHuawei:End()
+
 	oEtiqueta:SetFocus()
 
 

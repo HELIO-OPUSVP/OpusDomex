@@ -149,6 +149,8 @@ MakeSqlExpr(oReport:uParam)
 //旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커
 //쿔nicio do Embedded SQL                                                  �
 //읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸
+
+//NA TUALIZACAO DE 06/11/2021 ESTAVA FALTA DATEDIFF DA LINHA 173 JONAS
 BeginSql Alias cAliasRep
 
 SELECT 
@@ -170,7 +172,7 @@ CASE WHEN (SELECT B1_XKITPIG FROM  %table:SC2% SC2
  THEN
  (CASE WHEN D3_XHRINI < D3_HORA THEN (DATEDIFF(SS, D3_XHRINI,D3_HORA)/12) ELSE 0 END )
 ELSE
-(CASE WHEN D3_XHRINI < D3_HORA THEN ((SS, D3_XHRINI,D3_HORA)) ELSE 0 END  )
+(CASE WHEN D3_XHRINI < D3_HORA THEN (DATEDIFF(SS, D3_XHRINI,D3_HORA)) ELSE 0 END  )
 END AS MINUTOS,
 
 CASE WHEN (SELECT B1_XKITPIG FROM  %table:SC2% SC2
