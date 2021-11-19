@@ -24,11 +24,11 @@ User Function VALIDACAO(cConsultor,lRetorno)
 	Default lRetorno := .F.
 
 	AADD(aConsultores,"HELIO")
-	AADD(aConsultores,"RICARDO")
+	AADD(aConsultores,"RODA")
 	AADD(aConsultores,"JONAS")
 	AADD(aConsultores,"MAURICIO")
 	AADD(aConsultores,"OSMAR")
-	AADD(aConsultores,"MARCO")
+	AADD(aConsultores,"MAURESI")
 	AADD(aConsultores,"JAKCSON")
 
 	If !Empty(cConsultor)
