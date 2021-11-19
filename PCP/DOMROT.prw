@@ -753,9 +753,9 @@ Static Function MontaTela()
 	cQuery+= " AND D4_FILIAL = '"+xFilial("SD4")+"'"
 	cQuery+= " AND SD4.D_E_L_E_T_ = '' "
 
-	IF cTipo == "DIO" .and. U_VALIDACAO() // Roda 05/11/2021
-		cQuery+= " GROUP BY D4_PRODUTO, B1_GRUPO, D4_COD,B1_DESC
-	Endif
+	//IF cTipo == "DIO" .and. U_VALIDACAO() // Roda 05/11/2021
+	//	cQuery+= " GROUP BY D4_PRODUTO, B1_GRUPO, D4_COD,B1_DESC
+	//Endif
 	dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"QRY2",.T.,.T.)
 
 	oGetDados:aCols := {}

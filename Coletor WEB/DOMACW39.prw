@@ -471,7 +471,7 @@ Static Function ColetaProd(cCodProdut,cGrupoProd,dData,nQtdEmp,nQtdasep,aEnderec
 	EndIf
 
 	//Inicia o Pagamento
-	cQryOps := U_RetQryw39("2"/*cTipoCon*/,cGrupoProd,dData,cCodProdut,Nil,__cFilial)
+	cQryOps := U_FRetQryw39("2"/*cTipoCon*/,cGrupoProd,dData,cCodProdut,Nil,__cFilial)
 
 	If Select("TMPOPS") > 0
 		TMPOPS->(DbCloseArea())
@@ -979,7 +979,7 @@ Static Function ValidaEtiq()
 Return _Retorno
 
 
-User Function RetQryw39(cTipoCon,cGrupoProd,dData,cCodProdut,cNumOpCon,__cFilial)
+User Function FRetQryw39(cTipoCon,cGrupoProd,dData,cCodProdut,cNumOpCon,__cFilial)
 	Local cRet := ""
 	Default cTipoCon := '1' //1-Produto,2-OP's
 	Default cNumOpCon := ""
