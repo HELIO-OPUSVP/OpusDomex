@@ -943,7 +943,7 @@ Static Function VldEtiq()
 							Else
 								// Para habilitar a Repesagem numa próxima Fase após 90 dias
 								//Michel Sander em 20.11.2018
-								If U_VALIDACAO()  // Helio 01/09/21
+								If U_VALIDACAO("HELIO")  // Helio 01/09/21
 									If SB1->B1_XPESOOK == "S"
 										aAuxEmb := U_RetEmbala(SC2->C2_PRODUTO,XD1->XD1_NIVEMB)
 										nXD1QPESO := XD1->XD1_QTDATU

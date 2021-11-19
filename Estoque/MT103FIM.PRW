@@ -240,7 +240,7 @@ USER FUNCTION MT103FIM()
 
 								If cFilFiltro == '01'
 									//ConOut("Antes do a260Processa" + Time())
-									If U_VALIDACAO()  // Helio  16/08/21
+									If U_VALIDACAO("HELIO")  // Helio  16/08/21
 										lTransfere := .F.
 										If SB1->B1_APROPRI == 'I'
 											// Definido em 23/09/21 com Sergio e Denis que materiais de apropriação indireta não devem ser endereçado
@@ -398,7 +398,7 @@ USER FUNCTION MT103FIM()
 								XD1->XD1_ITEM    := aXD1Recno[x][6]
 								XD1->XD1_DTDIGI  := SF1->F1_DTDIGIT
 
-								If !U_VALIDACAO() // Helio  16/08/21
+								If !U_VALIDACAO("HELIO") // Helio  16/08/21
 									If aXD1Recno[x][4] == '5' 	//ocorrencia
 										XD1->XD1_QTDATU  := 0
 									EndIf

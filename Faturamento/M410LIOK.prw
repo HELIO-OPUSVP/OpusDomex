@@ -48,7 +48,7 @@ User Function M410LIOK()
 
 	If _Retorno
 		If !aCols[n,Len(aHeader)+1]
-			If SF4->( Fieldpos("F4_XOPBENE")) > 0 .and. U_VALIDACAO()  // Hélio Ferreira 10/11/21
+			If SF4->( Fieldpos("F4_XOPBENE")) > 0 .and. U_VALIDACAO("HELIO")  // Hélio Ferreira 10/11/21
 				SF4->( dbSetOrder(1) )
 				If SF4->( dbSeek( xFilial() + aCols[N,_nPTes] ) )
 					If SF4->F4_XOPBENE == 'S'

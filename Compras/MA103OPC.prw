@@ -18,8 +18,8 @@
 User Function MA103OPC()
 	Local aRet := {}
 
-	//If U_VALIDACAO()   // validacao.Mauresi   15/07/21  
- 	if U_VALIDACAO() .or. .T.     // MAURESI - Em producao - 23/08/2021	
+	//If U_VALIDACAO("MAURESI")   // validacao.Mauresi   15/07/21  
+ 	if U_VALIDACAO("MAURESI") .or. .T.     // MAURESI - Em producao - 23/08/2021	
 		aadd(aRet, {'Libera Etiquetas','U_U103LibEtq()' , 0, 5} )
 	EndIf
 
