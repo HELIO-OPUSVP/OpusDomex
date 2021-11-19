@@ -20,12 +20,15 @@ cQuery += "  WHERE SB1.D_E_L_E_T_ = '' AND B1_XXDRBCK = 'S'  AND B1_TIPO = 'PA' 
 cQuery += " ORDER BY B1_POSIPI "
 
 cQuery := " SELECT B1_COD,B1_DESC,B1_TIPO,B1_UM,'' YD_UNID,B1_POSIPI,B1_PESO,B1_XXDRBCK,B1_PESO FROM SB1010 SB1 WITH(NOLOCK) "
-//cQuery += " WHERE  D_E_L_E_T_='' AND B1_POSIPI IN  ('85447010')  "
-cQuery += " WHERE  D_E_L_E_T_='' AND B1_COD IN ('5030720462539','PJ2C15005005000') "
+cQuery += " WHERE  D_E_L_E_T_='' AND B1_POSIPI IN  ('85447010')  "
+//cQuery += " WHERE  D_E_L_E_T_='' AND B1_COD IN ('5030720462539','PJ2C15005005000') "
 
 TCQUERY cQuery NEW ALIAS "QUERYSB1"
 
 SB5->( dbSetOrder(1) )
+
+
+ALERT("inicio da rotina - GERA SB5")
 
 While !QUERYSB1->( EOF() )
 	If SB5->( dbSeek( xFilial("SB5") + QUERYSB1->B1_COD ) )

@@ -41,9 +41,9 @@ User Function VD3_QUANT(Param01,Param02,Param03,Param04)
 			OPVD3QUANT := Param01
 		EndIf
 
-		If alltrim(OPVD3QUANT)="89120 01001"
-			Return _Retorno
-		EndIf
+		// If alltrim(OPVD3QUANT)="89120 01001"
+		// 	Return _Retorno
+		// EndIf
 
 		If Empty(Param02)
 			nD3_QUANT := M->D3_QUANT
@@ -585,7 +585,7 @@ Static Function ProcRun()
 										(cAliasSD4)->(dbSkip())
 										nProcRegua++
 
-										IncProc("Validando pagamento de Materiais... " + Alltrim(Str(nProcRegua)) + "/" + Alltrim(Str(nTotRegProc))+"!")
+										IncProc("Validando pagamento de Materiais... " + Alltrim(Str(nProcRegua)) + "/" + Alltrim(Str(nTotRegProc)))
 
 									EndDo
 
