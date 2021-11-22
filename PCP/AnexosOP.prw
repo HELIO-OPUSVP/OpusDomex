@@ -48,8 +48,8 @@ oGetDados  := (MsNewGetDados():New( 10, 09 , 130 ,370,GD_UPDATE+GD_DELETE ,"Alwa
 //oGetDados:oBrowse:oFont  := oFontNW
 //oGetDados:oBrowse:bChange:={||U_DEV002LOK(oGetDados)}
 
-//@ 135,175 Button "Incluir"     Size 45,13 Action Incluir()       Pixel
-//@ 135,275 Button "Excluir"     Size 45,13 Action Excluir()       Pixel
+@ 135,175 Button "Incluir"     Size 45,13 Action Incluir()       Pixel
+@ 135,275 Button "Excluir"     Size 45,13 Action Excluir()       Pixel
 @ 135,275 Button "Visualizar"  Size 45,13 Action Visualizar()    Pixel
 @ 135,325 Button "Sair"        Size 45,13 Action oDlg01:End()    Pixel
 
@@ -79,7 +79,8 @@ Private cChave    := SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
 Private cAlias    := "SC2"
 
 If Empty(cChave)
-	MsgStop("Preencher primeiramente o código do produto.")
+	//MsgStop("Preencher primeiramente o código do produto.")
+	//Verificar se a OP esta fechada
 	Return
 EndIf
 
