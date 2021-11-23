@@ -18,34 +18,66 @@
 */
 
 User Function VldMarge()
-
-/*	Local aCusto := {}
-	Local cProdVenda := ""
-	Local x := 0
-    
-	nPC6_XCUSUNI := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_XCUSUNI" } )
-	nPC6_XSTACUS := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_XSTACUS" } )
-	For x := 1 To Len(aCols)
-		nPC6_PRODUTO := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_PRODUTO" } )
-		cProdVenda := aCols[x,nPC6_PRODUTO]
-
-		aCusto    := U_RetCust(cProdVenda,'N')
-		nCusMedio := aCusto[1]
-		cStatus   := aCusto[2]
-      //  Alert(M->C5_NUM+"      "+cProdVenda)
-	  //  Alert(nCusMedio)
-
-		aCols[x,nPC6_XCUSUNI] := nCusMedio
-        aCols[x,nPC6_XSTACUS] := cStatus
-	Next x
-*/
+Local nPerMargem := 0 //Percentual mínimo aceito como margem de lucro
+Local cTexto     := ""
+Local y          := 0
+Local cAssunto   := ""
+Local cPara      := ""
+Local cCC        := ""
+Local cArquivo   := ""
+Local aAreaSA1   := SA1->( GetArea() )
 
 U_xGrvPrnet()
+
+SA1->(dbSetOrder(01))
+SA1->( dbSeek(xFilial()+M->C5_CLIENTE+M->C5_LOJACLI) )
+
+//If SA1->A1_XMARGEM > 0
+//	nPerMargem := SA1->A1_XMARGEM
+//Else
+//    nPerMargem := GetMV("MV_XMARGEM")  
+//Endif	
+
+nPerMargem := 99.5
+
+nPC6_ITEM    := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_ITEM" } )
+nPC6_PRODUTO := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_PRODUTO" } )
+nPC6_XMARGEM := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_XMARGEM" } )
+
+For y := 1 To Len(aCols)
+	If aCols[y,nPC6_XMARGEM] < nPerMargem
+		cTexto += aCols[y,nPC6_ITEM] +" / "+ aCols[y,nPC6_PRODUTO]+" Margem -> " + Str(aCols[y,nPC6_XMARGEM])+ Chr(13)
+	EndIf
+Next y
+
+cAssunto := "ITENS COM MARGEM DE LUCRO ABAIXO DO PADRÃO"
+
+If cTexto <> ""
+   cTexto := cAssunto + Chr(13) + cTexto
+EndIf
+
+If "COLETOR" $ Funname()
+	U_MsgColetor(cTexto)
+Else
+	apMsgAlert(cTexto)
+EndIf
+
+cAssunto := "Pedido de Venda "+M->C5_NUM+ " Margem Abaixo do Padrão "
+cPara := "osmar@opusvp.com.br"
+cCC := ""
+cArquivo := ""
+cTexto := "CLIENTE: "+M->C5_CLIENTE+"/"+M->C5_LOJACLI+" - "+ SA1->A1_NREDUZ + Chr(13)+;
+		  "MARGEM PADRÃO: "+Str(nPerMargem)+"%" + Chr(13) + Chr(13) + cTexto
+cTexto   := StrTran(cTexto,Chr(13),"<br>")
+U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
+
+
 Alert("Fim do cálculo da margem de lucro...")
 
+RestArea(aAreaSA1)
 Return(Nil)
 
-
+//Verifica o preço net para o Pedido de Venda
 User Function xGrvPrNet()
 	Local nItAtu     := 0
 	Local nQtdPeso   := 0
