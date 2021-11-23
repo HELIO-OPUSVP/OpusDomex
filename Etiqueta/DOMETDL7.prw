@@ -774,7 +774,7 @@ Static Function ValidaEtiq(lTeste)
 				SB1->( dbSeek( xFilial() + aRetEmbala[1] ) )
 				cProxEmb    := SB1->B1_DESC
 				If lOkFlex
-					If U_Validacao("HELIO")  // 23/11/21
+					If U_VALIDACAO("HELIO")  // 23/11/21
 						If Alltrim(SB1->B1_GRUPO) == "CORD"
 							nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
 						EndIf
