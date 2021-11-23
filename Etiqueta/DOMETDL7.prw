@@ -774,13 +774,34 @@ Static Function ValidaEtiq(lTeste)
 				SB1->( dbSeek( xFilial() + aRetEmbala[1] ) )
 				cProxEmb    := SB1->B1_DESC
 				If lOkFlex
-					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007/FLEX"  // PCON retirado em 04/11/21 por Helio/Ricardo
-						nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
-					ElseIf LEFT(ALLTRIM(SB1->B1_GRUPO),3) == "DIO"
-						nQProxEmb := 1 //Sempre 1 para o DIO
-						nQEmbAtu  := 1 //Sempre 1 para o DIO
+					If U_Validacao("HELIO")  // 23/11/21
+						If Alltrim(SB1->B1_GRUPO) == "CORD"
+							nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
+						EndIf
+						If Alltrim(SB1->B1_GRUPO) =="0007"
+							nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
+						EndIf
+						If Alltrim(SB1->B1_GRUPO) == "FLEX"
+							nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
+						EndIf
+						If Alltrim(SB1->B1_GRUPO) == "PCON"
+							nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
+						EndIf
+						If LEFT(ALLTRIM(SB1->B1_GRUPO),3) == "DIO"
+							nQProxEmb := 1 //Sempre 1 para o DIO
+							nQEmbAtu  := 1 //Sempre 1 para o DIO
+						Else
+							nQProxEmb := aRetEmbala[2]
+						EndIf
 					Else
-						nQProxEmb := aRetEmbala[2]
+						If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007/FLEX"  // PCON retirado em 04/11/21 por Helio/Ricardo
+							nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
+						ElseIf LEFT(ALLTRIM(SB1->B1_GRUPO),3) == "DIO"
+							nQProxEmb := 1 //Sempre 1 para o DIO
+							nQEmbAtu  := 1 //Sempre 1 para o DIO
+						Else
+							nQProxEmb := aRetEmbala[2]
+						EndIf
 					EndIf
 				Else
 					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007"  // PCON retirado em 04/11/21 por Helio/Ricardo
