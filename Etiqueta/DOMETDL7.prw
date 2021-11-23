@@ -774,13 +774,35 @@ Static Function ValidaEtiq(lTeste)
 				SB1->( dbSeek( xFilial() + aRetEmbala[1] ) )
 				cProxEmb    := SB1->B1_DESC
 				If lOkFlex
-					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007/FLEX"  // PCON retirado em 04/11/21 por Helio/Ricardo
-						nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
-					ElseIf LEFT(ALLTRIM(SB1->B1_GRUPO),3) == "DIO"
-						nQProxEmb := 1 //Sempre 1 para o DIO
-						nQEmbAtu  := 1 //Sempre 1 para o DIO
+					If U_VALIDACAO("HELIO")  // 23/11/21
+						If Alltrim(SB1->B1_GRUPO) == "CORD"
+							nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
+						EndIf
+						If Alltrim(SB1->B1_GRUPO) =="0007"
+							nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
+						EndIf
+						If Alltrim(SB1->B1_GRUPO) == "FLEX"
+							nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
+						EndIf
+						If Alltrim(SB1->B1_GRUPO) == "PCON"
+							nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
+						EndIf
+						If LEFT(ALLTRIM(SB1->B1_GRUPO),3) == "DIO"
+							nQProxEmb := 1 //Sempre 1 para o DIO
+							nQEmbAtu  := 1 //Sempre 1 para o DIO
+						EndIf
+						If !(Alltrim(SB1->B1_GRUPO) $ "CORD/0007/FLEX/PCON") .and. LEFT(ALLTRIM(SB1->B1_GRUPO),3) <> "DIO"  
+							nQProxEmb := aRetEmbala[2]
+						EndIf
 					Else
-						nQProxEmb := aRetEmbala[2]
+						If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007/FLEX"  // PCON retirado em 04/11/21 por Helio/Ricardo
+							nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
+						ElseIf LEFT(ALLTRIM(SB1->B1_GRUPO),3) == "DIO"
+							nQProxEmb := 1 //Sempre 1 para o DIO
+							nQEmbAtu  := 1 //Sempre 1 para o DIO
+						Else
+							nQProxEmb := aRetEmbala[2]
+						EndIf
 					EndIf
 				Else
 					If ALLTRIM(SB1->B1_GRUPO) $ "CORD/0007"  // PCON retirado em 04/11/21 por Helio/Ricardo
@@ -1671,6 +1693,7 @@ Static Function ValidaEtiq(lTeste)
 					RestArea(aPklAreaAtu)
 				else
 					MsgStop("Essa OP já teve apontamento na rotina sem trava de roteiro, e deve continuar a ser apontado sem a trava!","Apontar na Rotina Sem Trava")
+					Return (.f.)
 				EndIf
 			else
 				//Gravar informação que foi utilizado o ambiente sem trava de roteiro para controlar alteração.
@@ -1985,7 +2008,7 @@ Static Function ValidaEtiq(lTeste)
 
 			Else
 
-				If AllTrim(_cGrupoUso) == "DROP/PCON" .Or. lEhFuruka
+				If AllTrim(_cGrupoUso) $ "DROP/PCON" .Or. lEhFuruka
 
 					//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 					//³ImpEtqBip() - Aponta OP e imprime etiqueta de embalagem ³
@@ -1998,7 +2021,12 @@ Static Function ValidaEtiq(lTeste)
 
 
 					ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T. )
+					if U_Validacao()
+						iF AllTrim(_cGrupoUso) == "PCON"
 
+							U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "")
+						EndIf
+					Endif
 
 				Else
 
@@ -2064,7 +2092,12 @@ Static Function ValidaEtiq(lTeste)
 					//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 
 					ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T.,.T. )
+					if U_Validacao()
+						iF AllTrim(_cGrupoUso) == "PCON"
 
+							U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "")
+						EndIf
+					Endif
 				Else
 					if U_VALIDACAO()// ricardo roda 04/11/2021
 						U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
