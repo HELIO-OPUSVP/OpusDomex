@@ -1671,6 +1671,7 @@ Static Function ValidaEtiq(lTeste)
 					RestArea(aPklAreaAtu)
 				else
 					MsgStop("Essa OP já teve apontamento na rotina sem trava de roteiro, e deve continuar a ser apontado sem a trava!","Apontar na Rotina Sem Trava")
+					Return (.f.)
 				EndIf
 			else
 				//Gravar informação que foi utilizado o ambiente sem trava de roteiro para controlar alteração.
