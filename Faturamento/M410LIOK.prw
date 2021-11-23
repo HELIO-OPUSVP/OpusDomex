@@ -48,9 +48,10 @@ User Function M410LIOK()
 
 	If _Retorno
 		If !aCols[n,Len(aHeader)+1]
-			If SF4->( Fieldpos("F4_XOPBENE")) > 0 .and. U_VALIDACAO("HELIO")  // Hélio Ferreira 10/11/21
+			If SF4->( Fieldpos("F4_XOPBENE")) > 0 .and. U_VALIDACAO("OSMAR")  // Hélio Ferreira 10/11/21
 				SF4->( dbSetOrder(1) )
-				If SF4->( dbSeek( xFilial() + aCols[N,_nPTes] ) )
+				//If SF4->( dbSeek( xFilial() + aCols[N,_nPTes] ) )
+				If SF4->( dbSeek( xFilial() + aCols[N,nPC6_TES] ) )
 					If SF4->F4_XOPBENE == 'S'
 						If Empty(aCols[N,nPC6_XXOP])
 							MsgStop("Pedido de remessa para beneficiamento. Favor informar o Numero da Ordem de Produção no campo OP Beneficia.")
