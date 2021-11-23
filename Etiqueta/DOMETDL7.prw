@@ -1986,7 +1986,7 @@ Static Function ValidaEtiq(lTeste)
 
 			Else
 
-				If AllTrim(_cGrupoUso) == "DROP/PCON" .Or. lEhFuruka
+				If AllTrim(_cGrupoUso) $ "DROP/PCON" .Or. lEhFuruka
 
 					//旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커
 					//쿔mpEtqBip() - Aponta OP e imprime etiqueta de embalagem �
@@ -1999,7 +1999,12 @@ Static Function ValidaEtiq(lTeste)
 
 
 					ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T. )
+					if U_Validacao()
+						iF AllTrim(_cGrupoUso) == "PCON"
 
+							U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "")
+						EndIf
+					Endif
 
 				Else
 
@@ -2065,7 +2070,12 @@ Static Function ValidaEtiq(lTeste)
 					//읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸
 
 					ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T.,.T. )
+					if U_Validacao()
+						iF AllTrim(_cGrupoUso) == "PCON"
 
+							U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "")
+						EndIf
+					Endif
 				Else
 					if U_VALIDACAO()// ricardo roda 04/11/2021
 						U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
