@@ -790,7 +790,8 @@ Static Function ValidaEtiq(lTeste)
 						If LEFT(ALLTRIM(SB1->B1_GRUPO),3) == "DIO"
 							nQProxEmb := 1 //Sempre 1 para o DIO
 							nQEmbAtu  := 1 //Sempre 1 para o DIO
-						Else
+						EndIf
+						If Alltrim(SB1->B1_GRUPO) $ "CORD/0007/FLEX/PCON" .and. LEFT(ALLTRIM(SB1->B1_GRUPO),3) <> "DIO"  
 							nQProxEmb := aRetEmbala[2]
 						EndIf
 					Else
