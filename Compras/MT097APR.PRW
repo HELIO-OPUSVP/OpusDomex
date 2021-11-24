@@ -2,17 +2,18 @@
 
 User Function MT094END()
    //Chama a função de controle de envios d e-mails ao forncedor.
-	U_DMXCPR01(AllTrim(SCR->CR_NUM))
 	
-Return
+//Return
    
-Static Function BKMT094END  
+//Static Function BKMT094END  
 	Local cPedAprov	:= AllTrim(SCR->CR_NUM)//SC7->C7_NUM
 	Local cMsg		:= ""
 	Local cArquivo  := "\pedido_compra\" + cPedAprov + ".pdf"
 	Local cEmail	:= ""
 	Local cUserComp	:= ""
-	
+
+	U_DMXCPR01(AllTrim(SCR->CR_NUM))
+
 	SC7->(DbSetOrder(1))
 	SC7->(DbSeek(xFilial("SC7")+AllTrim(cPedAprov)))                      
 	

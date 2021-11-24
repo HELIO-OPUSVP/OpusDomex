@@ -62,7 +62,7 @@ If _lRet
 	//	EndIf
 	//EndIf
 	If Empty(acols[N,_nPOP])
-		If Fieldpos("F4_XOPBENE") > 0
+		If SF4->( Fieldpos("F4_XOPBENE") ) > 0
 			SF4->( dbSetOrder(1) )
 			If SF4->( dbSeek( xFilial() + aCols[N,_nPTes] ) )
 				If SF4->F4_XOPBENE == 'S'

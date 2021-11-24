@@ -6,7 +6,7 @@
 ±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
 ±±ºPrograma  ³DOMETQ98  ºAutor  ³Michel Sander       º Data ³  07/06/17   º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
-±±ºDesc.     ³ Impressão de etiqueta pequena apenas com numeração			  º±±
+±±ºDesc.     ³ Impressão de etiqueta pequena apenas com numeração		  º±±
 ±±º          ³                                                            º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
 ±±ºUso       ³ AP                                                         º±±
@@ -24,13 +24,17 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 	Local aAreaSC2  := SC2->( GetArea() )
 	Local _nX		:= 0
 	Local nQ 		:= 0
-	local cLocImp	:= iif(cfilant == "02","000024","")
+	Local cLocImp	:= Iif(cfilant == "02","000024","LPT2")
 	Default cNumPeca	:= ""
 	Default cSetor   	:= ""
 	Default cEtqHuawei 	:=""
 	Default cVolumeAtu 	:= ""
 	Default cNumpedido 	:= ""
 	Default _PesoAuto   := 0
+
+	IF U_VALIDACAO() .AND. cfilant == "02" 
+		cLocImp:= "000005"
+	Endif
 
 
 

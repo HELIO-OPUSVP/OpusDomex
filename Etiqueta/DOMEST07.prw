@@ -165,7 +165,7 @@ Static Function fBuscaSb1()
 		EndIf
 
 		If !lSilk .and. SB1->B1_TIPO <> 'PA'
-			If U_Validacao()  // helio 08/09/21
+			If U_Validacao("HELIO")  // helio 08/09/21
 				If __cUserId $ GetMV('MV_XAVULSA')
 					MsgStop("Etiquetas avulsas são permitidas apenas para produtos 'Silk'. Para exceções, prencher o parâmetro MV_XAVULSA")
 					_lRet := .F.

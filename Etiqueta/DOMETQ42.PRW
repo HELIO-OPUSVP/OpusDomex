@@ -169,7 +169,7 @@ User Function DOMETQ42(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	cNumSerie1 := SPACE(12)
 	cNumSerie2 := SPACE(12)
 
-	AADD(_aArq,'CT~~CD,~CC^~CT~'+CRLF)
+	AADD(_aArq,'CT~~CD,~CC^~CT~'+CRLF)
 	AADD(_aArq,'^XA'+CRLF)
 	AADD(_aArq,'~TA000'+CRLF)
 	AADD(_aArq,'~JSN'+CRLF)
@@ -188,7 +188,7 @@ User Function DOMETQ42(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	AADD(_aArq,'^XZ'+CRLF)
 	AADD(_aArq,'^XA'+CRLF)
 	AADD(_aArq,'^MMT'+CRLF)
-	AADD(_aArq,'^PW886'+CRLF)
+	AADD(_aArq,'^PW945'+CRLF)
 	AADD(_aArq,'^LL886'+CRLF)
 	AADD(_aArq,'^LS0'+CRLF)
 
@@ -203,7 +203,7 @@ User Function DOMETQ42(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	AADD(_aArq,'^FO'+cValtoChar(nCol+27)+','+cValtoChar(nlin+207)+'^GFA,261,720,24,:Z64:eJzV0TEOwjAMBVBXDN2cC5jmGh6QuApHiAQSGRh6rI49io/g0QMDrgMUBiQ2xB+fIvsnAfjv1NrPec4KTAxpTrqR3giby+KDu3xwTXb3iyUhJQDODFiQe4UajkLl1Qvou0+Ah6efpkGpZAn3vZZqJ+F+urlFT+Rudj8/fWtLH0HeNM/a5rsjozftx/C9Nafwkq/hR3bX1Wu+JqCki7f7UoVkyO4WXnere5vdcPdCeXy8pyAxhv/6n7/NDeDzcNQ=:C159'+CRLF)
 	AADD(_aArq,'^FO'+cValtoChar(nCol+250)+','+cValtoChar(nlin+207)+'^GFA,397,600,20,:Z64:eJydkLFKxDAYx5OGI6VIMnpCaB3lllt7WHoOPoYPcd1uOEjp5NR7AZGOxVdQJKDg6As4dCwuZnAIWhPb5pzSyW/88fH//74PgH+NN8GOJ5jJHQSNu7acYLxzEDKtw7C5GIXuguo0KOqFVy0CpD3bROUmelIcy4QhGdmIfbc1r8rsdUpQPvpBccQ2EkMRhhEDs9EF5SRdNQQ0IVmXYK3BYS8TGEqG+z3+afNK9d3QVj/Q+/LgN/RmYqY4wydv2J6G3qk6b4BaPtKVRl+BzSNxJgDDNzjukLB+giTb1k/QLYm1V1i/58Hv8gpTNt8BG9j3pjH/GO6I0z8/3u9FL3IH5TyBXI7F9bVfB0Veg+rMR6Zx//fjvh4pl0HhMpBPMDu/TsZufw==:9ED3'+CRLF)
 
-	nCol:= 22
+	nCol:= 21
 	AADD(_aArq,'^FT'+cValtoChar(nCol+501)+','+cValtoChar(nlin+148)+'^A0N,25,30^FH\^CI28^FD'+cMVPAR01+'^FS^CI27'+CRLF)
 	AADD(_aArq,'^FT'+cValtoChar(nCol+789)+','+cValtoChar(nlin+148)+'^A0N,25,30^FH\^CI28^FD'+cMVPAR05+'^FS^CI27'+CRLF)
 	AADD(_aArq,'^FT'+cValtoChar(nCol+501)+','+cValtoChar(nlin+169)+'^A0N,17,15^FH\^CI28^FD'+cMVPAR02+'^FS^CI27'+CRLF)

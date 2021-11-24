@@ -14,7 +14,7 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function DOMETQ41(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
+User Function DOMETQ41(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca,cLocImp)
 
 	Local aPar       := {}
 	Local aRet       := {}
@@ -32,14 +32,14 @@ User Function DOMETQ41(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	Local cCodProdut := ""
 	Private lAchou   := .T.
 	Private aGrpAnat := {}     //Codigos Anatel Agrupados
-	Private cLocImp  := ""
+
 	Private lFatSZY  := .T.
 	private aRetPar   := {}
 	Private aPar:= {}
 	Private aCodEtq:= {}
 	Private _aArq:={}
 
-
+	Default cLocImp  := ""
 	Default cNumOP   := ""
 	Default cNumSenf := ""
 	Default nQtdEmb  := 0
@@ -237,13 +237,12 @@ User Function DOMETQ41(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 
 		if empty(Alltrim(cLocImp))
 			aAdd(aPar,{1,"Escolha a Impressora " ,SPACE(6) ,"@!"       ,'.T.' , 'CB5', '.T.', 20 , .T. } )
+			If !ParamBox(aPar,"INFORMAR IMPRESSORA",@aRetPar)
+				Return
+			EndIf
+
+			cLocImp := ALLTRIM(aRetPar[1])
 		Endif
-
-		If !ParamBox(aPar,"INFORMAR IMPRESSORA",@aRetPar)
-			Return
-		EndIf
-
-		cLocImp := ALLTRIM(aRetPar[1])
 
 		If !CB5SetImp(cLocImp,.F.)
 			MsgAlert("Local de impressao invalido!","Aviso")

@@ -1290,7 +1290,11 @@ Static Function ImpEtqBip(cPecaBip,cOP)
 		__mv_par03 := Nil
 		__mv_par04 := nQtdKit
 		__mv_par05 := 1
-		__mv_par06 := SZG->ZG_LAYOUT
+		If !U_VALIDACAO()
+			__mv_par06 := SZG->ZG_LAYOUT  // TRATADO
+		Else
+			__mv_par06 := SZG->ZG_LAYVALI
+		EndIf
 
 	EndIf
 
@@ -1320,7 +1324,11 @@ Static Function ImpEtqBip(cPecaBip,cOP)
 		__mv_par03 := Nil
 		__mv_par04 := 1
 		__mv_par05 := 1
-		__mv_par06 := SZG->ZG_LAYOUT
+		If !U_VALIDACAO()
+			__mv_par06 := SZG->ZG_LAYOUT  // TRATADO
+		Else
+			__mv_par06 := SZG->ZG_LAYVALI
+		EndIf
 
 	EndIf
 
@@ -2164,7 +2172,12 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			Return(.F.)
 		EndIf
 
-		cLayout   := SZG->ZG_LAYOUT
+		If !U_VALIDACAO()
+			cLayout := SZG->ZG_LAYOUT  // TRATADO
+		Else
+			cLayout := SZG->ZG_LAYVALI
+		EndIf
+
 		_PesoAuto := 0
 		lColetor  := .F.
 		cDomEtDl36_CancLay := cLayout

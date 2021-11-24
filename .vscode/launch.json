@@ -4,10 +4,20 @@
 		{
 			"type": "totvs_language_debug",
 			"request": "launch",
-			"name": "Depuração do idioma TOTVS",
+			"name": "domex",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
-			"smartclientBin": "C:/TOTVS/bin/smartclient/smartclient.exe",
+			"smartclientBin": "C:/Totvs/smartclient64_DOMEX/smartclient.exe",
+			"isMultiSession": true,
+			"enableTableSync": true
+		},
+		{
+			"type": "totvs_language_debug",
+			"request": "launch",
+			"name": "LOCAL",
+			"program": "${command:AskForProgramName}",
+			"cwb": "${workspaceFolder}",
+			"smartclientBin": "C:/Totvs/Protheus/Protheus/bin/smartclient/smartclient.exe",
 			"isMultiSession": true,
 			"enableTableSync": true
 		}
@@ -73,6 +83,38 @@
 		},
 		{
 			"label": "SIGApcp",
+			"description": "<nil>"
+		},
+		{
+			"label": "SIGAfat",
+			"description": "<nil>"
+		},
+		{
+			"label": "U",
+			"description": "<nil>"
+		},
+		{
+			"label": "U_WEB",
+			"description": "<nil>"
+		},
+		{
+			"label": "SIGACFG",
+			"description": "<nil>"
+		},
+		{
+			"label": "APSDU",
+			"description": "<nil>"
+		},
+		{
+			"label": "U_",
+			"description": "<nil>"
+		},
+		{
+			"label": "u_we",
+			"description": "<nil>"
+		},
+		{
+			"label": "u_mnu02coletor",
 			"description": "<nil>"
 		}
 	],

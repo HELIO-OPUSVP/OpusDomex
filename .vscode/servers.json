@@ -1,0 +1,92 @@
+{
+	"version": "0.2.1",
+	"includes": [
+		""
+	],
+	"permissions": {
+		"authorizationtoken": ""
+	},
+	"connectedServer": {
+		"id": "owsg2lu3kyhkvs3gvzpgijn7ssv49p",
+		"type": "totvs_server_protheus",
+		"name": "SHA",
+		"port": 9101,
+		"address": "192.168.0.10",
+		"buildVersion": "7.00.191205P",
+		"secure": true,
+		"includes": [
+			"C:\\Totvs\\includes_lobo"
+		],
+		"environments": [
+			"validacao"
+		],
+		"username": "ricardo",
+		"environment": "validacao",
+		"token": "djM6b3dzZzJsdTNreWhrdnMzZ3Z6cGdpam43c3N2NDlwOjE6MTkyLjE2OC4wLjEwOjkxMDE6MTo3LjAwLjE5MTIwNVA6Mw==:djE6dmFsaWRhY2FvOnJpY2FyZG86b0FrUUpLSk15ellxS0lab0ZPT1dVOUhJbDRYdGc3SEFjRS94cXk1RXN1VT0=|djI6MTYzNjQ2Mzc2MzowOjE6MQ==.KpNxmaDeP+hkHL2ZUf+V7z56FNJQ3KCJ+7YIxXAsJEBbY3frbkG0pI/wUkAVJUAi+WloQa1Gdt2uNLsLWApQU5sX1ehnILeKsyjmSGoSEjfj1NoHjleSAvYKd4s7RlyN5jKnBlH1nwqT8Um/6JCovUUujJbYT3rCs7PdPhQWX2AM/h4PUbbhRYCfaaJ4WUR+puSr55+2ibURJofJaJ31wSc5mAqeyJG0yMlJ59btQyupzgZmQSw3FzaebQsdE5A1q8pfGOFnytZEacitnrDIaxXWE/iQFJmVc7cpv4zBOy1BdE99miU2ZDuzwnHpJBL2prHaMkDBsyo7TmHZZHGXww=="
+	},
+	"configurations": [
+		{
+			"id": "mvqc8b1jartkvr3tx4celtjsvbqnur",
+			"type": "totvs_server_protheus",
+			"name": "Atos",
+			"port": 1257,
+			"address": "18.228.227.63",
+			"buildVersion": "7.00.191205P",
+			"secure": true,
+			"includes": [
+				"C:\\Totvs\\includes_lobo"
+			],
+			"environments": [
+				"RODA"
+			],
+			"username": "ADMIN",
+			"environment": "RODA",
+			"token": "djM6bXZxYzhiMWphcnRrdnIzdHg0Y2VsdGpzdmJxbnVyOjE6MTguMjI4LjIyNy42MzoxMjU3OjE6Ny4wMC4xOTEyMDVQOjM=:djE6Uk9EQTpBRE1JTjp4Y0Z0MjhUSUVSdjgweFlwajlxUDcxN0Z3YUVxaGcrWVlQcnRkVHpNNGFzPQ==|djI6MTYzNjQwMjU3NTowOjE6MQ==.P1Q8NyPgIX+dXNwXQM1uIXia/NgeUP6wa9VHcQOtbQxS5ppJwWDY47jq0WY/dfwZP7GfJx8kcoI5kzTOGLHS3tq9PmvyZ2S3xkOWlOBWsukHS2S3o1hgYIJYPC1x9iIYTgiN7olvKsLR2Kq171HWsDnCxiHdkQvxPUF+5Rdg/JFdhT/LIomZ/ikLhB08kUF9OV1bCkLKYBzXCBcbR3yejnMsrHc3IYv5VTIYsxPT3V7GtkOnrB82byEnt3kfocgTK8e9bJXbB9z4Sa+4lBrchVs9b9a8u+yenFtZ88HFoQWeFaScYAIDquvSLcR/sgwcCK+HfYo+tw2oSKTaocTL5g=="
+		},
+		{
+			"id": "uqtq814384hkvrd29r1i9laoec2heb",
+			"type": "totvs_server_protheus",
+			"name": "Nairobe",
+			"port": 7400,
+			"address": "10.249.80.90",
+			"buildVersion": "",
+			"secure": 0,
+			"includes": []
+		},
+		{
+			"id": "owsg2lu3kyhkvs3gvzpgijn7ssv49p",
+			"type": "totvs_server_protheus",
+			"name": "SHA",
+			"port": 9101,
+			"address": "192.168.0.10",
+			"buildVersion": "7.00.191205P",
+			"secure": true,
+			"includes": [
+				"C:\\Totvs\\includes_lobo"
+			],
+			"environments": [
+				"validacao"
+			],
+			"username": "ricardo",
+			"environment": "validacao",
+			"token": "djM6b3dzZzJsdTNreWhrdnMzZ3Z6cGdpam43c3N2NDlwOjE6MTkyLjE2OC4wLjEwOjkxMDE6MTo3LjAwLjE5MTIwNVA6Mw==:djE6dmFsaWRhY2FvOnJpY2FyZG86b0FrUUpLSk15ellxS0lab0ZPT1dVOUhJbDRYdGc3SEFjRS94cXk1RXN1VT0=|djI6MTYzNjQ2Mzc2MzowOjE6MQ==.KpNxmaDeP+hkHL2ZUf+V7z56FNJQ3KCJ+7YIxXAsJEBbY3frbkG0pI/wUkAVJUAi+WloQa1Gdt2uNLsLWApQU5sX1ehnILeKsyjmSGoSEjfj1NoHjleSAvYKd4s7RlyN5jKnBlH1nwqT8Um/6JCovUUujJbYT3rCs7PdPhQWX2AM/h4PUbbhRYCfaaJ4WUR+puSr55+2ibURJofJaJ31wSc5mAqeyJG0yMlJ59btQyupzgZmQSw3FzaebQsdE5A1q8pfGOFnytZEacitnrDIaxXWE/iQFJmVc7cpv4zBOy1BdE99miU2ZDuzwnHpJBL2prHaMkDBsyo7TmHZZHGXww=="
+		}
+	],
+	"savedTokens": [
+		[
+			"mvqc8b1jartkvr3tx4celtjsvbqnur:RODA",
+			{
+				"id": "mvqc8b1jartkvr3tx4celtjsvbqnur",
+				"token": "djM6bXZxYzhiMWphcnRrdnIzdHg0Y2VsdGpzdmJxbnVyOjE6MTguMjI4LjIyNy42MzoxMjU3OjE6Ny4wMC4xOTEyMDVQOjM=:djE6Uk9EQTpBRE1JTjp4Y0Z0MjhUSUVSdjgweFlwajlxUDcxN0Z3YUVxaGcrWVlQcnRkVHpNNGFzPQ==|djI6MTYzNjQwMjU3NTowOjE6MQ==.P1Q8NyPgIX+dXNwXQM1uIXia/NgeUP6wa9VHcQOtbQxS5ppJwWDY47jq0WY/dfwZP7GfJx8kcoI5kzTOGLHS3tq9PmvyZ2S3xkOWlOBWsukHS2S3o1hgYIJYPC1x9iIYTgiN7olvKsLR2Kq171HWsDnCxiHdkQvxPUF+5Rdg/JFdhT/LIomZ/ikLhB08kUF9OV1bCkLKYBzXCBcbR3yejnMsrHc3IYv5VTIYsxPT3V7GtkOnrB82byEnt3kfocgTK8e9bJXbB9z4Sa+4lBrchVs9b9a8u+yenFtZ88HFoQWeFaScYAIDquvSLcR/sgwcCK+HfYo+tw2oSKTaocTL5g=="
+			}
+		],
+		[
+			"owsg2lu3kyhkvs3gvzpgijn7ssv49p:validacao",
+			{
+				"id": "owsg2lu3kyhkvs3gvzpgijn7ssv49p",
+				"token": "djM6b3dzZzJsdTNreWhrdnMzZ3Z6cGdpam43c3N2NDlwOjE6MTkyLjE2OC4wLjEwOjkxMDE6MTo3LjAwLjE5MTIwNVA6Mw==:djE6dmFsaWRhY2FvOnJpY2FyZG86b0FrUUpLSk15ellxS0lab0ZPT1dVOUhJbDRYdGc3SEFjRS94cXk1RXN1VT0=|djI6MTYzNjQ2Mzc2MzowOjE6MQ==.KpNxmaDeP+hkHL2ZUf+V7z56FNJQ3KCJ+7YIxXAsJEBbY3frbkG0pI/wUkAVJUAi+WloQa1Gdt2uNLsLWApQU5sX1ehnILeKsyjmSGoSEjfj1NoHjleSAvYKd4s7RlyN5jKnBlH1nwqT8Um/6JCovUUujJbYT3rCs7PdPhQWX2AM/h4PUbbhRYCfaaJ4WUR+puSr55+2ibURJofJaJ31wSc5mAqeyJG0yMlJ59btQyupzgZmQSw3FzaebQsdE5A1q8pfGOFnytZEacitnrDIaxXWE/iQFJmVc7cpv4zBOy1BdE99miU2ZDuzwnHpJBL2prHaMkDBsyo7TmHZZHGXww=="
+			}
+		]
+	],
+	"lastConnectedServer": "owsg2lu3kyhkvs3gvzpgijn7ssv49p"
+}

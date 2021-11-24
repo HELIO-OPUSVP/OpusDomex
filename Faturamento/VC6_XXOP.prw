@@ -12,6 +12,9 @@
 ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
 ฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
 */
+// Mlhorias para o VC6_XXOP
+// Validar se a OP estแ encerrada
+// Validar se a TES atualiza estoque e se estแ com controle terceiros = Remessa
 
 User Function VC6_XXOP()
 Local _Retorno     := .T.

@@ -168,7 +168,7 @@ User Function ESTPRODOM(cVerPeca,lVerSldAtu,lVerEmbala)
 												SC2->C2_QUJE  -= QUERYSD3->D3_QUANT
 												SC2->C2_DATRF := CtoD('')
 												SC2->( msUnlock() )
-												If U_VALIDACAO() // HELIO 18/08/21
+												If U_VALIDACAO(HELIO,.F.) // HELIO 18/08/21
 													// If Colocado para detectar erro na gravação do SC2
 													If SC2->C2_QUJE <> (nC2QUJE-QUERYSD3->D3_QUANT) .or. !Empty(SC2->C2_DATRF)
 														cTxtMsg  := " Erro na gravação no C2_QUJE no estorno de etiquetas." + Chr(13)

@@ -1960,6 +1960,15 @@ Static Function fGerVldNFe(nRecTab1,oXmlTab1)
 				nQtdProd := Val(oItemTemp:_Prod:_qCom:TEXT)
 			EndIf
 
+
+			if U_VALIDACAO()  // MAURESI - 23/09/2021  -  REPLICA PRODUTO XML PARA PRODUTO QDO FOR FILIAL DOMEX
+				if _lDmxFilial
+						SB1->(dbSetOrder(1))
+						SB1->(dbSeek(xFilial("SB1")+cXmlProduto))
+				endif
+			endif
+
+
 			aadd(aLinha,{"D1_COD",SB1->B1_COD,Nil,Nil})
 
 			If _lTagPC .And. Type("oItemTemp:_Prod:_xPed") <> "U" .And. (cTab1)->&(cAls1+"_TIPDOC") == "N"
@@ -2057,6 +2066,7 @@ Static Function fGerVldNFe(nRecTab1,oXmlTab1)
 					else
 						_cOper		:= "01"
 					Endif
+
 
 					_cTesEnt	:= Alltrim( U_ReTesENT(_cProd,cCodCliFor,cLojCliFor,_cOper) )
 				
@@ -4286,6 +4296,14 @@ Static Function fLinkAssoc()
 						//³Retorna TES Inteligente³
 						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 						_cOper		:= oYYGetDad:aCols[nPrimPC+x-1][nYYOPER  ]
+
+						if U_VALIDACAO()  // MAURESI 23/09/2021
+						   if _lDmxFilial
+						   	aNewArray[ Len(aNewArray),nXXOPER   ] := "01"
+						   	_cOper	:= "01"
+						   endif
+						endif
+
 						_cTesEnt	:= U_ReTesENT(_cProd,cCodCliFor,cLojCliFor,_cOper)
 						aNewArray[ Len(aNewArray),nXXTES    ] :=  _cTesEnt
 						//
@@ -4311,6 +4329,14 @@ Static Function fLinkAssoc()
 						//³Retorna TES Inteligente³
 						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 						_cOper	:= oYYGetDad:aCols[nPrimPC+x-1][nYYOPER  ]
+
+						if U_VALIDACAO()  // MAURESI 23/09/2021
+						   if _lDmxFilial
+						   	aNewArray[ Len(aNewArray),nXXOPER   ] := "01"
+						   	_cOper	:= "01"
+						   endif
+						endif
+
 						_cTesEnt	:= U_ReTesENT(_cProd,cCodCliFor,cLojCliFor,_cOper)
 						aNewArray[ Len(aNewArray),nXXTES    ] := _cTesEnt
 						//
@@ -4362,6 +4388,14 @@ Static Function fLinkAssoc()
 				//³Retorna TES Inteligente³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 				_cOper	:= oYYGetDad:aCols[N2][nYYOPER  ]
+
+				if U_VALIDACAO()  // MAURESI 23/09/2021
+				   if _lDmxFilial
+					   	oXXGetDad:aCols[N1,nXXOPER   ] := "01"
+					   	_cOper	:= "01"
+				   endif
+				endif
+
 				_cTesEnt	:= U_ReTesENT(_cProd,cCodCliFor,cLojCliFor,_cOper)
 				oXXGetDad:aCols[N1,nXXTES ] :=  _cTesEnt
 				//
@@ -8785,6 +8819,11 @@ Static Function fRestSalva()
 							//³Retorna TES Inteligente³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 							_cOper	:= oYYGetDad:aCols[Y][nYYOPER  ]
+							if U_VALIDACAO()  // MAURESI 23/09/2021
+						   		if _lDmxFilial
+						   			_cOper	:= "01"
+						   		endif
+							endif
 							_cTesEnt	:= U_ReTesENT(_cProd,cCodCliFor,cLojCliFor,_cOper)
 							oXXGetDad:aCols[X,nXXTES    ] := _cTesEnt
 							//

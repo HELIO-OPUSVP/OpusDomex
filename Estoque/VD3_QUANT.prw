@@ -41,9 +41,9 @@ User Function VD3_QUANT(Param01,Param02,Param03,Param04)
 			OPVD3QUANT := Param01
 		EndIf
 
-		If alltrim(OPVD3QUANT)="89120 01001"
-			Return _Retorno
-		EndIf
+		// If alltrim(OPVD3QUANT)="89120 01001"
+		// 	Return _Retorno
+		// EndIf
 
 		If Empty(Param02)
 			nD3_QUANT := M->D3_QUANT
@@ -448,7 +448,8 @@ Static Function ProcRun()
 									cQuery += "	D_E_L_E_T_        = '' ), 0 ) ZE_PER_FOR                                                                           "
 
 									cQuery += "	FROM SD4010 SD4 (NOLOCK) JOIN SB1010 SB1 (NOLOCK) ON B1_COD = D4_COD                                               "
-									cQuery += "	WHERE SUBSTRING(D4_OP,1,11) = '"+Subs(aOps[nOp,1],1,11)+"' AND                                                     "
+									//cQuery += "	WHERE SUBSTRING(D4_OP,1,11) = '"+Subs(aOps[nOp,1],1,11)+"' AND                                                     "
+									cQuery += "	WHERE D4_OP = '"+Subs(aOps[nOp,1],1,11)+"' AND                                                     "
 									cQuery += "	SB1.B1_TIPO  <> 'MO' 						  		 AND                                                                  "
 									cQuery += "	SB1.B1_APROPRI <> 'I'                   		 AND                                                                  "
 									cQuery += "	SD4.D4_LOCAL = '97'					 		  		 AND                                                                  "
@@ -585,7 +586,7 @@ Static Function ProcRun()
 										(cAliasSD4)->(dbSkip())
 										nProcRegua++
 
-										IncProc("Validando pagamento de Materiais... " + Alltrim(Str(nProcRegua)) + "/" + Alltrim(Str(nTotRegProc))+"!")
+										IncProc("Validando pagamento de Materiais... " + Alltrim(Str(nProcRegua)) + "/" + Alltrim(Str(nTotRegProc)))
 
 									EndDo
 

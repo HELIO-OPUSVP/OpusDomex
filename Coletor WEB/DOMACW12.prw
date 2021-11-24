@@ -208,7 +208,7 @@ Static Function fValITEM() //MLS
 						dDtFatur := CtoD("")
 						If SZY->( dbSeek( xFilial() + Subs(_cItem,1,8) ) )
 							While !SZY->( EOF() )  .and. SZY->ZY_PEDIDO + SZY->ZY_ITEM == Subs(_cItem,1,8)
-								If Empty(SZY->ZY_NOTA)
+								If Empty(SZY->ZY_NOTA) .and. !Empty(SZY->ZY_PRVFAT)
 									dDtFatur := SZY->ZY_PRVFAT
 									Exit
 								EndIf
