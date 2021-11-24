@@ -1,9 +1,9 @@
 //------------------------------------------------------------------------------------//
-//Empresa...:
-//Funcao....:    
-//Autor.....:   
-//Data......:   
-//Uso.......:
+//Empresa...:  
+//Funcao....:     
+//Autor.....:  
+//Data......: 
+//Uso.......: 
 //Versao....:
 //------------------------------------------------------------------------------------//
 
@@ -16,22 +16,34 @@
 #INCLUDE "MSOBJECT.CH"
 
 *----------------------------------------------------------------------------*
-USER FUNCTION MRP002C() //GERACAO DE SC  MRP OFICIAL Filial 02
+USER FUNCTION MRPSIMUL() //GERACAO DE SC  MRP SIMULACAO Filial 02 
 	*----------------------------------------------------------------------------*
+	IF xFilial("SB2")=='01'
+		U_MRP002B()  // FILIAL 01
+	ENDIF
+
+	IF xFilial("SB2")=='02'
+		U_MRP002D()  // FILIAL 02
+	ENDIF
+
+	*----------------------------------------------------------------------------*
+USER FUNCTION MRP002D() //GERA��O DE SC simu�lacao FILIAL 02
+	*----------------------------------------------------------------------------*
+
 	Local aSizeAut    := MsAdvSize(,.F.,400)
 	Local aObjects	   := {}
-	local aDialogs    := {"Necessidade"}
-	local aDialogs2   := {"Entrada"}
-	local aDialogs3   := {"Saida"}
+	//local aDialogs    := {"Necessidade"}
+	//local aDialogs2   := {"Entrada"}
+	//local aDialogs3   := {"Saida"}
 
-	Local aTitles     := {OemToAnsi("Necessidade")}
-	Local aTitles2    := {OemToAnsi("Entrada")}
-	Local aTitles3    := {OemToAnsi("Saida")}
+	//Local aTitles     := {OemToAnsi("Necessidade")}
+	//Local aTitles2    := {OemToAnsi("Entrada")}
+	//Local aTitles3    := {OemToAnsi("Saida")}
 
-	Local aFldCBAtu   := Array(Len(aTitles))
-	Local aPages	   := {"HEADER"}
+	//Local aFldCBAtu   := Array(Len(aTitles))
+	//Local aPages	   := {"HEADER"}
 	LOCAL aButtons    :={}
-	Local dUlFat      := DATE()
+	//Local dUlFat      := DATE()
 
 	Private cPICT     :="@E 9,999,999.999"
 
@@ -55,7 +67,6 @@ USER FUNCTION MRP002C() //GERACAO DE SC  MRP OFICIAL Filial 02
 	Private cDESCRI  :=SPACE(40)
 	Private cIDMRP   :=SPACE(09)
 	Private dDATA    :=DATE()
-	Private cALTER   :=SPACE(40)
 
 	Private nSALDOI  :=0
 	Private nSALDOF  :=0
@@ -72,8 +83,6 @@ USER FUNCTION MRP002C() //GERACAO DE SC  MRP OFICIAL Filial 02
 	Private oDESCRI
 	Private oIDMRP
 	Private oDATA
-
-	Private oAlter // alternativo
 
 	Private onSLDATU
 	Private oSALDOI
@@ -140,69 +149,6 @@ USER FUNCTION MRP002C() //GERACAO DE SC  MRP OFICIAL Filial 02
 	private oMSG4  :=''
 	private oMSG4B :=''
 
-	private cMSG11   :=''
-	private cMSG11B  :=''
-	private cMSG11C  :=''
-
-	private oMSG11
-	private oMSG11B
-	private oMSG11C
-
-	private	oMSG21
-	private oMSG21b
-
-	private cMSG21   :=''
-	private cMSG21B  :=''
-
-	private cMSG31  :=''
-	private cMSG31B :=''
-	private oMSG31
-	private oMSG31B
-
-	private cMSG12   :=''
-	private cMSG12B  :=''
-	private cMSG12C  :=''
-
-	private oMSG12
-	private oMSG12B
-	private oMSG12C
-
-	private	oMSG22
-	private oMSG22b
-
-	private cMSG22   :=''
-	private cMSG22B  :=''
-
-	private cMSG32  :=''
-	private cMSG32B :=''
-	private oMSG32
-	private oMSG32B
-
-	//-------------------------
-	private cMSG13   :=''
-	private cMSG13B  :=''
-	private cMSG13C  :=''
-
-	private oMSG13
-	private oMSG13B
-	private oMSG13C
-
-	private	oMSG23
-	private oMSG23b
-
-	private cMSG23   :=''
-	private cMSG23B  :=''
-
-	private cMSG33  :=''
-	private cMSG33B :=''
-	private oMSG33
-	private oMSG33B
-
-	//-------------------------
-
-
-
-
 	Private cEOL    := "CHR(13)+CHR(10)"
 	Private nQTDITEM :=0
 	Private oQTDITEM
@@ -211,13 +157,7 @@ USER FUNCTION MRP002C() //GERACAO DE SC  MRP OFICIAL Filial 02
 	Private cFUCOM :=SPACE(06)
 	Private nQTDPRV:=0
 
-	*----------------------------------------------------------------------------*
-	//IF xFilial("SB2")=='02'
-	//	MSGALERT('MRP OFICIAL FILIAL 02 - EM DESENVOLVIMENTO')
-	//	RETURN
-	//	//U_MRP002D()  // FILIAL 02
-	//ENDIF
-	*----------------------------------------------------------------------------*
+	Private lprocmrp:=.F.
 
 	If Empty(cEOL)
 		cEOL := CHR(13)+CHR(10)
@@ -245,20 +185,20 @@ USER FUNCTION MRP002C() //GERACAO DE SC  MRP OFICIAL Filial 02
 	private aFilMRP   := {'              ','1 - Estamparia' }
 	private _cTIPOP   :=SPACE(02)
 
-	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||U_MRP02SCF()           ,'Aguarde','(F2)Gerar Solicitacao de Compras'  })  },"(F2)Gerar Solicitacao de Compras"  }) //
-	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||MATA110()              ,'Aguarde','Solicitacao de Compras SC'         })  },'Solicitacao de Compras SC'  }) //
-	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||MATA121()              ,'Aguarde','Pedido de Compras PC'              })  },'Pedido de Compras PC'  }) //
-	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||U_MRPSCPC()            ,'Aguarde','(F8)Saldo SCs e PCs'               })  },'(F8)Saldo SCs e PCs'  }) //
-	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||MRPZPRV(oGetSAI,cPRODUTO)       ,'Aguarde','(F9)Zerar Previsao Vendas'         })  },'(F9)Zerar Previsao Vendas'  }) //
-	aAdd( aButtons, {"NOTE"      , {||  MsAguarde({||U_MRPALTEF(oGetSAI,cPRODUTO) ,'Aguarde','(F10)Alternativo'                  })  },'(F10)Alternativo'  }) //
+	aAdd( aButtons, {"NOTE" , {||  MsAguarde({||U_MRP004SC()  ,'Aguarde','(F2)Gerar Solicitacao de Compras'  })  },"(F2)Gerar Solicitacao de Compras"}) //
+	aAdd( aButtons, {"NOTE" , {||  MsAguarde({||MATA110()     ,'Aguarde','Solicitacao de Compras SC'         })  },'Solicitacao de Compras SC'}) //
+	aAdd( aButtons, {"NOTE" , {||  MsAguarde({||MATA121()     ,'Aguarde','Pedido de Compras PC'              })  },'Pedido de Compras PC'}) //
+	aAdd( aButtons, {"NOTE" , {||  MsAguarde({||U_MRPSCPC()   ,'Aguarde','(F8)Saldo SCs e PCs'               })  },'(F8)Saldo SCs e PCs'}) //
+	aAdd( aButtons, {"NOTE" , {||  MsAguarde({||U_DCADSC4()    ,'Processar','Previsao de Venda(Simulacao) '   })  },'Previsao de Venda(Simulacao)'}) //
+	//aAdd( aButtons, {"NOTE" , {||  MsAguarde({||Xjob712()     ,'Processar','Processamento MRP (Simulacao) '  })  },'Processamento MRP (Simulacao)'}) //
+	aAdd( aButtons, {"NOTE" , {||  MsAguarde({||Xjob713D()     ,'Processar','Processamento MRP (NOVO) '     })  },'Processamento MRP (NOVO) '}) //
 
-	SetKey( VK_F2 , { || U_MRP02SCF() } )
-	SetKey( VK_F4 , { || U_MRP002EF() } )
-	SetKey( VK_F6 , { || U_MRP002SF() } )
-	SetKey( VK_F7 , { || U_MRPCHK0F(oGetNEC)  } )
-	SetKey( VK_F8 , { || U_MRPSCPCF()  } )
+	SetKey( VK_F2 , { || U_MRP004SC() } )
+	SetKey( VK_F4 , { || U_MRP004EN() } )
+	SetKey( VK_F6 , { || U_MRP004SA() } )
+	SetKey( VK_F7 , { || U_MRPCHK01(oGetNEC)  } )
+	SetKey( VK_F8 , { || U_MRPSCPC()  } )
 	SetKey( VK_F9 , { || MRPZPRV(oGetSAI,cPRODUTO)     } )
-	SetKey( VK_F10 , { || U_MRPALTEF(oGetSAI,cPRODUTO)  } )
 
 //----------------------------------------------------------------------------------------------------------------------------
 //NECESSIDADE
@@ -322,7 +262,7 @@ USER FUNCTION MRP002C() //GERACAO DE SC  MRP OFICIAL Filial 02
 	DEFINE FONT oFontBRW4 NAME "Arial" SIZE 0,-19 BOLD
 	DEFINE FONT oFontBRW5 NAME "Courier New" SIZE 0,-12 BOLD
 
-	DEFINE MSDIALOG oDlg FROM aSizeAut[7],0 TO aSizeAut[6],aSizeAut[5]  TITLE OemToAnsi("CENTRAL MRP DOMEX V2.0 Filial 02") OF oMainWnd PIXEL
+	DEFINE MSDIALOG oDlg FROM aSizeAut[7],0 TO aSizeAut[6],aSizeAut[5]  TITLE OemToAnsi("CENTRAL MRP DOMEX Filial 02 (Simulacao) v1.0") OF oMainWnd PIXEL
 	oDlg:oFont:=oFontBRW3
 //��������������������������������������������������������������Ŀ
 //�Define o cabecalho da rotina                                  �
@@ -331,11 +271,11 @@ USER FUNCTION MRP002C() //GERACAO DE SC  MRP OFICIAL Filial 02
 	@ 32,aPosGet[1,1] TO 65,aPosGet[1,1]+(aPosGet[1,1]*100) LABEL ""               OF oDlg PIXEL
 	nLin:=37
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*01) SAY OemToAnsi("Produto")                                OF oDlg PIXEL SIZE 040,010 FONT oFontBRW3
-	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*06) MSGET oProduto VAR cProduto  WHEN(.T.)   F3('ZHA001')   OF oDlg PIXEL SIZE 070,005 FONT oFontBRW3 Valid MRPVAL1('P')
+	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*06) MSGET oProduto VAR cProduto  WHEN(.T.)   F3('ZHD001')   OF oDlg PIXEL SIZE 070,005 FONT oFontBRW3 Valid MRPVAL1('P')
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*17) MSGET oDESCRI  VAR cDESCRI   WHEN(.F.)                  OF oDlg PIXEL SIZE 180,005 FONT oFontBRW3 //180   070
 
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*46) SAY OemToAnsi("Id MRP")                                 OF oDlg PIXEL SIZE 040,010 FONT oFontBRW3
-	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*51) MSGET oIDMRP   VAR cIdMRP    WHEN(.T.)   F3('ZHA002')   OF oDlg PIXEL SIZE 060,005 FONT oFontBRW3 Valid MRPVAL1('I')
+	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*51) MSGET oIDMRP   VAR cIdMRP    WHEN(.T.)   F3('ZHD002')   OF oDlg PIXEL SIZE 060,005 FONT oFontBRW3 Valid MRPVAL1('I')
 
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*62) SAY OemToAnsi("Filtro")                                 OF oDlg PIXEL SIZE 040,010 FONT oFontBRW3
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*66) combobox oFiltro var cFiltro items aFiltro              OF oDlg PIXEL SIZE 070,005 FONT oFontBRW3 Valid MRPVAL1('F')
@@ -347,8 +287,6 @@ USER FUNCTION MRP002C() //GERACAO DE SC  MRP OFICIAL Filial 02
 
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*01) SAY OemToAnsi("Data")                                   OF oDlg PIXEL SIZE 040,010 FONT oFontBRW3
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*06) MSGET oData    VAR dData     WHEN(.T.)                  OF oDlg PIXEL SIZE 070,005 FONT oFontBRW3
-	// ALTERNATIVO
-	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*17) SAY oAlter  VAR cAlter  OF oDlg PIXEL SIZE 180,010 FONT oFontBRW3 COLOR CLR_RED //180   070
 
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*46) SAY OemToAnsi("GrpMRP")                                 OF oDlg PIXEL SIZE 040,010 FONT oFontBRW3
 	@ nLin,aPosGet[1,1]+(aPosGet[1,1]*51) combobox oFilMRP var cFilMRP items aFilMRP              OF oDlg PIXEL SIZE 060,005 FONT oFontBRW3 Valid MRPVAL1('F')
@@ -363,7 +301,7 @@ USER FUNCTION MRP002C() //GERACAO DE SC  MRP OFICIAL Filial 02
 
 	oGetNEC   := (MsNewGetDados():New( 074,003,250,200,/*GD_UPDATE*/ ,/*"U_FAT002LOK()"*/  ,/*REQ_OPSD3()*/,/*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,/*Ffieldok*/,/*superdel*/,/*delok*/,oDlg,aHeadNec,aColsNec))
 	oGetNEC:oBrowse:Refresh()
-	oGetNEC:oBrowse:bChange:={||U_MRPCHG0F(oGetNEC,oGetSAI,oGetENT)}
+	oGetNEC:oBrowse:bChange:={||U_MRPCHG04(oGetNEC,oGetSAI,oGetENT)}
 
 	oGetENT   := (MsNewGetDados():New( 100,210,210,aPosGet[1,1]+(aPosGet[1,1]*100),/*GD_UPDATE */,/*"U_FAT002LOK()"*/  ,/*REQ_OPSD3()*/,/*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,/*Ffieldok*/,/*superdel*/,/*delok*/,oDlg,aHEADENT,aCOLSENT))
 	oGetENT:oBrowse:Refresh()
@@ -408,8 +346,8 @@ USER FUNCTION MRP002C() //GERACAO DE SC  MRP OFICIAL Filial 02
 	@ 291,aPosGet[1,1]+(aPosGet[1,1]*27.5) SAY oQTDITEM  VAR nQTDITEM  OF oDlg SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
 	Private nQTDITEM :=0
 
-	@ 257,195 BITMAP ResName "EMPILHADEIRA" OF oDlg Size 15,15 ON CLICK (U_MRP02SCF(oGetNEC))   NoBorder  Pixel
-	@ 277,198 BITMAP ResName "SELECT"       OF oDlg Size 45,45 ON CLICK (U_MRPCHK0F(oGetNEC))  NoBorder  Pixel
+	@ 257,195 BITMAP ResName "EMPILHADEIRA" OF oDlg Size 15,15 ON CLICK (U_MRP002SC(oGetNEC))   NoBorder  Pixel
+	@ 277,198 BITMAP ResName "SELECT"       OF oDlg Size 45,45 ON CLICK (U_MRPCHK01(oGetNEC))  NoBorder  Pixel
 
 	@ 255,003 TO 300,210 LABEL ""  OF oDlg PIXEL
 
@@ -429,13 +367,13 @@ STATIC FUNCTION MRP2FIM()
 RETURN(lRET)
 
 	*----------------------------------------------------------------------------*
-USER FUNCTION MRP002EF()
+USER FUNCTION MRP004EN()
 	*----------------------------------------------------------------------------*
 	MSGALERT('TELA CONSULTA ENTRADA - EM DESENVOLVIMENTO')
 RETURN
 
 	*----------------------------------------------------------------------------*
-USER FUNCTION MRP002SF()
+USER FUNCTION MRP004SA()
 	*----------------------------------------------------------------------------*
 	MSGALERT('TELA CONSULTA SAIDA - EM DESENVOLVIMENTO')
 RETURN
@@ -443,7 +381,15 @@ RETURN
 	*----------------------------------------------------------------------------*
 STATIC FUNCTION MRPVAL1(cTIPO)
 	*----------------------------------------------------------------------------*
-	MsAguarde( { || MRPVAL1B(cTIPO) } ,"Filtro", "Filtro MRP - Aguarde..." )
+	if lprocmrp==.t.
+		lprocmrp:=.f.
+		MSGALERT('Fim Processamento  - MRP Simulacao - Filial 02 ')
+		oDlg:End()
+		//U_MRP002B()
+	else
+		MsAguarde( { || MRPVAL1B(cTIPO) } ,"Filtro", "Filtro MRP - Aguarde..." )
+	endif
+
 RETURN
 
 	*----------------------------------------------------------------------------*
@@ -457,14 +403,14 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 		aColsNEC  := {}
 
 		cQueryID := " 	SELECT  B1_XFILMRP, "
-		cQueryID += " 	ZHC_PERIOD, ZHC_NUMMRP, ZHC_NIVEL, ZHC_PRODUT,ZHC_PRODSH,ZHC_OPC,ZHC_REVISA,ZHC_REVSHW,ZHC_TIPO,ZHC_TEXTO,ZHC_SALDOE, "
-		cQueryID += " 	ZHC_ENTRAD, ZHC_SAIDA , ZHC_SESTR, ZHC_SALDO ,ZHC_NEC,ZHC_DESC ,ZHC_TIPOP,ZHC_GRUPO,ZHC_XQTDE,ZHC_TXDT1,ZHC_TXDT2, "
-		cQueryID += " 	ZHC_LTIME,ZHC_IDMRP,ZHC_NUMSC,ZHC_HISTSC, ZHC_QTDSC, ZHC_DATASC,ZHC_STATUS,SUBSTRING(ZHC_FORN+' '+ZHC_LOJA+' '+ZHC_NFORN,1,30)  AS ZHC_NFORN,ZHC_UPRC "
-		cQueryID += " 	FROM ZHC010 (NOLOCK)  ,SB1010 (NOLOCK) "
-		cQueryID += " 	WHERE B1_COD=ZHC_PRODUT AND B1_FILIAL = '"+xFILIAL('SB1')+"' AND ZHC_FILIAL = '"+xFILIAL('ZHC')+"'"
-		cQueryID += " 	AND ZHC_IDMRP='"+cIDMRP+"' AND  SUBSTRING(ZHC_TIPO,1,2)='01' and ZHC_XQTDE>0  "
+		cQueryID += " 	ZHD_PERIOD, ZHD_NUMMRP, ZHD_NIVEL, ZHD_PRODUT,ZHD_PRODSH,ZHD_OPC,ZHD_REVISA,ZHD_REVSHW,ZHD_TIPO,ZHD_TEXTO,ZHD_SALDOE, "
+		cQueryID += " 	ZHD_ENTRAD, ZHD_SAIDA , ZHD_SESTR, ZHD_SALDO ,ZHD_NEC,ZHD_DESC ,ZHD_TIPOP,ZHD_GRUPO,ZHD_XQTDE,ZHD_TXDT1,ZHD_TXDT2, "
+		cQueryID += " 	ZHD_LTIME,ZHD_IDMRP,ZHD_NUMSC,ZHD_HISTSC, ZHD_QTDSC, ZHD_DATASC,ZHD_STATUS,SUBSTRING(ZHD_FORN+' '+ZHD_LOJA+' '+ZHD_NFORN,1,30)  AS ZHD_NFORN,ZHD_UPRC "
+		cQueryID += " 	FROM ZHD010 (NOLOCK)  ,SB1010 (NOLOCK) "
+		cQueryID += " 	WHERE B1_COD=ZHD_PRODUT AND B1_FILIAL = '"+xFILIAL('SB1')+"' AND ZHD_FILIAL = '"+XFILIAL('ZHD')+"  '"
+		cQueryID += " 	AND ZHD_IDMRP='"+cIDMRP+"' AND  SUBSTRING(ZHD_TIPO,1,2)='01' and ZHD_XQTDE>0  "
 		IF !EMPTY(cFUCOM)
-			cQueryID += " 	AND ZHC_FORN='"+cFUCOM+"'  "
+			cQueryID += " 	AND ZHD_FORN='"+cFUCOM+"'  "
 		ENDIF
 		cQueryID += " 	AND SB1010.D_E_L_E_T_='' "
 		IF SUBSTR(cFILMRP,1,1)=='1'
@@ -472,28 +418,28 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 		ENDIF
 
 		IF SUBSTR(cFILPRV,1,1)=='2' // QUERY RETIRAR PRODUTOS COM PREVISAO DE VENDA
-			cQueryID += " AND ZHC_PRODUT NOT IN ( "
-			cQueryID += " SELECT ZHC_PRODUT  "
-			cQueryID += " FROM ZHC010 ZHC (NOLOCK) "
-			cQueryID += " WHERE ZHC.ZHC_TIPO IN ('09-Previsao Venda')  "
-			cQueryID += " AND ZHC.D_E_L_E_T_='' "
-			cQueryID += " AND ZHC.ZHC_FILIAL='"+xFILIAL('ZHC')+"' "
-			cQueryID += " AND ZHC.ZHC_SAIDA>0 ) "
+			cQueryID += " AND ZHD_PRODUT NOT IN ( "
+			cQueryID += " SELECT ZHD_PRODUT  "
+			cQueryID += " FROM ZHD010 ZHD (NOLOCK) "
+			cQueryID += " WHERE ZHD.ZHD_TIPO IN ('09-Previsao Venda')  "
+			cQueryID += " AND ZHD.D_E_L_E_T_='' "
+			cQueryID += " AND ZHD.ZHD_FILIAL='"+xFILIAL('ZHD')+"' "
+			cQueryID += " AND ZHD.ZHD_SAIDA>0 ) "
 		ENDIF
 
 		IF SUBSTR(cFILEMP,1,1)=='2'//com empenho
-			cQueryID += " AND ZHC_PRODUT IN( SELECT D4_COD FROM SD4010 (NOLOCK) "
+			cQueryID += " AND ZHD_PRODUT IN( SELECT D4_COD FROM SD4010 (NOLOCK) "
 			cQueryID += " WHERE D4_FILIAL='"+xFILIAL('SD4')+"' AND D4_QUANT>0 AND SD4010.D_E_L_E_T_='' "
 			cQueryID += " GROUP BY D4_COD ) "
 		ENDIF
 
 		IF SUBSTR(cFILEMP,1,1)=='3'//sem empenho
-			cQueryID += " AND ZHC_PRODUT NOT IN( SELECT D4_COD FROM SD4010 (NOLOCK) "
+			cQueryID += " AND ZHD_PRODUT NOT IN( SELECT D4_COD FROM SD4010 (NOLOCK) "
 			cQueryID += " WHERE D4_FILIAL='"+xFILIAL('SD4')+"' AND D4_QUANT>0 AND SD4010.D_E_L_E_T_='' "
 			cQueryID += " GROUP BY D4_COD ) "
 		ENDIF
 
-		cQueryID += " 	ORDER BY  ZHC_PRODUT,ZHC_TXDT2 "
+		cQueryID += " 	ORDER BY  ZHD_PRODUT,ZHD_TXDT2 "
 
 		TCQUERY cQueryID NEW ALIAS "TR1"
 		TR1->( dbGoTop() )
@@ -501,53 +447,49 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 			//--------------------------------- filtro
 			_nNEC2 :=0
 			IF SUBSTR(cFILTRO,1,1)<>'1'
-				cQUERYSLD:="	SELECT ZHC_PRODUT , "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' AND B2_FILIAL='"+xFILIAL('SB2')+"' ) AS  EST, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND C1_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND  C1_QUANT > C1_QUJE) AS  SOL, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND C7_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND  C7_QUANT > C7_QUJE) AS  PC, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) AS  EMP, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('06-Ordem Producao') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  OP, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHC.ZHC_PRODUT AND C6_BLQ<>'R')  AS  PV, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND ZHC_TIPO IN ('09-Previsao Venda')  AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  PREV, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND ZHC_TIPO IN ('08-Saida Estrutura') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  SAES, "
+				cQUERYSLD:="	SELECT ZHD_PRODUT , "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='' AND B2_FILIAL='"+xFILIAL('SB2')+"' ) AS  EST, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND C1_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND  C1_QUANT > C1_QUJE) AS  SOL, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND C7_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND  C7_QUANT > C7_QUJE) AS  PC, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='' ) AS  EMP, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('06-Ordem Producao') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  OP, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHD.ZHD_PRODUT AND C6_BLQ<>'R')  AS  PV, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND ZHD_TIPO IN ('09-Previsao Venda')  AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  PREV, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND ZHD_TIPO IN ('08-Saida Estrutura') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  SAES, "
 
-				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='') + "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND C1_QUANT > C1_QUJE) + "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND C7_QUANT > C7_QUJE ) - "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) + "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('06-Ordem Producao') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) - "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHC.ZHC_PRODUT  AND C6_BLQ<>'R') - "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('09-Previsao Venda')  AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS FINAL "// -       "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='') + "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND C1_QUANT > C1_QUJE) + "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND C7_QUANT > C7_QUJE ) - "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='' ) + "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('06-Ordem Producao') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) - "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHD.ZHD_PRODUT  AND C6_BLQ<>'R') - "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('09-Previsao Venda')  AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS FINAL "// -       "
 
-				cQUERYSLD+="	FROM ZHC010 (NOLOCK) ZHC "
-				cQUERYSLD+="	WHERE ZHC_PRODUT='"+ALLTRIM(TR1->ZHC_PRODUT)+"'  AND ZHC_FILIAL = '"+xFILIAL('ZHC')+"' AND D_E_L_E_T_='' "
-				cQUERYSLD+="	GROUP BY ZHC_PRODUT "
-				cQUERYSLD+="	ORDER BY ZHC_PRODUT "
+				cQUERYSLD+="	FROM ZHD010 (NOLOCK) ZHD "
+				cQUERYSLD+="	WHERE ZHD_PRODUT='"+ALLTRIM(TR1->ZHD_PRODUT)+"'  AND ZHD_FILIAL = '"+xFILIAL('ZHD')+"' AND D_E_L_E_T_='' "
+				cQUERYSLD+="	GROUP BY ZHD_PRODUT "
+				cQUERYSLD+="	ORDER BY ZHD_PRODUT "
 
 				TCQUERY cQUERYSLD NEW ALIAS "TRS"
 				TRS->( dbGoTop() )
 				_nNEC2 :=TRS->FINAL
 				TRS->(DBCLOSEAREA())
-				cALTER:=POSICIONE('SB1',1,xFILIAL('SB1')+ALLTRIM(TR1->ZHC_PRODUT),'B1_ALTER')
-				IF !EMPTY(cALTER)
-					cALTER :='Alternativo: '+ AllTrim(cALTER)
-				ENDIF
 			ENDIF
 			//---------------------------------
 
 			lSTATUS :=.F.
-			IF TR1->ZHC_STATUS=='X' .OR. TR1->ZHC_STATUS=='S'  //SC CHECK
+			IF TR1->ZHD_STATUS=='X' .OR. TR1->ZHD_STATUS=='S'  //SC CHECK
 				lSTATUS :=.T.
 			ENDIF
-			IF TR1->ZHC_XQTDE >0
+			IF TR1->ZHD_XQTDE >0
 				IF (SUBSTR(cFILTRO,1,1)=='1') .OR. (SUBSTR(cFILTRO,1,1)=='2' .and. _nNEC2 <0) .OR. (SUBSTR(cFILTRO,1,1)=='3' .and. _nNEC2 >=0)
-					AADD(aColsNEC,{TR1->ZHC_PRODUT,;
-						TR1->ZHC_TXDT1,;
-						TR1->ZHC_XQTDE,;
-						TR1->ZHC_XQTDE*TR1->ZHC_UPRC,;
-						TR1->ZHC_NFORN,;
-						TR1->ZHC_IDMRP,;
-						TR1->ZHC_STATUS,;
+					AADD(aColsNEC,{TR1->ZHD_PRODUT,;
+						TR1->ZHD_TXDT1,;
+						TR1->ZHD_XQTDE,;
+						TR1->ZHD_XQTDE*TR1->ZHD_UPRC,;
+						TR1->ZHD_NFORN,;
+						TR1->ZHD_IDMRP,;
+						TR1->ZHD_STATUS,;
 						lSTATUS})//.f. POSICAO 8Flag de Delecao]
 					nQTDITEM++
 				ENDIF
@@ -577,14 +519,14 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 		aColsNEC  := {}
 
 		cQueryID := " 	SELECT  B1_XFILMRP, "
-		cQueryID += " 	ZHC_PERIOD, ZHC_NUMMRP, ZHC_NIVEL, ZHC_PRODUT,ZHC_PRODSH,ZHC_OPC,ZHC_REVISA,ZHC_REVSHW,ZHC_TIPO,ZHC_TEXTO,ZHC_SALDOE, "
-		cQueryID += " 	ZHC_ENTRAD, ZHC_SAIDA , ZHC_SESTR, ZHC_SALDO ,ZHC_NEC,ZHC_DESC ,ZHC_TIPOP,ZHC_GRUPO,ZHC_XQTDE,ZHC_TXDT1,ZHC_TXDT2, "
-		cQueryID += " 	ZHC_LTIME,ZHC_IDMRP,ZHC_NUMSC,ZHC_HISTSC, ZHC_QTDSC, ZHC_DATASC,ZHC_STATUS,SUBSTRING(ZHC_FORN+' '+ZHC_LOJA+' '+ZHC_NFORN,1,30)  AS ZHC_NFORN,ZHC_UPRC "
-		cQueryID += " 	FROM ZHC010 (NOLOCK)  ,SB1010 (NOLOCK) "
-		cQueryID += " 	WHERE B1_COD=ZHC_PRODUT AND B1_FILIAL = '"+xFILIAL('SB1')+"' AND ZHC_FILIAL = '"+xFILIAL('ZHC')+"' "
-		cQueryID += " 	AND  ZHC_PRODUT='"+cPRODUTO+"' AND SUBSTRING(ZHC_TIPO,1,2)='01' "
+		cQueryID += " 	ZHD_PERIOD, ZHD_NUMMRP, ZHD_NIVEL, ZHD_PRODUT,ZHD_PRODSH,ZHD_OPC,ZHD_REVISA,ZHD_REVSHW,ZHD_TIPO,ZHD_TEXTO,ZHD_SALDOE, "
+		cQueryID += " 	ZHD_ENTRAD, ZHD_SAIDA , ZHD_SESTR, ZHD_SALDO ,ZHD_NEC,ZHD_DESC ,ZHD_TIPOP,ZHD_GRUPO,ZHD_XQTDE,ZHD_TXDT1,ZHD_TXDT2, "
+		cQueryID += " 	ZHD_LTIME,ZHD_IDMRP,ZHD_NUMSC,ZHD_HISTSC, ZHD_QTDSC, ZHD_DATASC,ZHD_STATUS,SUBSTRING(ZHD_FORN+' '+ZHD_LOJA+' '+ZHD_NFORN,1,30)  AS ZHD_NFORN,ZHD_UPRC "
+		cQueryID += " 	FROM ZHD010 (NOLOCK)  ,SB1010 (NOLOCK) "
+		cQueryID += " 	WHERE B1_COD=ZHD_PRODUT AND B1_FILIAL = '"+xFILIAL('SB1')+"' AND ZHD_FILIAL = ' "+xFILIAL('ZHD')+"' "
+		cQueryID += " 	AND  ZHD_PRODUT='"+cPRODUTO+"' AND SUBSTRING(ZHD_TIPO,1,2)='01' "
 		IF !EMPTY(cFUCOM)
-			cQueryID += " 	AND ZHC_FORN='"+cFUCOM+"'  "
+			cQueryID += " 	AND ZHD_FORN='"+cFUCOM+"'  "
 		ENDIF
 		cQueryID += " 	AND SB1010.D_E_L_E_T_='' "
 		IF SUBSTR(cFILMRP,1,1)=='1'
@@ -592,28 +534,28 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 		ENDIF
 
 		IF SUBSTR(cFILEMP,1,1)=='2'//com empenho
-			cQueryID += " AND ZHC_PRODUT IN( SELECT D4_COD FROM SD4010 (NOLOCK) "
+			cQueryID += " AND ZHD_PRODUT IN( SELECT D4_COD FROM SD4010 (NOLOCK) "
 			cQueryID += " WHERE D4_FILIAL='"+xFILIAL('SD4')+"' AND D4_QUANT>0 AND SD4010.D_E_L_E_T_='' "
 			cQueryID += " GROUP BY D4_COD ) "
 		ENDIF
 
 		IF SUBSTR(cFILEMP,1,1)=='3'//sem empenho
-			cQueryID += " AND ZHC_PRODUT NOT IN( SELECT D4_COD FROM SD4010 (NOLOCK) "
+			cQueryID += " AND ZHD_PRODUT NOT IN( SELECT D4_COD FROM SD4010 (NOLOCK) "
 			cQueryID += " WHERE D4_FILIAL='"+xFILIAL('SD4')+"' AND D4_QUANT>0 AND SD4010.D_E_L_E_T_='' "
 			cQueryID += " GROUP BY D4_COD ) "
 		ENDIF
 
 		IF SUBSTR(cFILPRV,1,1)=='2' // QUERY RETIRAR PRODUTOS COM PREVISAO DE VENDA
-			cQueryID += " AND ZHC_PRODUT NOT IN ( "
-			cQueryID += " SELECT ZHC_PRODUT  "
-			cQueryID += " FROM ZHC010 ZHC (NOLOCK) "
-			cQueryID += " WHERE ZHC.ZHC_TIPO IN ('09-Previsao Venda')  "
-			cQueryID += " AND ZHC.D_E_L_E_T_='' "
-			cQueryID += " AND ZHC.ZHC_FILIAL='"+xFILIAL('ZHC')+"' "
-			cQueryID += " AND ZHC.ZHC_SAIDA>0 ) "
+			cQueryID += " AND ZHD_PRODUT NOT IN ( "
+			cQueryID += " SELECT ZHD_PRODUT  "
+			cQueryID += " FROM ZHD010 ZHD (NOLOCK) "
+			cQueryID += " WHERE ZHD.ZHD_TIPO IN ('09-Previsao Venda')  "
+			cQueryID += " AND ZHD.D_E_L_E_T_='' "
+			cQueryID += " AND ZHD.ZHD_FILIAL='"+xFILIAL('ZHD')+"' "
+			cQueryID += " AND ZHD.ZHD_SAIDA>0 ) "
 		ENDIF
 
-		cQueryID += " 	ORDER BY  ZHC_PRODUT,ZHC_TXDT2 "
+		cQueryID += " 	ORDER BY  ZHD_PRODUT,ZHD_TXDT2 "
 
 		TCQUERY cQueryID NEW ALIAS "TR1"
 		TR1->( dbGoTop() )
@@ -621,28 +563,28 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 			//--------------------------------- filtro
 			_nNEC2 :=0
 			IF SUBSTR(cFILTRO,1,1)<>'1'
-				cQUERYSLD:="	SELECT ZHC_PRODUT , "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) AS  EST, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK)  WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND  C1_QUANT > C1_QUJE) AS  SOL, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK)  WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND  C7_QUANT > C7_QUJE) AS  PC, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) AS  EMP, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('06-Ordem Producao') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  OP, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHC.ZHC_PRODUT AND C6_BLQ<>'R')  AS  PV, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('09-Previsao Venda')  AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  PREV, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('08-Saida Estrutura') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  SAES, "
+				cQUERYSLD:="	SELECT ZHD_PRODUT , "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='' ) AS  EST, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK)  WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND  C1_QUANT > C1_QUJE) AS  SOL, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK)  WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND  C7_QUANT > C7_QUJE) AS  PC, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='' ) AS  EMP, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('06-Ordem Producao') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  OP, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHD.ZHD_PRODUT AND C6_BLQ<>'R')  AS  PV, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('09-Previsao Venda')  AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  PREV, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('08-Saida Estrutura') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  SAES, "
 
-				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='') + "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND C1_QUANT > C1_QUJE) + "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND C7_QUANT > C7_QUJE ) - "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) + "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('06-Ordem Producao') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) - "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHC.ZHC_PRODUT  AND C6_BLQ<>'R') - "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('09-Previsao Venda')  AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS FINAL "// -       "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='') + "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND C1_QUANT > C1_QUJE) + "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND C7_QUANT > C7_QUJE ) - "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='' ) + "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('06-Ordem Producao') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) - "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHD.ZHD_PRODUT  AND C6_BLQ<>'R') - "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('09-Previsao Venda')  AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS FINAL "// -       "
 
-				cQUERYSLD+="	FROM ZHC010 (NOLOCK) ZHC "
-				cQUERYSLD+="	WHERE ZHC_PRODUT='"+ALLTRIM(TR1->ZHC_PRODUT)+"' AND ZHC_FILIAL = '"+xFILIAL('ZHC')+"'  "
-				cQUERYSLD+="	GROUP BY ZHC_PRODUT "
-				cQUERYSLD+="	ORDER BY ZHC_PRODUT "
+				cQUERYSLD+="	FROM ZHD010 (NOLOCK) ZHD "
+				cQUERYSLD+="	WHERE ZHD_PRODUT='"+ALLTRIM(TR1->ZHD_PRODUT)+"' AND ZHD_FILIAL = '"+xFILIAL('ZHD')+"'  "
+				cQUERYSLD+="	GROUP BY ZHD_PRODUT "
+				cQUERYSLD+="	ORDER BY ZHD_PRODUT "
 
 				TCQUERY cQUERYSLD NEW ALIAS "TRS"
 				TRS->( dbGoTop() )
@@ -652,18 +594,18 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 			//---------------------------------
 
 			lSTATUS :=.F.
-			IF TR1->ZHC_STATUS=='X' .OR. TR1->ZHC_STATUS=='S'  //SC CHECK
+			IF TR1->ZHD_STATUS=='X' .OR. TR1->ZHD_STATUS=='S'  //SC CHECK
 				lSTATUS :=.T.
 			ENDIF
-			IF TR1->ZHC_XQTDE >0
+			IF TR1->ZHD_XQTDE >0
 				IF (SUBSTR(cFILTRO,1,1)=='1') .OR. (SUBSTR(cFILTRO,1,1)=='2' .and. _nNEC2 <0) .OR. (SUBSTR(cFILTRO,1,1)=='3' .and. _nNEC2 >=0)
-					AADD(aColsNEC,{TR1->ZHC_PRODUT,;
-						TR1->ZHC_TXDT1,;
-						TR1->ZHC_XQTDE,;
-						TR1->ZHC_XQTDE*TR1->ZHC_UPRC,;
-						TR1->ZHC_NFORN,;
-						TR1->ZHC_IDMRP,;
-						TR1->ZHC_STATUS,;
+					AADD(aColsNEC,{TR1->ZHD_PRODUT,;
+						TR1->ZHD_TXDT1,;
+						TR1->ZHD_XQTDE,;
+						TR1->ZHD_XQTDE*TR1->ZHD_UPRC,;
+						TR1->ZHD_NFORN,;
+						TR1->ZHD_IDMRP,;
+						TR1->ZHD_STATUS,;
 						lSTATUS})//.f. POSICAO 8Flag de Delecao]
 					nQTDITEM++
 				ENDIF
@@ -685,7 +627,7 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 		TR1->(DBCLOSEAREA())
 		oGetNEC:ACOLS:=aCOLSNEC
 		oGetNEC:oBrowse:Refresh()
-		//U_MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
+		//U_MRPCHG01(oGetNEC,oGetSAI,oGetENT)
 		cIDMRP  :=space(09)
 		oIDMRP:refresh()
 		oProduto:refresh()
@@ -695,15 +637,15 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 		aColsNEC  := {}
 
 		cQueryID := " 	SELECT  B1_XFILMRP, "
-		cQueryID += " 	ZHC_PERIOD, ZHC_NUMMRP, ZHC_NIVEL, ZHC_PRODUT,ZHC_PRODSH,ZHC_OPC,ZHC_REVISA,ZHC_REVSHW,ZHC_TIPO,ZHC_TEXTO,ZHC_SALDOE, "
-		cQueryID += " 	ZHC_ENTRAD, ZHC_SAIDA , ZHC_SESTR, ZHC_SALDO ,ZHC_NEC,ZHC_DESC ,ZHC_TIPOP,ZHC_GRUPO,ZHC_XQTDE,ZHC_TXDT1,ZHC_TXDT2, "
-		cQueryID += " 	ZHC_LTIME,ZHC_IDMRP,ZHC_NUMSC,ZHC_HISTSC, ZHC_QTDSC, ZHC_DATASC,ZHC_STATUS,SUBSTRING(ZHC_FORN+' '+ZHC_LOJA+' '+ZHC_NFORN,1,30)  AS ZHC_NFORN,ZHC_UPRC "
-		cQueryID += " 	FROM ZHC010 (NOLOCK)  ,SB1010 (NOLOCK) "
-		cQueryID += " 	WHERE B1_COD=ZHC_PRODUT AND B1_FILIAL = '"+xFILIAL('SB1')+"' AND ZHC_FILIAL = '"+xFILIAL('ZHC')+"'  "
-		cQueryID += " 	AND   SUBSTRING(ZHC_TIPO,1,2)='01' AND ZHC_IDMRP<>'' "
+		cQueryID += " 	ZHD_PERIOD, ZHD_NUMMRP, ZHD_NIVEL, ZHD_PRODUT,ZHD_PRODSH,ZHD_OPC,ZHD_REVISA,ZHD_REVSHW,ZHD_TIPO,ZHD_TEXTO,ZHD_SALDOE, "
+		cQueryID += " 	ZHD_ENTRAD, ZHD_SAIDA , ZHD_SESTR, ZHD_SALDO ,ZHD_NEC,ZHD_DESC ,ZHD_TIPOP,ZHD_GRUPO,ZHD_XQTDE,ZHD_TXDT1,ZHD_TXDT2, "
+		cQueryID += " 	ZHD_LTIME,ZHD_IDMRP,ZHD_NUMSC,ZHD_HISTSC, ZHD_QTDSC, ZHD_DATASC,ZHD_STATUS,SUBSTRING(ZHD_FORN+' '+ZHD_LOJA+' '+ZHD_NFORN,1,30)  AS ZHD_NFORN,ZHD_UPRC "
+		cQueryID += " 	FROM ZHD010 (NOLOCK)  ,SB1010 (NOLOCK) "
+		cQueryID += " 	WHERE B1_COD=ZHD_PRODUT AND B1_FILIAL = '"+xFILIAL('SB1')+"' AND ZHD_FILIAL = '"+xFILIAL('ZHD')+"'  "
+		cQueryID += " 	AND   SUBSTRING(ZHD_TIPO,1,2)='01' AND ZHD_IDMRP<>'' "
 
 		IF !EMPTY(cFUCOM)
-			cQueryID += " 	AND ZHC_FORN='"+cFUCOM+"'  "
+			cQueryID += " 	AND ZHD_FORN='"+cFUCOM+"'  "
 		ENDIF
 		cQueryID += " 	AND SB1010.D_E_L_E_T_='' "
 		IF SUBSTR(cFILMRP,1,1)=='1'
@@ -711,28 +653,28 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 		ENDIF
 
 		IF SUBSTR(cFILEMP,1,1)=='2'//com empenho
-			cQueryID += " AND ZHC_PRODUT IN( SELECT D4_COD FROM SD4010 (NOLOCK) "
+			cQueryID += " AND ZHD_PRODUT IN( SELECT D4_COD FROM SD4010 (NOLOCK) "
 			cQueryID += " WHERE D4_FILIAL='"+xFILIAL('SD4')+"' AND D4_QUANT>0 AND SD4010.D_E_L_E_T_='' "
 			cQueryID += " GROUP BY D4_COD ) "
 		ENDIF
 
 		IF SUBSTR(cFILEMP,1,1)=='3'//sem empenho
-			cQueryID += " AND ZHC_PRODUT NOT IN( SELECT D4_COD FROM SD4010 (NOLOCK) "
+			cQueryID += " AND ZHD_PRODUT NOT IN( SELECT D4_COD FROM SD4010 (NOLOCK) "
 			cQueryID += " WHERE D4_FILIAL='"+xFILIAL('SD4')+"' AND D4_QUANT>0 AND SD4010.D_E_L_E_T_='' "
 			cQueryID += " GROUP BY D4_COD ) "
 		ENDIF
 
 		IF SUBSTR(cFILPRV,1,1)=='2' // QUERY RETIRAR PRODUTOS COM PREVISAO DE VENDA
-			cQueryID += " AND ZHC_PRODUT NOT IN ( "
-			cQueryID += " SELECT ZHC_PRODUT  "
-			cQueryID += " FROM ZHC010 ZHC (NOLOCK) "
-			cQueryID += " WHERE ZHC.ZHC_TIPO IN ('09-Previsao Venda')  "
-			cQueryID += " AND ZHC.D_E_L_E_T_='' "
-			cQueryID += " AND ZHC.ZHC_FILIAL='"+xFILIAL('ZHC')+"' "
-			cQueryID += " AND ZHC.ZHC_SAIDA>0 ) "
+			cQueryID += " AND ZHD_PRODUT NOT IN ( "
+			cQueryID += " SELECT ZHD_PRODUT  "
+			cQueryID += " FROM ZHD010 ZHD (NOLOCK) "
+			cQueryID += " WHERE ZHD.ZHD_TIPO IN ('09-Previsao Venda')  "
+			cQueryID += " AND ZHD.D_E_L_E_T_='' "
+			cQueryID += " AND ZHD.ZHD_FILIAL='"+xFILIAL('ZHD')+"' "
+			cQueryID += " AND ZHD.ZHD_SAIDA>0 ) "
 		ENDIF
 
-		cQueryID += " 	ORDER BY  ZHC_PRODUT,ZHC_TXDT2 "
+		cQueryID += " 	ORDER BY  ZHD_PRODUT,ZHD_TXDT2 "
 
 		TCQUERY cQueryID NEW ALIAS "TR1"
 		TR1->( dbGoTop() )
@@ -740,28 +682,28 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 			//--------------------------------- filtro
 			_nNEC2 :=0
 			IF SUBSTR(cFILTRO,1,1)<>'1'
-				cQUERYSLD:="	SELECT ZHC_PRODUT , "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0)              FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) AS  EST, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)     FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND  C1_QUANT > C1_QUJE) AS  SOL, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)     FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND  C7_QUANT > C7_QUJE) AS  PC, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0)              FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) AS  EMP, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)            FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"'  AND  ZHC_TIPO IN ('06-Ordem Producao') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  OP, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHC.ZHC_PRODUT AND C6_BLQ<>'R')  AS  PV, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)            FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"'  AND  ZHC_TIPO IN ('09-Previsao Venda')  AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  PREV, "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)            FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"'  AND  ZHC_TIPO IN ('08-Saida Estrutura') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  SAES, "
+				cQUERYSLD:="	SELECT ZHD_PRODUT , "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0)              FROM SB2010 (NOLOCK) WHERE B2_FILIAL ='"+xFILIAL('SB2')+"' AND  B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='' ) AS  EST, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)     FROM SC1010 (NOLOCK) WHERE C1_FILIAL ='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND  C1_QUANT > C1_QUJE) AS  SOL, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)     FROM SC7010 (NOLOCK) WHERE C7_FILIAL ='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND  C7_QUANT > C7_QUJE) AS  PC, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0)              FROM SB2010 (NOLOCK) WHERE B2_FILIAL ='"+xFILIAL('SB2')+"' AND  B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='' ) AS  EMP, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)            FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('06-Ordem Producao') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  OP, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL ='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHD.ZHD_PRODUT AND C6_BLQ<>'R')  AS  PV, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)            FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('09-Previsao Venda')  AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  PREV, "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)            FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('08-Saida Estrutura') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  SAES, "
 
-				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0)              FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='') + "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)     FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND C1_QUANT > C1_QUJE) + "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)     FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND C7_QUANT > C7_QUJE ) - "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0)              FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) + "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)            FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"'  AND  ZHC_TIPO IN ('06-Ordem Producao') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) - "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHC.ZHC_PRODUT  AND C6_BLQ<>'R') - "
-				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)            FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"'  AND  ZHC_TIPO IN ('09-Previsao Venda')  AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS FINAL "// -       "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0)              FROM SB2010 (NOLOCK) WHERE B2_FILIAL ='"+xFILIAL('SB2')+"' AND  B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='') + "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)     FROM SC1010 (NOLOCK) WHERE C1_FILIAL ='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND C1_QUANT > C1_QUJE) + "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)     FROM SC7010 (NOLOCK) WHERE C7_FILIAL ='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND C7_QUANT > C7_QUJE ) - "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0)              FROM SB2010 (NOLOCK) WHERE B2_FILIAL ='"+xFILIAL('SB2')+"' AND  B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='' ) + "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)            FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('06-Ordem Producao') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) - "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL ='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHD.ZHD_PRODUT  AND C6_BLQ<>'R') - "
+				cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)            FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('09-Previsao Venda')  AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS FINAL "// -       "
 
-				cQUERYSLD+="	FROM ZHC010 (NOLOCK) ZHC "
-				cQUERYSLD+="	WHERE ZHC_PRODUT='"+ALLTRIM(TR1->ZHC_PRODUT)+"' AND ZHC_FILIAL = '"+xFILIAL('ZHC')+"' AND ZHC.D_E_L_E_T_=''"
-				cQUERYSLD+="	GROUP BY ZHC_PRODUT "
-				cQUERYSLD+="	ORDER BY ZHC_PRODUT "
+				cQUERYSLD+="	FROM ZHD010 (NOLOCK) ZHD "
+				cQUERYSLD+="	WHERE ZHD_PRODUT='"+ALLTRIM(TR1->ZHD_PRODUT)+"' AND ZHD_FILIAL = '"+xFILIAL('ZHD')+"' AND ZHD.D_E_L_E_T_=''"
+				cQUERYSLD+="	GROUP BY ZHD_PRODUT "
+				cQUERYSLD+="	ORDER BY ZHD_PRODUT "
 
 				TCQUERY cQUERYSLD NEW ALIAS "TRS"
 				TRS->( dbGoTop() )
@@ -770,42 +712,48 @@ STATIC FUNCTION MRPVAL1B(cTIPO)
 			ENDIF
 			//---------------------------------
 			lSTATUS :=.F.
-			IF TR1->ZHC_STATUS=='X' .OR. TR1->ZHC_STATUS=='S'  //SC CHECK
+			IF TR1->ZHD_STATUS=='X' .OR. TR1->ZHD_STATUS=='S'  //SC CHECK
 				lSTATUS :=.T.
 			ENDIF
-			IF TR1->ZHC_XQTDE >0
+			IF TR1->ZHD_XQTDE >0
 				IF (SUBSTR(cFILTRO,1,1)=='1') .OR. (SUBSTR(cFILTRO,1,1)=='2' .and. _nNEC2 <0) .OR. (SUBSTR(cFILTRO,1,1)=='3' .and. _nNEC2 >=0)
-					AADD(aColsNEC,{TR1->ZHC_PRODUT,;
-						TR1->ZHC_TXDT1,;
-						TR1->ZHC_XQTDE,;
-						TR1->ZHC_XQTDE*TR1->ZHC_UPRC,;
-						TR1->ZHC_NFORN,;
-						TR1->ZHC_IDMRP,;
-						TR1->ZHC_STATUS,;
+					AADD(aColsNEC,{TR1->ZHD_PRODUT,;
+						TR1->ZHD_TXDT1,;
+						TR1->ZHD_XQTDE,;
+						TR1->ZHD_XQTDE*TR1->ZHD_UPRC,;
+						TR1->ZHD_NFORN,;
+						TR1->ZHD_IDMRP,;
+						TR1->ZHD_STATUS,;
 						lSTATUS})//.f. POSICAO 8Flag de Delecao]
 					nQTDITEM++
 				ENDIF
 			ENDIF
 			TR1->(DBSKIP())
 		ENDDO
+		IF LEN(aColsNEC)==0   //MLS 12/02/2020
+			AADD(aColsNEC,{"",;
+				"",;
+				0,;
+				0,;
+				"",;
+				"",;
+				"",;
+				.T.})//.f. POSICAO 8Flag de Delecao]
+			MSGALERT("Id MRP Nao Encontrado No CUBO MRP")
+			cPRODUTO:=space(15)
+		ENDIF
 		TR1->(DBCLOSEAREA())
 		oGetNEC:ACOLS:=aCOLSNEC
 		oGetNEC:oBrowse:Refresh()
 		oQTDITEM:Refresh()
-	ENDIF
-	cALTER:=POSICIONE('SB1',1,xFILIAL('SB1')+ALLTRIM(cProduto),'B1_ALTER')
-	IF !EMPTY(cALTER)
-		cALTER :='Alternativo: '+ AllTrim(cALTER)
-	ELSE
-		cALTER:=''
-	ENDIF
-	oAlter:Refresh()
 
+	ENDIF
 RETURN
 
 	*----------------------------------------------------------------------------*
-USER FUNCTION MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
+USER FUNCTION MRPCHG04(oGetNEC,oGetSAI,oGetENT)
 	*----------------------------------------------------------------------------*
+
 	LOCAL nLIN :=oGetNEC:nat
 	LOCAL nTotEnt:=0
 	LOCAL nTotSai:=0
@@ -816,6 +764,7 @@ USER FUNCTION MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
 
 	local nX
 
+	//MSGALERT('MRPCHG04')
 	IF lFIRST ==.F.
 
 		aCOLSENT :={}
@@ -837,14 +786,14 @@ USER FUNCTION MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
 		cMSGDIV:=''
 
 		cQuerySI := " SELECT  * "
-		cQuerySI += " FROM  ZHC010 (NOLOCK) "
-		cQuerySI += " WHERE ZHC010.D_E_L_E_T_='' AND ZHC_FILIAL = '"+xFILIAL('ZHC')+"' AND SUBSTRING(ZHC_TIPO,1,2)='02' " //AND ZHC_IDMRP<>'' "
-		cQuerySI += "            AND ZHC_PRODUT    ='"+ALLTRIM(oGetNEC:ACOLS[nLIN][01])+"' "
-		cQuerySI += "            AND ZHC_TXDT1 ='"+ALLTRIM(oGetNEC:ACOLS[nLIN][02])+"' "
+		cQuerySI += " FROM  ZHD010 (NOLOCK) "
+		cQuerySI += " WHERE ZHD010.D_E_L_E_T_='' AND ZHD_FILIAL = '"+xFILIAL('ZHD')+"' AND SUBSTRING(ZHD_TIPO,1,2)='02' " //AND ZHD_IDMRP<>'' "
+		cQuerySI += "            AND ZHD_PRODUT    ='"+ALLTRIM(oGetNEC:ACOLS[nLIN][01])+"' "
+		cQuerySI += "            AND ZHD_TXDT1 ='"+ALLTRIM(oGetNEC:ACOLS[nLIN][02])+"' "
 
 		TCQUERY cQuerySI NEW ALIAS "TR2"
 		TR2->( dbGoTop() )
-		nSALDOI:=TR2->ZHC_XQTDE
+		nSALDOI:=TR2->ZHD_XQTDE
 		oSALDOI:REFRESH()
 		TR2->(DBCLOSEAREA())
 
@@ -859,64 +808,75 @@ USER FUNCTION MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
 		oMSGDIV:REFRESH()
 		//------------------------------------------03 04 - ENTRADA
 		cQuerySI := " SELECT  * "
-		cQuerySI += " FROM  ZHC010 (NOLOCK) "
-		cQuerySI += " WHERE ZHC010.D_E_L_E_T_='' AND  ZHC_FILIAL = '"+xFILIAL('ZHC')+"' AND SUBSTRING(ZHC_TIPO,1,2) IN('03','04','06') " //AND ZHC_IDMRP<>'' "
-		cQuerySI += "            AND ZHC_PRODUT    ='"+ALLTRIM(oGetNEC:ACOLS[nLIN][01])+"' "
-		cQuerySI += "            AND ZHC_TXDT1 ='"+ALLTRIM(oGetNEC:ACOLS[nLIN][02])+"' "
+		cQuerySI += " FROM  ZHD010 (NOLOCK) "
+		cQuerySI += " WHERE ZHD010.D_E_L_E_T_='' AND  ZHD_FILIAL = '"+xFILIAL('ZHD')+"' AND SUBSTRING(ZHD_TIPO,1,2) IN('03','04','06') " //AND ZHD_IDMRP<>'' "
+		cQuerySI += "            AND ZHD_PRODUT    ='"+ALLTRIM(oGetNEC:ACOLS[nLIN][01])+"' "
+		cQuerySI += "            AND ZHD_TXDT1 ='"+ALLTRIM(oGetNEC:ACOLS[nLIN][02])+"' "
 
 		TCQUERY cQuerySI NEW ALIAS "TR2"
 		TR2->( dbGoTop() )
 		DO WHILE !TR2->(EOF())
-			AADD(aColsENT,{TR2->ZHC_TIPO,;
-				TR2->ZHC_TEXTO,;
-				TR2->ZHC_XQTDE,;
+			AADD(aColsENT,{TR2->ZHD_TIPO,;
+				TR2->ZHD_TEXTO,;
+				TR2->ZHD_XQTDE,;
 				.F.})//.f. POSICAO 8Flag de Delecao]
-			nTotEnt:=nTotEnt+TR2->ZHC_XQTDE
+			nTotEnt:=nTotEnt+TR2->ZHD_XQTDE
 			TR2->(DBSKIP())
 		ENDDO
+
+		IF LEN(aColsENT)==0  // mls 12/02/2020
+			AADD(aColsENT,{"",;
+				"",;
+				"",;
+				.T.})//.f. POSICAO 8Flag de Delecao]
+		ENDIF
+
 		TR2->(DBCLOSEAREA())
 		oGetENT:ACOLS:=aCOLSENT
 		oGetENT:ForceRefresh( )
 
 		//------------------------------------------05 07 08 09- SAIDA
 		cQuerySI := " SELECT  * "
-		cQuerySI += " FROM  ZHC010 (NOLOCK)  "
-		cQuerySI += " WHERE ZHC010.D_E_L_E_T_='' AND ZHC_FILIAL = '"+xFILIAL('ZHC')+"' AND SUBSTRING(ZHC_TIPO,1,2) IN('05','07','08','09') " //AND ZHC_IDMRP<>'' "
-		cQuerySI += "            AND ZHC_PRODUT    ='"+ALLTRIM(oGetNEC:ACOLS[nLIN][01])+"' "
-		cQuerySI += "            AND ZHC_TXDT1 ='"+ALLTRIM(oGetNEC:ACOLS[nLIN][02])+"' "
+		cQuerySI += " FROM  ZHD010 (NOLOCK)  "
+		cQuerySI += " WHERE ZHD010.D_E_L_E_T_='' AND ZHD_FILIAL = '"+xFILIAL('ZHD')+"' AND SUBSTRING(ZHD_TIPO,1,2) IN('05','07','08','09') " //AND ZHD_IDMRP<>'' "
+		cQuerySI += "            AND ZHD_PRODUT    ='"+ALLTRIM(oGetNEC:ACOLS[nLIN][01])+"' "
+		cQuerySI += "            AND ZHD_TXDT1 ='"+ALLTRIM(oGetNEC:ACOLS[nLIN][02])+"' "
 
 		TCQUERY cQuerySI NEW ALIAS "TR2"
 		TR2->( dbGoTop() )
 
 		DO WHILE !TR2->(EOF())
-			AADD(aColsSAI,{TR2->ZHC_TIPO,;
-				TR2->ZHC_TEXTO,;
-				TR2->ZHC_XQTDE,;
+			AADD(aColsSAI,{TR2->ZHD_TIPO,;
+				TR2->ZHD_TEXTO,;
+				TR2->ZHD_XQTDE,;
 				.F.})//.f. POSICAO 8Flag de Delecao]
-			nTotSai:=nTotSai+TR2->ZHC_XQTDE
+			nTotSai:=nTotSai+TR2->ZHD_XQTDE
 			DO CASE
-			CASE ALLTRIM(TR2->ZHC_TIPO)=='09-Previsao Venda' .AND. ALLTRIM(SUBSTR(TR2->ZHC_TEXTO,1,4))=='WON'
-				nTWON  :=nTWON +TR2->ZHC_XQTDE
-			CASE ALLTRIM(TR2->ZHC_TIPO)=='09-Previsao Venda' .AND. ALLTRIM(SUBSTR(TR2->ZHC_TEXTO,1,4))=='BEST'
-				nTBEST :=nTBEST+TR2->ZHC_XQTDE
-			CASE ALLTRIM(TR2->ZHC_TIPO)=='09-Previsao Venda' .AND. ALLTRIM(SUBSTR(TR2->ZHC_TEXTO,1,4))=='IN'
-				nTIN   :=nTIN  +TR2->ZHC_XQTDE
+			CASE ALLTRIM(TR2->ZHD_TIPO)=='09-Previsao Venda' .AND. ALLTRIM(SUBSTR(TR2->ZHD_TEXTO,1,4))=='WON'
+				nTWON  :=nTWON +TR2->ZHD_XQTDE
+			CASE ALLTRIM(TR2->ZHD_TIPO)=='09-Previsao Venda' .AND. ALLTRIM(SUBSTR(TR2->ZHD_TEXTO,1,4))=='BEST'
+				nTBEST :=nTBEST+TR2->ZHD_XQTDE
+			CASE ALLTRIM(TR2->ZHD_TIPO)=='09-Previsao Venda' .AND. ALLTRIM(SUBSTR(TR2->ZHD_TEXTO,1,4))=='IN'
+				nTIN   :=nTIN  +TR2->ZHD_XQTDE
 			ENDCASE
 			TR2->(DBSKIP())
 		ENDDO
+
+		IF LEN(aColsSAI)==0  // mls 12/02/2020
+			AADD(aColsSAI,{"",;
+				"",;
+				"",;
+				.T.})//.f. POSICAO 8Flag de Delecao]
+		ENDIF
+
 		TR2->(DBCLOSEAREA())
 		oGetSAI:ACOLS:=aCOLSSAI
 		oGetSAI:forceRefresh( )
 
-		cALTER:=''
 		cPRODUTO:=oGetNEC:ACOLS[nLIN][01]
 		cDESCRI:=POSICIONE('SB1',1,xFILIAL('SB1')+oGetNEC:ACOLS[nLIN][01],'B1_DESC')
 		cIDMRP:=oGetNEC:ACOLS[nLIN][06] //mls
 		dData :=ctod(oGetNEC:ACOLS[nLIN][02] )
-		cALTER:=POSICIONE('SB1',1,xFILIAL('SB1')+oGetNEC:ACOLS[nLIN][01],'B1_ALTER')
-		IF !EMPTY(cALTER)
-			cALTER :='Alternativo: '+ AllTrim(cALTER)
-		ENDIF
 
 		//------------------------------------------necessidade total
 		nTSALDOF :=0
@@ -952,6 +912,13 @@ USER FUNCTION MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
 			nSCA +=TRSC->C1_SALDO
 			TRSC->(DBSKIP())
 		ENDDO
+
+		IF LEN(aColsSC)==0  // mls 12/02/2020
+			AADD(aColsSC,{"",;
+				"",;
+				0,;
+				.T.})//.f. POSICAO 8Flag de Delecao]
+		ENDIF
 		TRSC->(DBCLOSEAREA())
 
 		//------------------------------------------PCs
@@ -960,7 +927,7 @@ USER FUNCTION MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
 
 		cQUERYPC := " SELECT C7_NUM,C7_DATPRF,C7_QUANT-C7_QUJE AS C7_SALDO "
 		cQUERYPC += " FROM SC7010 (NOLOCK)               "
-		cQUERYPC += " WHERE C7_FILIAL = '"+xFILIAL('SC1')+"' AND                      "
+		cQUERYPC += " WHERE C7_FILIAL = '"+xFILIAL('SC7')+"' AND                      "
 		cQUERYPC += " C7_QUANT > C7_QUJE AND     "
 		cQUERYPC += " C7_QUJE  >=0       AND     "
 		cQUERYPC += " C7_RESIDUO=''      AND     "
@@ -980,6 +947,13 @@ USER FUNCTION MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
 			nPCA +=TRPC->C7_SALDO
 			TRPC->(DBSKIP())
 		ENDDO
+
+		IF LEN(aColsPC)==0  // mls 12/02/2020
+			AADD(aColsPC,{"",;
+				"",;
+				0,;
+				.T.})//.f. POSICAO 8Flag de Delecao]
+		ENDIF
 		TRPC->(DBCLOSEAREA())
 
 		//------------------------------------------MV MOVIMENTO ENTRADA
@@ -1007,6 +981,14 @@ USER FUNCTION MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
 
 			TRMV->(DBSKIP())
 		ENDDO
+		IF LEN(aColsMV)==0  // mls 12/02/2020
+			AADD(aColsMV,{"",;
+				"",;
+				"",;
+				0,;
+				.T.})//.f. POSICAO 8Flag de Delecao]
+		ENDIF
+
 		TRMV->(DBCLOSEAREA())
 		*---------------------------------------------------------------------
 		cQUERYMV2 := "	  select * from SD3010 (NOLOCK) "
@@ -1034,6 +1016,7 @@ USER FUNCTION MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
 				nQTDMV,;
 				.F.})//.f. POSICAO 8Flag de Delecao]
 		ENDIF
+
 		TRMV->(DBCLOSEAREA())
 
 		//------------------------------------------MLS QUERY
@@ -1047,33 +1030,33 @@ USER FUNCTION MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
 		_nSAES :=0
 		_nNEC1 :=0
 
-		cQUERYSLD:="	SELECT ZHC_PRODUT , "
-		//	cQUERYSLD+="	(SELECT TOP 1 ZHC_XQTDE FROM ZHC010 WHERE ZHC_TIPO IN ('02-Saldo Estoque' ) AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  EST, "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' AND B2_FILIAL='"+xFILIAL('SB2')+"' ) AS  EST, "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND  C1_QUANT > C1_QUJE) AS  SOL, "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND  C7_QUANT > C7_QUJE) AS  PC, "
-		//	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 WHERE ZHC_TIPO IN ('05-Empenho       ') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  EMP, "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) AS  EMP, "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND   ZHC_TIPO IN ('06-Ordem Producao') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  OP, "
-		//	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 WHERE ZHC_TIPO IN ('07-Pedido Venda  ') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  PV, "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHC.ZHC_PRODUT AND C6_BLQ<>'R')  AS  PV, "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('09-Previsao Venda')  AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  PREV, "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('08-Saida Estrutura') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  SAES, "
+		cQUERYSLD:="	SELECT ZHD_PRODUT , "
+		//	cQUERYSLD+="	(SELECT TOP 1 ZHD_XQTDE FROM ZHD010 WHERE ZHD_TIPO IN ('02-Saldo Estoque' ) AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  EST, "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='' AND B2_FILIAL='"+xFILIAL('SB2')+"' ) AS  EST, "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND  C1_QUANT > C1_QUJE) AS  SOL, "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND  C7_QUANT > C7_QUJE) AS  PC, "
+		//	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 WHERE ZHD_TIPO IN ('05-Empenho       ') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  EMP, "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='' ) AS  EMP, "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND   ZHD_TIPO IN ('06-Ordem Producao') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  OP, "
+		//	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 WHERE ZHD_TIPO IN ('07-Pedido Venda  ') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  PV, "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHD.ZHD_PRODUT AND C6_BLQ<>'R')  AS  PV, "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('09-Previsao Venda')  AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  PREV, "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('08-Saida Estrutura') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS  SAES, "
 
-		cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='') + "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND C1_QUANT > C1_QUJE) + "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND C7_QUANT > C7_QUJE ) - "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) + "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('06-Ordem Producao') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) - "
-		//	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 WHERE ZHC_TIPO IN ('07-Pedido Venda  ') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) - "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHC.ZHC_PRODUT  AND C6_BLQ<>'R') - "
-		cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('09-Previsao Venda')  AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS FINAL "// -       "
-		//	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_TIPO IN ('08-Saida Estrutura') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS FINAL "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='') + "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND C1_QUANT > C1_QUJE) + "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHD.ZHD_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND C7_QUANT > C7_QUJE ) - "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHD_PRODUT  AND D_E_L_E_T_='' ) + "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('06-Ordem Producao') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) - "
+		//	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 WHERE ZHD_TIPO IN ('07-Pedido Venda  ') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) - "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHD.ZHD_PRODUT  AND C6_BLQ<>'R') - "
+		cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND  ZHD_TIPO IN ('09-Previsao Venda')  AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS FINAL "// -       "
+		//	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHD_XQTDE),0)  FROM ZHD010 (NOLOCK) WHERE ZHD_TIPO IN ('08-Saida Estrutura') AND ZHD_PRODUT=ZHD.ZHD_PRODUT) AS FINAL "
 
-		cQUERYSLD+="	FROM ZHC010 (NOLOCK) ZHC "
-		cQUERYSLD+="	WHERE ZHC_PRODUT='"+ALLTRIM(oGetNEC:ACOLS[nLIN][01])+"'  AND ZHC.D_E_L_E_T_='' "
-		cQUERYSLD+="	GROUP BY ZHC_PRODUT "
-		cQUERYSLD+="	ORDER BY ZHC_PRODUT "
+		cQUERYSLD+="	FROM ZHD010 (NOLOCK) ZHD "
+		cQUERYSLD+="	WHERE ZHD_PRODUT='"+ALLTRIM(oGetNEC:ACOLS[nLIN][01])+"'  AND ZHD.D_E_L_E_T_='' "
+		cQUERYSLD+="	GROUP BY ZHD_PRODUT "
+		cQUERYSLD+="	ORDER BY ZHD_PRODUT "
 
 		TCQUERY cQUERYSLD NEW ALIAS "TRS"
 		TRS->( dbGoTop() )
@@ -1100,7 +1083,6 @@ USER FUNCTION MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
 		oDESCRI :REFRESH()
 		oIDMRP  :REFRESH()
 		oDATA   :REFRESH()
-		oAlter  :REFRESH()
 		oENTRADA:REFRESH()
 		oSAIDA  :REFRESH()
 		oSALDOF :REFRESH()
@@ -1144,13 +1126,13 @@ USER FUNCTION MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
 		ENDIF
 		//MLS
 		cQuerySI := " SELECT  * "
-		cQuerySI += " FROM ZHC010 (NOLOCK)  "
-		cQuerySI += " WHERE ZHC_FILIAL = '"+xFILIAL('ZHC')+"' AND ZHC_IDMRP='"+ALLTRIM(oGetNEC:ACOLS[nLIN][06])+"' AND ZHC010.D_E_L_E_T_='' "
+		cQuerySI += " FROM ZHD010 (NOLOCK)  "
+		cQuerySI += " WHERE ZHD_FILIAL = '"+xFILIAL('ZHD')+"' AND ZHD_IDMRP='"+ALLTRIM(oGetNEC:ACOLS[nLIN][06])+"' AND ZHD010.D_E_L_E_T_='' "
 
 		TCQUERY cQuerySI NEW ALIAS "TR2"
 		TR2->( dbGoTop() )
-		IF !EMPTY(TR2->ZHC_NUMSC)
-			cMSG2 :='SC: '+TR2->ZHC_NUMSC+' Qtde: '+Transform(TR2->ZHC_QTDSC,"@E 9,999,999.99")+" Data: "+SUBSTR(TR2->ZHC_DATASC,7,2)+'/'+SUBSTR(TR2->ZHC_DATASC,5,2)+'/'+SUBSTR(TR2->ZHC_DATASC,1,4)
+		IF !EMPTY(TR2->ZHD_NUMSC)
+			cMSG2 :='SC: '+TR2->ZHD_NUMSC+' Qtde: '+Transform(TR2->ZHD_QTDSC,"@E 9,999,999.99")+" Data: "+SUBSTR(TR2->ZHD_DATASC,7,2)+'/'+SUBSTR(TR2->ZHD_DATASC,5,2)+'/'+SUBSTR(TR2->ZHD_DATASC,1,4)
 			cMSG2b:=''
 		ELSE
 			cMSG2 :=''
@@ -1169,7 +1151,7 @@ USER FUNCTION MRPCHG0F(oGetNEC,oGetSAI,oGetENT)
 RETURN
 
 	*----------------------------------------------------------------------------*
-USER FUNCTION MRPSCPCF()
+USER FUNCTION MRPSCPC4()
 	*----------------------------------------------------------------------------*
 	Local aSizeAut    := MsAdvSize(,.F.,400)
 	DEFINE MSDIALOG oDlg2 FROM aSizeAut[4],aSizeAut[4] TO aSizeAut[3]*3,aSizeAut[3]+aSizeAut[4]  TITLE OemToAnsi("MRP DOMEX SCs PCs EM ABERTO") OF oMainWnd PIXEL
@@ -1190,17 +1172,17 @@ USER FUNCTION MRPSCPCF()
 RETURN
 
 	*----------------------------------------------------------------------------*
-USER FUNCTION  MRPCHK0F(oGetNEC)
+USER FUNCTION  MRPCHK04(oGetNEC)
 	*----------------------------------------------------------------------------*
 	LOCAL nLIN :=oGetNEC:nat
 	LOCAL cQ1 := ""
 	IF oGetNEC:ACOLS[nLIN][07]<>'X' // COM SC
 		IF oGetNEC:ACOLS[nLIN][08]==.T. //DELETADO
 			oGetNEC:ACOLS[nLIN][08]:=.F.
-			cQ1 := "UPDATE ZHC010 SET ZHC_STATUS='N' WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_IDMRP='"+oGetNEC:ACOLS[nLIN][06]+"'"
+			cQ1 := "UPDATE ZHD010 SET ZHD_STATUS='N' WHERE ZHD_IDMRP='"+oGetNEC:ACOLS[nLIN][06]+"'"
 		ELSE
 			oGetNEC:ACOLS[nLIN][08]:=.T. //DELETADO
-			cQ1 := "UPDATE ZHC010 SET ZHC_STATUS='S' WHERE ZHC_FILIAL='"+xFILIAL('SB1')+"' AND SZHC_IDMRP='"+oGetNEC:ACOLS[nLIN][06]+"'"
+			cQ1 := "UPDATE ZHD010 SET ZHD_STATUS='S' WHERE ZHD_IDMRP='"+oGetNEC:ACOLS[nLIN][06]+"'"
 		ENDIF
 		TCSQLEXEC(cQ1)
 	ENDIF
@@ -1209,22 +1191,22 @@ USER FUNCTION  MRPCHK0F(oGetNEC)
 RETURN
 
 	*----------------------------------------------------------------------------*
-USER FUNCTION MRP02SCF()
+USER FUNCTION MRP004SC()
 	*----------------------------------------------------------------------------*
 
-	Local cTitulo        := "ZHC"
+	Local cTitulo        := "ZHD"
 	Local oDLG1Marc
 	Local oFnt
 	Local aBotoes        := {}
-	Local lopc           :=.F.
-	local cvirgula       := ""
+	//Local lopc           :=.F.
+	//local cvirgula       := ""
 
 	Local oOK	         := LoadBitmap( GetResources(), "LBOK" )
 	Local oNO	         := LoadBitmap( GetResources(), "LBNO" )
 
 	Private cStatus:=''
 
-	PRIVATE cTITULOE     :='SOLICITACAO DE COMPRAS - MRP'
+	PRIVATE cTITULOE     :='SOLICITACAO DE COMPRAS - MRP Filial 02'
 
 	Private oNor         := LoadBitmap( GetResources(), "PMSEDT1" )
 	Private oSC	         := LoadBitmap( GetResources(), "PMSEDT2" )
@@ -1249,7 +1231,7 @@ USER FUNCTION MRP02SCF()
 
 	DbSelectArea("SX3")
 
-	MsgRun("Espere... Buscando Dados...",,{ || MRPSC003(@aDados) })
+	MsgRun("AGUARDE... Buscando Dados...",,{ || MRPSC004(@aDados) })
 
 	If lNExistDados
 		alert("Nao existe dados")
@@ -1329,7 +1311,7 @@ USER FUNCTION MRP02SCF()
 	@ 174,145 MSGET oUnidReq VAR cUnidReq  WHEN(.T.)   OF oDLG1Marc SIZE 055,005  F3('SY3')   PIXEL COLOR CLR_HBLUE FONT oFontBRW3
 
 	@ 174,210 SAY OemToAnsi("Qtde SC" )                OF oDLG1Marc PIXEL SIZE 250,010 FONT oFontBRW3 Color CLR_BLUE,CLR_WHITE
-	@ 174,245 MSGET oQTDSC  VAR nQTDSC     WHEN(.T.)   OF oDLG1Marc SIZE 070,005 PICTURE ("@E 9,999,999,999.99") PIXEL COLOR CLR_HBLUE FONT oFontBRW3
+	@ 174,245 MSGET oQTDSC  VAR nQTDSC     WHEN(.T.)   OF oDLG1Marc SIZE 070,005 PICTURE ("@E 999,999,999.99") PIXEL COLOR CLR_HBLUE FONT oFontBRW3
 
 	@ 192,030 Say "Inverte Selecao" 			       Size 050,09 Of oDLG1Marc Pixel
 	@ 192,140 Say "Marcar Todos   " 			       Size 050,09 Of oDLG1Marc Pixel
@@ -1383,19 +1365,20 @@ Static Function MarcAll() //Marca todos
 Return()
 
 	*-------------------------------------------------------------------------------------------------------------
-Static Function MRPSC003()
+Static Function MRPSC004()
 	*-------------------------------------------------------------------------------------------------------------
 	LOCAL nLIN    :=oGetNEC:nat
-	Local cPedido := "000000"
+	//Local cPedido := "000000"
 	local nCount  := 1
-	local nCount2 := 1
+	//local nCount2 := 1
 	Local cQuery  := ''
 	Local oTMP
 
-	cQuery := " Select * From " + RetSqlName("ZHC") + " (NOLOCK) ZHC "
-	cQuery += " Where ZHC_FILIAL = '"+xFILIAL('ZHC')+"' "
-	cQuery += " AND ZHC_PRODUT = '"+oGetNEC:ACOLS[nLIN][01]+"' AND ZHC_IDMRP <> '' AND ZHC.D_E_L_E_T_=''  "//AND ZHC_STATUS<>'X' "
-	cQuery += " Order BY ZHC_IDMRP "
+	cQuery := " Select * From " + RetSqlName("ZHD") + " (NOLOCK) ZHD "
+	cQuery += " Where ZHD_FILIAL = '"+xFILIAL('ZHD')+"' "
+	cQuery += " AND ZHD_PRODUT = '"+oGetNEC:ACOLS[nLIN][01]+"' AND ZHD_IDMRP <> '' AND ZHD.D_E_L_E_T_=''  "//AND ZHD_STATUS<>'X' "
+	cQuery += " AND ZHD_TIPO='01-Necessidade' "
+	cQuery += " Order BY ZHD_IDMRP "
 
 	cQuery := ChangeQuery( cQuery )
 
@@ -1415,17 +1398,17 @@ Static Function MRPSC003()
 	TMP->(DbGotop())
 
 	DO While !TMP->(EOF())
-		IF TMP:=ZHC_STATUS<>'X'
+		IF TMP:=ZHD_STATUS<>'X'
 			oTMP:=oNor
 		ELSE
 			oTMP:=oIn
 		ENDIF
 		AADD(aDados, {  .F. , ;
 			oTMP ,;
-			TMP->ZHC_IDMRP,;
-			TMP->ZHC_TXDT1,;
-			TMP->ZHC_XQTDE ,;
-			TMP->ZHC_NUMSC})
+			TMP->ZHD_IDMRP,;
+			TMP->ZHD_TXDT1,;
+			TMP->ZHD_XQTDE ,;
+			TMP->ZHD_NUMSC})
 
 		TMP->(DbSkip())
 		nCount ++
@@ -1474,11 +1457,11 @@ STATIC FUNCTION MRPGERSC(dDATASC,nQTDSC,cPRODUTO,_cIDMRP,_cUnidReq)
 	*------------------------------------------------------------------------------------*
 
 	Local cAliasAnt:=GetArea()
-	Local nCont     :=1
+	//Local nCont     :=1
 	Local aCab      :={}
 	Local aItem     :={}
-	Local aCabItem  :={}
-	Local cScAnt
+	//Local aCabItem  :={}
+	//Local cScAnt
 	Local cItem     := StrZero(0,Len(SC1->C1_ITEM))
 	Local cNumero
 	Local nSaveSX8  := GetSX8Len()
@@ -1628,9 +1611,9 @@ STATIC FUNCTION MRPGERSC(dDATASC,nQTDSC,cPRODUTO,_cIDMRP,_cUnidReq)
 					aDados[i,1] := .F.
 					aDados[i,2] := oIn
 					aDados[i,6] := cNumero
-					cQ1 := " UPDATE ZHC010 SET "
-					cQ1 += " ZHC_STATUS='X' ,ZHC_NUMSC='"+alltrim(cNumero)+"',ZHC_HISTSC='SC Gerada MRP',ZHC_QTDSC='"+alltrim(STR(_nQTDSC))+"',ZHC_DATASC='"+DTOS(_dDATASC)+"'"
-					cQ1 += " WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND ZHC_IDMRP='"+alltrim(aDados[i,3])+"'"
+					cQ1 := " UPDATE ZHD010 SET "
+					cQ1 += " ZHD_STATUS='X' ,ZHD_NUMSC='"+alltrim(cNumero)+"',ZHD_HISTSC='SC Gerada MRP',ZHD_QTDSC='"+alltrim(STR(_nQTDSC))+"',ZHD_DATASC='"+DTOS(_dDATASC)+"'"
+					cQ1 += " WHERE ZHD_IDMRP='"+alltrim(aDados[i,3])+"'"
 					TCSQLEXEC(cQ1)    //MLS
 					_CIDMRP:=_CIDMRP+alltrim(aDados[i,3])+'|'
 				Endif
@@ -1644,23 +1627,23 @@ STATIC FUNCTION MRPGERSC(dDATASC,nQTDSC,cPRODUTO,_cIDMRP,_cUnidReq)
 			NEXT
 			oLbx:Refresh(.F.)
 			oGetNEC:oBrowse:Refresh()
-			ZHC->(DBSELECTAREA('ZHC'))
-			RecLock("ZHC",.T.)
-			ZHC_FILIAL := xFILIAL('ZHC')
-			ZHC_PERIOD := _dDATASC
-			ZHC_NUMMRP := SUBSTR(_CIDMRP,1,6)
-			ZHC_PRODUT := _cPRODUTO
-			ZHC_DESC   := POSICIONE('SB1',1,xFILIAL('SB1')+_cPRODUTO,'B1_DESC')
-			ZHC_TIPOP  := POSICIONE('SB1',1,xFILIAL('SB1')+_cPRODUTO,'B1_TIPO')
-			ZHC_GRUPO  := POSICIONE('SB1',1,xFILIAL('SB1')+_cPRODUTO,'B1_GRUPO')
-			ZHC_TIPO   := '03-Sol.Compras'
-			ZHC_TEXTO  := cNumero+'/'+cITEM+' '
-			ZHC_TXDT1  := DTOC(_dDATASC)
-			ZHC_TXDT2  := _dDATASC
-			ZHC_XQTDE  := _nQTDSC
-			ZHC_ENTRAD := _nQTDSC
-			ZHC_NUMSC  := cNumero
-			ZHC->( msUnlock() )
+			ZHD->(DBSELECTAREA('ZHD'))
+			RecLock("ZHD",.T.)
+			ZHD_FILIAL := xFILIAL('ZHD')
+			ZHD_PERIOD := _dDATASC
+			ZHD_NUMMRP := SUBSTR(_CIDMRP,1,6)
+			ZHD_PRODUT := _cPRODUTO
+			ZHD_DESC   := POSICIONE('SB1',1,xFILIAL('SB1')+_cPRODUTO,'B1_DESC')
+			ZHD_TIPOP  := POSICIONE('SB1',1,xFILIAL('SB1')+_cPRODUTO,'B1_TIPO')
+			ZHD_GRUPO  := POSICIONE('SB1',1,xFILIAL('SB1')+_cPRODUTO,'B1_GRUPO')
+			ZHD_TIPO   := '03-Sol.Compras'
+			ZHD_TEXTO  := cNumero+'/'+cITEM+' '
+			ZHD_TXDT1  := DTOC(_dDATASC)
+			ZHD_TXDT2  := _dDATASC
+			ZHD_XQTDE  := _nQTDSC
+			ZHD_ENTRAD := _nQTDSC
+			ZHD_NUMSC  := cNumero
+			ZHD->( msUnlock() )
 			MRPRECALC(_cPRODUTO,SUBSTR(_CIDMRP,1,6))
 		Else
 			Help(" ",1,"MRP")
@@ -1678,19 +1661,19 @@ Return
 STATIC FUNCTION MRPRECALC(_cPRODUTO,_cNUMMRP)
 	*------------------------------------------------------------------------------------------------------------------
 
-	ZHC->(DBSELECTAREA('ZHC'))
-	ZHC->(DBSETORDER(3)) //ZHC_FILIAL+ZHC_NUMMRP+ZHC_PRODUT+DTOS(ZHC_PERIOD)+ZHC_TIPO
-	ZHC->(DBGOTOP())
+	ZHD->(DBSELECTAREA('ZHD'))
+	ZHD->(DBSETORDER(3)) //ZHD_FILIAL+ZHD_NUMMRP+ZHD_PRODUT+DTOS(ZHD_PERIOD)+ZHD_TIPO
+	ZHD->(DBGOTOP())
 
-	cQ1 := " UPDATE ZHC010 SET "
-	cQ1 += " ZHC_TIPO = '11-Necessidade' "
-	cQ1 += " WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND ZHC_TIPO='01-Necessidade' AND ZHC_PRODUT='"+_cPRODUTO+"'"
+	cQ1 := " UPDATE ZHD010 SET "
+	cQ1 += " ZHD_TIPO = '11-Necessidade' "
+	cQ1 += " WHERE ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND ZHD_TIPO='01-Necessidade' AND ZHD_PRODUT='"+_cPRODUTO+"'"
 	TCSQLEXEC(cQ1)    //MLS
 
-	ZHC->(DBSEEK(xFILIAL('ZHC')+_cNUMMRP+_cPRODUTO))
+	ZHD->(DBSEEK(xFILIAL('ZHD')+_cNUMMRP+_cPRODUTO))
 
-	cPRODUT := ZHC->ZHC_PRODUT
-	dPERIOD := ZHC->ZHC_PERIOD
+	cPRODUT := ZHD->ZHD_PRODUT
+	dPERIOD := ZHD->ZHD_PERIOD
 
 	nSALDO  := 0
 	nENTRAD := 0
@@ -1698,23 +1681,23 @@ STATIC FUNCTION MRPRECALC(_cPRODUTO,_cNUMMRP)
 	nSESTR  := 0
 	nSALDOF := 0
 
-	DO WHILE  !ZHC->(Eof()) .AND. cPRODUT==ZHC->ZHC_PRODUT  //.AND.  dPERIOD==CTOD(SUBSTR(ZHC->ZHC_PERIOD,7,2)+'/'+SUBSTR(ZHC->ZHC_PERIOD,5,2)+'/'+SUBSTR(ZHC->ZHC_PERIOD,1,4))
+	DO WHILE  !ZHD->(Eof()) .AND. cPRODUT==ZHD->ZHD_PRODUT  //.AND.  dPERIOD==CTOD(SUBSTR(ZHD->ZHD_PERIOD,7,2)+'/'+SUBSTR(ZHD->ZHD_PERIOD,5,2)+'/'+SUBSTR(ZHD->ZHD_PERIOD,1,4))
 
-		IF ALLTRIM(cPRODUT)==ALLTRIM(ZHC->ZHC_PRODUT) .AND. dPERIOD<>ZHC->ZHC_PERIOD
-			IF SUBSTR(ZHC->ZHC_TIPO,1,2)=='02'
+		IF ALLTRIM(cPRODUT)==ALLTRIM(ZHD->ZHD_PRODUT) .AND. dPERIOD<>ZHD->ZHD_PERIOD
+			IF SUBSTR(ZHD->ZHD_TIPO,1,2)=='02'
 				IF nSALDOF<0
-					RecLock("ZHC",.F.)
-					ZHC_XQTDE  := 0
-					ZHC_SALDOE := 0
-					ZHC->( msUnlock() )
+					RecLock("ZHD",.F.)
+					ZHD_XQTDE  := 0
+					ZHD_SALDOE := 0
+					ZHD->( msUnlock() )
 				ELSE
-					RecLock("ZHC",.F.)
-					ZHC_XQTDE  := nSALDOF
-					ZHC_SALDOE := nSALDOF
-					ZHC->( msUnlock() )
+					RecLock("ZHD",.F.)
+					ZHD_XQTDE  := nSALDOF
+					ZHD_SALDOE := nSALDOF
+					ZHD->( msUnlock() )
 				ENDIF
-				cPRODUT := ZHC->ZHC_PRODUT
-				dPERIOD := ZHC->ZHC_PERIOD
+				cPRODUT := ZHD->ZHD_PRODUT
+				dPERIOD := ZHD->ZHD_PERIOD
 				nSALDO  := 0
 				nENTRAD := 0
 				nSAIDA  := 0
@@ -1722,9 +1705,9 @@ STATIC FUNCTION MRPRECALC(_cPRODUTO,_cNUMMRP)
 				nSALDOF := 0
 			ENDIF
 		ELSE
-			IF ALLTRIM(cPRODUT)<>ALLTRIM(ZHC->ZHC_PRODUT)
-				cPRODUT := ZHC->ZHC_PRODUT
-				dPERIOD := ZHC->ZHC_PERIOD
+			IF ALLTRIM(cPRODUT)<>ALLTRIM(ZHD->ZHD_PRODUT)
+				cPRODUT := ZHD->ZHD_PRODUT
+				dPERIOD := ZHD->ZHD_PERIOD
 				nSALDO  := 0
 				nENTRAD := 0
 				nSAIDA  := 0
@@ -1733,39 +1716,39 @@ STATIC FUNCTION MRPRECALC(_cPRODUTO,_cNUMMRP)
 			ENDIF
 		ENDIF
 		DO CASE
-		CASE ZHC->ZHC_SALDOE    > 0
-			nSALDO :=nSALDO+ZHC->ZHC_SALDOE
-		CASE ZHC->ZHC_ENTRAD    > 0
-			nENTRAD:=nENTRAD+ZHC->ZHC_ENTRAD
-		CASE ZHC->ZHC_SAIDA     > 0
-			nSAIDA :=nSAIDA+ZHC->ZHC_SAIDA
-		CASE ZHC->ZHC_SESTR     > 0
-			nSESTR :=nSESTR+ZHC->ZHC_SESTR
-		CASE SUBSTR(ZHC->ZHC_TIPO,1,2)  == '10'//'10-Saldo Final'
+		CASE ZHD->ZHD_SALDOE    > 0
+			nSALDO :=nSALDO+ZHD->ZHD_SALDOE
+		CASE ZHD->ZHD_ENTRAD    > 0
+			nENTRAD:=nENTRAD+ZHD->ZHD_ENTRAD
+		CASE ZHD->ZHD_SAIDA     > 0
+			nSAIDA :=nSAIDA+ZHD->ZHD_SAIDA
+		CASE ZHD->ZHD_SESTR     > 0
+			nSESTR :=nSESTR+ZHD->ZHD_SESTR
+		CASE SUBSTR(ZHD->ZHD_TIPO,1,2)  == '10'//'10-Saldo Final'
 			nSALDOF:=(nSALDO+nENTRAD)-(nSAIDA+nSESTR)
-			RecLock("ZHC",.F.)
-			ZHC_XQTDE  := nSALDOF
-			ZHC_SALDO  := nSALDOF
-			ZHC->( msUnlock() )
-		CASE  SUBSTR(ZHC->ZHC_TIPO,1,2)  == '11'// '11-Necessidade'
+			RecLock("ZHD",.F.)
+			ZHD_XQTDE  := nSALDOF
+			ZHD_SALDO  := nSALDOF
+			ZHD->( msUnlock() )
+		CASE  SUBSTR(ZHD->ZHD_TIPO,1,2)  == '11'// '11-Necessidade'
 			IF nSALDOF<0
-				RecLock("ZHC",.F.)
-				ZHC_XQTDE  := nSALDOF*(-1)
-				ZHC_NEC    := nSALDOF*(-1)
-				ZHC->( msUnlock() )
+				RecLock("ZHD",.F.)
+				ZHD_XQTDE  := nSALDOF*(-1)
+				ZHD_NEC    := nSALDOF*(-1)
+				ZHD->( msUnlock() )
 			ELSE
-				RecLock("ZHC",.F.)
-				ZHC_XQTDE  := 0
-				ZHC_NEC    := 0
-				ZHC->( msUnlock() )
+				RecLock("ZHD",.F.)
+				ZHD_XQTDE  := 0
+				ZHD_NEC    := 0
+				ZHD->( msUnlock() )
 			ENDIF
 		ENDCASE
-		ZHC->(DBSKIP())
+		ZHD->(DBSKIP())
 	ENDDO
 
-	cQ1 := " UPDATE ZHC010 SET "
-	cQ1 += " ZHC_TIPO = '01-Necessidade' "
-	cQ1 += " WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND ZHC_TIPO='11-Necessidade' AND ZHC_PRODUT='"+_cPRODUTO+"'"
+	cQ1 := " UPDATE ZHD010 SET "
+	cQ1 += " ZHD_TIPO = '01-Necessidade' "
+	cQ1 += " WHERE ZHD_TIPO='11-Necessidade' AND ZHD_PRODUT='"+_cPRODUTO+"'"
 	TCSQLEXEC(cQ1)    //MLS
 
 RETURN
@@ -1785,7 +1768,7 @@ STATIC FUNCTION MRPZPRV(oGetSAI,cPRODUTO)
 		lPREV :=.F.
 		MRPZPRV2(oGetSAI,cPRODUTO)
 	ELSE
-		MSGALERT('Nao existe (09-Previsao Venda) para esse item '+cPRODUTO)
+		MSGALERT('Nao existe (09-Previsisao Venda) para esse item '+cPRODUTO)
 	ENDIF
 
 RETURN
@@ -1794,12 +1777,12 @@ RETURN
 STATIC FUNCTION MRPZPRV2(oGetSAI,cPRODUTO)
 	*----------------------------------------------------------------------------*
 
-	Local cTitulo        := "ZHC"
+	Local cTitulo        := "ZHD"
 	Local oDLG1Marc
 	Local oFnt
 	Local aBotoes        := {}
-	Local lopc           :=.F.
-	local cvirgula       := ""
+	//Local lopc           :=.F.
+	//local cvirgula       := ""
 
 	Local oOK	         := LoadBitmap( GetResources(), "LBOK" )
 	Local oNO	         := LoadBitmap( GetResources(), "LBNO" )
@@ -1833,7 +1816,7 @@ STATIC FUNCTION MRPZPRV2(oGetSAI,cPRODUTO)
 	MsgRun("Espere... Buscando Dados...",,{ || MRPZPRV3(@aDados) })
 
 	If lNExistDados
-		alert("Nao existe dados")
+		alert("N�o existe dados")
 		Return()
 	EndIf
 
@@ -1921,17 +1904,17 @@ return()
 Static Function MRPZPRV3(oGetSAI)
 	*-------------------------------------------------------------------------------------------------------------
 	LOCAL nLIN    :=oGetNEC:nat
-	Local cPedido := "000000"
+	//Local cPedido := "000000"
 	local nCount  := 1
-	local nCount2 := 1
+	//local nCount2 := 1
 	Local cQuery  := ''
 	Local oTMP
 
-	cQuery := " Select * From " + RetSqlName("ZHC") + " (NOLOCK) ZHC "
-	cQuery += " Where ZHC_FILIAL = '"+xFILIAL('ZHC')+"'  AND ZHC.D_E_L_E_T_=''  "
-	cQuery += " AND ZHC_PRODUT   =  '"+cPRODUTO+"' "
-	cQuery += " AND ZHC_TIPO     = '09-Previsao Venda' "
-	cQuery += " Order BY ZHC_IDMRP  "
+	cQuery := " Select * From " + RetSqlName("ZHD") + " (NOLOCK) ZHD "
+	cQuery += " Where ZHD_FILIAL = '"+xFILIAL('ZHD')+"'  AND ZHD.D_E_L_E_T_=''  "
+	cQuery += " AND ZHD_PRODUT   =  '"+cPRODUTO+"' "
+	cQuery += " AND ZHD_TIPO     = '09-Previsao Venda' "
+	cQuery += " Order BY ZHD_IDMRP  "
 
 	cQuery := ChangeQuery( cQuery )
 
@@ -1955,11 +1938,11 @@ Static Function MRPZPRV3(oGetSAI)
 		oTMP:=oIn
 		AADD(aDados, {.T., ;
 			oTMP ,;
-			TMP->ZHC_SAIDA,;
-			TMP->ZHC_TXDT1+' '+TMP->ZHC_TEXTO,;
-			TMP->ZHC_SC4REC,;
+			TMP->ZHD_SAIDA,;
+			TMP->ZHD_TXDT1+' '+TMP->ZHD_TEXTO,;
+			TMP->ZHD_SC4REC,;
 			TMP->R_E_C_N_O_})
-		nQTDPRV:=nQTDPRV+TMP->ZHC_SAIDA
+		nQTDPRV:=nQTDPRV+TMP->ZHD_SAIDA
 		TMP->(DbSkip())
 		nCount ++
 	EndDo
@@ -2000,403 +1983,300 @@ Static Function MarcAll2() //Marca todos
 		EndIf
 	Next i
 
-	oLbx:Refresh
+	oLbx:Refresh()
 Return()
 
 	*-------------------------------------------------------------------------------------------------------------
 Static Function MRPZPRV5() // PROCESSAMENTO ZERAR PREVISAO DE VENDAS
 	*-------------------------------------------------------------------------------------------------------------
 	Local i:=0
-
+ 
 	IF MSGYESNO('Zerar previsao dos itens marcado ?')
 		For i := 1 To Len(aDados)
- 
+
 			If aDados[i,1] == .T.    .AND.   aDados[i,2] == oIn
 				aDados[i,1] := .F.
 				aDados[i,2] := oNor
 				aDados[i,3] := 0
-				nZHCREC :=aDados[i,6]
+				nZHDREC :=aDados[i,6]
 				nC4REC  :=aDados[i,5]
-				cQZ1 := " UPDATE ZHC010 SET ZHC_SAIDA=0 , ZHC_XQTDE=0 WHERE  ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND R_E_C_N_O_="+ALLTRIM(STR(nZHCREC))+"  "
+				cQZ1 := " UPDATE ZHD010 SET ZHD_SAIDA=0 , ZHD_XQTDE=0 WHERE  ZHD_FILIAL='"+xFILIAL('ZHD')+"' AND R_E_C_N_O_="+ALLTRIM(STR(nZHDREC))+"  "
 				cQZ2 := " UPDATE SC4010 SET C4_QUANT =0               WHERE   C4_FILIAL='"+xFILIAL('SC4')+"' AND R_E_C_N_O_="+ALLTRIM(STR(nC4REC))+"  "
 				TCSQLEXEC(cQZ1)
 				TCSQLEXEC(cQZ2)
 			Endif
 		Next i
 	ENDIF
-	oLbx:Refresh
+	oLbx:Refresh()
 
 Return
 
 
-	*----------------------------------------------------------------------------*
-USER FUNCTION MRPALTEFC()
-	*----------------------------------------------------------------------------*
-	Local aSizeAut    := MsAdvSize(,.F.,400)
+/*
+�����������������������������������������������������������������������������
+�����������������������������������������������������������������������������
+�������������������������������������������������������������������������ͻ��
+���Programa  �DCADSC4   �Autor  �  Mauricio Lima de Souza -OPUS            ���
+��� Data � 28/12/2019                                                     ���
+�������������������������������������������������������������������������͹��
+���Desc.     �  AxCadastro.                                               ���
+���          �                                                            ���
+�������������������������������������������������������������������������͹��
+���Uso       �                                                            ���
+�������������������������������������������������������������������������ͼ��
+�����������������������������������������������������������������������������
+�����������������������������������������������������������������������������
+*/
+User Function DCADSC4
+
+	Local cAlias  := "SC4"
+	Local cTitulo := "Prev. Venda Simulacao"
+//Local cFunExc := "U_RERPA02A()"
+	Local cFunAlt := "U_DCADSC4AL()"
+	Local cFunEXC := "U_DCADSC4EX()"
+	cFiltro := "C4_XXSIMU == 'S' "
+
+	dbselectarea("SC4")
+	SET FILTER TO &(cFiltro)
+	//AxCadastro( <cAlias>, <cTitulo>, <cVldExc>, <cVldAlt>)
+	AxCadastro(cAlias, cTitulo,cFunEXC, cFunAlt)
+	SET FILTER TO
+
+Return
+
+User Function DCADSC4EX
+	local QSC4:=''
+	local _lRet:=.F.
 
 
-	IF alltrim(cAlter)<>''
-		//DEFINE MSDIALOG oDlg5 FROM aSizeAut[4],aSizeAut[4] TO aSizeAut[3]*3,aSizeAut[3]+aSizeAut[4]  TITLE OemToAnsi("MRP DOMEX ALTERNATIVO") OF oMainWnd PIXEL
-		DEFINE MSDIALOG oDlg5 FROM aSizeAut[4],aSizeAut[4] TO aSizeAut[3]*1.2,aSizeAut[3]+aSizeAut[4]  TITLE OemToAnsi("MRP DOMEX ALTERNATIVO") OF oMainWnd PIXEL
+	QSC4 := " UPDATE SC4010 SET D_E_L_E_T_='*', R_E_C_D_E_L_=R_E_C_N_O_ "
+	QSC4 += " WHERE C4_XXCOD='"+SC4->C4_XXCOD+"'  AND C4_FILIAL='"+xFILIAL('SC4')+"'  "
+	//TCSQLEXEC(cQ1)
+	IF SC4->C4_XXSIMU=='S'
+		IF MSGYESNO( "Excluir Previsao de Venda N."+SC4->C4_XXCOD, "Exclusao" )
+			TCSQLEXEC(QSC4)
+			_lRet:=.T.
+		ELSE
+			MSGALERT("Nao foi Excluida  a previsao "+SC4->C4_XXCOD,"Exclusao Cancelada")
+			lRet:=.F.
 
-		@ 05,10 SAY ALLTRIM(cPRODUTO)+' - '+posicione('SB1',1,xFILIAL('SB1')+cPRODUTO,'B1_DESC')  OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4
-
-		//oGetSC:= (MsNewGetDados():New( 025,015,095,300,/*GD_UPDATE */,/*"U_FAT002LOK()"*/  ,/*REQ_OPSD3()*/,/*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,/*Ffieldok*/,/*superdel*/,/*delok*/,oDlg2,aHEADSC,aCOLSSC))
-		//oGetSC:oBrowse:Refresh()
-
-		//oGetPC:= (MsNewGetDados():New( 105,015,175,300,/*GD_UPDATE*/ ,/*"U_FAT002LOK()"*/  ,/*REQ_OPSD3()*/,/*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,/*Ffieldok*/,/*superdel*/,/*delok*/,oDlg2,aHEADPC,aCOLSPC))
-		//oGetPC:oBrowse:Refresh()
-
-		//oGetMV:= (MsNewGetDados():New( 185,015,255,300,/*GD_UPDATE*/ ,/*"U_FAT002LOK()"*/  ,/*REQ_OPSD3()*/,/*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,/*Ffieldok*/,/*superdel*/,/*delok*/,oDlg2,aHEADMV,aCOLSMV))
-		//oGetMV:oBrowse:Refresh()
-		nLin:=35
-		@ nLin,aPosGet[1,1] SAY oMSG11  VAR cMSG11   OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_HBLUE FONT oFontBRW5
-		@ nLin,aPosGet[1,1] SAY oMSG11B VAR cMSG11B  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_RED   FONT oFontBRW5
-		@ nLin,aPosGet[1,1] SAY oMSG11C VAR cMSG11C  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_GREEN FONT oFontBRW5
-		nLin:=60
-		@ nLin,aPosGet[1,1] SAY oMSG21  VAR cMSG21   OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
-		@ nLin,aPosGet[1,1] SAY oMSG21B VAR cMSG21B  OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
-
-		@ nLin,aPosGet[1,1] SAY oMSG31  VAR cMSG31   OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
-		@ nLin,aPosGet[1,1] SAY oMSG31B VAR cMSG31B  OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
-
-		cPRALTER := ALLTRIM(SUBSTR(cAlter+SPACE(15),14,15))
-		cPRALTER := cPRALTER+' - '+posicione('SB1',1,xFILIAL('SB1')+cPRALTER,'B1_DESC')
-		@ 85,10 SAY cPRALTER OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4 //+' - '+ALLTRIM(cDESCRI) OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4
-		nLin:=110
-		@ nLin,aPosGet[1,1] SAY oMSG12  VAR cMSG12   OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_HBLUE FONT oFontBRW5
-		@ nLin,aPosGet[1,1] SAY oMSG12B VAR cMSG12B  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_RED   FONT oFontBRW5
-		@ nLin,aPosGet[1,1] SAY oMSG12C VAR cMSG12C  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_GREEN FONT oFontBRW5
-		nLin:=135
-		@ nLin,aPosGet[1,1] SAY oMSG22  VAR cMSG22   OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
-		@ nLin,aPosGet[1,1] SAY oMSG22B VAR cMSG22B  OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
-
-		@ nLin,aPosGet[1,1] SAY oMSG32  VAR cMSG32   OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
-		@ nLin,aPosGet[1,1] SAY oMSG32B VAR cMSG32B  OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
-
-		//-------------------------------------------------
-		nLin:=155
-		@ nLin,10 SAY 'RESUMO' OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4 //+' - '+ALLTRIM(cDESCRI) OF oDlg5 PIXEL SIZE 300,040 FONT oFontBRW4
-		nLin:=175
-		@ nLin,aPosGet[1,1] SAY oMSG13  VAR cMSG13   OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_HBLUE FONT oFontBRW5
-		@ nLin,aPosGet[1,1] SAY oMSG13B VAR cMSG13B  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_RED   FONT oFontBRW5
-		@ nLin,aPosGet[1,1] SAY oMSG13C VAR cMSG13C  OF oDlg5 SIZE 200,035  PIXEL COLOR CLR_GREEN FONT oFontBRW5
-		nLin:=135
-		@ nLin,aPosGet[1,1] SAY oMSG23  VAR cMSG23   OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
-		@ nLin,aPosGet[1,1] SAY oMSG23B VAR cMSG23B  OF oDlg5 SIZE 200,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
-
-		@ nLin,aPosGet[1,1] SAY oMSG33  VAR cMSG33   OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
-		@ nLin,aPosGet[1,1] SAY oMSG33B VAR cMSG33B  OF oDlg5 SIZE 150,015  PIXEL COLOR CLR_GREEN FONT oFontBRW3
-
-		//-------------------------------------------------
-
-		MRPCALC1()
-
-		ACTIVATE MSDIALOG oDlg5  CENTERED
+		ENDIF
 	ELSE
-		MSGALERT('Produto: '+alltrim(cPRODUTO)+' n�o possui alternativo')
+		MSGALERT("Nao pode ser Excluida "+SC4->C4_XXCOD,"Previsao Nao eh Simulacao")
+		_lRet:=.F.
 	ENDIF
+RETURN _lRet
+
+User Function DCADSC4AL
+	local dEdit1 := M->C4_DATA
+	Local lRet := .T.
+	Private _oDlg
+
+	If INCLUI
+
+		DEFINE MSDIALOG _oDlg TITLE "Data da Previsao de Venda" FROM C(178),C(181) TO C(268),C(427) PIXEL
+
+		@ C(014),C(045) MsGet oEdit1 Var dEdit1 Size C(060),C(009) COLOR CLR_BLACK PIXEL OF _oDlg
+		@ C(015),C(005) Say "Data :" Size C(038),C(008) COLOR CLR_BLACK PIXEL OF _oDlg
+		@ C(032),C(067) Button "Confirma" Size C(037),C(012) ACTION (GrvDSaida(dEdit1),_oDlg:End()) PIXEL OF _oDlg
+
+		ACTIVATE MSDIALOG _oDlg CENTERED
+
+	EndIf
+
+	lRet := MsgBox('Incluir item Simulacao MRP Filial02', "Confirmacao", "YESNO")
+
+Return lRet
+
+STATIC FUNCTION GrvDSaida(dEdit1)
+
+	M->C4_XXSIMU :='S'
+	M->C4_DATA   := dEdit1
+
+Return Nil
+
+STATIC FUNCTION Xjob712()
+	Local aSaveArea	:= GetArea()
+	U_Ejobm712()
+	RestArea(aSaveArea)
+	//MSGALERT('Fim Processamento  - MRP Simulacao')
+	lprocmrp :=.t.
+	//oDlg:End()
+//	U_MRP002B()
+RETURN
+
+STATIC FUNCTION Xjob713D() //SIMULACAO
+	Local aSaveArea	:= GetArea()
+	MSGALERT('MRP SIMULCAO FILIAL 02, Aguarde fim de processamento')
+
+//-------------------------------------------------------------
+	cData     := DtoC(Date())
+	cAssunto  := "MRP SIMULACAO V2 Filial 02 Explode SC4 Prev.Venda - Environment: " + GetEnvServer() + " User: " + Subs(cUsuario,7,14)
+	cTexto    := "MRP SIMULACAO V2 Filial 02 Explode SC4 Prev.Venda - Date " + cData + "  Time: " + Time()
+	cPara     := "denis.vieira@rdt.com.br;mauricio.souza@opusvp.com.br"
+	cCC       := ""
+	cArquivo  := ""
+
+	U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
+
+	U_ExplSC4()
+//-------------------------------------------------------------
+
+	U_MRPTST1D()
+	RestArea(aSaveArea)
+	MSGALERT('Fim Processamento  - Sair e entrar novamente na Rotina')
+	//-------------------------------------------------------------
+	cData     := DtoC(Date())
+	cAssunto  := "FIM MRP SIMULACAO V2 filial 02 Explode SC4 Prev.Venda - Environment: " + GetEnvServer() + " User: " + Subs(cUsuario,7,14)
+	cTexto    := "FIM MRP SIMULACAO V2 filial 02 Explode SC4 Prev.Venda - Date " + cData + "  Time: " + Time()
+	cPara     := "denis.vieira@rdt.com.br;mauricio.souza@opusvp.com.br"
+	cCC       := ""
+	cArquivo  := ""
+
+	U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
+
+	lprocmrp :=.t.
+//	oDlg:End()
+RETURN
+
+
+	*-----------------------------------------------------------------*
+USER FUNCTION MRPTST1D()
+	*-----------------------------------------------------------------*
+
+	cQUERY1:=" DELETE FROM ZHD010  "
+	TCSQLEXEC(cQUERY1)
+
+	cQuery := " SELECT B2_TIPO AS ZHD_TIPO,B2_COD AS ZHD_PRODUT,B2_QATU AS ZHD_QTDE,OBS AS ZHD_TEXTO "
+	cQuery += " FROM SIMSB2D    UNION ALL "
+	cQuery += " SELECT * FROM SIMSC4D  UNION ALL "
+	cQuery += " SELECT * FROM SIMSD4D "
+	cQuery += " ORDER BY B2_COD,B2_TIPO "
+
+	TcQuery cQuery Alias "TRB" New
+
+	TRB->(DbGoTop())
+
+	If TRB->(Eof())
+		//	Alert("Nao foi encontrado nenhum item neste Processo !")
+		DbSelectArea("TRB")
+		TRB->(DbCloseArea())
+		Return()
+	EndIf
+
+	ZHD->(DBSELECTAREA('ZHD'))
+	ZHD->(DBSETORDER(2))
+
+	//cIDMRP :=TRB->ZHD_NUMMRP+'000'// INICIALIZADOR IDMRP
+	cIDMRP :='0000000'
+
+	dPERIOD := DATE()
+	cNUMMRP := '000000'
+	cPRODUT := TRB->ZHD_PRODUT
+	cPERMRP := ''//TRB->CZI_PERMRP
+
+	nQTDE:=0
+	DO WHILE .NOT. TRB->(EOF())
+		cPROD:=TRB->ZHD_PRODUT
+		RecLock("ZHD",.T.)
+		IF ALLTRIM(TRB->ZHD_TIPO)=='02-Saldo Estoque'
+			ZHD->ZHD_FILIAL := xFILIAL('ZHD')
+			//ZHD->ZHD_PERIOD := dPERIOD
+			//ZHD->ZHD_NUMMRP := TRB->ZHD_NUMMRP
+			ZHD->ZHD_PRODUT := TRB->ZHD_PRODUT
+			//ZHD->ZHD_DESC   := TRB->ZHD_DESC
+			ZHD->ZHD_TIPO   := TRB->ZHD_TIPO
+			//ZHD->ZHD_TIPOP  := TRB->ZHD_TIPOP
+			//ZHD->ZHD_GRUPO  := TRB->ZHD_GRUPO
+			//ZHD->ZHD_NIVEL  := TRB->ZHD_NIVEL
+			////ZHD->ZHD_REVISA := TRB->ZHD_REVISA
+			////ZHD->ZHD_REVSHW := TRB->ZHD_REVSHW
+			ZHD->ZHD_SALDOE := TRB->ZHD_QTDE
+			ZHD->ZHD_TEXTO  := TRB->ZHD_TEXTO
+			nQTDE:=TRB->ZHD_QTDE
+		ENDIF
+		IF ALLTRIM(TRB->ZHD_TIPO)=='09-Previsao Venda'
+			ZHD->ZHD_FILIAL := xFILIAL('ZHD')
+			ZHD->ZHD_TIPO   := TRB->ZHD_TIPO
+			ZHD->ZHD_PRODUT := TRB->ZHD_PRODUT
+			ZHD->ZHD_TIPO   := TRB->ZHD_TIPO
+			ZHD->ZHD_SAIDA  := TRB->ZHD_QTDE
+			ZHD->ZHD_TEXTO  := TRB->ZHD_TEXTO
+			nQTDE:=nQTDE-TRB->ZHD_QTDE
+		ENDIF
+		IF ALLTRIM(TRB->ZHD_TIPO)=='05-Empenho'
+			ZHD->ZHD_FILIAL := xFILIAL('ZHD')
+			ZHD->ZHD_TIPO   := TRB->ZHD_TIPO
+			ZHD->ZHD_PRODUT := TRB->ZHD_PRODUT
+			ZHD->ZHD_TIPO   := TRB->ZHD_TIPO
+			ZHD->ZHD_SAIDA  := TRB->ZHD_QTDE
+			ZHD->ZHD_TEXTO  := TRB->ZHD_TEXTO
+			nQTDE:=nQTDE-TRB->ZHD_QTDE
+		ENDIF
+		//ZHD->ZHD_TXDT1  := DTOC(dPERIOD)
+		//ZHD->ZHD_TXDT2  := dPERIOD
+		ZHD->ZHD_XQTDE  := TRB->ZHD_QTDE
+		//ZHD->ZHD_SC4REC := TRB->ZHD_SC4REC
+		//DO CASE
+		//CASE SUBSTR(TRB->ZHD_TIPO,1,2) $('05|07|09|00')  //05-Empenho   07-Pedido Venda    09-Previsao Venda 00-Seguranca
+		//	ZHD->ZHD_SAIDA:=TRB->CZI_QUANT
+		//CASE SUBSTR(TRB->ZHD_TIPO,1,2) =='08'            //08-Saida Estrutura
+		//	ZHD->ZHD_SESTR:=TRB->CZI_QUANT
+		//CASE SUBSTR(TRB->ZHD_TIPO,1,2) $('03|04|06')     //03-Sol.Compras //04-Pedido Compra   06-Ordem Producao
+		//	ZHD->ZHD_ENTRAD:=TRB->CZI_QUANT
+		//ENDCASE
+
+		//nSLDINI  :=TRB->CZK_QTSLES    //SALDO INICIAL    02-Saldo Estoque
+		//CZK_QTENTR                  //ENTRADA
+		//CZK_QTSAID                  //SAIDA
+		//CZK_QTSEST                  //SAIDA ESTRUTURA
+		//nSLDFIN  :=TRB->CZK_QTSALD    //SALDO FINAL      10-Saldo Final
+		//nNECE    :=TRB->CZK_QTNECE    //NECESSIDADE      01-Necessidade
+
+		//cDESC    :=TRB->ZHD_DESC
+		//cTIPOP   :=TRB->ZHD_TIPOP
+		//cGRUPO   :=TRB->ZHD_GRUPO
+		//dDATA    :=dPERIOD
+		ZHD->ZHD_TXDT1  := DTOC(DATE())
+		ZHD->ZHD_TXDT2  := DATE()
+		ZHD_NUMMRP :='000000'
+		ZHD_IDMRP  :='000000'
+		ZHD_PERIOD := DATE()
+		ZHD->( msUnlock() )
+		TRB->(DBSKIP())
+		IF TRB->ZHD_PRODUT<>cPROD
+			IF nQTDE<0
+				RecLock("ZHD",.T.)
+				ZHD->ZHD_FILIAL := xFILIAL('ZHD')
+				ZHD->ZHD_PRODUT := cPROD
+				ZHD->ZHD_TIPO   := '01-Necessidade'
+				ZHD->ZHD_NEC    := nQTDE*(-1)
+				ZHD->ZHD_XQTDE  := nQTDE*(-1)
+				ZHD->ZHD_TXDT1  := DTOC(DATE())
+				ZHD->ZHD_TXDT2  := DATE()
+				ZHD_NUMMRP :='000000'
+				ZHD_IDMRP :='000000'
+				ZHD_PERIOD := DATE()
+				ZHD->( msUnlock() )
+			ENDIF
+			RecLock("ZHD",.T.)
+			ZHD->ZHD_FILIAL := xFILIAL('ZHD')
+			ZHD->ZHD_PRODUT := cPROD
+			ZHD->ZHD_TIPO   := '10-Saldo Final'
+			ZHD->ZHD_SALDO  := nQTDE
+			ZHD->ZHD_XQTDE  := nQTDE
+			ZHD->ZHD_TXDT1  := DTOC(DATE())
+			ZHD->ZHD_TXDT2  := DATE()
+			ZHD_NUMMRP :='000000'
+			cIDMRP     := Soma1(cIDMRP,7,.T.,.T.)
+			ZHD->ZHD_IDMRP  := cIDMRP
+			ZHD_PERIOD := DATE()
+			ZHD->( msUnlock() )
+			nQTDE:=0
+		ENDIF
+	ENDDO
+	//MSGALERT('FIM')
 
 RETURN
 
-//--------------------------------------------------------------------------------------
-STATIC FUNCTION  MRPCALC1()
-	//------------------------------------------MLS QUERY
-	_nEST  :=0
-	_nSC   :=0
-	_nPC   :=0
-	_nEMP  :=0
-	_nOP   :=0
-	_nPV   :=0
-	_nPREV :=0
-	_nSAES :=0
-	_nNEC1 :=0
-
-	_nESTX  :=0
-	_nSCX   :=0
-	_nPCX   :=0
-	_nEMPX  :=0
-	_nOPX   :=0
-	_nPVX   :=0
-	_nPREVX :=0
-	_nSAESX :=0
-	_nNEC1X :=0
-
-	_nSAESTOT :=0
-
-
-	cQUERYSLD:="	SELECT ZHC_PRODUT , "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' AND B2_FILIAL='"+xFILIAL('SB2')+"' ) AS  EST, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND  C1_QUANT > C1_QUJE) AS  SOL, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND  C7_QUANT > C7_QUJE) AS  PC, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) AS  EMP, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND   ZHC_TIPO IN ('06-Ordem Producao') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  OP, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHC.ZHC_PRODUT AND C6_BLQ<>'R')  AS  PV, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('09-Previsao Venda')  AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  PREV, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('08-Saida Estrutura') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  SAES, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='') + "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND C1_QUANT > C1_QUJE) + "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND C7_QUANT > C7_QUJE ) - "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) + "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('06-Ordem Producao') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) - "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHC.ZHC_PRODUT  AND C6_BLQ<>'R') - "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('09-Previsao Venda')  AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS FINAL "// -       "
-
-	cQUERYSLD+="	FROM ZHC010 (NOLOCK) ZHC "
-	cQUERYSLD+="	WHERE ZHC_PRODUT='"+ALLTRIM(cPRODUTO)+"'  AND ZHC.D_E_L_E_T_='' "
-	cQUERYSLD+="	GROUP BY ZHC_PRODUT "
-	cQUERYSLD+="	ORDER BY ZHC_PRODUT "
-
-	TCQUERY cQUERYSLD NEW ALIAS "TRS"
-	TRS->( dbGoTop() )
-	_nEST  :=TRS->EST
-	_nSC   :=TRS->SOL
-	_nPC   :=TRS->PC
-	_nEMP  :=TRS->EMP
-	_nOP   :=TRS->OP
-	_nPV   :=TRS->PV
-	_nPREV :=TRS->PREV
-	_nSAES :=TRS->SAES
-	_nNEC1 :=TRS->FINAL
-
-	_nESTX  :=_nEST
-	_nSCX   :=_nSC
-	_nPCX   :=_nPC
-	_nEMPX  :=_nEMP
-	_nOPX   :=_nOP
-	_nPVX   :=_nPV
-	_nPREVX :=_nPREV
-	_nSAESX :=_nSAES
-	_nNEC1X :=_nNEC1
-
-	TRS->(DBCLOSEAREA())   //_nEMP-_nSAES
-
-	//nENTRADA:=nTotEnt
-	//nSAIDA  :=nTotSai
-	//nSALDOF :=(nSALDOI+nTotEnt)-nTotSai
-
-	//nWON   :=nTWON
-	//nBEST  :=nTBEST
-	//nIN    :=nTIN
-
-	IF _nNEC1<0
-		cMSG11  :=''
-		cMSG11B :='Saldo SC+PC Menor que Necessidade: '+cEOL   //+TRANSFORM(_nNEC1,"@E 999,999.99")
-		cMSG11B +='+EST:' +TRANSFORM(_nEST ,"@E 9,999,999.99") +' +SC: '+TRANSFORM(_nSC  ,"@E 9,999,999.99")+' +PC :'+TRANSFORM(_nPC  ,"@E 9,999,999.99")+cEOL
-		cMSG11B +='-EMP:' +TRANSFORM(_nEMP ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPV  ,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREV,"@E 9,999,999.99")+cEOL
-		IF _nSAES-_nEMP>0
-			cMSG11B +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAES-_nEMP,"@E 9,999,999.99")
-		ELSE
-			cMSG11B +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99")
-		ENDIF
-		cMSG11C :=''
-	ELSE
-		cMSG11 :='Saldo SC+PC Maior que Necessidade: '+cEOL   //+TRANSFORM(_nNEC1,"@E 999,999.99")
-		cMSG11b:=''
-		cMSG11C :=''
-
-		cMSG11 +='+EST:' +TRANSFORM(_nEST ,"@E 9,999,999.99") +' +SC: '+TRANSFORM(_nSC,"@E 9,999,999.99")+' +PC :'+TRANSFORM(_nPC  ,"@E 9,999,999.99")+cEOL
-		cMSG11 +='-EMP:' +TRANSFORM(_nEMP ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPV,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREV,"@E 9,999,999.99")+cEOL
-		IF _nSAES-_nEMP>0
-			cMSG11 +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAES-_nEMP,"@E 9,999,999.99")
-			_nSAESTOT:=_nSAESTOT+(_nSAES-_nEMP)
-		ELSE
-			cMSG11 +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99")
-		ENDIF
-
-	ENDIF
-	//IF nSALDOF>=0
-	//	cMSG11 :=''
-	//	cMSG11b:=''
-	//	cMSG11C:='Item com Saldo'
-	//ENDIF
-	//MLS
-	//cQuerySI := " SELECT  * "
-	//cQuerySI += " FROM ZHC010 (NOLOCK)  "
-	//cQuerySI += " WHERE ZHC_FILIAL = '"+xFILIAL('ZHC')+"' AND ZHC_IDMRP='"+ALLTRIM(oGetNEC:ACOLS[nLIN][06])+"' AND ZHC010.D_E_L_E_T_='' "
-
-	//TCQUERY cQuerySI NEW ALIAS "TR2"
-	//TR2->( dbGoTop() )
-	//IF !EMPTY(TR2->ZHC_NUMSC)
-	//	cMSG21 :='SC: '+TR2->ZHC_NUMSC+' Qtde: '+Transform(TR2->ZHC_QTDSC,"@E 9,999,999.99")+" Data: "+SUBSTR(TR2->ZHC_DATASC,7,2)+'/'+SUBSTR(TR2->ZHC_DATASC,5,2)+'/'+SUBSTR(TR2->ZHC_DATASC,1,4)
-	//	cMSG21b:=''
-	//ELSE
-	//	cMSG21 :=''
-	//	cMSG21b:=''
-	//ENDIF
-	//TR2->(DBCLOSEAREA())
-	oMSG11 :refresh()
-	oMSG11b:refresh()
-	oMSG11c:refresh()
-
-	oMSG21 :refresh()
-	oMSG21b:refresh()
-
-	*-----------------------------------------------------------------------------------------
-	//------------------------------------------MLS QUERY alternativo
-	_nEST  :=0
-	_nSC   :=0
-	_nPC   :=0
-	_nEMP  :=0
-	_nOP   :=0
-	_nPV   :=0
-	_nPREV :=0
-	_nSAES :=0
-	_nNEC1 :=0
-	//ALTERNATIVO: '
-	cAlter :=cAlter+SPACE(15)
-	cCODALT :=SUBSTR(cAlter,14,15)
-
-	cQUERYSLD:="	SELECT ZHC_PRODUT , "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' AND B2_FILIAL='"+xFILIAL('SB2')+"' ) AS  EST, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND  C1_QUANT > C1_QUJE) AS  SOL, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND  C7_QUANT > C7_QUJE) AS  PC, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) AS  EMP, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND   ZHC_TIPO IN ('06-Ordem Producao') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  OP, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHC.ZHC_PRODUT AND C6_BLQ<>'R')  AS  PV, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('09-Previsao Venda')  AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  PREV, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('08-Saida Estrutura') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS  SAES, "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QATU),0) FROM SB2010 (NOLOCK) WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='') + "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(C1_QUANT-C1_QUJE),0)  FROM SC1010 (NOLOCK) WHERE C1_FILIAL='"+xFILIAL('SC1')+"' AND  C1_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C1_RESIDUO='' AND C1_QUANT > C1_QUJE) + "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(C7_QUANT-C7_QUJE),0)  FROM SC7010 (NOLOCK) WHERE C7_FILIAL='"+xFILIAL('SC7')+"' AND  C7_PRODUTO=ZHC.ZHC_PRODUT AND D_E_L_E_T_='' AND C7_RESIDUO='' AND C7_QUANT > C7_QUJE ) - "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(B2_QEMP),0) FROM SB2010 (NOLOCK)  WHERE B2_FILIAL='"+xFILIAL('SB2')+"' AND  B2_COD=ZHC_PRODUT  AND D_E_L_E_T_='' ) + "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('06-Ordem Producao') AND ZHC_PRODUT=ZHC.ZHC_PRODUT) - "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(C6_QTDVEN-C6_QTDENT),0)  FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xFILIAL('SC6')+"' AND  (C6_QTDVEN-C6_QTDENT)>0 AND D_E_L_E_T_='' AND C6_PRODUTO=ZHC.ZHC_PRODUT  AND C6_BLQ<>'R') - "
-	cQUERYSLD+="	(SELECT ISNULL(SUM(ZHC_XQTDE),0)  FROM ZHC010 (NOLOCK) WHERE ZHC_FILIAL='"+xFILIAL('ZHC')+"' AND  ZHC_TIPO IN ('09-Previsao Venda')  AND ZHC_PRODUT=ZHC.ZHC_PRODUT) AS FINAL "// -       "
-
-	cQUERYSLD+="	FROM ZHC010 (NOLOCK) ZHC "
-	cQUERYSLD+="	WHERE ZHC_PRODUT='"+ALLTRIM(cCODALT)+"'  AND ZHC.D_E_L_E_T_='' "
-	cQUERYSLD+="	GROUP BY ZHC_PRODUT "
-	cQUERYSLD+="	ORDER BY ZHC_PRODUT "
-
-	TCQUERY cQUERYSLD NEW ALIAS "TRS"
-	TRS->( dbGoTop() )
-	_nEST  :=TRS->EST
-	_nSC   :=TRS->SOL
-	_nPC   :=TRS->PC
-	_nEMP  :=TRS->EMP
-	_nOP   :=TRS->OP
-	_nPV   :=TRS->PV
-	_nPREV :=TRS->PREV
-	_nSAES :=TRS->SAES
-	_nNEC1 :=TRS->FINAL
-
-	_nESTX  :=_nESTX  + _nEST
-	_nSCX   :=_nSCX   + _nSC
-	_nPCX   :=_nPCX   + _nPC
-	_nEMPX  :=_nEMPX  + _nEMP
-	_nOPX   :=_nOPX   + _nOP
-	_nPVX   :=_nPVX   + _nPV
-	_nPREVX :=_nPREVX + _nPREV
-	_nSAESX :=_nSAESX + _nSAES
-	_nNEC1X :=_nNEC1X + _nNEC1
-	TRS->(DBCLOSEAREA())   //_nEMP-_nSAES
-
-	IF _nNEC1<0
-		cMSG12  :=''
-		cMSG12B :='Saldo SC+PC Menor que Necessidade: '+cEOL   //+TRANSFORM(_nNEC1,"@E 999,999.99")
-		cMSG12B +='+EST:' +TRANSFORM(_nEST ,"@E 9,999,999.99") +' +SC: '+TRANSFORM(_nSC  ,"@E 9,999,999.99")+' +PC :'+TRANSFORM(_nPC  ,"@E 9,999,999.99")+cEOL
-		cMSG12B +='-EMP:' +TRANSFORM(_nEMP ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPV  ,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREV,"@E 9,999,999.99")+cEOL
-		IF _nSAES-_nEMP>0
-			cMSG12B +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAES-_nEMP,"@E 9,999,999.99")
-		ELSE
-			cMSG12B +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99")
-		ENDIF
-		cMSG12C :=''
-	ELSE
-		cMSG12 :='Saldo SC+PC Maior que Necessidade: '+cEOL   //+TRANSFORM(_nNEC1,"@E 999,999.99")
-		cMSG12b:=''
-		cMSG12C :=''
-
-		cMSG12 +='+EST:' +TRANSFORM(_nEST ,"@E 9,999,999.99") +' +SC: '+TRANSFORM(_nSC,"@E 9,999,999.99")+' +PC :'+TRANSFORM(_nPC  ,"@E 9,999,999.99")+cEOL
-		cMSG12 +='-EMP:' +TRANSFORM(_nEMP ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPV,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREV,"@E 9,999,999.99")+cEOL
-		IF _nSAES-_nEMP>0
-			cMSG12 +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAES-_nEMP,"@E 9,999,999.99")
-			_nSAESTOT:=_nSAESTOT+(_nSAES-_nEMP)
-		ELSE
-			cMSG12 +='=SLD:' +TRANSFORM(_nNEC1,"@E 9,999,999.99")
-		ENDIF
-
-	ENDIF
-	//IF nSALDOF>=0
-	//	cMSG11 :=''
-	//	cMSG11b:=''
-	//	cMSG11C:='Item com Saldo'
-	//ENDIF
-	//MLS
-	//cQuerySI := " SELECT  * "
-	//cQuerySI += " FROM ZHC010 (NOLOCK)  "
-	//cQuerySI += " WHERE ZHC_FILIAL = '"+xFILIAL('ZHC')+"' AND ZHC_IDMRP='"+ALLTRIM(oGetNEC:ACOLS[nLIN][06])+"' AND ZHC010.D_E_L_E_T_='' "
-
-	//TCQUERY cQuerySI NEW ALIAS "TR2"
-	//TR2->( dbGoTop() )
-	//IF !EMPTY(TR2->ZHC_NUMSC)
-	//	cMSG22 :='SC: '+TR2->ZHC_NUMSC+' Qtde: '+Transform(TR2->ZHC_QTDSC,"@E 9,999,999.99")+" Data: "+SUBSTR(TR2->ZHC_DATASC,7,2)+'/'+SUBSTR(TR2->ZHC_DATASC,5,2)+'/'+SUBSTR(TR2->ZHC_DATASC,1,4)
-	//	cMSG22b:=''
-	//ELSE
-	//	cMSG22 :=''
-	//	cMSG22b:=''
-	//ENDIF
-	//TR2->(DBCLOSEAREA())
-	oMSG12 :refresh()
-	oMSG12b:refresh()
-	oMSG12c:refresh()
-
-	oMSG22 :refresh()
-	oMSG22b:refresh()
-
-	//-------------------RESUMO---------------------------------
-	IF _nNEC1X<0
-		cMSG13  :=''
-		cMSG13B :='Saldo SC+PC Menor que Necessidade: '+cEOL   //+TRANSFORM(_nNEC1,"@E 999,999.99")
-		cMSG13B +='+EST:' +TRANSFORM(_nESTX ,"@E 9,999,999.99") +' +SC: '+TRANSFORM(_nSCX  ,"@E 9,999,999.99")+' +PC :'+TRANSFORM(_nPCX  ,"@E 9,999,999.99")+cEOL
-		cMSG13B +='-EMP:' +TRANSFORM(_nEMPX ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPVX  ,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREVX,"@E 9,999,999.99")+cEOL
-		IF _nSAESX-_nEMPX>0
-			cMSG13B +='=SLD:' +TRANSFORM(_nNEC1X,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAESX-_nEMPX,"@E 9,999,999.99")
-		ELSE
-			cMSG13B +='=SLD:' +TRANSFORM(_nNEC1X,"@E 9,999,999.99")
-		ENDIF
-		cMSG13C :=''
-	ELSE
-		cMSG13 :='Saldo SC+PC Maior que Necessidade: '+cEOL   //+TRANSFORM(_nNEC1,"@E 999,999.99")
-		cMSG13b:=''
-		cMSG13C :=''
-
-		cMSG13 +='+EST:' +TRANSFORM(_nESTX ,"@E 9,999,999.99") +' +SC: '+TRANSFORM(_nSCX,"@E 9,999,999.99")+' +PC :'+TRANSFORM(_nPCX  ,"@E 9,999,999.99")+cEOL
-		cMSG13 +='-EMP:' +TRANSFORM(_nEMPX ,"@E 9,999,999.99") +' -PV: '+TRANSFORM(_nPVX,"@E 9,999,999.99")+' -PRV:'+TRANSFORM(_nPREVX,"@E 9,999,999.99")+cEOL
-		IF _nSAESX-_nEMPX>0
-			cMSG13 +='=SLD:' +TRANSFORM(_nNEC1X,"@E 9,999,999.99") +'      Saida Estrutura:' +TRANSFORM(_nSAESTOT,"@E 9,999,999.99")
-		ELSE
-			cMSG13 +='=SLD:' +TRANSFORM(_nNEC1X,"@E 9,999,999.99")
-		ENDIF
-
-	ENDIF
-	//IF nSALDOF>=0
-	//	cMSG11 :=''
-	//	cMSG11b:=''
-	//	cMSG11C:='Item com Saldo'
-	//ENDIF
-	//MLS
-	//cQuerySI := " SELECT  * "
-	//cQuerySI += " FROM ZHC010 (NOLOCK)  "
-	//cQuerySI += " WHERE ZHC_FILIAL = '"+xFILIAL('ZHC')+"' AND ZHC_IDMRP='"+ALLTRIM(oGetNEC:ACOLS[nLIN][06])+"' AND ZHC010.D_E_L_E_T_='' "
-
-	//TCQUERY cQuerySI NEW ALIAS "TR2"
-	//TR2->( dbGoTop() )
-	//IF !EMPTY(TR2->ZHC_NUMSC)
-	//	cMSG22 :='SC: '+TR2->ZHC_NUMSC+' Qtde: '+Transform(TR2->ZHC_QTDSC,"@E 9,999,999.99")+" Data: "+SUBSTR(TR2->ZHC_DATASC,7,2)+'/'+SUBSTR(TR2->ZHC_DATASC,5,2)+'/'+SUBSTR(TR2->ZHC_DATASC,1,4)
-	//	cMSG22b:=''
-	//ELSE
-	//	cMSG22 :=''
-	//	cMSG22b:=''
-	//ENDIF
-	//TR2->(DBCLOSEAREA())
-	oMSG13 :refresh()
-	oMSG13b:refresh()
-	oMSG13c:refresh()
-
-	oMSG23 :refresh()
-	oMSG23b:refresh()
-
-RETURN
 
