@@ -448,7 +448,8 @@ Static Function ProcRun()
 									cQuery += "	D_E_L_E_T_        = '' ), 0 ) ZE_PER_FOR                                                                           "
 
 									cQuery += "	FROM SD4010 SD4 (NOLOCK) JOIN SB1010 SB1 (NOLOCK) ON B1_COD = D4_COD                                               "
-									cQuery += "	WHERE SUBSTRING(D4_OP,1,11) = '"+Subs(aOps[nOp,1],1,11)+"' AND                                                     "
+									//cQuery += "	WHERE SUBSTRING(D4_OP,1,11) = '"+Subs(aOps[nOp,1],1,11)+"' AND                                                     "
+									cQuery += "	WHERE D4_OP = '"+Subs(aOps[nOp,1],1,11)+"' AND                                                     "
 									cQuery += "	SB1.B1_TIPO  <> 'MO' 						  		 AND                                                                  "
 									cQuery += "	SB1.B1_APROPRI <> 'I'                   		 AND                                                                  "
 									cQuery += "	SD4.D4_LOCAL = '97'					 		  		 AND                                                                  "
