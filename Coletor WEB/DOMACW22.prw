@@ -88,7 +88,7 @@ User Function DOMACW22()
 
 	@ nLin, nCol1	SAY oTexto1 Var 'Etiq.:'    SIZE 100*nWebPx,10*nWebPx PIXEL
 	oTexto1:oFont := TFont():New('Arial',,16*nWebPx,,.T.,,,,.T.,.F.)
-	@ nLin-2, nCol1+30 MSGET oEtiqueta VAR cEtiqueta  SIZE 75*nWebPx,08*nWebPx WHEN .T. Valid ValidaEtiq() PIXEL
+	@ nLin-2, nCol1+30 MSGET oEtiqueta VAR cEtiqueta  SIZE 75*nWebPx,08*nWebPx WHEN .T. Valid (ValidaEtiq()) PIXEL
 	oEtiqueta:oFont := TFont():New('Courier New',,22*nWebPx,,.T.,,,,.T.,.F.)
 	nLin += 12*nWebPx
 

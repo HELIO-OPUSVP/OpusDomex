@@ -224,6 +224,8 @@ User Function DOMETDLG()
 				U_DOMETQ42(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07) 
 			ElseIf mv_par06 == "43" // Layout 43 - (NOVO LAYOUT SUBSTITUTO DA 107) Ricardo Roda
 				U_DOMETQ43(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07)
+			ElseIf mv_par06 == "44" // Layout 44 - (NOVO LAYOUT SUBSTITUTO DA 83) Ricardo Roda
+				U_DOMETQ44(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07)
 			ElseIf mv_par06 == "115"  // Layout 115 - (ID CORTE FURUKAWA - AVULSA))
 				U_DOMET115(mv_par02,mv_par05,mv_par07)
 			ElseIf mv_par06 == "117"  // Layout 117 - (TELECOM ARGENTINA )
