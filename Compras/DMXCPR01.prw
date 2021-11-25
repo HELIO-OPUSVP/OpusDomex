@@ -63,7 +63,7 @@ User Function DMXCPR01(cNumPCLib)
 			cEmail += Iif(Empty(AllTrim(PswRet()[1][14])),"",";" + AllTrim(PswRet()[1][14])) // Retorna vetor com informações do usuário
 		EndIf
 		*/
-		cEmail += ";" + UsrRetMail(cUserComp)// Retorna vetor com informações do usuário
+		cEmail += ";" + UsrRetMail(SC7->C7_USER)// Retorna vetor com informações do usuário
 
 		cEmail += ";denis.vieira@rosenbergerdomex.com.br"
 	
