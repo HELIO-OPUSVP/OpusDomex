@@ -1922,12 +1922,7 @@ Static Function ValidaEtiq(lTeste)
 						//Else
 						ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T. )
 						//EndIf
-						if U_Validacao() //Paletiza豫o Pcon
-							iF AllTrim(_cGrupoUso) == "PCON"
-
-								U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "")
-							EndIf
-						Endif
+						
 					Else
 
 						If AllTrim(_cGrupoUso) == "JUMP" .Or. SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX"
@@ -1988,11 +1983,7 @@ Static Function ValidaEtiq(lTeste)
 
 
 					ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T. )
-					if U_Validacao() //Etiqueta Paletiza豫o PCON
-						iF AllTrim(_cGrupoUso) == "PCON"
-							U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "")
-						EndIf
-					Endif
+		
 				Else
 
 					If AllTrim(_cGrupoUso) == "JUMP" .Or. SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX"
@@ -2059,12 +2050,7 @@ Static Function ValidaEtiq(lTeste)
 					//읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸
 
 					ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T.,.T. )
-					if U_Validacao()
-						iF AllTrim(_cGrupoUso) == "PCON"
-
-							U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "")
-						EndIf
-					Endif
+					
 				Else
 					if U_VALIDACAO() // ricardo roda 04/11/2021
 					IF lEricsson
