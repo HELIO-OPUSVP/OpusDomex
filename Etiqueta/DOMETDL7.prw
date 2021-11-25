@@ -3517,7 +3517,6 @@ Static Function fButtCel()
 	oButton2:setCSS(cCSSBtN1)
 	@ 010, 284 BUTTON oButton3 PROMPT "LINHA 3" SIZE 119, 043 OF oDlg ACTION (cCel := "LINHA 3", oDlg:end() ) PIXEL
 	oButton3:setCSS(cCSSBtN1)
-
 	@ 069, 018 BUTTON oButton4 PROMPT "LINHA 4" SIZE 119, 043 OF oDlg ACTION (cCel := "LINHA 4", oDlg:end() ) PIXEL
 	oButton4:setCSS(cCSSBtN1)
 	@ 069, 151 BUTTON oButton5 PROMPT "LINHA 5" SIZE 119, 043 OF oDlg ACTION (cCel := "LINHA 5", oDlg:end() ) PIXEL
