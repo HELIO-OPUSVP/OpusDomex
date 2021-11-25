@@ -1941,7 +1941,7 @@ Static Function ValidaEtiq(lTeste)
 							//읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸
 							If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX" ) .And. lEricsson
 								
-								if U_VALIDACAO()// ricardo roda 04/11/2021
+								if U_VALIDACAO() .OR. .T.// ricardo roda 04/11/2021
 									U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 								Else
 									U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
@@ -1954,7 +1954,7 @@ Static Function ValidaEtiq(lTeste)
 							EndIf
 						Else
 							if lEricsson
-								if U_VALIDACAO()
+								if U_VALIDACAO() .OR. .T.
 									U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 								Else	
 									U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
@@ -2002,7 +2002,7 @@ Static Function ValidaEtiq(lTeste)
 						//읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸
 						If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .OR. SubStr(AllTrim(_cGrupoUso),1,4)=="FLEX")  .And. lEricsson
 							
-							if U_VALIDACAO()// ricardo roda 04/11/2021
+							if U_VALIDACAO() .OR. .T.// ricardo roda 04/11/2021
 								U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 							Else
 								U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
@@ -2060,7 +2060,7 @@ Static Function ValidaEtiq(lTeste)
 						EndIf
 					Endif
 				Else
-					if U_VALIDACAO()// ricardo roda 04/11/2021
+					if U_VALIDACAO() .OR. .T.// ricardo roda 04/11/2021
 						U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 					Else
 						U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQtdBip,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
@@ -2474,7 +2474,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		EndIf
 	EndIf
 
-	If __mv_par06 == "41" .and. U_VALIDACAO() // Ricardo Roda 04/11/21  // layout criado a partir do 94
+	If __mv_par06 == "41" .and. U_VALIDACAO()  .OR. .T.// Ricardo Roda 04/11/21  // layout criado a partir do 94
 		cLayoutEnt := "41"
 		lRotValid := U_DOMETQ41(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL,"000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 		If !lRotValid
