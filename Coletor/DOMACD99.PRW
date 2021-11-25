@@ -546,6 +546,7 @@ Static Function AlertC(cTexto)
 	Local aTemp := U_QuebraString(cTexto,20)
 	Local cTemp := ''
 	Local lRet  := .T.
+	Local x		:= 0
 
 	For x := 1 to Len(aTemp)
 		cTemp += aTemp[x] + Chr(13)
@@ -563,7 +564,9 @@ Return(lRet)
 
 
 Static function fProcArray(oSay)
+	Local _i := 0
 	nMais:= 1
+
 	for _i := 1 to len(aWBrowse1)*100000
         // if 	oSay <> nil
         //     oSay:cCaption := ("Processando o registro numero "+ cvaltoChar(nMais) )

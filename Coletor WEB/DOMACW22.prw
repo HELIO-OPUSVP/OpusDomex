@@ -395,14 +395,15 @@ Static Function ImpNivelP()
 	SB1->(dbSetOrder(1))
 	SB1->(dbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
 	
-	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) == "DROP" ) //.OR. lEhClaro 
+	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) == "DROP" ) .Or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) == "PCON" )  //.OR. lEhClaro 
 		lColetor   := .F.
 	Else
 		lColetor   := .T.
 	EndIf
 
 	//conforme solicita豫o do Denis em 15/10/2021 quando o cliente for a claro e a filial 02 imprimir este layout  
-	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) == "DROP" )
+	//Adiconado o pcon 25/11/2021 - jackson santos
+	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) == "DROP" ) .OR. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) == "PCON" )
 		//旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커
 		//쿗AYOUT 94 - Etiqueta Nivel 3												   	�
 		//읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸
