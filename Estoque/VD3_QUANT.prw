@@ -31,6 +31,7 @@ User Function VD3_QUANT(Param01,Param02,Param03,Param04)
 	Default Param02  := 0  //M->D3_QUANT
 	Default Param03  := "" //M->D3_COD
 	Default Param04  := "" //M->D3_LOCAL
+	cOpOrig2:=''
 
 
 
@@ -175,12 +176,22 @@ Static Function ProcRun()
 			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 			cAliasSD4 :=  "SD4G"//GetNextAlias()
 
-			BeginSQL Alias cAliasSD4
-			
-			SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND SUBSTRING(D4_OP,1,8) = %Exp:cOpOrigem% AND SD4.%NotDel%
-			
-			EndSQL
+			//BeginSQL Alias cAliasSD4
+			// SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND SUBSTRING(D4_OP,1,8) = %Exp:cOpOrigem% AND SD4.%NotDel%
+			//EndSQL
 
+			//cOpOrig2 :=cOpOrigem+'%'
+
+			//If U_VALIDACAO()
+			//	BeginSQL Alias cAliasSD4
+			// SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND D4_OP LIKE %Exp:cOpOrig2% AND SD4.%NotDel%
+			//	EndSQL
+			//else
+			BeginSQL Alias cAliasSD4
+			 SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND SUBSTRING(D4_OP,1,8) = %Exp:cOpOrigem% AND SD4.%NotDel%
+			EndSQL
+			//endif
+ 
 			nTotRegProc := (cAliasSD4)->NSOMA
 			(cAliasSD4)->(dbCloseArea())
 
@@ -283,7 +294,7 @@ Static Function ProcRun()
 								//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 								_cAlias   := GetNextAlias()
 								c_cOP     := "%'"+Subs(aOps[nOp,1],1,11)+"'%"
-								cFilialSD3 := xFilial("SD3")   
+								cFilialSD3 := xFilial("SD3")
 
 								BeginSQL Alias _cAlias
 								
@@ -653,7 +664,7 @@ Static Function ProcRun()
 																c_produto := "%'"+SD4->D4_COD+"'%"
 																c_local   := "%'"+cLocProcDom+"'%"
 																SUMD3QTD1 := 0
-																cFilialSD3 := xFilial("SD3")  
+																cFilialSD3 := xFilial("SD3")
 
 																BeginSQL Alias _cAlias
 																
@@ -832,7 +843,7 @@ Static Function ProcRun()
 						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 						_cAlias   := GetNextAlias()
 						c_cOP     := "%'"+Subs(aOps[nOp,1],1,11)+"'%"
-						cFilialSD3 := xFilial("SD3")   
+						cFilialSD3 := xFilial("SD3")
 
 						BeginSQL Alias _cAlias
 							
@@ -889,7 +900,7 @@ Static Function ProcRun()
 			For nXB := 1 to Len(aNecessidades)
 				//                            Produto              Local
 				If SB2->( dbSeek( xFilial() + aNecessidades[nXB,1] + aNecessidades[nXB,2] ) ) //.and. aNecessidades[x,2]=="99"
-		
+
 					nP05_SOMA := 0
 					cQuery := " SELECT SUM(CAST(RIGHT(RTRIM(P05_SOMA), LEN(RTRIM(P05_SOMA))-PATINDEX('%-%',P05_SOMA)) AS DECIMAL(10,5) )) AS SOMA_P05 FROM P05010 (NOLOCK) WHERE P05_FILIAL='"+xFilial("P05")+"' AND D_E_L_E_T_='' AND  P05_CAMPO='B2_QATU' AND P05_PRODUT='"+aNecessidades[nXB,1]+"' AND P05_LOCAL='99' "
 
@@ -974,17 +985,17 @@ Static Function ProcRun()
 		EndIf
 	EndIf
 
-		RestArea(aAreaSC2)
-		RestArea(aAreaSD3)
-		RestArea(aAreaSBF)
-		RestArea(aAreaSD4)
-		RestArea(aAreaGER)
+	RestArea(aAreaSC2)
+	RestArea(aAreaSD3)
+	RestArea(aAreaSBF)
+	RestArea(aAreaSD4)
+	RestArea(aAreaGER)
 
 // TESTE TRANSFERENCIA EM
 /*
 lContinua := .T.
 
-		If lContinua
+	If lContinua
 lRastroL  := Rastro(aCols[n,nPosCODOri],'L')
 lRastroS  := Rastro(aCols[n,nPosCODOri],'S')
 lLocalizO := Localiza(aCols[n,nPosCODOri])
@@ -992,143 +1003,143 @@ lLocalizD := Localiza(aCols[n,nPosCODDes])
 
 //-- Produtos sem Rastro ou Localizacao mas com Controle de Estoque (ou integracao com WMS)
 //-- Negativo - Impede Movimentacoes que causem Saldo Negativo no SB2
-			If !lPermNegat .And. ;
+		If !lPermNegat .And. ;
 (!(lRastroL .Or. lRastroS) .And. (!lLocalizO .And. !lLocalizD) .Or. IntDL(aCols[n,nPosCODOri]))
 SB2->(DbSetOrder(1))
-					If !SB2->(dbSeek(xFilial('SB2')+aCols[n,nPosCODOri]+aCols[n,nPosLOCOri], .F.))
+				If !SB2->(dbSeek(xFilial('SB2')+aCols[n,nPosCODOri]+aCols[n,nPosLOCOri], .F.))
 Help(' ',1,'A260Local')
 lRet		:= .F.
 lContinua	:= .F.
-				EndIf
-				If lContinua
+			EndIf
+			If lContinua
 //-- Subtrai a Reserva do Saldo a ser Retornado?
-					If IntDL(aCols[n,nPosCODOri]) .And. lLocalizO .And. aCols[n,nPosCODOri]==aCols[n,nPosCODDes] .And. aCols[n,nPosLOCOri]==aCols[n,nPosLOCDes] .And. aCols[n,nPosLcZOri]#aCols[n,nPosLcZDes]
+				If IntDL(aCols[n,nPosCODOri]) .And. lLocalizO .And. aCols[n,nPosCODOri]==aCols[n,nPosCODDes] .And. aCols[n,nPosLOCOri]==aCols[n,nPosLOCDes] .And. aCols[n,nPosLcZOri]#aCols[n,nPosLcZDes]
 lSaldoSemR := .F.
-					EndIf
+				EndIf
 nSaldo := SaldoMov(Nil,Nil,Nil,If(mv_par03==1,.F.,Nil),Nil,Nil, lSaldoSemR, If(Type('dA261Data') == "D",dA261Data,dDataBase))
-					For nX := If(!lDigita,n+1,1) to Len(aCols)
-						If nX # n
-							If !aCols[nX,Len(aCols[nX])].And.(If(lRastroL,aCols[n,nPosLoTCTL]==aCols[nX,nPosLoTCTL],.T.).And.If(lRastroS,aCols[n,nPosNLOTE]==aCols[nX,nPosNLOTE],.T.))
-								If aCols[n,nPosCODOri] + aCols[n,nPosLOCOri] == aCols[nX,nPosCODOri] + aCols[nX,nPosLOCOri]
+				For nX := If(!lDigita,n+1,1) to Len(aCols)
+					If nX # n
+						If !aCols[nX,Len(aCols[nX])].And.(If(lRastroL,aCols[n,nPosLoTCTL]==aCols[nX,nPosLoTCTL],.T.).And.If(lRastroS,aCols[n,nPosNLOTE]==aCols[nX,nPosNLOTE],.T.))
+							If aCols[n,nPosCODOri] + aCols[n,nPosLOCOri] == aCols[nX,nPosCODOri] + aCols[nX,nPosLOCOri]
 nSaldo -= aCols[nX,nPosQUANT]
-								ElseIf aCols[n,nPosCODOri] + aCols[n,nPosLOCOri] == aCols[nX,nPosCODDes] + aCols[nX,nPosLOCDes]
+							ElseIf aCols[n,nPosCODOri] + aCols[n,nPosLOCOri] == aCols[nX,nPosCODDes] + aCols[nX,nPosLOCDes]
 nSaldo += aCols[nX,nPosQUANT]
-								EndIf
 							EndIf
 						EndIf
-					Next nX
-					If QtdComp(nSaldo) < QtdComp(nQuant)
+					EndIf
+				Next nX
+				If QtdComp(nSaldo) < QtdComp(nQuant)
 Help(' ',1,'MA240NEGAT')
 lRet		:= .F.
 lContinua	:= .F.
-					EndIf
 				EndIf
 			EndIf
 		EndIf
+	EndIf
 
 //-- Produto Origem com Localizacao - Impede Movimentacoes com
 //-- Quantidades maiores que o Saldo no SBF
-		If lContinua .And. lLocalizO
-			If Empty(aCols[n,nPosLcZOri]+aCols[n,nPosNSer]) .Or. ;
+	If lContinua .And. lLocalizO
+		If Empty(aCols[n,nPosLcZOri]+aCols[n,nPosNSer]) .Or. ;
 (!Empty(aCols[n,nPosLcZOri]) .And. !SBE->(dbSeek(xFilial('SBE')+aCols[n,nPosLOCOri]+aCols[n,nPosLcZOri],.F.)))
 Help(' ',1,'MA260OBR')
 lRet		:= .F.
 lContinua	:= .F.
-				EndIf
-			If lContinua
+			EndIf
+		If lContinua
 nSaldo := SaldoSBF(aCols[n,nPosLOCOri],aCols[n,nPosLcZOri],aCols[n,nPosCODOri],aCols[n,nPosNSer],aCols[n,nPosLoTCTL],aCols[n,nPosNLOTE])
-				For nX := If(!lDigita,n+1,1) to Len(aCols)
-					If nX # n
-						If !aCols[nX,Len(aCols[nX])].And.(If(lRastroL,aCols[n,nPosLoTCTL]==aCols[nX,nPosLoTCTL],.T.).And.If(lRastroS,aCols[n,nPosNLOTE]==aCols[nX,nPosNLOTE],.T.))
-							If aCols[n,nPosCODOri] + aCols[n,nPosLOCOri] + aCols[n,nPosCODDes] + aCols[n,nPosNSer] == aCols[nX,nPosCODOri] + aCols[nX,nPosLcZOri] + aCols[nX,nPosLcZOri] + aCols[nX,nPosNSer]
+			For nX := If(!lDigita,n+1,1) to Len(aCols)
+				If nX # n
+					If !aCols[nX,Len(aCols[nX])].And.(If(lRastroL,aCols[n,nPosLoTCTL]==aCols[nX,nPosLoTCTL],.T.).And.If(lRastroS,aCols[n,nPosNLOTE]==aCols[nX,nPosNLOTE],.T.))
+						If aCols[n,nPosCODOri] + aCols[n,nPosLOCOri] + aCols[n,nPosCODDes] + aCols[n,nPosNSer] == aCols[nX,nPosCODOri] + aCols[nX,nPosLcZOri] + aCols[nX,nPosLcZOri] + aCols[nX,nPosNSer]
 nSaldo -= aCols[nX,nPosQUANT]
-							ElseIf aCols[n,nPosCODOri] + aCols[n,nPosLOCOri]  + aCols[n,nPosLcZOri] + aCols[n,nPosNSer] == aCols[nX,nPosCODDes] + aCols[nX,nPosLOCDes] + aCols[nX,nPosLcZDes] + aCols[nX,nPosNSer]
+						ElseIf aCols[n,nPosCODOri] + aCols[n,nPosLOCOri]  + aCols[n,nPosLcZOri] + aCols[n,nPosNSer] == aCols[nX,nPosCODDes] + aCols[nX,nPosLOCDes] + aCols[nX,nPosLcZDes] + aCols[nX,nPosNSer]
 nSaldo += aCols[nX,nPosQUANT]
-							EndIf
 						EndIf
 					EndIf
-				Next nX
-				If QtdComp(nSaldo) < QtdComp(nQuant)
+				EndIf
+			Next nX
+			If QtdComp(nSaldo) < QtdComp(nQuant)
 Help(' ',1,'SALDOLOCLZ')
 lRet		:= .F.
 lContinua	:= .F.
-				EndIf
 			EndIf
 		EndIf
+	EndIf
 
 //-- Produto Destino com Localizacao - Impede Movimentacoes com
 //-- Quantidades superiores a Capacidade no SBE
-		If lContinua .And. lLocalizD
-			If (aCols[n,nPosLOCDes] == cLocCQ .And. Empty(aCols[n,nPosLcZDes]+aCols[n,nPosNSer])) .Or. ;
+	If lContinua .And. lLocalizD
+		If (aCols[n,nPosLOCDes] == cLocCQ .And. Empty(aCols[n,nPosLcZDes]+aCols[n,nPosNSer])) .Or. ;
 (!Empty(aCols[n,nPosLcZDes]) .And. !SBE->(dbSeek(xFilial('SBE')+aCols[n,nPosLOCDes]+aCols[n,nPosLcZDes],.F.)))
 Help(' ',1,'MA260OBR')
 lRet		:= .F.
 lContinua	:= .F.
-				EndIf
-			If lContinua
+			EndIf
+		If lContinua
 nSaldo := QuantSBF(aCols[n,nPosLOCDes],aCols[n,nPosLcZDes],aCols[n,nPosCODDes])
-				For nX := If(!lDigita,n+1,1) to Len(aCols)
-					If nX # n
-						If !aCols[nX,Len(aCols[nX])].And.(If(lRastroL,aCols[n,nPosLoTCTL]==aCols[nX,nPosLoTCTL],.T.).And.If(lRastroS,aCols[n,nPosNLOTE]==aCols[nX,nPosNLOTE],.T.))
-							If	aCols[n,nPosCODDes] + aCols[n,nPosLOCDes] + aCols[n,nPosLcZDes] == aCols[nX,nPosCODOri] + aCols[nX,nPosLOCOri] + aCols[nX,nPosLcZOri]
+			For nX := If(!lDigita,n+1,1) to Len(aCols)
+				If nX # n
+					If !aCols[nX,Len(aCols[nX])].And.(If(lRastroL,aCols[n,nPosLoTCTL]==aCols[nX,nPosLoTCTL],.T.).And.If(lRastroS,aCols[n,nPosNLOTE]==aCols[nX,nPosNLOTE],.T.))
+						If	aCols[n,nPosCODDes] + aCols[n,nPosLOCDes] + aCols[n,nPosLcZDes] == aCols[nX,nPosCODOri] + aCols[nX,nPosLOCOri] + aCols[nX,nPosLcZOri]
 nSaldo -= aCols[nX,nPosQUANT]
-							ElseIf aCols[n,nPosCODDes] + aCols[n,nPosLOCDes] + aCols[n,nPosLcZDes] == aCols[nX,nPosCODDes] + aCols[nX,nPosLOCDes] + aCols[nX,nPosLcZDes]
+						ElseIf aCols[n,nPosCODDes] + aCols[n,nPosLOCDes] + aCols[n,nPosLcZDes] == aCols[nX,nPosCODDes] + aCols[nX,nPosLOCDes] + aCols[nX,nPosLcZDes]
 nSaldo += aCols[nX,nPosQUANT]
-							EndIf
 						EndIf
 					EndIf
-				Next nX
-				If SBE->(!Eof()) .And. QtdComp(SBE->BE_CAPACID)>QtdComp(0) .And. (QtdComp(SBE->BE_CAPACID)<QtdComp(nQuant+QuantSBF(cLocDest, cLoclzDest)))
+				EndIf
+			Next nX
+			If SBE->(!Eof()) .And. QtdComp(SBE->BE_CAPACID)>QtdComp(0) .And. (QtdComp(SBE->BE_CAPACID)<QtdComp(nQuant+QuantSBF(cLocDest, cLoclzDest)))
 Help(' ',1,'MA265CAPAC')
 lRet		:= .F.
 lContinua	:= .F.
-				EndIf
 			EndIf
 		EndIf
+	EndIf
 
 //-- Produto Origem com Rastro - Impede Movimentacoes com Quantidades
 //-- maiores que as existentes no Lote/SubLote de Origem
-		If lContinua .And. (lRastroL .Or. lRastroS)
-			If lRastroL
+	If lContinua .And. (lRastroL .Or. lRastroS)
+		If lRastroL
 SB8->(dbSetOrder(3))
-				If !SB8->(dbSeek(xFilial('SB8')+aCols[n,nPosCODOri]+aCols[n,nPosLOCOri]+aCols[n,nPosLoTCTL],.F.))
+			If !SB8->(dbSeek(xFilial('SB8')+aCols[n,nPosCODOri]+aCols[n,nPosLOCOri]+aCols[n,nPosLoTCTL],.F.))
 Help(' ', 1, 'A240LOTERR')
 lRet		:= .F.
 lContinua	:= .F.
-				Else
+			Else
 nSaldo := SaldoLote(aCols[n,nPosCODOri],aCols[n,nPosLOCOri],aCols[n,nPosLoTCTL],NIL,NIL,NIL,NIL,dA261Data)
-				EndIf
-			ElseIf lRastroS
+			EndIf
+		ElseIf lRastroS
 SB8->(dbSetOrder(2))
-				If !SB8->(dbSeek(xFilial('SB8')+aCols[n,nPosNLOTE]+aCols[n,nPosLoTCTL]+aCols[n,nPosCODOri]+aCols[n,nPosLOCOri],.F.))
+			If !SB8->(dbSeek(xFilial('SB8')+aCols[n,nPosNLOTE]+aCols[n,nPosLoTCTL]+aCols[n,nPosCODOri]+aCols[n,nPosLOCOri],.F.))
 Help(' ', 1, 'A240LOTERR')
 lRet		:= .F.
 lContinua	:= .F.
-				Else
+			Else
 nSaldo := SB8Saldo(nil,.T.,nil,nil,nil,lEmpPrev,nil,dA261Data)
-				EndIf
 			EndIf
-			If lContinua
-				For nX := If(!lDigita,n+1,1) to Len(aCols)
-					If nX # n
-						If !aCols[nX,Len(aCols[nX])].And.(If(lRastroL,aCols[n,nPosLoTCTL]==aCols[nX,nPosLoTCTL],.T.).And.If(lRastroS,aCols[n,nPosNLOTE]==aCols[nX,nPosNLOTE],.T.))
-							If aCols[n,nPosCODOri] + aCols[n,nPosLOCOri] + aCols[n,nPosLoTCTL] + If(lRastroS,aCols[n,nPosNLOTE],'') == aCols[nX,nPosCODOri] + aCols[nX,nPosLOCOri] + aCols[nX,nPosLoTCTL] + If(lRastroS,aCols[nX,nPosNLOTE],'')
+		EndIf
+		If lContinua
+			For nX := If(!lDigita,n+1,1) to Len(aCols)
+				If nX # n
+					If !aCols[nX,Len(aCols[nX])].And.(If(lRastroL,aCols[n,nPosLoTCTL]==aCols[nX,nPosLoTCTL],.T.).And.If(lRastroS,aCols[n,nPosNLOTE]==aCols[nX,nPosNLOTE],.T.))
+						If aCols[n,nPosCODOri] + aCols[n,nPosLOCOri] + aCols[n,nPosLoTCTL] + If(lRastroS,aCols[n,nPosNLOTE],'') == aCols[nX,nPosCODOri] + aCols[nX,nPosLOCOri] + aCols[nX,nPosLoTCTL] + If(lRastroS,aCols[nX,nPosNLOTE],'')
 nSaldo -= aCols[nX,nPosQUANT]
-							EndIf
 						EndIf
 					EndIf
-				Next nX
-				If QtdComp(nSaldo) < QtdComp(nQuant)
+				EndIf
+			Next nX
+			If QtdComp(nSaldo) < QtdComp(nQuant)
 cHelp:=Substr("STR0006",1,4)+" "+aCols[n,nPosCODOri]+Substr("STR0018",1,4)+" "+aCols[n,nPosLoTCTL]
 Help(" ",1,"MA240NEGAT",,cHelp,4,1)
 lRet		:= .F.
 lContinua	:= .F.
-				EndIf
 			EndIf
 		EndIf
+	EndIf
 */
 
-		Return _Retorno
+Return _Retorno
 
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
@@ -1149,8 +1160,8 @@ Static Function fVerSilk(cCodSilk)
 
 	cAliasSG1 := GetNextAlias()
 	cProdOrig := "%'"+cCodSilk+"'%"
-	cFilialSG1 := xFilial("SG1")   
-	
+	cFilialSG1 := xFilial("SG1")
+
 	BeginSQL Alias cAliasSG1
 	
 	SELECT G1_FILIAL, G1_COD, G1_COMP FROM %table:SG1% SG1 (NOLOCK) WHERE G1_FILIAL = %exp:cFilialSG1% AND G1_COD = %Exp:cProdOrig% AND SUBSTRING(G1_COMP,1,6) = '500960' AND SG1.%NotDel%
