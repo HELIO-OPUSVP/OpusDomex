@@ -24,18 +24,14 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 	Local aAreaSC2  := SC2->( GetArea() )
 	Local _nX		:= 0
 	Local nQ 		:= 0
-	Local cLocImp	:= Iif(cfilant == "02","000024","LPT2")
+	//Local cLocImp	:= Iif(cfilant == "02","000024","LPT2")
+	Local cLocImp	:= Iif(cfilant == "02","000032","LPT2")
 	Default cNumPeca	:= ""
 	Default cSetor   	:= ""
 	Default cEtqHuawei 	:=""
 	Default cVolumeAtu 	:= ""
 	Default cNumpedido 	:= ""
 	Default _PesoAuto   := 0
-
-	IF U_VALIDACAO() .AND. cfilant == "02" 
-		cLocImp:= "000005"
-	Endif
-
 
 
 	SC2->( dbSetOrder(1) )
@@ -138,13 +134,14 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 
 					MSCBSayBar(30,10,AllTrim(XD1->XD1_XXPECA),"N","MB04",10,.F.,.T.,.F.,,3,Nil,Nil,Nil,Nil,Nil)
 					MSCBEnd()
-					MSCBClosePrinter()
+					
 				//EndIf
 				//U_MsgColetor("Impressão concluída")
 			Next
 		EndIf
 	EndIf
-
+	
+	MSCBClosePrinter()
 	RestArea(aAreaSC2)
 	RestArea(aAreaSB1)
 	RestArea(aAreaGER)

@@ -56,12 +56,15 @@ User Function DMXCPR01(cNumPCLib)
 	If lEnviar
 		cEmail	:= AllTrim(Posicione("SA2",1,xFilial("SA2")+SC7->C7_FORNECE,"A2_EMAIL"))
 		cUserComp	:= UsrRetName(SC7->C7_USER) 
-		
+		/*
 		PswOrder(2)
 		//cEmail := ""
 		If PswSeek( cUserComp, .T. )  
 			cEmail += Iif(Empty(AllTrim(PswRet()[1][14])),"",";" + AllTrim(PswRet()[1][14])) // Retorna vetor com informações do usuário
 		EndIf
+		*/
+		cEmail += ";" + UsrRetMail(SC7->C7_USER)// Retorna vetor com informações do usuário
+
 		cEmail += ";denis.vieira@rosenbergerdomex.com.br"
 	
 		
