@@ -52,6 +52,9 @@ User Function AnexPvOp(cProduto)
 	Private cRamo:= ""
 	Private oTextoF
 
+	Private oTextoG
+	Private cTPAnexo := ""
+
 	Default cProduto   := Space(16)
 
 
@@ -138,6 +141,11 @@ User Function AnexPvOp(cProduto)
 		@ 043+nLinM, 08 SAY oTextoF VAR "Ramo :"+ cRamo PIXEL SIZE 180,15
 		oTextoF:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 	//Endif
+
+	If U_Validacao("OSMAR")
+		@ 043+nLinM, 480 SAY oTextoG VAR cTPAnexo PIXEL SIZE 180,15
+		oTextoG:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
+	EndIf
 
 	nLinM += 10
 	@ 045+nLinM, 008	SAY oTextoC   VAR cDesClien  PIXEL SIZE 180,15
@@ -234,6 +242,7 @@ Static Function ValidaProd(cProduto)
 			cNomClien := SC2->C2_NCLIENT
 			cQuant    := "Quant.: "+AllTrim(TransForm(SC2->C2_QUANT,"@E 999,999.99"))
 			cSAldo    := "Saldo: "+AllTrim(TransForm((SC2->C2_QUANT-SC2->C2_QUJE),"@E 999,999.99"))
+			cTPAnexo  := "CONCESSÃO"
 
 			SA1->(dbSeek(xFilial("SA1")+SC2->C2_CLIENT))
 			lCodHuawei  := If("HUAWEI" $ SA1->A1_NOME, .T., .F.)
@@ -273,7 +282,8 @@ Static Function ValidaProd(cProduto)
 			oTexto3:Refresh()
 			oTexto4:Refresh()
 			oTexto5:Refresh()
-			oTexto6:Refresh()
+			oTexto6:Refresh()	
+
 			if nLado
 				nTamanho:= 55
 			else
