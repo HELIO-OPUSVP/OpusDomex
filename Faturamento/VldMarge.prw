@@ -17,64 +17,66 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function VldMarge()
-Local nPerMargem := 0 //Percentual mínimo aceito como margem de lucro
-Local cTexto     := ""
-Local y          := 0
-Local cAssunto   := ""
-Local cPara      := ""
-Local cCC        := ""
-Local cArquivo   := ""
-Local aAreaSA1   := SA1->( GetArea() )
+User Function VldMarge(lMsg,lWflow)
+	Local nPerMargem := 0 //Percentual mínimo aceito como margem de lucro
+	Local cTexto     := ""
+	Local y          := 0
+	Local cAssunto   := ""
+	Local cPara      := ""
+	Local cCC        := ""
+	Local cArquivo   := ""
+	Local aAreaSA1   := SA1->( GetArea() )
 
-U_xGrvPrnet()
+	U_xGrvPrnet()
 
-SA1->(dbSetOrder(01))
-SA1->( dbSeek(xFilial()+M->C5_CLIENTE+M->C5_LOJACLI) )
+	SA1->(dbSetOrder(01))
+	SA1->( dbSeek(xFilial()+M->C5_CLIENTE+M->C5_LOJACLI) )
 
-//If SA1->A1_XMARGEM > 0
-//	nPerMargem := SA1->A1_XMARGEM
-//Else
-//    nPerMargem := GetMV("MV_XMARGEM")  
-//Endif	
+	If SA1->A1_XMARGEM > 0
+		nPerMargem := SA1->A1_XMARGEM
+	Else
+		nPerMargem := GetMV("MV_XMARGEM")
+	Endif
 
-nPerMargem := 99.5
+	nPC6_ITEM    := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_ITEM" } )
+	nPC6_PRODUTO := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_PRODUTO" } )
+	nPC6_XMARGEM := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_XMARGEM" } )
 
-nPC6_ITEM    := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_ITEM" } )
-nPC6_PRODUTO := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_PRODUTO" } )
-nPC6_XMARGEM := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_XMARGEM" } )
+	For y := 1 To Len(aCols)
+		If aCols[y,nPC6_XMARGEM] < nPerMargem
+			cTexto += aCols[y,nPC6_ITEM] +" / "+ aCols[y,nPC6_PRODUTO]+" Margem -> " + Str(aCols[y,nPC6_XMARGEM])+ Chr(13)
+		EndIf
+	Next y
 
-For y := 1 To Len(aCols)
-	If aCols[y,nPC6_XMARGEM] < nPerMargem
-		cTexto += aCols[y,nPC6_ITEM] +" / "+ aCols[y,nPC6_PRODUTO]+" Margem -> " + Str(aCols[y,nPC6_XMARGEM])+ Chr(13)
+	If lMsg .And. cTexto <> ""
+		cAssunto := "ITENS COM MARGEM DE LUCRO ABAIXO DO PADRÃO ("+ Str(nPerMargem)+"%)"
+		If cTexto <> ""
+			cTexto := cAssunto + Chr(13) + cTexto
+		EndIf
+
+		If "COLETOR" $ Funname()
+			U_MsgColetor(cTexto)
+		Else
+			apMsgAlert(cTexto)
+		EndIf
 	EndIf
-Next y
 
-cAssunto := "ITENS COM MARGEM DE LUCRO ABAIXO DO PADRÃO"
+	If lWflow .And. cTexto <> ""
+		cAssunto := "Pedido de Venda "+M->C5_NUM+ " Margem Abaixo do Padrão "
+		cPara := "osmar@opusvp.com.br"
+		cCC := ""
+		cArquivo := ""
+		cTexto := "CLIENTE: "+M->C5_CLIENTE+"/"+M->C5_LOJACLI+" - "+ SA1->A1_NREDUZ + Chr(13)+;
+			"MARGEM PADRÃO: "+Str(nPerMargem)+"%" + Chr(13) + Chr(13) + cTexto
+		cTexto   := StrTran(cTexto,Chr(13),"<br>")
+		U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
+	EndIf
 
-If cTexto <> ""
-   cTexto := cAssunto + Chr(13) + cTexto
-EndIf
+	If cTexto == ""
+	   Alert("Fim do cálculo da margem de lucro...")
+	EndIf
 
-If "COLETOR" $ Funname()
-	U_MsgColetor(cTexto)
-Else
-	apMsgAlert(cTexto)
-EndIf
-
-cAssunto := "Pedido de Venda "+M->C5_NUM+ " Margem Abaixo do Padrão "
-cPara := "osmar@opusvp.com.br"
-cCC := ""
-cArquivo := ""
-cTexto := "CLIENTE: "+M->C5_CLIENTE+"/"+M->C5_LOJACLI+" - "+ SA1->A1_NREDUZ + Chr(13)+;
-		  "MARGEM PADRÃO: "+Str(nPerMargem)+"%" + Chr(13) + Chr(13) + cTexto
-cTexto   := StrTran(cTexto,Chr(13),"<br>")
-U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
-
-
-Alert("Fim do cálculo da margem de lucro...")
-
-RestArea(aAreaSA1)
+	RestArea(aAreaSA1)
 Return(Nil)
 
 //Verifica o preço net para o Pedido de Venda
@@ -181,8 +183,8 @@ User Function xGrvPrNet()
 	//While ! SC6->(EoF()) .And. SC6->C6_NUM == SC5->C5_NUM
 	For x := 1 To Len(aCols)
 		//Pega os valores
-		
-	
+
+
 		nPC6_QTDVEN  := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_QTDVEN" } )
 		nPC6_VALOR   := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_VALOR" } )
 		nPC6_PRCVEN  := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_PRCVEN" } )
@@ -243,8 +245,8 @@ User Function xGrvPrNet()
 		nMargem := ((nPrcNet - nCusMedio) / nPrcNet) * 100
 
 		aCols[x,nPC6_XCUSUNI] := nCusMedio
-        aCols[x,nPC6_XSTACUS] := cStatus
-		aCols[x,nPC6_XPRCNET] := nPrcNet	
+		aCols[x,nPC6_XSTACUS] := cStatus
+		aCols[x,nPC6_XPRCNET] := nPrcNet
 		aCols[x,nPC6_XMARGEM] := nMargem
 
 		//nMargem   Falta fazer o cálculo
@@ -253,7 +255,7 @@ User Function xGrvPrNet()
 
 
 
-	Next x	
+	Next x
 	//EndDo
 	nTotFrete := MaFisRet(, "NF_FRETE")
 	nTotVal := MaFisRet(, "NF_TOTAL")

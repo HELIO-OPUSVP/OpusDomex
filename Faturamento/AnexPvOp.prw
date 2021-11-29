@@ -143,7 +143,7 @@ User Function AnexPvOp(cProduto)
 	//Endif
 
 	If U_Validacao("OSMAR")
-		@ 043+nLinM, 480 SAY oTextoG VAR cTPAnexo PIXEL SIZE 180,15
+		@ 043+nLinM, 480 SAY oTextoG VAR cTPAnexo PIXEL SIZE 180,15 Color CLR_RED
 		oTextoG:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 	EndIf
 
@@ -242,7 +242,15 @@ Static Function ValidaProd(cProduto)
 			cNomClien := SC2->C2_NCLIENT
 			cQuant    := "Quant.: "+AllTrim(TransForm(SC2->C2_QUANT,"@E 999,999.99"))
 			cSAldo    := "Saldo: "+AllTrim(TransForm((SC2->C2_QUANT-SC2->C2_QUJE),"@E 999,999.99"))
-			cTPAnexo  := "CONCESSÃO"
+			If SC2->C2_XTPANEX == "C"
+			   cTPAnexo  := "CONCESSÃO"
+			ElseIf SC2->C2_XTPANEX == "P"
+				cTPAnexo  := "PILOTO"
+			ElseIf SC2->C2_XTPANEX == "A"
+				cTPAnexo  := "AMOSTRA"
+			Else
+				cTPAnexo  := ""	
+			EndIf
 
 			SA1->(dbSeek(xFilial("SA1")+SC2->C2_CLIENT))
 			lCodHuawei  := If("HUAWEI" $ SA1->A1_NOME, .T., .F.)
