@@ -58,6 +58,29 @@ User Function M410STTS()
 		EndIf
 	EndIf
 
+	If U_Validacao("OSMAR")
+		//Verifica a margem de lucro e bloqueia caso necessário
+		If (_nOper == 3) // .Or. (_nOper == 4)  //Inclusão / Alteração
+			If SC5->C5_TIPO == 'N'
+				If !U_VldMargem(.F.,.T.)
+					SC6->( dbSetOrder(1) )
+					SC6->(dbSeek(xFilial()+SC5->C5_NUM))
+					While SC6->(!Eof()) .And. SC6->C6_NUM == SC5->C5_NUM
+						If (SC6->C6_BLQ <> "R") .And. (Empty(SC6->C6_NUMOP)) // SC6->C6_QTDENT = 0
+							//	RecLock("SC6",.f.)
+							//	SC6->C6_BLQ := "S"
+							//	SC6->C6_XGERAOP := "2"
+							//	SC6->( msUnLock() )
+						EndIf
+						SC6->( dbSkip() )
+					EndDo
+				EndIf
+			EndIf
+		EndIf
+	Endif
+
+
+
 
 	If (_nOper == 3)  .Or. (_nOper == 4)  //Inclusão / Alteração
 		If SC5->C5_TIPO == 'N'
