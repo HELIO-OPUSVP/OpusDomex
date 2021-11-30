@@ -588,7 +588,7 @@ Static Function ValidaEtiq(lTeste)
 				cCliBip   := SA1->A1_NOME
 				nQtdOpBip := SC2->C2_QUANT
 				cPedBip   := SC2->C2_PEDIDO
-				nPerdaBip := U_SomaPerda(cNumOpBip,SC2->C2_PRODUTO)
+				nPerdaBip := U_SomaPer2(cNumOpBip,SC2->C2_PRODUTO)
 				nSaldoBip := (SC2->C2_QUANT - SC2->C2_QUJE) - nPerdaBip  // Trocado de C2_XXQUJE para C2_QUJE      por Hélio em 25/09/18
 				oCliente:Refresh()
 				oProduto:Refresh()
@@ -679,7 +679,7 @@ Static Function ValidaEtiq(lTeste)
 							cCliBip   := SA1->A1_NOME
 							nQtdOpBip := SC2->C2_QUANT
 							cPedBip   := SC2->C2_PEDIDO
-							nPerdaBip := U_SomaPerda(cNumOpBip,SC2->C2_PRODUTO)
+							nPerdaBip := U_SomaPer2(cNumOpBip,SC2->C2_PRODUTO)
 							nSaldoBip := (SC2->C2_QUANT - SC2->C2_QUJE) - nPerdaBip  // Trocado de C2_XXQUJE para C2_QUJE      por Hélio em 25/09/18
 							cEtiqueta := Space(_nTamEtiq)
 							aQtdBip   := {}
@@ -2094,7 +2094,7 @@ Return
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
-±±ºPrograma  ³ SomaPerdaºAutor ³ Michel Sander	     º Data ³    27/05/15 º±±
+±±ºPrograma  ³ SomaPer2 ºAutor ³ Michel Sander	     º Data ³    27/05/15 º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
 ±±ºDesc.     ³ Soma as perdas por OP			                             º±±
 ±±º          ³                                                            º±±
@@ -2105,7 +2105,7 @@ Return
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function SomaPerda(cNumOpBip,cProdBip)
+User Function SomaPer2(cNumOpBip,cProdBip)
 
 	LOCAL nPerdas := 0
 	SZA->(dbSetOrder(1))

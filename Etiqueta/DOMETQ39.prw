@@ -317,75 +317,7 @@ User Function DOMETQ39(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 					Return .F.
 				EndIf
 
-				//MSCBBEGIN(1,5)
-				AADD(_aArq,'CT~~CD,~CC^~CT~'+ CRLF)
-				AADD(_aArq,'^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR2,2~SD28^JUS^LRN^CI0^XZ'+ CRLF)
-				AADD(_aArq,'^XA'+ CRLF)
-				AADD(_aArq,'^MMT'+ CRLF)
-				AADD(_aArq,'^PW945'+ CRLF)
-				AADD(_aArq,'^LL0709'+ CRLF)
-				AADD(_aArq,'^LS0'+ CRLF)
-				AADD(_aArq,'^FO384,64^GFA,01536,01536,00016,:Z64:'+ CRLF)
-				AADD(_aArq,'eJzN1DFuwyAUBuBYDGylB6jCRSxzpY4ZIuFMPUYuEjWOPGTMEYqVwaNTdXFlK688avDDatNEXcLkbwD+9wDPZnc6dBuRA+TUCsBQAwCdwKzPxNIa4unRgkgoAhPncQPufAoWzuOGqtWRtZvRB7duxRAoMW7HYG6TaBLwYUjs/TTYB34cIpAC3IZTF8TsChvi5D9uYwubjFrZL2psHXGCrSNm2CpiLI3ateKCsXUFMR5+wWKbC8ajOU3Nb7S40fIPq/H8frT+3a4+8gDQFTFutZu4JMaoL+RBTY2lC2I8P0nuO56vovd/iBesvuOF92PvT+TZcxL78mArc1oAfBqfb1VZN8FiV5kemm70e9VLwbxlaT2XrPDxyu44cdlnc+6tS9hvMll7d/vtYZOqOh/8UW8PaZrx3LejXq/7ZSqoz6PZsRGv2SIVvpyyEZtsoQ/D/4ZbL63f4j/mdeMLGRXtbA==:BDC0'+ CRLF)
-				AADD(_aArq,'^FO32,64^GFA,03456,03456,00036,:Z64:'+ CRLF)
-				AADD(_aArq,'eJztlDFr20AUx9/JEgVBsQM+NHrXHjzqDPoAMlhDh0I+ggMx3srhDIEsnTpXaDruSzRfokM3hw4dm9JFaYOu750tWwZdlLFDng77nvz81+/+73QAr/Ea/0XEumhloeyq4XzcygKHju7V8dO0nbl0Wv918MC8lbFuHRn36vj2AoQSOPxU0NTHxBf2VqOji1DLWHtah1p5uojjuCxiFTbWceCMjzh+jYNgHPAR4zAe8zPgo4AfeTZaodtab0iHpGJt87BZsQ+pL1IESH20aj+lifAJrvEnLHXslTrc2Cl+7e/dNjp8vmAi48CyYJbxQCw4LHLI2CwLWHbwWYUyjqVXhJsipikoHF5ZhLdF4w89Gx9tvfHRKwRM0SMhDjiWB/+sS63LnY7WVkfrgw6HHL0J0CQeAA3OR2MYM5sf/bmVMehSqb2O2vEodeQhArwEdWjHAzse27GWjofr8Lz9ugBlQ8zDIw+ZAmyeARPcWgUZzM9mlB900Af0uVDWnwJXiTzYLxWe8KBF1CjrE3UqJTzKjzpN34mH9g/plNT3Fs9uq+AH+WT3D7AZ7aejP7gW6WkIFekgA25JAGyfOujsmPb7ucmAtraAdng0mosGlF5h58/F6OCNO+L2y+sIP+0tQZ3+GjZ69uek7kfh+V1vTWKq3prp+uoFOnU/D8v7dcBADUU1lINtsu3WPIcVW7HLdXTBr/ismy2B5Nrc/zXmIamH37vXSC9KPsvzPMu/4lHi0vn485cxpqqTm98PnTVTiCJ2eRXNlg/RYH3RrSOTz/LxaSKranhtti6eT/ANX9c5nmy5cPF8kY/VRD4ac2ekg2cawWrJ4XK1EuvOkj0P2lz90dLcOXjwYHuPPO/w5HDymInlqSpv4FjXlK3Rn2UEyyUM1stuHYNt+kU89fDmR7fPPF9gv5Any/O3rn6ZamDuiScxrr6frwTuH/Rn+cz+QW9rRjzDKpFPnTWnsei8653MP7xAx9GwUzrZX8NFf81k21/z5qK/ZvgCnaC7YafP6j+MYNC9gV7jEP8A2BorUg==:0F0C'+ CRLF)
-
-				AADD(_aArq,'^FT337,228^A0N,46,48^FH\^FD'+StrZero(MVPAR02,4)+' Unidade(s)^FS'+ CRLF)
-
-				if !Empty(SB1->B1_XMODELO)
-					XD6->(dbSetOrder(1))
-					If XD6->(dbSeek(xFilial()+SB1->B1_XMODELO))
-						AADD(_aArq,'^FT715,579^BQN,2,3'+ CRLF)
-						AADD(_aArq,'^FDMA,'+alltrim(XD6->XD6_LINK)+'^FS'+ CRLF)
-					Else
-						msginfo("Não existe nenhum Link Cadastrado na XD6", "Atenção")
-					Endif
-				Endif
-
-				AADD(_aArq,'^BY3,2,69^FT590,126^BEN,,Y,N'+ CRLF)
-				AADD(_aArq,'^FH\^FD'+XD1->XD1_XXPECA+'^FS'+ CRLF)
-
-
-				If !Empty(cCdAnat1)
-					AADD(_aArq,'^BY3,3,60^FT40,483^BCN,,N,N'+ CRLF)
-					AADD(_aArq,'^FD>:'+U_fTratTxt(cCdAnat1)+'^FS'+ CRLF)
-					AADD(_aArq,'^FT40,515^A0N,35,35^FH\^FD'+U_fTratTxt(cCdAnat1)+'^FS'+ CRLF)
-				EndIf
-
-				If !Empty(cCdAnat2)
-					AADD(_aArq,'^BY3,3,60^FT45,584^BCN,,N,N'+ CRLF)
-					AADD(_aArq,'^FD>:'+U_fTratTxt(cCdAnat2)+'^FS'+ CRLF)
-					AADD(_aArq,'^FT40,615^A0N,35,35^FH\^FD'+U_fTratTxt(cCdAnat2)+'^FS'+ CRLF)
-				EndIf
-
-				AADD(_aArq,'^FO22,37^GB901,631,2^FS'+ CRLF)
-
-				AADD(_aArq,'^FT40,267^A0N,29,28^FH\^FD'+U_fTratTxt(SB1->B1_DESC)+'^FS'+ CRLF)
-				AADD(_aArq,'^FT40,304^A0N,29,28^FH\^FDPN RDT: '+SB1->B1_COD+'^FS'+ CRLF)
-				If !Empty(SC2->C2_PEDIDO)
-					AADD(_aArq,'^FT40,341^A0N,29,28^FH\^FD'+U_fTratTxt(SA1->A1_NREDUZ)+' - '+U_fTratTxt(SC6->C6_SEUCOD)+'^FS'+ CRLF)
-					AADD(_aArq,'^FT40,379^A0N,29,28^FH\^FDCOD:'+U_fTratTxt(SC5->C5_ESP1)+'^FS'+ CRLF)
-					AADD(_aArq,'^FT40,416^A0N,29,28^FH\^FDITEM DO PEDIDO/CLIENTE: '+U_fTratTxt(SC6->C6_SEUDES)+'^FS'+ CRLF)
-				Endif
-				AADD(_aArq,'^FT715,446^A0N,29,28^FH\^FDSEMANA: '+U_fSemaAno()+"/"+SubStr(StrZero(Year(Date()),4),3,2) +'^FS'+ CRLF)
-				If !Empty(SC6->C6_XXSITE)
-					AADD(_aArq,'^FT40,621^A0N,29,28^FH\^FDSITE:'+alltrim( SC6->C6_XXSITE)+'^FS'+ CRLF)
-				Endif
-				AADD(_aArq,'^FT40,658^A0N,29,28^FH\^FDINDUSTRIA BRASILEIRA^FS'+ CRLF)
-				AADD(_aArq,'^FT766,651^A0N,29,28^FH\^FDLayout 039^FS'+ CRLF)
-
-				AADD(_aArq,'^PQ1,0,1,Y^XZ'+ CRLF)
-
-				AaDd(aCodEtq,_aArq)
-
-				For nY:=1 To Len(aCodEtq)
-					For nP:=1 To Len(aCodEtq[nY])
-						MSCBWrite(aCodEtq[nY][nP])
-					Next nP
-				Next nY
-
-				//Finaliza impressão da etiqueta
-				MSCBEND()
+				Imprime()
 
 				_aArq:= {}
 				aCodEtq:= {}
@@ -490,3 +422,78 @@ Static Function fCodNat(cCodProd)
 	RestArea(aAreaSG1)
 
 Return({lOk,aRet})
+
+Static Function Imprime()
+
+Local np
+	//MSCBBEGIN(1,5)
+	AADD(_aArq,'CT~~CD,~CC^~CT~'+ CRLF)
+	AADD(_aArq,'^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR2,2~SD28^JUS^LRN^CI0^XZ'+ CRLF)
+	AADD(_aArq,'^XA'+ CRLF)
+	AADD(_aArq,'^MMT'+ CRLF)
+	AADD(_aArq,'^PW945'+ CRLF)
+	AADD(_aArq,'^LL0709'+ CRLF)
+	AADD(_aArq,'^LS0'+ CRLF)
+	AADD(_aArq,'^FO384,64^GFA,01536,01536,00016,:Z64:'+ CRLF)
+	AADD(_aArq,'eJzN1DFuwyAUBuBYDGylB6jCRSxzpY4ZIuFMPUYuEjWOPGTMEYqVwaNTdXFlK688avDDatNEXcLkbwD+9wDPZnc6dBuRA+TUCsBQAwCdwKzPxNIa4unRgkgoAhPncQPufAoWzuOGqtWRtZvRB7duxRAoMW7HYG6TaBLwYUjs/TTYB34cIpAC3IZTF8TsChvi5D9uYwubjFrZL2psHXGCrSNm2CpiLI3ateKCsXUFMR5+wWKbC8ajOU3Nb7S40fIPq/H8frT+3a4+8gDQFTFutZu4JMaoL+RBTY2lC2I8P0nuO56vovd/iBesvuOF92PvT+TZcxL78mArc1oAfBqfb1VZN8FiV5kemm70e9VLwbxlaT2XrPDxyu44cdlnc+6tS9hvMll7d/vtYZOqOh/8UW8PaZrx3LejXq/7ZSqoz6PZsRGv2SIVvpyyEZtsoQ/D/4ZbL63f4j/mdeMLGRXtbA==:BDC0'+ CRLF)
+	AADD(_aArq,'^FO32,64^GFA,03456,03456,00036,:Z64:'+ CRLF)
+	AADD(_aArq,'eJztlDFr20AUx9/JEgVBsQM+NHrXHjzqDPoAMlhDh0I+ggMx3srhDIEsnTpXaDruSzRfokM3hw4dm9JFaYOu750tWwZdlLFDng77nvz81+/+73QAr/Ea/0XEumhloeyq4XzcygKHju7V8dO0nbl0Wv918MC8lbFuHRn36vj2AoQSOPxU0NTHxBf2VqOji1DLWHtah1p5uojjuCxiFTbWceCMjzh+jYNgHPAR4zAe8zPgo4AfeTZaodtab0iHpGJt87BZsQ+pL1IESH20aj+lifAJrvEnLHXslTrc2Cl+7e/dNjp8vmAi48CyYJbxQCw4LHLI2CwLWHbwWYUyjqVXhJsipikoHF5ZhLdF4w89Gx9tvfHRKwRM0SMhDjiWB/+sS63LnY7WVkfrgw6HHL0J0CQeAA3OR2MYM5sf/bmVMehSqb2O2vEodeQhArwEdWjHAzse27GWjofr8Lz9ugBlQ8zDIw+ZAmyeARPcWgUZzM9mlB900Af0uVDWnwJXiTzYLxWe8KBF1CjrE3UqJTzKjzpN34mH9g/plNT3Fs9uq+AH+WT3D7AZ7aejP7gW6WkIFekgA25JAGyfOujsmPb7ucmAtraAdng0mosGlF5h58/F6OCNO+L2y+sIP+0tQZ3+GjZ69uek7kfh+V1vTWKq3prp+uoFOnU/D8v7dcBADUU1lINtsu3WPIcVW7HLdXTBr/ismy2B5Nrc/zXmIamH37vXSC9KPsvzPMu/4lHi0vn485cxpqqTm98PnTVTiCJ2eRXNlg/RYH3RrSOTz/LxaSKranhtti6eT/ANX9c5nmy5cPF8kY/VRD4ac2ekg2cawWrJ4XK1EuvOkj0P2lz90dLcOXjwYHuPPO/w5HDymInlqSpv4FjXlK3Rn2UEyyUM1stuHYNt+kU89fDmR7fPPF9gv5Any/O3rn6ZamDuiScxrr6frwTuH/Rn+cz+QW9rRjzDKpFPnTWnsei8653MP7xAx9GwUzrZX8NFf81k21/z5qK/ZvgCnaC7YafP6j+MYNC9gV7jEP8A2BorUg==:0F0C'+ CRLF)
+
+	AADD(_aArq,'^FT337,228^A0N,46,48^FH\^FD'+StrZero(MVPAR02,4)+' Unidade(s)^FS'+ CRLF)
+
+	if !Empty(SB1->B1_XMODELO)
+		XD6->(dbSetOrder(1))
+		If XD6->(dbSeek(xFilial()+SB1->B1_XMODELO))
+			AADD(_aArq,'^FT715,579^BQN,2,3'+ CRLF)
+			AADD(_aArq,'^FDMA,'+alltrim(XD6->XD6_LINK)+'^FS'+ CRLF)
+		Else
+			msginfo("Não existe nenhum Link Cadastrado na XD6", "Atenção")
+		Endif
+	Endif
+
+	AADD(_aArq,'^BY3,2,69^FT590,126^BEN,,Y,N'+ CRLF)
+	AADD(_aArq,'^FH\^FD'+XD1->XD1_XXPECA+'^FS'+ CRLF)
+
+
+	If !Empty(cCdAnat1)
+		AADD(_aArq,'^BY3,3,60^FT40,483^BCN,,N,N'+ CRLF)
+		AADD(_aArq,'^FD>:'+U_fTratTxt(cCdAnat1)+'^FS'+ CRLF)
+		AADD(_aArq,'^FT40,515^A0N,35,35^FH\^FD'+U_fTratTxt(cCdAnat1)+'^FS'+ CRLF)
+	EndIf
+
+	If !Empty(cCdAnat2)
+		AADD(_aArq,'^BY3,3,60^FT45,584^BCN,,N,N'+ CRLF)
+		AADD(_aArq,'^FD>:'+U_fTratTxt(cCdAnat2)+'^FS'+ CRLF)
+		AADD(_aArq,'^FT40,615^A0N,35,35^FH\^FD'+U_fTratTxt(cCdAnat2)+'^FS'+ CRLF)
+	EndIf
+
+	AADD(_aArq,'^FO22,37^GB901,631,2^FS'+ CRLF)
+
+	AADD(_aArq,'^FT40,267^A0N,29,28^FH\^FD'+U_fTratTxt(SB1->B1_DESC)+'^FS'+ CRLF)
+	AADD(_aArq,'^FT40,304^A0N,29,28^FH\^FDPN RDT: '+SB1->B1_COD+'^FS'+ CRLF)
+	If !Empty(SC2->C2_PEDIDO)
+		AADD(_aArq,'^FT40,341^A0N,29,28^FH\^FD'+U_fTratTxt(SA1->A1_NREDUZ)+' - '+U_fTratTxt(SC6->C6_SEUCOD)+'^FS'+ CRLF)
+		AADD(_aArq,'^FT40,379^A0N,29,28^FH\^FDCOD:'+U_fTratTxt(SC5->C5_ESP1)+'^FS'+ CRLF)
+		AADD(_aArq,'^FT40,416^A0N,29,28^FH\^FDITEM DO PEDIDO/CLIENTE: '+U_fTratTxt(SC6->C6_SEUDES)+'^FS'+ CRLF)
+	Endif
+	AADD(_aArq,'^FT715,446^A0N,29,28^FH\^FDSEMANA: '+U_fSemaAno()+"/"+SubStr(StrZero(Year(Date()),4),3,2) +'^FS'+ CRLF)
+	If !Empty(SC6->C6_XXSITE)
+		AADD(_aArq,'^FT40,621^A0N,29,28^FH\^FDSITE:'+alltrim( SC6->C6_XXSITE)+'^FS'+ CRLF)
+	Endif
+	AADD(_aArq,'^FT40,658^A0N,29,28^FH\^FDINDUSTRIA BRASILEIRA^FS'+ CRLF)
+	AADD(_aArq,'^FT766,651^A0N,29,28^FH\^FDLayout 039^FS'+ CRLF)
+
+	AADD(_aArq,'^PQ1,0,1,Y^XZ'+ CRLF)
+
+	AaDd(aCodEtq,_aArq)
+
+	For nY:=1 To Len(aCodEtq)
+		For nP:=1 To Len(aCodEtq[nY])
+			MSCBWrite(aCodEtq[nY][nP])
+		Next nP
+	Next nY
+
+	//Finaliza impressão da etiqueta
+	MSCBEND()
+
+Return
