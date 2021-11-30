@@ -285,6 +285,7 @@ User Function DOMETQ39(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			XD1->XD1_OP      := cNumOP
 			XD1->XD1_PV      := cNumSenf
 			XD1->XD1_QTDATU  := nQtdEmb
+			XD1->XD1_QTDORI  := nQtdEmb
 			XD1->XD1_EMBALA  := aRetEmbala[1]
 			XD1->XD1_QTDEMB  := aRetEmbala[2]
 			XD1->XD1_NIVEMB  := If(AllTrim(cNivel)=="3",cNivel,aRetEmbala[3]) // Nivel 3 (Volumes parar expedição não constam na estrutura)

@@ -2468,7 +2468,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		EndIf
 	EndIf
 
-	If __mv_par06 == "41" .and. lEricsson .and. U_VALIDACAO()  .OR. .T.// Ricardo Roda 04/11/21  // layout criado a partir do 94
+	If __mv_par06 == "41" .and. lEricsson .and. U_VALIDACAO("RODA",.T.) // Ricardo Roda 04/11/21  // layout criado a partir do 94
 		cLayoutEnt := "41"
 		lRotValid := U_DOMETQ41(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL,"000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 		If !lRotValid
