@@ -89,6 +89,21 @@ User Function RetCusB9(cCodigo,cGera)
 		cNumSC := C8CUS->C1_NUM
 	EndIf
 
+	If U_VALIDACAO("OSMAR")
+		//Verifica se o item não é M.O. criado dentro do mes
+		If Empty(nValor)
+			cQry := " Select Top 1 B1_COD, B2_CM1 As PRECO "
+			cQry += " From " +RetSQLTab("SB1")+ " With(Nolock) "
+			cQry += " Inner join " +RetSQLTab("SB2")+ " With(Nolock) On SB2.D_E_L_E_T_ = '' And B2_FILIAL = '"+xFilial("SB2")+"' AND B2_COD = B1_COD And B2_LOCAL = B1_LOCPAD "
+			cQry += " Where SB1.D_E_L_E_T_ = '' And B1_TIPO = 'MO' And B1_COD = '"+cCodigo+"'"
+			If Select("B2CUS") <> 0
+				B2CUS->( dbCloseArea() )
+			EndIf
+			DBUSEAREA(.t.,"TOPCONN",TCGenQry(,,cQry),"B2CUS",.f.,.t.)
+			nValor := B2CUS->PRECO
+			B2CUS->(dbCloseArea())
+		EndIf
+	EndIf
 
 	//Cria a SC para cotação
 	If dDataBase > GetMV("MV_XGRVSC")
