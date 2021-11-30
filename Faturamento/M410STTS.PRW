@@ -60,7 +60,7 @@ User Function M410STTS()
 
 	If U_Validacao("OSMAR")
 		//Verifica a margem de lucro e bloqueia caso necessário
-		If (_nOper == 3) // .Or. (_nOper == 4)  //Inclusão / Alteração
+		If (_nOper == 3)  //.Or. (_nOper == 4)  //Inclusão / Alteração
 			If SC5->C5_TIPO == 'N'
 				If !U_VldMargem(.F.,.T.)
 					SC6->( dbSetOrder(1) )
