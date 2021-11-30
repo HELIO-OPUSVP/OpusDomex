@@ -319,9 +319,9 @@ User Function DOMETQ39(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 					Return .F.
 				EndIf
 
-				If Subs(cUsuario,7,5) <> 'HELIO'
+				//If Subs(cUsuario,7,5) <> 'HELIO'
 				   fImprime()
-				EndIf
+				//EndIf
 				
 				_aArq:= {}
 				aCodEtq:= {}
