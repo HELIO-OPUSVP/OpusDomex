@@ -14,16 +14,17 @@ Description
 User Function DOMETQ39(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
 
 	Local nVar       := 0
+	Local x
 	//Local cRotacao   := "N"      //(N,R,I,B)
-	Local MVPAR02   := 1         //Qtd Embalagem
-	Local MVPAR03   := 1         //Qtd Etiquetas
-	Local aRetAnat   := {}        //Codigos Anatel, Array
-	Local aCodAnat   := {}        //Codigos Anatel, Array
-	Local cCdAnat1   := ""        //Codigo Anatel 1
-	Local cCdAnat2   := ""        //Codigo Anatel 2
-	Local cCdAnat3   := ""        //Codigo Anatel 3
-	Local x			 := 0
-	Local _nX		 := 0
+	Private MVPAR02   := 1         //Qtd Embalagem
+	Private MVPAR03   := 1         //Qtd Etiquetas
+	Private aRetAnat   := {}        //Codigos Anatel, Array
+	Private aCodAnat   := {}        //Codigos Anatel, Array
+	Private cCdAnat1   := ""        //Codigo Anatel 1
+	Private cCdAnat2   := ""        //Codigo Anatel 2
+	Private cCdAnat3   := ""        //Codigo Anatel 3
+	Private x			 := 0
+	Private _nX		 := 0
 	//Local nP		 := 0
 	//Local nY		 := 0
 	Private lAchou   := .T.
@@ -143,7 +144,7 @@ User Function DOMETQ39(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 
 	If lAchou
 		//Agrupando Codigos Anatel
-		For x:=1 To Len(aCodAnat)
+		For x := 1 To Len(aCodAnat)
 			nVar := aScan(aGrpAnat,aCodAnat[x])
 			If nVar == 0
 				aAdd(aGrpAnat,aCodAnat[x])
