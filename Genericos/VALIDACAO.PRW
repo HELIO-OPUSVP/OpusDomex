@@ -37,7 +37,7 @@ User Function VALIDACAO(cConsultor,lRetorno)
 		EndIf
 	EndIf
 
-	If cEnvironment == "VALIDACAO" .or. cEnvironment =="WEBCOL_VALIDACAO" .or. cEnvironment == "WEBCOLMG_VALIDACAO" .or. ".OPUS" $ cEnvironment .or. cEnvironment == "MAURESI" .or. cEnvironment == "COMPILA_QUENTE_VALIDACAO"
+	If cEnvironment == "VALIDACAO" .or. cEnvironment =="WEBCOL_VALIDACAO" .or. cEnvironment == "WEBCOLMG_VALIDACAO" .or. ".OPUS" $ cEnvironment .or. cEnvironment == "MAURESI" .or. cEnvironment == "COMPILA_QUENTE_VALIDACAO" .or. cEnvironment == "HELIO.OPUS"
 		lRetorno := .T.
 	EndIf
 
