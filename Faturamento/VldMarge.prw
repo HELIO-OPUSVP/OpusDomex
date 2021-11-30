@@ -63,7 +63,7 @@ User Function VldMarge(lMsg,lWflow)
 
 	If lWflow .And. cTexto <> ""
 		cAssunto := "Pedido de Venda "+M->C5_NUM+ " BLOQUEADO - Margem Abaixo do Padrão "
-		cPara := "osmar@opusvp.com.br"
+		cPara := "osmar@opusvp.com.br;dayse.paschoal@rosenbergerdomex.com.br"
 		cCC := ""
 		cArquivo := ""
 		cTexto := "CLIENTE: "+M->C5_CLIENTE+"/"+M->C5_LOJACLI+" - "+ SA1->A1_NREDUZ + Chr(13)+;
