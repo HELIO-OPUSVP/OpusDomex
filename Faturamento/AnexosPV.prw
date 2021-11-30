@@ -8,10 +8,10 @@
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
-ฑฑบPrograma  ณAnexosOP  บAutor  ณHelio / Osmar       บ Data ณ  17/11/21   บฑฑ
+ฑฑบPrograma  ณAnexosPV  บAutor  ณHelio / Osmar       บ Data ณ  17/11/21   บฑฑ
 ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
-ฑฑบDesc.     ณ Botใo de amarra็ใo de documentos (.doc, .pdf) a cadastro   บฑฑ
-ฑฑบ          ณ de Ordem de Produ็ใo.                                      บฑฑ
+ฑฑบDesc.     ณ Botใo de amarra็ใo de documentos (.doc, .pdf) ao cadastro  บฑฑ
+ฑฑบ          ณ de Pedido de Venda.                                        บฑฑ
 ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
 ฑฑบUso       ณ Domex                                                      บฑฑ
 ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ

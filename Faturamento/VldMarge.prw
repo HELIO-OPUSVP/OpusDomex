@@ -18,6 +18,7 @@
 */
 
 User Function VldMarge(lMsg,lWflow)
+	Loca lRet        := .T.
 	Local nPerMargem := 0 //Percentual mínimo aceito como margem de lucro
 	Local cTexto     := ""
 	Local y          := 0
@@ -50,10 +51,9 @@ User Function VldMarge(lMsg,lWflow)
 
 	If lMsg .And. cTexto <> ""
 		cAssunto := "ITENS COM MARGEM DE LUCRO ABAIXO DO PADRÃO ("+ Str(nPerMargem)+"%)"
-		If cTexto <> ""
-			cTexto := cAssunto + Chr(13) + cTexto
-		EndIf
-
+		cTexto := cAssunto + Chr(13) + cTexto + Chr(13)
+		cTexto := cTexto + "Se gravar os dados o pedido será bloqueado!!"
+		
 		If "COLETOR" $ Funname()
 			U_MsgColetor(cTexto)
 		Else
@@ -62,22 +62,25 @@ User Function VldMarge(lMsg,lWflow)
 	EndIf
 
 	If lWflow .And. cTexto <> ""
-		cAssunto := "Pedido de Venda "+M->C5_NUM+ " Margem Abaixo do Padrão "
-		cPara := "osmar@opusvp.com.br"
+		cAssunto := "Pedido de Venda "+M->C5_NUM+ " BLOQUEADO - Margem Abaixo do Padrão "
+		cPara := "osmar@opusvp.com.br;dayse.paschoal@rosenbergerdomex.com.br"
 		cCC := ""
 		cArquivo := ""
 		cTexto := "CLIENTE: "+M->C5_CLIENTE+"/"+M->C5_LOJACLI+" - "+ SA1->A1_NREDUZ + Chr(13)+;
 			"MARGEM PADRÃO: "+Str(nPerMargem)+"%" + Chr(13) + Chr(13) + cTexto
 		cTexto   := StrTran(cTexto,Chr(13),"<br>")
 		U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
+
+		lRet := .f.  // Irá travar o pedido de venda
+
 	EndIf
 
 	If cTexto == ""
-	   Alert("Fim do cálculo da margem de lucro...")
+	   Alert("Margem de lucro dentro dos parametros!...")
 	EndIf
 
 	RestArea(aAreaSA1)
-Return(Nil)
+Return(lRet)
 
 //Verifica o preço net para o Pedido de Venda
 User Function xGrvPrNet()

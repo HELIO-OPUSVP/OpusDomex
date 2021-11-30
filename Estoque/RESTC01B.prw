@@ -54,6 +54,9 @@ User Function RESTC01B(cProduto)
 
 	Default cProduto   := Space(16)
 
+	Private oTextoG
+	Private cTPAnexo := ""
+
 
 	if !empty(alltrim(cProduto))
 		nLado:= 1
@@ -133,11 +136,15 @@ User Function RESTC01B(cProduto)
 	@ 37+nLinM,08 say oDet4 VAR cDescDet4 Picture "@!" SIZE 700,15 PIXEL
 	oDet4:oFont := TFont():New('Courier New',,20,,.T.,,,,.T.,.F.)
 
-
 	//IF !EMPTY(cRamo)
 		@ 043+nLinM, 08 SAY oTextoF VAR "Ramo :"+ cRamo PIXEL SIZE 180,15
 		oTextoF:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 	//Endif
+
+	If U_Validacao("OSMAR")
+		@ 043+nLinM, 480 SAY oTextoG VAR cTPAnexo PIXEL SIZE 180,15 Color CLR_RED
+		oTextoG:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
+	EndIf
 
 	nLinM += 10
 	@ 045+nLinM, 008	SAY oTextoC   VAR cDesClien  PIXEL SIZE 180,15
@@ -234,6 +241,16 @@ Static Function ValidaProd(cProduto)
 			cNomClien := SC2->C2_NCLIENT
 			cQuant    := "Quant.: "+AllTrim(TransForm(SC2->C2_QUANT,"@E 999,999.99"))
 			cSAldo    := "Saldo: "+AllTrim(TransForm((SC2->C2_QUANT-SC2->C2_QUJE),"@E 999,999.99"))
+
+			If SC2->C2_XTPANEX == "C"
+			   cTPAnexo  := "CONCESSÃO"
+			ElseIf SC2->C2_XTPANEX == "P"
+				cTPAnexo  := "PILOTO"
+			ElseIf SC2->C2_XTPANEX == "A"
+				cTPAnexo  := "AMOSTRA"
+			Else
+				cTPAnexo  := ""	
+			EndIf
 
 			SA1->(dbSeek(xFilial("SA1")+SC2->C2_CLIENT))
 			lCodHuawei  := If("HUAWEI" $ SA1->A1_NOME, .T., .F.)
