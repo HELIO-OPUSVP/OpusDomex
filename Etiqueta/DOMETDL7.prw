@@ -2086,7 +2086,7 @@ Static Function ValidaEtiq(lTeste)
 
 	EndIf
 
-	//EndIf
+	EndIf
 
 Return
 
