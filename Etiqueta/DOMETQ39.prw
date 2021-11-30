@@ -15,6 +15,7 @@ User Function DOMETQ39(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 
 	Local nVar       := 0
 	Local x
+	Local _nX
 	//Local cRotacao   := "N"      //(N,R,I,B)
 	Private MVPAR02   := 1         //Qtd Embalagem
 	Private MVPAR03   := 1         //Qtd Etiquetas
