@@ -121,7 +121,7 @@ Static Function RunProc()
 					AADD(aVetorIn,{"SZ4","Z4_RELATO" , "S"                       })
 					AADD(aVetorIn,{"SZ4","Z4_MSBLQL" , "2"                       })
 					AADD(aVetorIn,{"SZ4","Z4_CONSULT", SZJ->ZJ_Z4CONSU           })
-					//AADD(aVetorIn,{"SZ4","Z4_SEPFAT" , "000001"                  })
+					//AADD(aVetorIn,{"SZ4","Z4_SEPFAT" , "000001"                })
 					AADD(aVetorIn,{"SZ4","Z4_LINHA"  , "ZZZZZZZZZZZZZZZ"         })
 
 					//If MsgNoYes("Deseja aguardar o envio do chamado para o SistemOpus (Yes) ou coloca-lo na fila de envio (No)")
