@@ -32,10 +32,12 @@ User Function M410LIOK()
 
 	cTimeIni := Time()
 
-	_Retorno     := .T.
-	aAreaGER     := GetArea()
-	aAreaSC2     := SC2->( GetArea() )
-	aAreaSB1 	  := SB1->( GetArea() )
+	_Retorno  := .T.
+	aAreaGER  := GetArea()
+	aAreaSC2  := SC2->( GetArea() )
+	aAreaSB1  := SB1->( GetArea() )
+	aAreaSF4  := SF4->( GetArea() )
+	aAreaSD4  := SD4->( GetArea() )
 
 	nPC6_ITEM    := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_ITEM"    } )
 	nPC6_PRODUTO := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_PRODUTO" } )
@@ -48,34 +50,63 @@ User Function M410LIOK()
 
 	If _Retorno
 		If !aCols[n,Len(aHeader)+1]
-			If SF4->( Fieldpos("F4_XOPBENE")) > 0 .and. U_VALIDACAO("OSMAR")  // Hélio Ferreira 10/11/21
+			If U_VALIDACAO("OSMAR")
 				SF4->( dbSetOrder(1) )
-				//If SF4->( dbSeek( xFilial() + aCols[N,_nPTes] ) )
 				If SF4->( dbSeek( xFilial() + aCols[N,nPC6_TES] ) )
 					If SF4->F4_XOPBENE == 'S'
 						If Empty(aCols[N,nPC6_XXOP])
 							MsgStop("Pedido de remessa para beneficiamento. Favor informar o Numero da Ordem de Produção no campo OP Beneficia.")
 							_Retorno := .F.
+						Else
+							SC2->( dbSetOrder(1) )
+							If SC2->(dbSeek(xFilial()+aCols[N,nPC6_XXOP]))
+								If !Empty(SC2->C2_DATRF)
+									MsgStop("A Ordem de Produção "+aCols[N,nPC6_XXOP]+" esta Encerrada!!! ")
+									_Retorno := .F.
+								EndIf
+								//Verificar se ha empenho
+								SD4->( dbSetOrder(2) )
+								If !SD4->( dbSeek( xFilial() + Subs(aCols[N,nPC6_XXOP],1,11) + "  " + aCols[N,nPC6_PRODUTO] ) )
+									MsgStop("Não foi encontrado empenho deste produto para esta OP!!!")
+									_Retorno := .F.
+								EndIf
+							Else
+								MsgStop("Ordem de Produção "+aCols[N,nPC6_XXOP]+" não cadastrada!!! ")
+								_Retorno := .F.
+							EndIf
 						EndIf
 					EndIf
 				EndIf
 			Else
-				If acols[N,nPC6_TES] == '903'
-					If Empty(aCols[N,nPC6_XXOP])
-
-						MsgStop("Pedido de remessa para beneficiamento. Favor informar o Numero da Ordem de Produção no campo OP Beneficia.")
-
-						If Date() <= StoD("20130731")
-							MsgStop("Até a data de 31/07/13 o sistema aceitará envios para beneficiamento sem OP. Posteriormente não será possível.")
-						Else
-							If Date() >= StoD("20130810")
+				If SF4->( Fieldpos("F4_XOPBENE")) > 0 .and. U_VALIDACAO("OSMAR")  // Hélio Ferreira 10/11/21
+					SF4->( dbSetOrder(1) )
+					//If SF4->( dbSeek( xFilial() + aCols[N,_nPTes] ) )
+					If SF4->( dbSeek( xFilial() + aCols[N,nPC6_TES] ) )
+						If SF4->F4_XOPBENE == 'S'
+							If Empty(aCols[N,nPC6_XXOP])
+								MsgStop("Pedido de remessa para beneficiamento. Favor informar o Numero da Ordem de Produção no campo OP Beneficia.")
 								_Retorno := .F.
 							EndIf
 						EndIf
-					Else
-						SC2->(  dbSetOrder(1) )
-						// Testar se a OP está correta
+					EndIf
+				Else
+					If acols[N,nPC6_TES] == '903'
+						If Empty(aCols[N,nPC6_XXOP])
 
+							MsgStop("Pedido de remessa para beneficiamento. Favor informar o Numero da Ordem de Produção no campo OP Beneficia.")
+
+							If Date() <= StoD("20130731")
+								MsgStop("Até a data de 31/07/13 o sistema aceitará envios para beneficiamento sem OP. Posteriormente não será possível.")
+							Else
+								If Date() >= StoD("20130810")
+									_Retorno := .F.
+								EndIf
+							EndIf
+						Else
+							SC2->(  dbSetOrder(1) )
+							// Testar se a OP está correta
+
+						EndIf
 					EndIf
 				EndIf
 			EndIf
@@ -87,39 +118,39 @@ User Function M410LIOK()
 // Validação abortada.
 
 /*
-If _Retorno
-If aCols[n,Len(aHeader)+1]
-If !MsgYesNo("A partir de 27/02/14 não será possível apagar o Produto de uma OF e incluir o mesmo Porduto como outro ítem. Deseja realmente apagar este item?")
+	If _Retorno
+		If aCols[n,Len(aHeader)+1]
+			If !MsgYesNo("A partir de 27/02/14 não será possível apagar o Produto de uma OF e incluir o mesmo Porduto como outro ítem. Deseja realmente apagar este item?")
 _Retorno := .F.
-EndIf
-EndIf
-EndIf
+			EndIf
+		EndIf
+	EndIf
 
-If _Retorno
-For _nx := 1 to Len(aCols)
-If _nx <> N
-If aCols[_nx,nPC6_PRODUTO] == aCols[N,nPC6_PRODUTO]
+	If _Retorno
+		For _nx := 1 to Len(aCols)
+			If _nx <> N
+				If aCols[_nx,nPC6_PRODUTO] == aCols[N,nPC6_PRODUTO]
 MsgStop("Produto já utilizado no Item " + aCols[_nx,1]+". A partir de 27/02/14 não será permitida a digitação de mesmo produto duas vezes na mesma OS.")
 _Retorno := .F.
-EndIf
-EndIf
-Next _nx
-EndIf
+				EndIf
+			EndIf
+		Next _nx
+	EndIf
 
-If _Retorno
+	If _Retorno
 cQuery := "SELECT C6_ITEM FROM " + RetSqlName("SC6") + " WHERE C6_FILIAL = '"+xFilial("SC6")+"' AND C6_NUM = '"+M->C5_NUM+"' AND C6_PRODUTO = '"+aCols[N,nPC6_PRODUTO]+"' AND D_E_L_E_T_ = '*' "
 
-If Select("QUERYSC6") <> 0
+		If Select("QUERYSC6") <> 0
 QUERYSC6->( dbCloseArea() )
-EndIf
+		EndIf
 
 TCQUERY cQuery NEW ALIAS "QUERYSC6"
 
-If !Empty(QUERYSC6->C6_ITEM)
+		If !Empty(QUERYSC6->C6_ITEM)
 MsgStop("Produto já utilizado e apagado como no Item " + QUERYSC6->C6_ITEM+". A partir de 27/02/14 não será permitida a utilização do mesmo Produto como dois itens diferentes na mesma OF.")
 _Retorno := .F.
-EndIf
-EndIf
+		EndIf
+	EndIf
 */
 
 // Foi definido que não será possível apagar um item do Pedido se o mesmo já estiver amarrado a uma OP.
@@ -163,23 +194,25 @@ EndIf
 	EndIf
 
 /*
-If _Retorno
+	If _Retorno
 	dbSelectArea("DA1")
 	dbSetOrder(1)
-	If !Empty(M->C5_TABELA)
-	   If dbSeek(xFilial() + M->C5_TABELA + aCols[n,nPC6_PRODUTO])
-    	  If DA1->DA1_PRCVEN <> aCols[n,nPC6_PRCVEN]
+		If !Empty(M->C5_TABELA)
+			If dbSeek(xFilial() + M->C5_TABELA + aCols[n,nPC6_PRODUTO])
+				If DA1->DA1_PRCVEN <> aCols[n,nPC6_PRCVEN]
    		     MsgInfo("Preço do pedido esta diferente do preço de Tabela de Preços!!","A T E N Ç Ã O")
         	 _Retorno := .t.
-      	  EndIf
-   		Else
+				EndIf
+			Else
      		MsgInfo("O Produto "+aCols[n,nPC6_PRODUTO]+Chr(13)+ "não esta cadastro na Tabela de Preço "+M->C5_TABELA+" ","A T E N Ç Ã O")
      		_Retorno := .t.
-   		EndIf	
+			EndIf
+		EndIf
 	EndIf
-EndIf
 */
 
+	RestArea(aAreaSD4)
+	RestArea(aAreaSF4)
 	RestArea(aAreaSB1)
 	RestArea(aAreaSC2)
 	RestArea(aAreaGER)

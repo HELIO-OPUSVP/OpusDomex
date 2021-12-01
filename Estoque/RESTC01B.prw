@@ -56,6 +56,7 @@ User Function RESTC01B(cProduto)
 
 	Private oTextoG
 	Private cTPAnexo := ""
+	Private cPedVen := ""
 
 
 	if !empty(alltrim(cProduto))
@@ -241,6 +242,7 @@ Static Function ValidaProd(cProduto)
 			cNomClien := SC2->C2_NCLIENT
 			cQuant    := "Quant.: "+AllTrim(TransForm(SC2->C2_QUANT,"@E 999,999.99"))
 			cSAldo    := "Saldo: "+AllTrim(TransForm((SC2->C2_QUANT-SC2->C2_QUJE),"@E 999,999.99"))
+			cPedVen   := SC2->C2_PEDIDO + SC2->C2_ITEMPV
 
 			If SC2->C2_XTPANEX == "C"
 			   cTPAnexo  := "CONCESSÃO"
@@ -330,9 +332,19 @@ Static Function ValidaProd(cProduto)
 			While !SZV->( EOF() ) .and. SZV->ZV_ALIAS == 'SB1' .and. SZV->ZV_CHAVE == SB1->B1_COD
 				AADD(oGetDados:aCols,{SZV->ZV_ARQUIVO,SZV->ZV_DESCRI,.F.})
 				SZV->( dbSkip() )
-			End
+			End		
 			oGetDados:oBrowse:Refresh()
-		Else
+		EndIf
+
+		If  SZV->( dbSeek( xFilial() + "SC6" + cPedVen ) )
+			While !SZV->( EOF() ) .and. SZV->ZV_ALIAS == 'SC6' .and. AllTrim(SZV->ZV_CHAVE) == AllTrim(cPedVen)
+				AADD(oGetDados:aCols,{SZV->ZV_ARQUIVO,SZV->ZV_DESCRI,.F.})
+				SZV->( dbSkip() )
+			End		
+			oGetDados:oBrowse:Refresh()
+		EndIf
+
+		If Len(aCols) = 0
 			MsgInfo("Não foram encontrados documentos para este produto/OP")
 			oGetDados:aCols := {}
 			AADD(oGetDados:aCols,{"","",.F.})
