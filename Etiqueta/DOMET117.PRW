@@ -272,7 +272,7 @@ Description ETIQUETA TELECOM ARGENTINA - EM ESPANHOL
 	If lImpressao
 
 		//Controla o numero da etiqueta de embalagens
-		If Empty(cNumPeca)
+	/*	If Empty(cNumPeca)
 			_cProxPeca := U_IXD1PECA()
 		Else
 			_cProxPeca := cNumPeca
@@ -288,12 +288,12 @@ Description ETIQUETA TELECOM ARGENTINA - EM ESPANHOL
 				XD2->XD2_PCFILH := aFilhas[_nX]
 			EndIf
 			XD2->( msUnlock() )
-		Next _nX
+		Next _nX*/
 
 		For __nEtq := 1 To MVPAR03
 
 
-			If __nEtq > 1
+			/*If __nEtq > 1
 				_cProxPeca := U_IXD1PECA()
 			EndIf
 
@@ -341,7 +341,7 @@ Description ETIQUETA TELECOM ARGENTINA - EM ESPANHOL
 				aDomEtDl3A_CancFil := aFilhas
 				cDomEtDl39_CancPes := nPesoVol
 			EndIf
-
+			*/
 			cFila := "000000"
 			IF !CB5SetImp(cFila,.F.)
 				U_MsgColetor("Local de impressao invalido!")
