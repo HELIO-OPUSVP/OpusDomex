@@ -138,8 +138,8 @@ User Function RESTC01B(cProduto)
 	oDet4:oFont := TFont():New('Courier New',,20,,.T.,,,,.T.,.F.)
 
 	//IF !EMPTY(cRamo)
-		@ 043+nLinM, 08 SAY oTextoF VAR "Ramo :"+ cRamo PIXEL SIZE 180,15
-		oTextoF:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
+	@ 043+nLinM, 08 SAY oTextoF VAR "Ramo :"+ cRamo PIXEL SIZE 180,15
+	oTextoF:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 	//Endif
 
 	If U_Validacao("OSMAR")
@@ -245,13 +245,13 @@ Static Function ValidaProd(cProduto)
 			cPedVen   := SC2->C2_PEDIDO + SC2->C2_ITEMPV
 
 			If SC2->C2_XTPANEX == "C"
-			   cTPAnexo  := "CONCESSÃO"
+				cTPAnexo  := "CONCESSÃO"
 			ElseIf SC2->C2_XTPANEX == "P"
 				cTPAnexo  := "PILOTO"
 			ElseIf SC2->C2_XTPANEX == "A"
 				cTPAnexo  := "AMOSTRA"
 			Else
-				cTPAnexo  := ""	
+				cTPAnexo  := ""
 			EndIf
 
 			SA1->(dbSeek(xFilial("SA1")+SC2->C2_CLIENT))
@@ -332,16 +332,18 @@ Static Function ValidaProd(cProduto)
 			While !SZV->( EOF() ) .and. SZV->ZV_ALIAS == 'SB1' .and. SZV->ZV_CHAVE == SB1->B1_COD
 				AADD(oGetDados:aCols,{SZV->ZV_ARQUIVO,SZV->ZV_DESCRI,.F.})
 				SZV->( dbSkip() )
-			End		
+			End
 			oGetDados:oBrowse:Refresh()
 		EndIf
 
-		If  SZV->( dbSeek( xFilial() + "SC6" + cPedVen ) )
-			While !SZV->( EOF() ) .and. SZV->ZV_ALIAS == 'SC6' .and. AllTrim(SZV->ZV_CHAVE) == AllTrim(cPedVen)
-				AADD(oGetDados:aCols,{SZV->ZV_ARQUIVO,SZV->ZV_DESCRI,.F.})
-				SZV->( dbSkip() )
-			End		
-			oGetDados:oBrowse:Refresh()
+		If U_VALIDACAO("OSMAR")
+			If  SZV->( dbSeek( xFilial() + "SC6" + cPedVen ) )
+				While !SZV->( EOF() ) .and. SZV->ZV_ALIAS == 'SC6' .and. AllTrim(SZV->ZV_CHAVE) == AllTrim(cPedVen)
+					AADD(oGetDados:aCols,{SZV->ZV_ARQUIVO,SZV->ZV_DESCRI,.F.})
+					SZV->( dbSkip() )
+				End
+				oGetDados:oBrowse:Refresh()
+			EndIf
 		EndIf
 
 		If Len(aCols) = 0
