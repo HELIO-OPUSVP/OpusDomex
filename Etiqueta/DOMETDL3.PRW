@@ -265,7 +265,7 @@ Return (__lOkBip)
 */
 
 Static Function ValidaEtiq(lTeste)
-
+	Local _nX := 0
 	Private cEtiqOrig := cEtiqueta
 
 	DEFAULT lTeste := .F.
@@ -2002,11 +2002,19 @@ Static Function fValQtd()
 		SC2->( dbSetOrder(1) )
 		SC2->( dbSeek( xFilial() + Subs(_cNumOpBip,1,11) ) )
 		cVerGrp := AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO"))
-		If cVerGrp == "DROP"
-			cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '1' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+		If u_validacao()
+			If Alltrim(cVerGrp) $ "DROP/PCON"
+				cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '1' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+			Else
+				cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '2' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+			EndIf
 		Else
-			cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '2' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
-		EndIf
+			If cVerGrp == "DROP"
+				cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '1' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+			Else
+				cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '2' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+			EndIf
+		Endif
 		dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TEMP",.F.,.T.)
 		If _nQtdOpBip > TEMP->CONTAGEM
 			MsgStop("Quantidade superior a disponível para ser enviada para expedição.")
@@ -2035,23 +2043,39 @@ Static Function fProcEnv()
 		SC2->( dbSetOrder(1) )
 		SC2->( dbSeek( xFilial() + Subs(_cNumOpBip,1,11) ) )
 		cVerGrp := AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO"))
-		If cVerGrp == "DROP"
-			cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '1' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
-		Else
-			cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '2' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
-		EndIf
+		
+		If U_Validacao()
+			If Alltrim(cVerGrp) $ "DROP/PCON"
+				cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '1' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+			Else
+				cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '2' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+			EndIf
 
+		Else
+			If cVerGrp == "DROP/PCON"
+				cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '1' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+			Else
+				cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '2' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+			EndIf
+		EndIf
 		dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TEMP",.F.,.T.)
 
 		If _nQtdOpBip <= TEMP->CONTAGEM
 
 			TEMP->(dbCloseArea())
-			If cVerGrp == "DROP"
-				cQuery := "SELECT TOP " + Alltrim(Str(_nQtdOpBip)) + " R_E_C_N_O_ FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '1' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+			If U_Validacao()
+				If Alltrim(cVerGrp) $ "DROP/PCON"
+					cQuery := "SELECT TOP " + Alltrim(Str(_nQtdOpBip)) + " R_E_C_N_O_ FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '1' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+				Else
+					cQuery := "SELECT TOP " + Alltrim(Str(_nQtdOpBip)) + " R_E_C_N_O_ FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB IN ('2') AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+				EndIf
 			Else
-				cQuery := "SELECT TOP " + Alltrim(Str(_nQtdOpBip)) + " R_E_C_N_O_ FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '2' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+				If cVerGrp == "DROP"
+					cQuery := "SELECT TOP " + Alltrim(Str(_nQtdOpBip)) + " R_E_C_N_O_ FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '1' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+				Else
+					cQuery := "SELECT TOP " + Alltrim(Str(_nQtdOpBip)) + " R_E_C_N_O_ FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB IN ('2') AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+				EndIf
 			EndIf
-
 			dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TEMP",.F.,.T.)
 			While !TEMP->( EOF() )
 				XD1->( dbGoto(TEMP->R_E_C_N_O_) )
@@ -2350,7 +2374,8 @@ User Function fImpQRCode(cQrCodeUso)
 	LOCAL _aArq       := {}
 	LOCAL aCodEtq     := {}
 	LOCAL cUserSis		:= Upper(Alltrim(Substr(cUsuario,7,15)))
-
+	LOCAL nP		  := 0
+	LOCAL nY		   := 0
 //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄxÔ[¿
 //³Configura fila de impressão no ACD				 	 ³
 //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄxÔ[¿
