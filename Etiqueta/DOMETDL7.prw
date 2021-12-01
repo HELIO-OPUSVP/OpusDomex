@@ -1066,6 +1066,36 @@ Static Function ValidaEtiq(lTeste)
 				If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 					nQtdEmbNv1 :=  Int(U_RetEmbala(SC2->C2_PRODUTO,"1")[2])
 
+
+
+
+			// Validao de Roteiro
+				lValidaRot := .F.
+				If U_VALIDACAO()
+					If cFilAnt == '01'
+						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
+							lValidaRot := .T.
+						EndIf
+					EndIf
+					If cFilAnt == '02'
+						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP" .And. lComTravR
+							lValidaRot := .T.
+						EndIf
+					EndIf
+				Else
+					If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
+						lValidaRot := .T.
+					EndIf
+				EndIf
+				If lValidaRot
+
+
+
+
+
+
+
+
 					nQTotPklOp  := 0
 					nQPklOcor7 := 0
 					nQPklOcor8 := 0
