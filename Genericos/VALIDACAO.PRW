@@ -29,7 +29,7 @@ User Function VALIDACAO(cConsultor,lRetorno)
 	AADD(aConsultores,"MAURICIO")
 	AADD(aConsultores,"OSMAR")
 	AADD(aConsultores,"MAURESI")
-	AADD(aConsultores,"JAKCSON")
+	AADD(aConsultores,"JACKSON")
 
 	If !Empty(cConsultor)
 		If aScan(aConsultores,cConsultor) == 0
@@ -37,11 +37,7 @@ User Function VALIDACAO(cConsultor,lRetorno)
 		EndIf
 	EndIf
 
-<<<<<<< Updated upstream
-	If cEnvironment == "VALIDACAO" .or. cEnvironment =="WEBCOL_VALIDACAO" .or. cEnvironment == "WEBCOLMG_VALIDACAO" .or. ".OPUS" $ cEnvironment .or. cEnvironment == "MAURESI" .or. cEnvironment == "COMPILA_QUENTE_VALIDACAO" .or. cEnvironment == "HELIO.OPUS"
-=======
-	If cEnvironment == "VALIDACAO" .or. cEnvironment =="WEBCOL_VALIDACAO" .or. cEnvironment == "WEBCOLMG_VALIDACAO" .or. ".OPUS" $ cEnvironment .or. cEnvironment == "MAURESI" .or. cEnvironment == "COMPILA_QUENTE_VALIDACAO" .or. cEnvironment =="ricardo.opus"
->>>>>>> Stashed changes
+	If cEnvironment == "VALIDACAO" .or. cEnvironment =="WEBCOL_VALIDACAO" .or. cEnvironment == "WEBCOLMG_VALIDACAO" .or. ".OPUS" $ cEnvironment .or. cEnvironment == "MAURESI" .or. cEnvironment == "COMPILA_QUENTE_VALIDACAO" .or. cEnvironment =="ricardo.opus" .or. cEnvironment == "HELIO.OPUS"
 		lRetorno := .T.
 	EndIf
 
