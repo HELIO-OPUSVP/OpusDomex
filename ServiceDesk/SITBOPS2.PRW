@@ -4,7 +4,7 @@
 #INCLUDE "TOPCONN.CH"
 
 
-User Function SITBOPS2(lMsgRun)
+User Function SITBOPS2(lMsgRun) 
 
 	Default lMsgRun := 'F'
 
@@ -24,10 +24,10 @@ Static Function RunProc()
 	Local n:=0
 
 	RPCSetType(3)  // Nao utilizar licensa
-
 	PREPARE ENVIRONMENT EMPRESA "01" FILIAL "01"  USER 'MRP' PASSWORD 'MRP' TABLES  "SZJ" , "SZK" , "SZ4"
-
-	SetUserDefault("000000")
+	//SetUserDefault("000000")
+	//teste3
+	
 
 	SZJ->( dbSetOrder(1) )
 	SZK->( dbSetOrder(1) )
@@ -121,7 +121,7 @@ Static Function RunProc()
 					AADD(aVetorIn,{"SZ4","Z4_RELATO" , "S"                       })
 					AADD(aVetorIn,{"SZ4","Z4_MSBLQL" , "2"                       })
 					AADD(aVetorIn,{"SZ4","Z4_CONSULT", SZJ->ZJ_Z4CONSU           })
-					//AADD(aVetorIn,{"SZ4","Z4_SEPFAT" , "000001"                })
+					//AADD(aVetorIn,{"SZ4","Z4_SEPFAT" , "000001"                  })
 					AADD(aVetorIn,{"SZ4","Z4_LINHA"  , "ZZZZZZZZZZZZZZZ"         })
 
 					//If MsgNoYes("Deseja aguardar o envio do chamado para o SistemOpus (Yes) ou coloca-lo na fila de envio (No)")
@@ -156,8 +156,8 @@ Static Function RunProc()
 	While n <> 0 .and. nTentativas < nMaxReg
 		nTentativas++
 
-		MsgRun("Processando sincronização de " + Alltrim(Str(n)) + " registros.","Processamento: " + Alltrim(Str(nTentativas))+ "/"+Alltrim(Str(nMaxReg)) + " Ultimo Z4_VERSAO sinc.:" + MAXSZ4->MAX,{|| ProcRun()} )
-		//ProcRun()
+		//MsgRun("Processando sincronização de " + Alltrim(Str(n)) + " registros.","Processamento: " + Alltrim(Str(nTentativas))+ "/"+Alltrim(Str(nMaxReg)) + " Ultimo Z4_VERSAO sinc.:" + MAXSZ4->MAX,{|| ProcRun()} )
+		ProcRun()
 
 		cQuery := "SELECT MAX(Z4_VERSAO) AS MAX FROM SZ4010 "
 
@@ -181,7 +181,7 @@ Static Function RunProc()
 	StartJob( "WFLauncher", GetEnvServer(), .F., { "WFSndMsgAll", { cEmpAnt, cFilAnt } } )
 
 	*--------------------------------------------------------------------------------------------------------------------------*
-	//RESET ENVIRONMENT
+	RESET ENVIRONMENT
 	*--------------------------------------------------------------------------------------------------------------------------*
 Return
 
