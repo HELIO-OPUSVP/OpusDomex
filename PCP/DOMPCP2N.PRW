@@ -418,4 +418,3 @@ For i:=1 to Len(aRegs)
 Next
 
 Return()
-
