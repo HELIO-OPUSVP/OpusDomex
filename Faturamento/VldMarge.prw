@@ -17,35 +17,72 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function VldMarge()
+User Function VldMarge(lMsg,lWflow)
+	Loca lRet        := .T.
+	Local nPerMargem := 0 //Percentual mínimo aceito como margem de lucro
+	Local cTexto     := ""
+	Local y          := 0
+	Local cAssunto   := ""
+	Local cPara      := ""
+	Local cCC        := ""
+	Local cArquivo   := ""
+	Local aAreaSA1   := SA1->( GetArea() )
 
-/*	Local aCusto := {}
-	Local cProdVenda := ""
-	Local x := 0
-    
-	nPC6_XCUSUNI := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_XCUSUNI" } )
-	nPC6_XSTACUS := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_XSTACUS" } )
-	For x := 1 To Len(aCols)
-		nPC6_PRODUTO := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_PRODUTO" } )
-		cProdVenda := aCols[x,nPC6_PRODUTO]
+	U_xGrvPrnet()
 
-		aCusto    := U_RetCust(cProdVenda,'N')
-		nCusMedio := aCusto[1]
-		cStatus   := aCusto[2]
-      //  Alert(M->C5_NUM+"      "+cProdVenda)
-	  //  Alert(nCusMedio)
+	SA1->(dbSetOrder(01))
+	SA1->( dbSeek(xFilial()+M->C5_CLIENTE+M->C5_LOJACLI) )
 
-		aCols[x,nPC6_XCUSUNI] := nCusMedio
-        aCols[x,nPC6_XSTACUS] := cStatus
-	Next x
-*/
+	If SA1->A1_XMARGEM > 0
+		nPerMargem := SA1->A1_XMARGEM
+	Else
+		nPerMargem := GetMV("MV_XMARGEM")
+	Endif
 
-U_xGrvPrnet()
-Alert("Fim do cálculo da margem de lucro...")
+	nPC6_ITEM    := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_ITEM" } )
+	nPC6_PRODUTO := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_PRODUTO" } )
+	nPC6_XMARGEM := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_XMARGEM" } )
 
-Return(Nil)
+	For y := 1 To Len(aCols)
+		If aCols[y,nPC6_XMARGEM] < nPerMargem
+			cTexto += aCols[y,nPC6_ITEM] +" / "+ aCols[y,nPC6_PRODUTO]+" Margem -> " + Str(aCols[y,nPC6_XMARGEM])+ Chr(13)
+		EndIf
+	Next y
 
+	If lMsg .And. cTexto <> ""
+		cAssunto := "ITENS COM MARGEM DE LUCRO ABAIXO DO PADRÃO ("+ Str(nPerMargem)+"%)"
+		cTexto := cAssunto + Chr(13) + cTexto + Chr(13)
+		cTexto := cTexto + "Se gravar os dados o pedido será bloqueado!!"
+		
+		If "COLETOR" $ Funname()
+			U_MsgColetor(cTexto)
+		Else
+			apMsgAlert(cTexto)
+		EndIf
+	EndIf
 
+	If lWflow .And. cTexto <> ""
+		cAssunto := "Pedido de Venda "+M->C5_NUM+ " BLOQUEADO - Margem Abaixo do Padrão "
+		cPara := "osmar@opusvp.com.br;dayse.paschoal@rosenbergerdomex.com.br"
+		cCC := ""
+		cArquivo := ""
+		cTexto := "CLIENTE: "+M->C5_CLIENTE+"/"+M->C5_LOJACLI+" - "+ SA1->A1_NREDUZ + Chr(13)+;
+			"MARGEM PADRÃO: "+Str(nPerMargem)+"%" + Chr(13) + Chr(13) + cTexto
+		cTexto   := StrTran(cTexto,Chr(13),"<br>")
+		U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
+
+		lRet := .f.  // Irá travar o pedido de venda
+
+	EndIf
+
+	If cTexto == ""
+	   Alert("Margem de lucro dentro dos parametros!...")
+	EndIf
+
+	RestArea(aAreaSA1)
+Return(lRet)
+
+//Verifica o preço net para o Pedido de Venda
 User Function xGrvPrNet()
 	Local nItAtu     := 0
 	Local nQtdPeso   := 0
@@ -149,8 +186,8 @@ User Function xGrvPrNet()
 	//While ! SC6->(EoF()) .And. SC6->C6_NUM == SC5->C5_NUM
 	For x := 1 To Len(aCols)
 		//Pega os valores
-		
-	
+
+
 		nPC6_QTDVEN  := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_QTDVEN" } )
 		nPC6_VALOR   := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_VALOR" } )
 		nPC6_PRCVEN  := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_PRCVEN" } )
@@ -211,8 +248,8 @@ User Function xGrvPrNet()
 		nMargem := ((nPrcNet - nCusMedio) / nPrcNet) * 100
 
 		aCols[x,nPC6_XCUSUNI] := nCusMedio
-        aCols[x,nPC6_XSTACUS] := cStatus
-		aCols[x,nPC6_XPRCNET] := nPrcNet	
+		aCols[x,nPC6_XSTACUS] := cStatus
+		aCols[x,nPC6_XPRCNET] := nPrcNet
 		aCols[x,nPC6_XMARGEM] := nMargem
 
 		//nMargem   Falta fazer o cálculo
@@ -221,7 +258,7 @@ User Function xGrvPrNet()
 
 
 
-	Next x	
+	Next x
 	//EndDo
 	nTotFrete := MaFisRet(, "NF_FRETE")
 	nTotVal := MaFisRet(, "NF_TOTAL")

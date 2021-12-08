@@ -9,7 +9,7 @@
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
-±±ºPrograma  ³ DOMETDLG ºAutor  ³ Michel Sander      º Data ³    27/05/15 º±±
+±±ºPrograma  ³ DOMETDL9 ºAutor  ³ Michel Sander      º Data ³    27/05/15 º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
 ±±ºDesc.     ³ Apontamento e impressão de etiquetas de embalagem nivel 2  º±±
 ±±º          ³                                                            º±±
@@ -20,7 +20,7 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function DOMETDL7()
+User Function DOMETDL9()
 
 	//Local lLoop     := .T.
 	//Local lOk       := .F.
@@ -60,7 +60,7 @@ User Function DOMETDL7()
 	Private nPerdaBip   := 0.00
 	Private nPesoBip    := 0
 	Private lRePrint    := .F.
-	Private bRePrint	  := { || fColar( aCopyTab,.T. ) }
+	Private bRePrint	:= { || fColar( aCopyTab,.T. ) }
 	Private lTelefonic  := .F.
 	Private lEricsson   := .F.
 	Private lComba      := .F.
@@ -87,9 +87,9 @@ User Function DOMETDL7()
 	Private oPdVen
 	Private oPdaOp
 	Private oDlgHuawei
-	Private lNewDL7  := .F.//SuperGetMv("MV_XNEWDL7",.F., .F.)
+	Private lNewDL7    := .F.//SuperGetMv("MV_XNEWDL7",.F., .F.)
 	Private oRadio
-	Private nRadio   := 1
+	Private nRadio     := 1
 	Private cSubClasse := ""
 	Private cTipoSB1   := ""
 	Private cCodHuawei := SPACE(100)//SPACE(Len(XD1->XD1_ETQHUA))
@@ -97,13 +97,13 @@ User Function DOMETDL7()
 	Private cCodHua2ok := ""
 	Private oCodHuawei
 	Private oCdHuawei2
-	Private cFila:= ""
-	Private cCelula:= ""
-	Private lOkFlex   := SuperGetMv("MV_XVRFLEX",.F.,.F.)
-	Private lOkFuruka := SuperGetMv("MV_XVRFURU",.F.,.T.)
-	Private lGlobal  := .F.
-	Private lEhFuruka := .F.
-	Private lComTravR := IIF(ISINCALLSTACK('U_DL7STRVR'),.T.,.F.)
+	Private cFila      := ""
+	Private cCelula    := ""
+	Private lOkFlex    := SuperGetMv("MV_XVRFLEX",.F.,.F.)
+	Private lOkFuruka  := SuperGetMv("MV_XVRFURU",.F.,.T.)
+	Private lGlobal    := .F.
+	Private lEhFuruka  := .F.
+	Private lComTravR  := IIF(ISINCALLSTACK('U_DL7STRVR'),.T.,.F.)
 
 	Public cDomEtDl31_CancEtq := ""
 	Public cDomEtDl32_CancOP  := ""
@@ -165,7 +165,7 @@ User Function DOMETDL7()
 	cFila:= fLocImp(cCelula)
 
 
-	DEFINE MSDIALOG oDlg01 TITLE OemToAnsi("U_DOMETDL7() - Emissão de Etiquetas (NOVO)") FROM 0,0 TO 510,800 PIXEL of oMainWnd PIXEL //300,400 PIXEL of oMainWnd PIXEL
+	DEFINE MSDIALOG oDlg01 TITLE OemToAnsi("U_DOMETDL9() - Emissão de Etiquetas DL9 (cópia DL7)") FROM 0,0 TO 510,800 PIXEL of oMainWnd PIXEL //300,400 PIXEL of oMainWnd PIXEL
 
 	@ nLin-10,nCol1-05 TO nLin+62,nCol1+387 LABEL " Informações da Ordem de Produção "  OF oDlg01 PIXEL
 	@ nLin, nCol1	SAY oTexto10 Var 'Número da OP:'    SIZE 100,10 PIXEL
@@ -588,7 +588,7 @@ Static Function ValidaEtiq(lTeste)
 				cCliBip   := SA1->A1_NOME
 				nQtdOpBip := SC2->C2_QUANT
 				cPedBip   := SC2->C2_PEDIDO
-				nPerdaBip := U_SomaPerda(cNumOpBip,SC2->C2_PRODUTO)
+				nPerdaBip := U_SomaPer2(cNumOpBip,SC2->C2_PRODUTO)
 				nSaldoBip := (SC2->C2_QUANT - SC2->C2_QUJE) - nPerdaBip  // Trocado de C2_XXQUJE para C2_QUJE      por Hélio em 25/09/18
 				oCliente:Refresh()
 				oProduto:Refresh()
@@ -679,7 +679,7 @@ Static Function ValidaEtiq(lTeste)
 							cCliBip   := SA1->A1_NOME
 							nQtdOpBip := SC2->C2_QUANT
 							cPedBip   := SC2->C2_PEDIDO
-							nPerdaBip := U_SomaPerda(cNumOpBip,SC2->C2_PRODUTO)
+							nPerdaBip := U_SomaPer2(cNumOpBip,SC2->C2_PRODUTO)
 							nSaldoBip := (SC2->C2_QUANT - SC2->C2_QUJE) - nPerdaBip  // Trocado de C2_XXQUJE para C2_QUJE      por Hélio em 25/09/18
 							cEtiqueta := Space(_nTamEtiq)
 							aQtdBip   := {}
@@ -1062,29 +1062,10 @@ Static Function ValidaEtiq(lTeste)
 				//Verifica se existem OP's sepradas no picklist que ainda não constam na linha de produção através do roteiro.
 				//XD1_OCORR == 8 Gerado Pelo PickList,  7=Lido na produção, foi transferido e está validado pelo tela de roteiro.
 
-
-				// Validações de Roteiro    Antigo if: //If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
-				lValidaRot := .F.
-				If U_VALIDACAO()
-					If cFilAnt == '01'
-						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
-							lValidaRot := .T.
-						EndIf
-					EndIf
-					If cFilAnt == '02'
-						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP" .And. lComTravR
-							//lValidaRot := .T.
-						EndIf
-					EndIf
-				Else
-					If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
-						lValidaRot := .T.
-					EndIf
-				EndIf
-
-				If lValidaRot
-
+				//If (GetMv("MV_XVERROT") .or. (GetEnvServ() == 'VALIDACAO')) .And. AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) == "DROP"
+				If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 					nQtdEmbNv1 :=  Int(U_RetEmbala(SC2->C2_PRODUTO,"1")[2])
+
 					nQTotPklOp  := 0
 					nQPklOcor7 := 0
 					nQPklOcor8 := 0
@@ -1559,28 +1540,7 @@ Static Function ValidaEtiq(lTeste)
 			//XD1_OCORR == 8 Gerado Pelo PickList,  7=Lido na produção, foi transferido e está validado pelo tela de roteiro.
 
 			//If (GetMv("MV_XVERROT") .or. (GetEnvServ() == 'VALIDACAO')) .And. AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) == "DROP"
-		
-			// Validações de Roteiro    Antigo if: //If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
-				lValidaRot := .F.
-				If U_VALIDACAO()
-					If cFilAnt == '01'
-						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
-							lValidaRot := .T.
-						EndIf
-					EndIf
-					If cFilAnt == '02'
-						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP" .And. lComTravR
-							//lValidaRot := .T.
-						EndIf
-					EndIf
-				Else
-					If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
-						lValidaRot := .T.
-					EndIf
-				EndIf
-
-				If lValidaRot
-			
+			If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR // PCON acrescentado em 04/11/21 por Helio/Ricardo
 				If !Alltrim(SC2->C2_OBS) $ "SEMTRAVAROTEIRO"
 					nQtdEmbNv1 :=  Int(U_RetEmbala(SC2->C2_PRODUTO,"1")[2])
 					
@@ -2134,7 +2094,7 @@ Return
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
-±±ºPrograma  ³ SomaPerdaºAutor ³ Michel Sander	     º Data ³    27/05/15 º±±
+±±ºPrograma  ³ SomaPer2 ºAutor ³ Michel Sander	     º Data ³    27/05/15 º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
 ±±ºDesc.     ³ Soma as perdas por OP			                             º±±
 ±±º          ³                                                            º±±
@@ -2145,7 +2105,7 @@ Return
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function SomaPerda(cNumOpBip,cProdBip)
+User Function SomaPer2(cNumOpBip,cProdBip)
 
 	LOCAL nPerdas := 0
 	SZA->(dbSetOrder(1))

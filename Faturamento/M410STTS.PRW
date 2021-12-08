@@ -58,6 +58,48 @@ User Function M410STTS()
 		EndIf
 	EndIf
 
+	If U_Validacao("OSMAR")
+		//Verifica a margem de lucro e bloqueia caso necessário
+		If (_nOper == 3)  //.Or. (_nOper == 4)  //Inclusão / Alteração
+			If SC5->C5_TIPO == 'N'
+				If !U_VldMargem(.F.,.T.)
+					SC6->( dbSetOrder(1) )
+					SC6->(dbSeek(xFilial()+SC5->C5_NUM))
+					While SC6->(!Eof()) .And. SC6->C6_NUM == SC5->C5_NUM
+						If (SC6->C6_BLQ <> "R") .And. (Empty(SC6->C6_NUMOP)) // SC6->C6_QTDENT = 0
+							//	RecLock("SC6",.f.)
+							//	SC6->C6_BLQ := "S"
+							//	SC6->C6_XGERAOP := "2"
+							//	SC6->( msUnLock() )
+						EndIf
+						//Gravar para controle de desbloqueio de PV
+						If ZZF->( dbSeek(xFilial()+"BLQ"+SC6->C6_NUM+SC6->C6_ITEM))
+							RecLock("ZZF",.f.)
+						Else 	
+						 	RecLock("ZZF",.t.)
+						EndIf	 
+						 	ZZF->ZZF_FILIAL := xFilial("ZZF")
+							ZZF->ZZF_ORIGEM	:= "BLQ"
+							ZZF->ZZF_NUMERO	:= SC6->C6_NUM
+							ZZF->ZZF_ITEM 	:= SC6->C6_ITEM
+							ZZF->ZZF_COD    := SC6->C6_PRODUTO
+							ZZF->ZZF_DATA   := dDataBase
+							ZZF->ZZF_PRCVEN	:= SC6->C6_PRCVEN
+							ZZF->ZZF_CUSUNI	:= SC6->C6_XCUSUNI
+							ZZF->ZZF_STACUS	:= "B"
+							ZZF->ZZF_PRCNET	:= SC6->C6_XPRCNET
+							ZZF->ZZF_MARGEM := SC6->C6_XMARGEM
+							ZZF->ZZF_OBS    := "BLQ - Margem"
+							ZZF->( msUnLock() )
+						SC6->( dbSkip() )
+					EndDo
+				EndIf
+			EndIf
+		EndIf
+	Endif
+
+
+
 
 	If (_nOper == 3)  .Or. (_nOper == 4)  //Inclusão / Alteração
 		If SC5->C5_TIPO == 'N'

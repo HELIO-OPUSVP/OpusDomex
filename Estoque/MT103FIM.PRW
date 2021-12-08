@@ -133,7 +133,7 @@ USER FUNCTION MT103FIM()
 								If SDA->(dbSeek( xFilial() + SD1->D1_NUMSEQ ))
 									If SDA->DA_SALDO != 0
 
-										If U_Validacao() // 23/09/21
+										If U_VALIDACAO("HELIO",.T.) // 23/09/21   19/11/21
 
 											// Tem que melhorar isso. Vai ficar lento no futuro  (tem mais um Seek desse pra baixo)
 											XD1->(DBSETORDER(8))
@@ -240,7 +240,7 @@ USER FUNCTION MT103FIM()
 
 								If cFilFiltro == '01'
 									//ConOut("Antes do a260Processa" + Time())
-									If U_VALIDACAO()  // Helio  16/08/21
+									If U_VALIDACAO("HELIO",.T.)  // Helio  16/08/21     19/11/21
 										lTransfere := .F.
 										If SB1->B1_APROPRI == 'I'
 											// Definido em 23/09/21 com Sergio e Denis que materiais de apropriação indireta não devem ser endereçado
@@ -398,7 +398,7 @@ USER FUNCTION MT103FIM()
 								XD1->XD1_ITEM    := aXD1Recno[x][6]
 								XD1->XD1_DTDIGI  := SF1->F1_DTDIGIT
 
-								If !U_VALIDACAO() // Helio  16/08/21
+								If !U_VALIDACAO("HELIO",.T.) // Helio  16/08/21    19/11/21
 									If aXD1Recno[x][4] == '5' 	//ocorrencia
 										XD1->XD1_QTDATU  := 0
 									EndIf

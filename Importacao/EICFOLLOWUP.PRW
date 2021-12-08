@@ -216,7 +216,7 @@ User Function EICFLWUP()
 	nUsado	:= len(aHeader)
 	aAdd(aCols,Array(nUsado+1))
 
-	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V2.4")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
+	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V2.7")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
 
 	@ 032, 003 GROUP oGroup1 TO 092, 649 PROMPT "Filtros" OF oDlg COLOR 0, 16777215 PIXEL
 
@@ -720,7 +720,8 @@ Static Function Atu_aCols2()
 		cW6_DI_NUM :=''
 		cHAWB      :=''
 		SW7->(DbSetOrder(RetOrder("SW7","W7_FILIAL+W7_PO_NUM+W7_COD_I+W7_POSICAO")))
-		If SW7->( dbSeek( xFilial() + SUBSTR(TRB->W2_PO_NUM,1,15) + TRB->W3_COD_I + TRB->W3_POSICAO ) )
+		//If SW7->( dbSeek( xFilial() + SUBSTR(TRB->W2_PO_NUM,1,15) + TRB->W3_COD_I + TRB->W3_POSICAO ) )
+		If SW7->( dbSeek( xFilial() + SUBSTR(TRB->W2_PO_NUM,1,20) + TRB->W3_COD_I + TRB->W3_POSICAO ) )
 			SW6->( dbSetOrder(1) )
 			IF SW6->( dbSeek( xFilial() + SW7->W7_HAWB ) )
 				cW6_DI_NUM := SW6->W6_DI_NUM
@@ -810,7 +811,8 @@ Static Function Atu_aCols2()
 			cW8_INVOICE := TR3->W8_INVOICE
 		Else
 			SW8->( dbSetOrder(RetOrder("SW8","W8_FILIAL+W8_FORN+W8_FORLOJ+W8_COD_I+W8_PO_NUM+W8_POSICAO")) )
-			If SW8->( dbSeek( xFilial() + TRB->A2_COD + TRB->A2_LOJA + TRB->W3_COD_I + SUBSTR(TRB->W2_PO_NUM,1,15) + TRB->W3_POSICAO ) )
+			//If SW8->( dbSeek( xFilial() + TRB->A2_COD + TRB->A2_LOJA + TRB->W3_COD_I + SUBSTR(TRB->W2_PO_NUM,1,15) + TRB->W3_POSICAO ) )
+			If SW8->( dbSeek( xFilial() + TRB->A2_COD + TRB->A2_LOJA + TRB->W3_COD_I + SUBSTR(TRB->W2_PO_NUM,1,20) + TRB->W3_POSICAO ) )
 				//apMsgInfo("SW8 entrou no seek")
 				cW8_INVOICE := SW8->W8_INVOICE
 			EndIf
@@ -967,19 +969,20 @@ Static Function Atu_aCols2()
 				nSLDIMP :=TR5->W5_SALDO_Q
 				dTEMB   :=TR5->W5_DT_EMB
 
-				dDTPCOL :=DaySum(STOD(TR5->W5_DT_EMB), nTRSTIME)
-				dDTPCOL := DataValida(dDTPCOL,.T.)
+				//*retirado auto*//dDTPCOL :=DaySum(STOD(TR5->W5_DT_EMB), nTRSTIME)
+				//*retirado auto*//dDTPCOL := DataValida(dDTPCOL,.T.)
 
 			Else
 				SW5->( dbSetOrder(RetOrder("SW5","W5_FILIAL+W5_HAWB+W5_PO_NUM+W5_COD_I+W5_POSICAO")) )
-				If SW5->( dbSeek( xFilial() + cHAWB + SUBSTR(TRB->W2_PO_NUM,1,15) + TRB->W3_COD_I + TRB->W3_POSICAO ) )
+				//If SW5->( dbSeek( xFilial() + cHAWB + SUBSTR(TRB->W2_PO_NUM,1,15) + TRB->W3_COD_I + TRB->W3_POSICAO ) )
+				If SW5->( dbSeek( xFilial() + cHAWB + SUBSTR(TRB->W2_PO_NUM,1,20) + TRB->W3_COD_I + TRB->W3_POSICAO ) )
 					//apMsgInfo("SW5 entrou no seek")
 					nQTDIMP := SW5->W5_QTDE
 					nSLDIMP := SW5->W5_SALDO_Q
 					dTEMB   := SW5->W5_DT_EMB
 
-					dDTPCOL := DaySum((SW5->W5_DT_EMB), nTRSTIME)
-					dDTPCOL := DataValida(dDTPCOL,.T.)
+					//*retirado auto*//dDTPCOL := DaySum((SW5->W5_DT_EMB), nTRSTIME)
+					//*retirado auto*//dDTPCOL := DataValida(dDTPCOL,.T.)
 
 				EndIf
 			EndIf
@@ -1003,8 +1006,8 @@ Static Function Atu_aCols2()
 			If SW6->( dbSeek( xFilial() + cHAWB ) )
 				dTEMB   := SW6->W6_DT_EMB
 
-				dDTPCOL := DaySum((SW6->W6_DT_EMB), nTRSTIME)
-				dDTPCOL := DataValida(dDTPCOL,.T.)
+				//*retirado auto*//dDTPCOL := DaySum((SW6->W6_DT_EMB), nTRSTIME)
+				//*retirado auto*//dDTPCOL := DataValida(dDTPCOL,.T.)
 
 				IF nTRSTIME<=0
 					MSGALERT('Transit Time Origem '+TRB->W2_ORIGEM+' Modal '+cMODAL+' = '+STR(nTRSTIME))
@@ -1055,7 +1058,7 @@ Static Function Atu_aCols2()
 //SELECT W5_QTDE,* FROM SW5010  WHERE W5_HAWB='IMP 4612/21' AND W5_PO_NUM='I0011310' AND W5_COD_I='121F0304L' AND W5_POSICAO='0001'
 //W5_PO_NUM=W2_PO_NUM AND W5_COD_I=W3_COD_I  AND W5_HAWB<>'' AND W5_POSICAO=W3_POSICAO
 //----------------------------------------------------------------------------------
-		IF lGRAVA == .T.
+        IF lGRAVA == .T.
 			/*    01 @BMP                   */	AADD(aCols1, {oBmpAux   ,  ;
 				/*02 Linha       ZZT_NLINHA */	Transform(nLINHA,"@E 99999") ,;
 				/*03 Origin      ZZT_ORIGIN */	TRB->W2_ORIGEM+'-'+TRB->CCH_PAIS  ,;
@@ -1278,8 +1281,10 @@ USER FUNCTION fGRVZZT(NLIN,lFST)
 	/*02*/       Local nPos02 := aScan(aHeader,{|x|AllTrim(x[2])=="ZZT_PO_NUM"})
 	/*03*/       Local nPos03 := aScan(aHeader,{|x|AllTrim(x[2])=="ZZT_PO_SIG"})
 
-	cPEDIDO  :=SUBSTR(aCols[N][nPos02],01,15) //I0011387          /0001
-	cPOSICAO :=SUBSTR(aCols[N][nPos02],20,04)
+	//cPEDIDO  :=SUBSTR(aCols[N][nPos02],01,15) //I0011387          /0001
+	//cPOSICAO :=SUBSTR(aCols[N][nPos02],20,04) // PRODUCAO    "I0011387          /0001"
+	cPEDIDO  :=SUBSTR(aCols[N][nPos02],01,20)
+	cPOSICAO :=SUBSTR(aCols[N][nPos02],25,04)   // HOMOLOGACAO "I0011575               /0001"
 	cPOSIGA  :=aCols[N][nPos03]
 
 	DbSelectArea("SW3")
@@ -1313,10 +1318,11 @@ USER FUNCTION fGRVZZT(NLIN,lFST)
 		ENDIF
 
 		IF !EMPTY(aCols[N][nPos22]) //ZZT_DTCOLE
-			dPRV := DaySum(aCols[N][nPos22], aCols[N][41]) //DaySum(Data, nDias)
-			dPRV := DataValida(dPRV,.T.)
-			M->ZZT_DTPCOL    := dPRV
-			aCols[N][nPos23] := dPRV
+		//*retirado auto*//
+		//	dPRV := DaySum(aCols[N][nPos22], aCols[N][41]) //DaySum(Data, nDias)
+		//	dPRV := DataValida(dPRV,.T.)
+		//	M->ZZT_DTPCOL    := dPRV
+		//	aCols[N][nPos23] := dPRV
 		ENDIF
 
 		IF !EMPTY(aCols[N][nPos26]) //ZZT_ETA
@@ -1576,15 +1582,14 @@ STATIC FUNCTION fGRAVAZZT()
 //	aAbreTab := {}
 //	RPCSetType(3)
 //	RpcSetEnv(_cEmpresa, _cFilial,,,,,aAbreTab)
-
-	For nX := 1 to len (aCols1)
+    For nX := 1 to len (aCols1)
 		cQRDEL1:=" DELETE FROM ZZT010 WHERE ZZT_PO_NUM ='"+acols1[nX][04]+"' "
 		TCSqlExec(cQRDEL1)
 	next nx
-
+   // HOMOLOGACAO "I0011575               /0001"
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	cQRDEL2 := " DELETE FROM ZZT010 WHERE SUBSTRING(ZZT_PO_SIG,1,6)+SUBSTRING(ZZT_PO_NUM,20,4) NOT IN  "
-	cQRDEL2 += " (SELECT C7_NUM+C7_ITEM FROM SC7010  WHERE C7_NUM=SUBSTRING(ZZT_PO_SIG,1,6) AND C7_ITEM=SUBSTRING(ZZT_PO_NUM,20,4) AND D_E_L_E_T_='') "
+	cQRDEL2 := " DELETE FROM ZZT010 WHERE SUBSTRING(ZZT_PO_SIG,1,6)+SUBSTRING(ZZT_PO_NUM,25,4) NOT IN  "
+	cQRDEL2 += " (SELECT C7_NUM+C7_ITEM FROM SC7010  WHERE C7_NUM=SUBSTRING(ZZT_PO_SIG,1,6) AND C7_ITEM=SUBSTRING(ZZT_PO_NUM,25,4) AND D_E_L_E_T_='') "
 	cQRDEL2 += " AND SUBSTRING(ZZT_PO_NUM,1,2)<>'DA' AND ZZT_NFISCA='' "
 	TCSqlExec(cQRDEL2)
 	//---------------------------------------------------------------------------------------------------

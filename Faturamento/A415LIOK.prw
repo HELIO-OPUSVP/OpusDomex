@@ -14,18 +14,36 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 User Function A415LIOK
-    Local aAreaSCK := GetArea()
-    Local aAreaSCL := GetArea()
-    Local lRetorno := .t.
-    Local nMargem  := GetMV("MV_XMARGEM")  //Percentual mínimo aceito como margem de lucro
-    
-    If lRetorno
-        If TMP1->CK_XMARGEM > 0 .And. TMP1->CK_XMARGEM < nMargem
-            MsgInfo("A Margem de Contribuição deste item esta em "+Alltrim(Str(TMP1->CK_XMARGEM))+"%"+Chr(13)+"e esta abaixo de "+Alltrim(Str(nMargem))+"% ","A T E N Ç Ã O")
-            lRetorno := .T.
-        EndIf
-    EndIf
+	Local aAreaSCK := SCK->( GetArea() )
+	Local aAreaSCL := SCL->( GetArea() )
+	Local aAreaSA1 := SA1->( GetArea() )
+	Local lRetorno := .t.
+	Local nMargem  := GetMV("MV_XMARGEM") //Percentual mínimo aceito como margem de lucro
 
-    RestArea(aAreaSCL)
-    RestArea(aAreaSCK)
+	If U_Validacao("OSMAR")
+		SA1->(dbSetOrder(01))
+		SA1->( dbSeek(xFilial()+M->CJ_CLIENTE+M->CJ_LOJA) )
+
+		If SA1->A1_XMARGEM > 0
+			nPerMargem := SA1->A1_XMARGEM
+		Else
+			nPerMargem := GetMV("MV_XMARGEM")
+		Endif
+
+		If TMP1->CK_XMARGEM > 0 .And. TMP1->CK_PRCVEN = 0 .And. TMP1->CK_XCUSUNI
+			TMP1->CK_PRCVEN := TMP1->CK_XCUSUNI * (1 + (TMP1->CK_XMARGEM / 100))
+			//Alert(TMP1->CK_PRCVEN)
+		EndIf
+	EndIf
+
+	If lRetorno
+		If TMP1->CK_XMARGEM > 0 .And. TMP1->CK_XMARGEM < nMargem
+			MsgInfo("A Margem de Contribuição deste item esta em "+Alltrim(Str(TMP1->CK_XMARGEM))+"%"+Chr(13)+"e esta abaixo de "+Alltrim(Str(nMargem))+"% ","A T E N Ç Ã O")
+			lRetorno := .T.
+		EndIf
+	EndIf
+
+	RestArea(aAreaSA1)
+	RestArea(aAreaSCL)
+	RestArea(aAreaSCK)
 Return(lRetorno)

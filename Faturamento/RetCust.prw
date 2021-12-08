@@ -53,7 +53,7 @@ User Function  RetCust(cProduto,cGrvSC)
 //	RecLock("ZZF",.T.)
 //	ZZF_FILIAL := xFilial("ZZF")
 //	ZZF_ORIGEM := "TST"
-//	ZZF_NUMERO := "051915"
+//	ZZF_NUMERO := "YYYYYY"
 //	ZZF_ITEM  := "00"
 //	ZZF_COD   := AllTrim(aEstruPA[w,2])
 //	ZZF_DATA  := dDataBase

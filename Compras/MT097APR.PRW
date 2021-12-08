@@ -1,8 +1,16 @@
 #Include "Protheus.ch"
 
 User Function MT094END()
-   //Chama a função de controle de envios d e-mails ao forncedor.
+ 	Local cPedAprov	:= AllTrim(SCR->CR_NUM)//SC7->C7_NUM
+	Local cMsg		:= ""
+	Local cArquivo  := "\pedido_compra\" + cPedAprov + ".pdf"
+	Local cEmail	:= ""
+	Local cUserComp	:= ""
+
 	U_DMXCPR01(AllTrim(SCR->CR_NUM))
+ 
+  
+   //Chama a função de controle de envios d e-mails ao forncedor.
 	
 Return
    
@@ -12,7 +20,9 @@ Static Function BKMT094END
 	Local cArquivo  := "\pedido_compra\" + cPedAprov + ".pdf"
 	Local cEmail	:= ""
 	Local cUserComp	:= ""
-	
+
+	U_DMXCPR01(AllTrim(SCR->CR_NUM))
+
 	SC7->(DbSetOrder(1))
 	SC7->(DbSeek(xFilial("SC7")+AllTrim(cPedAprov)))                      
 	

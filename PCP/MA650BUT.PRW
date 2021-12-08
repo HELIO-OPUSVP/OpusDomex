@@ -17,8 +17,4 @@ User Function MA650BUT()
 
 aAdd(aRotina,{OemToAnsi('Programação OP')  , "U_BOT650DT()"   , 0 , 2, 0, nil} )
 
-If U_Validacao()
-   aAdd(aRotina,{OemToAnsi('Anexos da OP')  , "U_AnexosOP()"   , 0 , 2, 0, nil} )
-EndIf
-
 Return aRotina

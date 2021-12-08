@@ -4,7 +4,7 @@
 #INCLUDE "TOPCONN.CH"
 
 
-User Function SITBOPS2(lMsgRun)
+User Function SITBOPS2(lMsgRun) 
 
 	Default lMsgRun := 'F'
 
@@ -24,10 +24,10 @@ Static Function RunProc()
 	Local n:=0
 
 	RPCSetType(3)  // Nao utilizar licensa
-
 	PREPARE ENVIRONMENT EMPRESA "01" FILIAL "01"  USER 'MRP' PASSWORD 'MRP' TABLES  "SZJ" , "SZK" , "SZ4"
-
-	SetUserDefault("000000")
+	//SetUserDefault("000000")
+	//teste3
+	
 
 	SZJ->( dbSetOrder(1) )
 	SZK->( dbSetOrder(1) )
@@ -156,8 +156,8 @@ Static Function RunProc()
 	While n <> 0 .and. nTentativas < nMaxReg
 		nTentativas++
 
-		MsgRun("Processando sincronização de " + Alltrim(Str(n)) + " registros.","Processamento: " + Alltrim(Str(nTentativas))+ "/"+Alltrim(Str(nMaxReg)) + " Ultimo Z4_VERSAO sinc.:" + MAXSZ4->MAX,{|| ProcRun()} )
-		//ProcRun()
+		//MsgRun("Processando sincronização de " + Alltrim(Str(n)) + " registros.","Processamento: " + Alltrim(Str(nTentativas))+ "/"+Alltrim(Str(nMaxReg)) + " Ultimo Z4_VERSAO sinc.:" + MAXSZ4->MAX,{|| ProcRun()} )
+		ProcRun()
 
 		cQuery := "SELECT MAX(Z4_VERSAO) AS MAX FROM SZ4010 "
 
