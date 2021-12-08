@@ -493,7 +493,11 @@ Static Function fValEnvEx()
 
 Local nCxaPronta := 0
 Local cNivEmb 	  := IIF(cVerUsoGr $ "DROP/PCON","1","2")
-cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN+"' AND XD1_NIVEMB = '" + cNivEmb  + "' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+If U_Validacao()
+	cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN+"' AND (XD1_NIVEMB = '" + cNivEmb + "'  OR  XD1_NIVEMB = 'P') AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+Else
+	cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN+"' AND XD1_NIVEMB = '" + cNivEmb  + "' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+EndIf
 dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TEMP",.F.,.T.)
 nCxaPronta := TEMP->CONTAGEM
 TEMP->(dbCloseArea())
@@ -516,10 +520,14 @@ Return ( nCxaPronta )
 */
 
 Static Function fMontaExp()
-
+//
 aCaixas := {}
 cNivEmb 	  := IIF(cVerUsoGr $ "DROP/PCON","1","2")
-cQuery := "SELECT * FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN+"' AND XD1_NIVEMB = '"  + cNivEmb + "' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+If U_Validacao()
+	cQuery := "SELECT * FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN+"' AND (XD1_NIVEMB = '" + cNivEmb + "'  OR  XD1_NIVEMB = 'P') AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "	
+Else
+	cQuery := "SELECT * FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN+"' AND XD1_NIVEMB = '"  + cNivEmb + "' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
+EndIf
 dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TEMP",.F.,.T.)
 Do While TEMP->(!Eof())
    Aadd(aCaixas, { .T., oNChecked, TEMP->XD1_XXPECA, TEMP->XD1_COD, TEMP->XD1_LOTECT, TEMP->XD1_DTDIGI, TEMP->XD1_QTDATU, TEMP->XD1_NIVEMB } )
@@ -575,7 +583,11 @@ nTotColeta := 0
 nResto     := 0
 nTotCaixas := 0
 aCaixas    := {}
-cQuery := "SELECT * FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+XD1->XD1_OP+"' AND XD1_NIVEMB = '" + cNivEmb + "' AND XD1_OCORRE <> '5' AND D_E_L_E_T_ = '' "
+If U_Validacao()
+	cQuery := "SELECT * FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+XD1->XD1_OP+"' AND (XD1_NIVEMB = '" + cNivEmb + "'  OR  XD1_NIVEMB = 'P') AND XD1_OCORRE <> '5' AND D_E_L_E_T_ = '' "
+else
+	cQuery := "SELECT * FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+XD1->XD1_OP+"' AND XD1_NIVEMB = '" + cNivEmb + "' AND XD1_OCORRE <> '5' AND D_E_L_E_T_ = '' "	
+EndIf
 dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TEMP",.F.,.T.)
 TEMP->(dbEval({||nTotCaixas++}))
 TEMP->(dbGotop())
@@ -672,7 +684,7 @@ Return
 */
 
 Static Function fAtuExp()
-
+Local nQ := 0
 nAviso := Aviso("Atenção","Deseja enviar "+Transform(nTotColeta,"@E999999")+" caixas para expedição?",{"Sim","Não"})
 
 If nAviso == 1

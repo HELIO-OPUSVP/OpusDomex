@@ -380,7 +380,7 @@ SB1->(dbSetOrder(1))
 	EndIf
 
 	//conforme solicita豫o do Denis em 15/10/2021 quando o cliente for a claro e a filial 02 imprimir este layout  
-	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) == "DROP" )
+	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) $ "DROP/PCON" )
 		//旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커
 		//쿗AYOUT 94 - Etiqueta Nivel 3												   	�
 		//읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸
@@ -559,7 +559,8 @@ Static Function AlertC(cTexto)
 	Local aTemp := U_QuebraString(cTexto,20)
 	Local cTemp := ''
 	Local lRet  := .T.
-
+	Local x 	:= 0
+	
 	For x := 1 to Len(aTemp)
 		cTemp += aTemp[x] + Chr(13)
 	Next x
