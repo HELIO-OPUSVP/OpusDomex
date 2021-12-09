@@ -1179,7 +1179,7 @@ Static Function ValidaEtiq(lTeste)
 					TMPN1->(dbCloseArea())
 
 
-					If  (nQtdEmbNv1 > nQTotFibra) .Or.  ((nQtdEmbNv1 + nQtTotN1)  > nQTotFibra)
+					If  (nQtdEmbNv1 > nQTotFibra) .Or.  ((nQtdEmbNv1 + nQtTotN1)  > nQTotFibra) .Or. nQTotFibra >= SC2->C2_QUANT 
 						While !MsgNoYes("."+CHR(13)+"A quantidade de Fibra bipada na entrada da linha é insuficiente para " + ENTER +;
 								"dar continuidade no Processo!")
 						End
