@@ -1073,7 +1073,7 @@ Static Function ValidaEtiq(lTeste)
 					EndIf
 					If cFilAnt == '02'
 						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP" .And. lComTravR
-							//lValidaRot := .T.
+							lValidaRot := .T.
 						EndIf
 					EndIf
 				Else
@@ -1178,8 +1178,8 @@ Static Function ValidaEtiq(lTeste)
 					EndIf
 					TMPN1->(dbCloseArea())
 
-
-					If  (nQtdEmbNv1 > nQTotFibra) .Or.  ((nQtdEmbNv1 + nQtTotN1)  > nQTotFibra) .Or. nQTotFibra >= SC2->C2_QUANT 
+					
+					If  (nQtdEmbNv1 > nQTotFibra) .Or.  ((nQtdEmbNv1 + nQtTotN1)  > nQTotFibra)
 						While !MsgNoYes("."+CHR(13)+"A quantidade de Fibra bipada na entrada da linha é insuficiente para " + ENTER +;
 								"dar continuidade no Processo!")
 						End
