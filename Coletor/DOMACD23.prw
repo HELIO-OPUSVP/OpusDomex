@@ -879,8 +879,14 @@ If U_uMsgYesNo("Deseja gerar NOTA FISCAL?")
 					AutoNfeEnv(cEmpAnt,SF2->F2_FILIAL,"0","1",SF2->F2_SERIE,SF2->F2_DOC,SF2->F2_DOC)
 				endif
 				
-				
-				If SF2->F2_FIMP == 'T'  // Status de NF transmitida
+				_lGnreOK := .F.
+
+				if U_VALIDACAO("MAURESI")
+					_lGnreOK := .T.
+				endif
+
+				If SF2->F2_FIMP == 'T'  .or. _lGnreOK // Status de NF transmitida   // MARESI 06/12/21			
+//				If SF2->F2_FIMP == 'T'  // Status de NF transmitida
 					
 					__cNumGuia := 0
 					If SF2->F2_EST <> 'SP' .And. ( SF2->F2_ICMSRET > 0 )
