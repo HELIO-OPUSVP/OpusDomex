@@ -341,6 +341,10 @@ Static Function Filtrar(lPerg)
 				SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100DR" ) )
 				_QtdMinMon:= SG1->G1_QUANT
 
+			ElseIf  Alltrim(mv_par11) == 'FTTA'
+				SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100FTTA" ) )
+				_QtdMinMon:= SG1->G1_QUANT
+
 			ElseIf Alltrim(mv_par11) == 'JUMPER'
 				SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100J" ) )
 				_QtdMinMon:= SG1->G1_QUANT
@@ -352,7 +356,6 @@ Static Function Filtrar(lPerg)
 				SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100" ) )
 				_QtdMinMon:= SG1->G1_QUANT
 			Endif
-
 		Else
 
 			If Alltrim(mv_par11) == 'TRUE' .Or. Alltrim(mv_par11) == 'TRUN'
