@@ -31,10 +31,14 @@ User Function DesBlqPV(cNumPV)
 	AADD(aHeader,  {    "Item"      ,   "ITEM"   ,"@R" ,02,0,""            ,"","C","","","","",".F."})//01
 	AADD(aHeader,  {    "Produto"   ,   "PROD"   ,"@R" ,15,0,""            ,"","C","","","","",".F."})//02
 	AADD(aHeader,  {    "Descrição" ,   "DESCI"  ,"@R" ,50,0,""            ,"","C","","","","",".F."})//03
+    AADD(aHeader,  {    "Preço"     ,   "PRECO"  ,""   ,16,8,""            ,"","N","","","","",".F."})//04
+    AADD(aHeader,  {    "Custo"     ,   "CUSTO"  ,""   ,16,8,""            ,"","N","","","","",".F."})//05
+    AADD(aHeader,  {    "Preço Net" ,   "PRNET"  ,""   ,16,8,""            ,"","N","","","","",".F."})//06
+    AADD(aHeader,  {    "Margem"    ,   "MARGE"  ,""   ,10,2,""            ,"","N","","","","",".F."})//07
 
 	If SC6->( dbSeek( xFilial() + cNumPV ) )
 		While !SC6->( EOF() ) .and. SC6->C6_NUM == cNumPV
-			AADD(aCols,{SC6->C6_ITEM,SC6->C6_PRODUTO,SC6->C6_DESCRI,.F.})
+			AADD(aCols,{SC6->C6_ITEM,SC6->C6_PRODUTO,SC6->C6_DESCRI,SC6->C6_PRCVEN, SC6->C6_XCUSUNI,SC6->C6_XPRCNET,SC6->C6_XMARGEM,.F.})
 			SC6->( dbSkip() )
 		End
 	Else
@@ -43,17 +47,20 @@ User Function DesBlqPV(cNumPV)
 
 	DEFINE FONT oFontNW  NAME "Arial" SIZE 0,-15 BOLD
 
-	Define MsDialog oDlg01 Title OemToAnsi("AMARRAÇÃO DE DOCUMENTOS AO PEDIDO DE VENDA  " + cNumPv) From 0,0 To 305,750 Pixel of oMainWnd PIXEL
+	Define MsDialog oDlg01 Title OemToAnsi("DESBLOQUEIO DO PEDIDO DE VENDA POR MARGEM DE LUCRO " + cNumPv) From 0,0 To 305,750 Pixel of oMainWnd PIXEL
 
 	oGetDados  := (MsNewGetDados():New( 10, 09 , 130 ,370,GD_UPDATE+GD_DELETE ,"AlwaysTrue" ,"AlwaysTrue", /*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,/*"U_fFfieldok()"*/,/*superdel*/,/*delok*/,oDlg01,aHeader,aCols))
 
-	//@ 135,175 Button "Anexos"  Size 45,13 Action Anexos(cNumPV,oGetDados:aCols[oGetDados:oBrowse:nAt,1])        Pixel
-	@ 135,325 Button "Sair"    Size 45,13 Action oDlg01:End()    Pixel
+	@ 135,175 Button "Aprovar"  Size 45,13 Action Aprovar(cNumPV)  Pixel
+	@ 135,325 Button "Sair"     Size 45,13 Action oDlg01:End()    Pixel
 
 	Activate MsDialog oDlg01
 
 	RestArea(aAreaSC6)
 	RestArea(aAreaSC5)
 
-
 Return
+
+Static Function Aprovar(cNumPV)
+    
+Return 
