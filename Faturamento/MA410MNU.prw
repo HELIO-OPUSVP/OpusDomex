@@ -10,7 +10,8 @@ user function MA410MNU()
 	aadd(aRotina,{"Etiqueta SGP" ,"U_EtiSGP01(SC5->C5_NUM)", 0 , 3, 0 , Nil})
 	
 	If U_Validacao("OSMAR")
-	   aadd(aRotina,{"Anexos do P.V." ,"U_AnexosPV(SC5->C5_NUM)", 0 , 3, 0 , Nil})
+	   aadd(aRotina,{"Anexos do P.V."     ,"U_AnexosPV(SC5->C5_NUM)", 0 , 3, 0 , Nil})
+	   aadd(aRotina,{"Desbl. Margem/P.V." ,"U_DesBlqPv(SC5->C5_NUM)", 0 , 3, 0 , Nil})
 	EndIf   
 
 return
