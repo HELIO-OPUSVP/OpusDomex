@@ -26,21 +26,29 @@ User Function DesBlqPV(cNumPV)
 	Local oGetDados
 	Local aHeader    := {}
 	Local aCols      := {}
+	Local nMarAprovada := 0
 	//Private cSlvAnexos := "\docs"
 	PRIVATE oFontNW
 
-	AADD(aHeader,  {    "Item"      ,   "ITEM"   ,"@R" ,02,0,""            ,"","C","","","","",".F."})//01
-	AADD(aHeader,  {    "Produto"   ,   "PROD"   ,"@R" ,15,0,""            ,"","C","","","","",".F."})//02
-	AADD(aHeader,  {    "Descrição" ,   "DESCI"  ,"@R" ,50,0,""            ,"","C","","","","",".F."})//03
-	AADD(aHeader,  {    "Preço"     ,   "PRECO"  ,""   ,16,8,""            ,"","N","","","","",".F."})//04
-	AADD(aHeader,  {    "Custo"     ,   "CUSTO"  ,""   ,16,8,""            ,"","N","","","","",".F."})//05
-	AADD(aHeader,  {    "Preço Net" ,   "PRNET"  ,""   ,16,8,""            ,"","N","","","","",".F."})//06
-	AADD(aHeader,  {    "Margem"    ,   "MARGE"  ,""   ,10,2,""            ,"","N","","","","",".F."})//07
+	AADD(aHeader,  {    "Item"        ,   "ITEM"   ,"@R" ,02,0,""            ,"","C","","","","",".F."})//01
+	AADD(aHeader,  {    "Produto"     ,   "PROD"   ,"@R" ,15,0,""            ,"","C","","","","",".F."})//02
+	AADD(aHeader,  {    "Descrição"   ,   "DESCI"  ,"@R" ,50,0,""            ,"","C","","","","",".F."})//03
+	AADD(aHeader,  {    "Preço"       ,   "PRECO"  ,""   ,16,8,""            ,"","N","","","","",".F."})//04
+	AADD(aHeader,  {    "Custo"       ,   "CUSTO"  ,""   ,16,8,""            ,"","N","","","","",".F."})//05
+	AADD(aHeader,  {    "Preço Net"   ,   "PRNET"  ,""   ,16,8,""            ,"","N","","","","",".F."})//06
+	AADD(aHeader,  {    "Margem"      ,   "MARGE"  ,""   ,10,2,""            ,"","N","","","","",".F."})//07
+	AADD(aHeader,  {    "Margem Aprov",   "APROV"  ,""   ,10,2,""            ,"","N","","","","",".F."})//08
+
 
 	If SC6->( dbSeek( xFilial() + cNumPV ) )
-		While !SC6->( EOF() ) .and. SC6->C6_NUM == cNumPV
-			AADD(aCols,{SC6->C6_ITEM,SC6->C6_PRODUTO,SC6->C6_DESCRI,SC6->C6_PRCVEN, SC6->C6_XCUSUNI,SC6->C6_XPRCNET,SC6->C6_XMARGEM,.F.})
+		While !SC6->( EOF() ) .and. SC6->C6_NUM == cNumPV	
 			//Buscar no ZZF o valor da margem e status de aprovação
+			If ZZF->( dbSeek(xFilial()+"BLQ"+SC6->C6_NUM+SC6->C6_ITEM))
+				nMarAprovada := ZZF->ZZF_MARGEM
+			Else
+				nMarAprovada := 0
+			EndIf		
+			AADD(aCols,{SC6->C6_ITEM,SC6->C6_PRODUTO,SC6->C6_DESCRI,SC6->C6_PRCVEN, SC6->C6_XCUSUNI,SC6->C6_XPRCNET,SC6->C6_XMARGEM,nMarAprovada,.F.})
 			SC6->( dbSkip() )
 		End
 	Else
