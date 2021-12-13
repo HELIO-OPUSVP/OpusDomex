@@ -27,7 +27,7 @@ User Function DesBlqPV(cNumPV)
 	Local aHeader    := {}
 	Local aCols      := {}
 	Local nMarAprovada := 0
-	//Private cSlvAnexos := "\docs"
+	Local lAprovado := .t.
 	PRIVATE oFontNW
 
 	AADD(aHeader,  {    "Item"        ,   "ITEM"   ,"@R" ,02,0,""            ,"","C","","","","",".F."})//01
@@ -39,7 +39,6 @@ User Function DesBlqPV(cNumPV)
 	AADD(aHeader,  {    "Margem"      ,   "MARGE"  ,""   ,10,2,""            ,"","N","","","","",".F."})//07
 	AADD(aHeader,  {    "Margem Aprov",   "APROV"  ,""   ,10,2,""            ,"","N","","","","",".F."})//08
 
-
 	If SC6->( dbSeek( xFilial() + cNumPV ) )
 		While !SC6->( EOF() ) .and. SC6->C6_NUM == cNumPV	
 			//Buscar no ZZF o valor da margem e status de aprovação
@@ -49,6 +48,9 @@ User Function DesBlqPV(cNumPV)
 				nMarAprovada := 0
 			EndIf		
 			AADD(aCols,{SC6->C6_ITEM,SC6->C6_PRODUTO,SC6->C6_DESCRI,SC6->C6_PRCVEN, SC6->C6_XCUSUNI,SC6->C6_XPRCNET,SC6->C6_XMARGEM,nMarAprovada,.F.})
+			If SC6->C6_XANEXO == 'B'
+			   lAprovado := .f.
+			EndIf
 			SC6->( dbSkip() )
 		End
 	Else
@@ -60,8 +62,11 @@ User Function DesBlqPV(cNumPV)
 	Define MsDialog oDlg01 Title OemToAnsi("DESBLOQUEIO DO PEDIDO DE VENDA POR MARGEM DE LUCRO " + cNumPv) From 0,0 To 305,750 Pixel of oMainWnd PIXEL
 
 	oGetDados  := (MsNewGetDados():New( 10, 09 , 130 ,370,GD_UPDATE+GD_DELETE ,"AlwaysTrue" ,"AlwaysTrue", /*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,/*"U_fFfieldok()"*/,/*superdel*/,/*delok*/,oDlg01,aHeader,aCols))
-
-	@ 135,175 Button "Aprovar"  Size 45,13 Action Aprovar(cNumPV)  Pixel
+	If !lAprovado 
+	   @ 135,175 Button "Aprovar"  Size 45,13 Action Aprovar(cNumPV)  Pixel
+	Else
+		MsgInfo("Pedido de Venda já Liberado", "Atenção")   
+	EndIf   
 	@ 135,325 Button "Sair"     Size 45,13 Action oDlg01:End()    Pixel
 
 	Activate MsDialog oDlg01
