@@ -102,6 +102,7 @@ Static Function Aprovar(cNumPV)
 				ZZF->ZZF_PRCNET	:= SC6->C6_XPRCNET
 				ZZF->ZZF_MARGEM := SC6->C6_XMARGEM
 				ZZF->ZZF_OBS    := "BLQ - Margem"
+				ZZF->ZZF_HORA   := Time()
 				ZZF->( msUnLock() )
 			SC6->( dbSkip() )
 		End
