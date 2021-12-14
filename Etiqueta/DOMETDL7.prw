@@ -1178,8 +1178,9 @@ Static Function ValidaEtiq(lTeste)
 					EndIf
 					TMPN1->(dbCloseArea())
 
-					
-					If  (nQtdEmbNv1 > nQTotFibra) .Or.  ((nQtdEmbNv1 + nQtTotN1)  > nQTotFibra)
+					lFimOp := ((nQtTotN1 + (SC2->C2_QUANT - SC2->C2_QUJE)) == nQTotFibra )
+
+					If !lFimOp .And. ((nQtdEmbNv1 > nQTotFibra) .Or.  ((nQtdEmbNv1 + nQtTotN1)  > nQTotFibra))
 						While !MsgNoYes("."+CHR(13)+"A quantidade de Fibra bipada na entrada da linha é insuficiente para " + ENTER +;
 								"dar continuidade no Processo!")
 						End
@@ -1677,8 +1678,9 @@ Static Function ValidaEtiq(lTeste)
 					EndIf
 					TMPN1->(dbCloseArea())
 
+					lFimOp := ((nQtTotN1 + (SC2->C2_QUANT - SC2->C2_QUJE)) == nQTotFibra )
 
-					If  (nQtdEmbNv1 > nQTotFibra) .Or.  ((nQtdEmbNv1 + nQtTotN1)  > nQTotFibra)
+					If !lFimOp .And. ((nQtdEmbNv1 > nQTotFibra) .Or.  ((nQtdEmbNv1 + nQtTotN1)  > nQTotFibra))
 						While !MsgNoYes("."+CHR(13)+"A quantidade de Fibra bipada na entrada da linha é insuficiente para " + ENTER +;
 								"dar continuidade no Processo!")
 						End
