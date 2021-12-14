@@ -30,6 +30,11 @@ User Function DesBlqPV(cNumPV)
 	Local lAprovado := .t.
 	PRIVATE oFontNW
 
+	If  __cUserID <> "000084"  // Somente a Dayse pode desbloquear Pedido de Venda
+    	MsgInfo("Você não tem permissão para desbloquear Pedido de Venda!")  
+    	Return
+	EndIf        
+
 	AADD(aHeader,  {    "Item"        ,   "ITEM"   ,"@R" ,02,0,""            ,"","C","","","","",".F."})//01
 	AADD(aHeader,  {    "Produto"     ,   "PROD"   ,"@R" ,15,0,""            ,"","C","","","","",".F."})//02
 	AADD(aHeader,  {    "Descrição"   ,   "DESCI"  ,"@R" ,50,0,""            ,"","C","","","","",".F."})//03
@@ -107,7 +112,7 @@ Static Function Aprovar(cNumPV)
 			SC6->( dbSkip() )
 		End
 	EndIf
-
+	MsgInfo("Pedido Aprovado!!", "APROVAÇÃO")
 Return
 
 
