@@ -159,6 +159,13 @@ User Function M410STTS()
 		Endif
 	EndIf
 
+	If (_nOper == 3)  .Or. (_nOper == 4)  //Inclusão / Alteração
+			If SC5->C5_TIPO == 'N'
+				U_GrvPrNet(SC5->C5_NUM)
+			EndIf	
+	EndIf
+
+
 		//If (_nOper == 3)  .Or. (_nOper == 4)  //Inclusão / Alteração
 		//	If SC5->C5_TIPO == 'N'
 		//		U_GrvPrNet(SC5->C5_NUM)
