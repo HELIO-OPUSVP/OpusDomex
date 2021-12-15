@@ -111,6 +111,7 @@ User Function RFATA04()
 	cGrupo3 += "000157 - FARLEI SANTOS"
 	cGrupo3 += "000098 - FABIO RENNO"
 	cGrupo3 += "000515 - FERNANDA REIS"
+	cGrupo3 += "001055 - GABRIELA PRADO"              // Adicionado em 15/12/2021 - chamado 029662 	
 	cGrupo3 += "000053 - GEISE VALERIA"
 	cGrupo3 += "000876 - GUILHERME PEREIRA"	
 	cGrupo3 += "000267 - HELENA FERRAZ"
