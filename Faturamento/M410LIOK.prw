@@ -14,7 +14,7 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function M410LIOK()
+User Function M410LIOK() 
 	Local _Retorno
 	Local aAreaGER
 	Local aAreaSC2

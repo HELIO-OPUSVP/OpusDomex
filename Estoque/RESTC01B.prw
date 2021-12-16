@@ -330,7 +330,7 @@ Static Function ValidaProd(cProduto)
 		oGetDados:aCols := {}
 		If SZV->( dbSeek( xFilial() + "SB1" + SB1->B1_COD ) )
 			While !SZV->( EOF() ) .and. SZV->ZV_ALIAS == 'SB1' .and. SZV->ZV_CHAVE == SB1->B1_COD
-				AADD(oGetDados:aCols,{SZV->ZV_ARQUIVO,SZV->ZV_DESCRI,.F.})
+				AADD(oGetDados:aCols,{SZV->ZV_ARQUIVO,SZV->ZV_DESCRI,"SB1",.F.})
 				SZV->( dbSkip() )
 			End
 			oGetDados:oBrowse:Refresh()
@@ -339,7 +339,7 @@ Static Function ValidaProd(cProduto)
 		If U_VALIDACAO("OSMAR")
 			If  SZV->( dbSeek( xFilial() + "SC6" + cPedVen ) )
 				While !SZV->( EOF() ) .and. SZV->ZV_ALIAS == 'SC6' .and. AllTrim(SZV->ZV_CHAVE) == AllTrim(cPedVen)
-					AADD(oGetDados:aCols,{SZV->ZV_ARQUIVO,SZV->ZV_DESCRI,.F.})
+					AADD(oGetDados:aCols,{SZV->ZV_ARQUIVO,SZV->ZV_DESCRI,"SC6",.F.})
 					SZV->( dbSkip() )
 				End
 				oGetDados:oBrowse:Refresh()
@@ -430,19 +430,51 @@ Static Function Visualizar()
 
 	n := oGetDados:oBrowse:nAt
 	If n > 0
-		If SZV->( dbSeek( xFilial() + "SB1" + SB1->B1_COD + oGetDados:aCols[n,1] ) )
-			QDH->( dbSetOrder(1) )
-			If QDH->( dbSeek( xFilial() + Subs(SZV->ZV_ARQUIVO,1,16) ) )
+		If oGetDados:aCols[n,3] = "SB1"
+			If SZV->( dbSeek( xFilial() + "SB1" + SB1->B1_COD + oGetDados:aCols[n,1] ) )
+				QDH->( dbSetOrder(1) )
+				If QDH->( dbSeek( xFilial() + Subs(SZV->ZV_ARQUIVO,1,16) ) )
 
-				While !QDH->( EOF() ) .and. Alltrim(QDH->QDH_DOCTO) == Alltrim(SZV->ZV_ARQUIVO)
-					QDHRecno := QDH->( Recno() )
-					QDH->( dbSkip() )
-				End
+					While !QDH->( EOF() ) .and. Alltrim(QDH->QDH_DOCTO) == Alltrim(SZV->ZV_ARQUIVO)
+						QDHRecno := QDH->( Recno() )
+						QDH->( dbSkip() )
+					End
 
-				QDH->( dbGoTo(QDHRecno) )
+					QDH->( dbGoTo(QDHRecno) )
 
-				cFileOri := cSlvAnexos + "\" + QDH->QDH_NOMDOC
-				cFileDes := cPathTmp + QDH->QDH_NOMDOC
+					cFileOri := cSlvAnexos + "\" + QDH->QDH_NOMDOC
+					cFileDes := cPathTmp + QDH->QDH_NOMDOC
+
+					If !File(cFileOri)
+						MsgStop("Arquivo não encontrado.")
+						Return
+					EndIf
+
+					If File(cFileDes)
+						fErase(cFileDes)
+					EndIf
+
+					If File(cFileDes)
+						Alert("Arquivo já está aberto!")
+						Return
+					EndIf
+
+					COPY File &cFileOri TO &cFileDes
+
+					ShellExecute("open",cFileDes,"","", 5 )
+				Else
+					MsgStop("Documento não encontrado no Controle de Documentos.")
+				EndIf
+			Else
+				MsgStop("O arquivo não foi encontrado para exibição")
+			EndIf
+
+		Else
+			//Busca por arquivo de concessão
+			If SZV->( dbSeek( xFilial() + "SC6" + cPedVen ) )
+
+				cFileOri := cSlvAnexos + "\" +cPedVen+ "\" + SZV->ZV_ARQUIVO
+				cFileDes := cPathTmp + SZV->ZV_ARQUIVO
 
 				If !File(cFileOri)
 					MsgStop("Arquivo não encontrado.")
@@ -462,11 +494,11 @@ Static Function Visualizar()
 
 				ShellExecute("open",cFileDes,"","", 5 )
 			Else
-				MsgStop("Documento não encontrado no Controle de Documentos.")
+				MsgStop("O arquivo não foi encontrado para exibição!")
 			EndIf
-		Else
-			MsgStop("O arquivo não foi encontrado para exibição")
+
 		EndIf
+
 	Else
 		MsgStop("Posicione em um arquivo para exibição")
 	EndIf

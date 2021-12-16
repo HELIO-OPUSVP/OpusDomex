@@ -385,7 +385,9 @@ Static Function ReportPrin(oReport)
 		ElseIf mv_par05 $ "DROP" .OR. mv_par05orig $ "DROP"
 			SG1->( dbSeek( xFilial() + (_cAlias)->C2_PRODUTO + "50010100DR"        ) )
 		ElseIf mv_par05 $ "JUMPER" .OR. mv_par05orig $ "JUMPER"
-			SG1->( dbSeek( xFilial() + (_cAlias)->C2_PRODUTO + "50010100J"        ) )			
+			SG1->( dbSeek( xFilial() + (_cAlias)->C2_PRODUTO + "50010100J"        ) )
+		ElseIf mv_par05 $ "FTTA" .OR. mv_par05orig $ "FTTA"
+			SG1->( dbSeek( xFilial() + (_cAlias)->C2_PRODUTO + "50010100FTTA"        ) )					
 		Else
 			SG1->( dbSeek( xFilial() + (_cAlias)->C2_PRODUTO + "50010100"        ) )
 		Endif
