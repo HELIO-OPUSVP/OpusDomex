@@ -59,6 +59,8 @@ TRCell():New(oSection1,"B8_LOTECTL"       ,,"OP"                 , ,010,.F.,)
 TRCell():New(oSection1,"B8_SALDO"         ,,"Qtd. Atual"         , ,015,.F.,)
 TRCell():New(oSection1,"B2_CM1"           ,,"Custo Medio"        , ,015,.F.,)
 TRCell():New(oSection1,"B2_TOTAL"         ,,"Valor"              , ,015,.F.,)
+TRCell():New(oSection1,"D4_OP"            ,,"OP Mae"              , ,015,.F.,)
+TRCell():New(oSection1,"C2_DATRF"         ,,"Dt Fech Mae"         , ,008,.F.,)
 
 
 //oSection1:Cell("B9_CM1")  :SetPicture("@E 9,999.99")
@@ -105,6 +107,16 @@ oSection1:Cell("B2_TOTAL"):SetHeaderAlign("RIGHT")
 oSection1:Cell("B2_TOTAL"):SetAlign("RIGHT")
 oSection1:Cell("B2_TOTAL"):SetSize(15)
 
+oSection1:Cell("D4_OP"):SetHeaderAlign("RIGHT")
+oSection1:Cell("D4_OP"):SetAlign("RIGHT")
+oSection1:Cell("D4_OP"):SetSize(15)
+
+
+oSection1:Cell("C2_DATRF"):SetHeaderAlign("RIGHT")
+oSection1:Cell("C2_DATRF"):SetAlign("RIGHT")
+oSection1:Cell("C2_DATRF"):SetSize(8)
+
+
 Return oReport
 
 //---------------------------------------------------------
@@ -134,6 +146,8 @@ SELECT *, B8_SALDO * CM1 AS VALOR FROM
 (
 SELECT B8_FILIAL, B8_LOTECTL, B8_PRODUTO, B1_DESC, B8_SALDO, 
 
+SC2.C2_NUM+SC2.C2_ITEM+SC2.C2_SEQUEN AS 'OPMAE', SC2.C2_DATRF AS 'DTFECHMAE',
+
 (
 
 SELECT CASE WHEN round(B2_QATU,2) <= 0 or round(B2_VATU1,2) <=0 THEN 
@@ -153,7 +167,9 @@ ELSE ROUND(B2_VATU1/B2_QATU,2)  END AS CM1 FROM %table:SB2%  SB2 WHERE B2_COD=B8
 ) AS CM1
 
 FROM %table:SB8%  SB8
-INNER JOIN %table:SB1% SB1 ON B1_COD=B8_PRODUTO AND B1_FILIAL=''
+INNER JOIN %table:SB1% SB1 ON B1_COD=B8_PRODUTO AND B1_FILIAL='' AND SB1.%notDel%
+LEFT JOIN %table:SC2% SC2 ON RTRIM(B8_LOTECTL)+'001'=C2_NUM+C2_ITEM+C2_SEQUEN AND SC2.%notDel% AND B8_FILIAL=C2_FILIAL
+
 WHERE SB8.%notDel%  AND B8_LOCAL='97' AND B8_SALDO>0
 ) AS FINAL
 WHERE 	B8_FILIAL  >= %Exp:mv_par03%
@@ -171,6 +187,8 @@ ORDER BY %Exp:_cOrder%
 EndSql
 
 //TcSetField(_cAlias,"C4_DATA"   ,"D",  8, 0)
+
+TcSetField(_cAlias,"C2_DATRF"   ,"D",  8, 0)
 
 oSection1:EndQuery()
 
@@ -196,7 +214,10 @@ While !oReport:Cancel() .And. (_cAlias)->(!Eof())
 	oSection1:Cell("B8_SALDO"):SetValue((_cAlias)->B8_SALDO)
 	oSection1:Cell("B2_CM1"):SetValue((_cAlias)->CM1)
 	oSection1:Cell("B2_TOTAL"):SetValue((_cAlias)->VALOR)
-	
+	oSection1:Cell("D4_OP"):SetValue((_cAlias)->OPMAE)
+	oSection1:Cell("C2_DATRF"):SetValue((_cAlias)->DTFECHMAE)
+
+
 	oSection1:PrintLine()
 	
 	dbSelectArea(_cAlias)

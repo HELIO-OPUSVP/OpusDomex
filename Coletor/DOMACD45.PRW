@@ -312,7 +312,7 @@ If nRecZZR == ZZR->(RECNO())
     _pro       := ZZR->ZZR_PRODUT
 	_Despro    := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
 	_DT        := DTOC(ZZR->ZZR_DTPLAN)
-	_cEndereco :=""
+	 _cEndereco     := Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
 	_cEtiqueta
 
 	
@@ -400,7 +400,7 @@ If nRecZZR == ZZR->(RECNO())
     _pro       := ZZR->ZZR_PRODUT
 	_Despro    := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
 	_DT        := DTOC(ZZR->ZZR_DTPLAN)
-	_cEndereco :=""
+	 _cEndereco     := Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
 	_cEtiqueta
 	If cSeq == ZZR->ZZR_SEQ
 		U_MsgColetor("Primeiro item da lista.")

@@ -39,11 +39,11 @@ Static Function ReportDef()
 
 Local oSection1
 
-cTitulo:= "Relatório de Planejado x Realizado"
+cTitulo:= "Relatório Gerencial de Inventario Ciclico"
 oFontN :=TFont():New("Times New Roman",08,08,,.T.,,,,.T.,.F.) // Negrito
 oFont  :=TFont():New("Times New Roman",08,08,,.F.,,,,.F.,.F.)
 
-oReport   :=TReport():New("RINV0002",cTitulo,_cPerg,{|oReport| ReportPrin(oReport)},"Relatório de Gerencial de Inventario Ciclico.")
+oReport   :=TReport():New("RINV0002",cTitulo,_cPerg,{|oReport| ReportPrin(oReport)},"Relatório Gerencial de Inventario Ciclico.")
 
 oReport:SetLandScape()
 
@@ -57,17 +57,19 @@ Local _cFilial  	:= "%"+cFilAnt+"%"
 Local lFirst := .t.
 
 oSection1:=TRSection():New(oReport,"","ZZR",{},.F./*aOrder*/,.F./*lLoadCells*/,""/*cTotalText*/,.F./*lTotalInCol*/,.F./*lHeaderPage*/,.F./*lHeaderBreak*/)
-                                                          
 
-TRCell():New(oSection1,"ZZR_DTPLAN"       ,,"Dt. Planejada"       , ,020                               ,.F.,)
-TRCell():New(oSection1,"ZZR_DTREAL"       ,,"Dt. Realizada"       , ,020                               ,.F.,)
 TRCell():New(oSection1,"ZZR_PRODUT"       ,,"Produto"             , ,020                               ,.F.,)
 TRCell():New(oSection1,"ZZR_DESCRI"       ,,"Descrição"           , ,050                               ,.F.,)
 TRCell():New(oSection1,"ZZR_TIPO"         ,,"Tipo"                , ,002                               ,.F.,)
 TRCell():New(oSection1,"ZZR_LOCAL"        ,,"Almoxarifado"        , ,002                               ,.F.,)
-TRCell():New(oSection1,"ZZR_CLASSI"       ,,"Classificação"       , ,002                               ,.F.,)
-TRCell():New(oSection1,"ZZR_QTD"          ,,"Inventários Periodo" , ,010                               ,.F.,)
-TRCell():New(oSection1,"ZZR_ULT"          ,,"Ultimo Inventário"   , ,008                               ,.F.,)
+TRCell():New(oSection1,"ZZR_VALDEV"       ,,"Valor Devolução"     , ,010                               ,.F.,)
+TRCell():New(oSection1,"ZZR_VALREQ"       ,,"Valor Requisição"    , ,010                               ,.F.,)
+TRCell():New(oSection1,"ZZR_VALAJU"       ,,"Valor Ajuste"        , ,010                               ,.F.,)
+TRCell():New(oSection1,"QTDINV"           ,,"Qtd. Inventariada"   , ,010                               ,.F.,)
+TRCell():New(oSection1,"QTDNINV"          ,,"Qtd. N Inventariada" , ,010                               ,.F.,)
+TRCell():New(oSection1,"VALARM"           ,,"Valor Armazem"       , ,010                               ,.F.,)
+TRCell():New(oSection1,"QTDARM"           ,,"Qtd Armazem"         , ,010                               ,.F.,)
+TRCell():New(oSection1,"PERCAJU"          ,,"Perc. Ajuste"        , ,010                               ,.F.,)
 
 
 //TRCell():New(oSection1,"ESTOQUE"        ,,"ESTOQUE"         , ,010                               ,.F.,)
