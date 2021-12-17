@@ -25,6 +25,7 @@ User Function DOMET87B(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	Local aPar       := {}
 	Local aRet       := {}
 	Local nVar       := 0
+	Local nY		 := 0
 
 	Local MVPAR02   := nQtdEmb   //Qtd Embalagem
 	Local MVPAR03   := nQtdEtq   //Qtd Etiquetas
@@ -297,7 +298,7 @@ User Function DOMET87B(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 
 // Verifica nivel da embalagem
 	aRetEmbala := U_RetEmbala(SB1->B1_COD,cNivel)
-	If !aRetEmbala[4]
+	If !aRetEmbala[4] .And. Empty(Alltrim(cNumSenf))
 		Alert("Emissão de etiqueta não permitida por falta de nivel da embalagem na estrutura.")
 		Return(.F.)
 	EndIf
@@ -670,5 +671,3 @@ Static Function NEXTSEQ()
 
 Return _Retorno
 
-	
-	
