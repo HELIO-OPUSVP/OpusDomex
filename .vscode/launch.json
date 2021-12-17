@@ -4,10 +4,10 @@
 		{
 			"type": "totvs_language_debug",
 			"request": "launch",
-			"name": "domex",
+			"name": "Domex",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
-			"smartclientBin": "C:/Totvs/smartclient64_DOMEX/smartclient.exe",
+			"smartclientBin": "C:/Dropbox/Clientes/Domex/remote interno/smartclient64/smartclient.exe",
 			"isMultiSession": true,
 			"enableTableSync": true
 		},
@@ -116,7 +116,11 @@
 		{
 			"label": "u_mnu02coletor",
 			"description": "<nil>"
+		},
+		{
+			"label": "SIGAMDI",
+			"description": "<nil>"
 		}
 	],
-	"lastProgramExecuted": "u_mnucoletor"
+	"lastProgramExecuted": "SIGAMDI"
 }
