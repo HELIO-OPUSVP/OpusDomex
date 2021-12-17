@@ -1065,7 +1065,7 @@ Static Function ValidaEtiq(lTeste)
 
 				// Validações de Roteiro    Antigo if: //If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 				lValidaRot := .F.
-				If U_VALIDACAO()
+				If U_VALIDACAO("HELIO")
 					If cFilAnt == '01'
 						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 							lValidaRot := .T.
