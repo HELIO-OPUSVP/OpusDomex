@@ -1072,7 +1072,7 @@ Static Function ValidaEtiq(lTeste)
 						EndIf
 					EndIf
 					If cFilAnt == '02'
-						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP" .And. lComTravR
+						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD" .And. lComTravR
 							lValidaRot := .T.
 						EndIf
 					EndIf
