@@ -432,7 +432,7 @@ Return
 *---------------------------------------------------------------------------------------------
 Static Function fOkProc()
 *---------------------------------------------------------------------------------------------
-If! Empty(_aCols)
+If !Empty(_aCols)
 	fOkGrava()
 Else
 	U_MsgColetor("Não existem informações para serem processadas.")
@@ -537,7 +537,7 @@ While _nI <= Len(_aCols)
 							ELSE
 								Aadd(_aEndereco,{SB1->B1_COD,SBE->BE_LOCAL,SBF->BF_LOCALIZ,SBF->BF_QUANT,SBF->BF_LOTECTL})
 							ENDIF
-						ENDIF
+						ENDIF,
 					EndIf
 				EndIf
 			EndIf
@@ -1212,8 +1212,12 @@ Static Function fValEnd()
 Local _lRet:=.T.
 
 IF EMPTY(_cEndereco)
-	U_MsgColetor('Endereço em branco.')
-	RETURN(.f.)    
+	If !Empty(_aCols)
+		RETURN(.t.)    
+	Else
+		U_MsgColetor('Endereço em branco.')
+		RETURN(.f.)    
+	EndIf
 ENDIF
 
 SBE->( dbSetOrder(1) )
@@ -1234,6 +1238,12 @@ Static Function fValEtiq()
 *---------------------------------------------------------------------------------------------
 Local _lRet   :=.T.
 Local _nSaldo := 0
+
+
+IF EMPTY(_cEndereco)
+	U_MsgColetor('Endereço em branco.')
+	RETURN(.f.)    
+ENDIF
 
 If Len(AllTrim(_cEtiqueta))==12 //EAN 13 s/ dígito verificador.
 	_cEtiqueta := "0"+_cEtiqueta
