@@ -24,7 +24,7 @@
 */
 
 *---------------------------------------------------------------------------------------------
-User Function DOMACD45()
+User Function DOMACD45(__cFilial)
 *---------------------------------------------------------------------------------------------
 Private oTxtEnd,oGetEnd,oTxtEtiq,oGetEtiq,oTxtProd,oGetProd,oTxtQtd,oGetQtd,oMark,oTxtQTDETQ
 Private _nTamEtiq      := 21
@@ -71,6 +71,8 @@ Private cSeq       := ""
 
 Private _aCols:={}
 
+Private FilOri := __cFilial
+
 If! Empty(_cCtrNum)
     fAlmoxinv()
 Else
@@ -84,11 +86,12 @@ Local lRetAlm := .t.
 
 
 //Seleciona os almoxarifados pendentes de inventário...
-cQuery := " SELECT ZZR_LOCAL, LEFT(ZZR_DTPLAN,6) AS PERIODO FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE D_E_L_E_T_='' AND ZZR_DTREAL='' "
+cQuery := " SELECT ZZR_LOCAL, LEFT(ZZR_DTPLAN,6) AS PERIODO FROM " + RetSqlName("ZZR") + " (NOLOCK) "
+cQuery += " WHERE ZZR_FILIAL='"+FilOri+"' AND D_E_L_E_T_='' AND ZZR_DTREAL='' "
 cQuery += " AND LEFT(ZZR_DTPLAN,6) = ( "
 cQuery += " SELECT (CASE WHEN MAX(ZZR_DTPLAN) IS NULL THEN LEFT(CONVERT(VARCHAR(10), DATEADD(month, -1, GETDATE()), 112),6)  "
 cQuery += " ELSE LEFT(MAX(ZZR_DTPLAN),6) END) AS DTULT FROM " + RetSqlName("ZZR") + "  (NOLOCK)  "
-cQuery += " WHERE D_E_L_E_T_=''  "
+cQuery += " WHERE ZZR_FILIAL='"+FilOri+"' AND D_E_L_E_T_=''  "
 cQuery += " ) "
 cQuery += " GROUP BY ZZR_LOCAL, LEFT(ZZR_DTPLAN,6)  "
 cQuery += " ORDER BY ZZR_LOCAL "
@@ -155,7 +158,7 @@ Endif
 
 
 //Seleciona o ultimo inventario ciclico gerado
-cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE D_E_L_E_T_='' AND ZZR_DTREAL='' " 
+cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE ZZR_FILIAL='"+FilOri+"' AND D_E_L_E_T_='' AND ZZR_DTREAL='' " 
 cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' "
 cQuery += " ORDER BY R_E_C_N_O_ "
 
@@ -277,7 +280,7 @@ lNext := .t.
 _aCols:={}
 
 //Seleciona o ultimo inventario ciclico gerado
-cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE D_E_L_E_T_='' AND ZZR_DTREAL='' " 
+cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE ZZR_FILIAL='"+FilOri+"' AND D_E_L_E_T_='' AND ZZR_DTREAL='' " 
 cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' and ZZR_SEQ>"+ZZR->ZZR_SEQ+" "
 cQuery += " ORDER BY R_E_C_N_O_ "
 
@@ -309,7 +312,7 @@ If nRecZZR == ZZR->(RECNO())
     _pro       := ZZR->ZZR_PRODUT
 	_Despro    := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
 	_DT        := DTOC(ZZR->ZZR_DTPLAN)
-	_cEndereco :=""
+	 _cEndereco     := Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
 	_cEtiqueta
 
 	
@@ -365,7 +368,7 @@ _aCols:={}
 
 
 //Seleciona o ultimo inventario ciclico gerado
-cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE D_E_L_E_T_='' AND ZZR_DTREAL='' " 
+cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE ZZR_FILIAL='"+FilOri+"' AND D_E_L_E_T_='' AND ZZR_DTREAL='' " 
 cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' and ZZR_SEQ<"+ZZR->ZZR_SEQ+" "
 cQuery += " ORDER BY R_E_C_N_O_ DESC "
 
@@ -397,7 +400,7 @@ If nRecZZR == ZZR->(RECNO())
     _pro       := ZZR->ZZR_PRODUT
 	_Despro    := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
 	_DT        := DTOC(ZZR->ZZR_DTPLAN)
-	_cEndereco :=""
+	 _cEndereco     := Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
 	_cEtiqueta
 	If cSeq == ZZR->ZZR_SEQ
 		U_MsgColetor("Primeiro item da lista.")
@@ -429,7 +432,7 @@ Return
 *---------------------------------------------------------------------------------------------
 Static Function fOkProc()
 *---------------------------------------------------------------------------------------------
-If! Empty(_aCols)
+If !Empty(_aCols)
 	fOkGrava()
 Else
 	U_MsgColetor("Não existem informações para serem processadas.")
@@ -534,7 +537,7 @@ While _nI <= Len(_aCols)
 							ELSE
 								Aadd(_aEndereco,{SB1->B1_COD,SBE->BE_LOCAL,SBF->BF_LOCALIZ,SBF->BF_QUANT,SBF->BF_LOTECTL})
 							ENDIF
-						ENDIF
+						ENDIF,
 					EndIf
 				EndIf
 			EndIf
@@ -1209,8 +1212,12 @@ Static Function fValEnd()
 Local _lRet:=.T.
 
 IF EMPTY(_cEndereco)
-	U_MsgColetor('Endereço em branco.')
-	RETURN(.f.)    
+	If !Empty(_aCols)
+		RETURN(.t.)    
+	Else
+		U_MsgColetor('Endereço em branco.')
+		RETURN(.f.)    
+	EndIf
 ENDIF
 
 SBE->( dbSetOrder(1) )
@@ -1231,6 +1238,12 @@ Static Function fValEtiq()
 *---------------------------------------------------------------------------------------------
 Local _lRet   :=.T.
 Local _nSaldo := 0
+
+
+IF EMPTY(_cEndereco)
+	U_MsgColetor('Endereço em branco.')
+	RETURN(.f.)    
+ENDIF
 
 If Len(AllTrim(_cEtiqueta))==12 //EAN 13 s/ dígito verificador.
 	_cEtiqueta := "0"+_cEtiqueta

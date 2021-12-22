@@ -37,7 +37,7 @@ ExecBlock("MTA650AE",.F.,.F.,{cNum,cItem,cSeq})
 	If cSeq == '001'  // Apagar somente quando for a OP pai
 		cLoteCTL := U_RetLotC6(cOP+cItem+cSeq)
 
-		cQuery := "SELECT R_E_C_N_O_ FROM " + RetSqlName("SC6") + " (NOLOCK) WHERE C6_FILIAL = '"+xFilial("SC6")+"' AND C6_LOTECTL = '"+cLoteCTL+"' AND D_E_L_E_T_ = '' "
+		cQuery := "SELECT R_E_C_N_O_ FROM " + RetSqlName("SC6") + " (NOLOCK) WHERE C6_FILIAL='"+xfilial("SC6")+"' AND C6_LOTECTL = '"+cLoteCTL+"' AND D_E_L_E_T_ = '' "
 
 		If Select("QUERYSC6") <> 0
 			QUERYSC6->( dbCloseArea() )
@@ -60,8 +60,8 @@ ExecBlock("MTA650AE",.F.,.F.,{cNum,cItem,cSeq})
 			QUERYSC6->( dbSkip() )
 		End
 
-		cQuery := "SELECT C6_NUM, C6_ITEM FROM SC6010 (NOLOCK) WHERE C6_FILIAL = '"+xFilial("SC6")+"' AND C6_NUMOP <> '' AND D_E_L_E_T_ = '' "
-		cQuery += "AND C6_NUMOP + C6_ITEMOP NOT IN (SELECT C2_NUM + C2_ITEM FROM SC2010 (NOLOCK) WHERE C2_FILIAL = '"+xFilial("SC2")+"' AND D_E_L_E_T_ = '') "
+		cQuery := "SELECT C6_NUM, C6_ITEM FROM SC6010 (NOLOCK) WHERE C6_FILIAL='"+xfilial("SC6")+"' AND C6_NUMOP <> '' AND D_E_L_E_T_ = '' "
+		cQuery += "AND C6_NUMOP + C6_ITEMOP NOT IN (SELECT C2_NUM + C2_ITEM FROM SC2010 (NOLOCK) WHERE C2_FILIAL='"+xfilial("SC2")+"' AND D_E_L_E_T_ = '') "
 
 		If Select("QUERYSC6") <> 0
 			QUERYSC6->( dbCloseArea() )

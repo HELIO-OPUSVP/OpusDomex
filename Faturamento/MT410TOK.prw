@@ -538,7 +538,7 @@ Exit
 			cTexto    += "Conteúdo Novo.....: " + Alltrim(M->C5_MOTREVI)
 			//cTexto    := StrTran(cTexto,Chr(13),"<br>")
 			cPara     :=  ";priscila.silva@rosenbergerdomex.com.br;juliana.gomes@rosenbergerdomex.com.br;thalita.rufino@rosenbergerdomex.com.br;sergio.santos@rosenbergerdomex.com.br" 
-			cPara     +=  ";ludmila.guimaraes@rosenbergerdomex.com.br;denis.vieira@rosenbergerdomex.com.br" +";"+ UsrRetMail(SC5->C5_USER)+";"+AllTrim(UsrRetMail(__cUserID))
+			cPara     +=  ";ludmila.guimaraes@rosenbergerdomex.com.br;denis.vieira@rosenbergerdomex.com.br" +";"+ Alltrim(UsrRetMail(SC5->C5_USER))+";"+AllTrim(UsrRetMail(__cUserID))
 			cCC       :=  ""
 			cArquivo  :=  ""
 			U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)

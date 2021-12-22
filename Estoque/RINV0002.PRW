@@ -39,11 +39,11 @@ Static Function ReportDef()
 
 Local oSection1
 
-cTitulo:= "Relatório de Planejado x Realizado"
+cTitulo:= "Relatório Gerencial de Inventario Ciclico"
 oFontN :=TFont():New("Times New Roman",08,08,,.T.,,,,.T.,.F.) // Negrito
 oFont  :=TFont():New("Times New Roman",08,08,,.F.,,,,.F.,.F.)
 
-oReport   :=TReport():New("RINV0002",cTitulo,_cPerg,{|oReport| ReportPrin(oReport)},"Relatório de Gerencial de Inventario Ciclico.")
+oReport   :=TReport():New("RINV0002",cTitulo,_cPerg,{|oReport| ReportPrin(oReport)},"Relatório Gerencial de Inventario Ciclico.")
 
 oReport:SetLandScape()
 
@@ -57,17 +57,19 @@ Local _cFilial  	:= "%"+cFilAnt+"%"
 Local lFirst := .t.
 
 oSection1:=TRSection():New(oReport,"","ZZR",{},.F./*aOrder*/,.F./*lLoadCells*/,""/*cTotalText*/,.F./*lTotalInCol*/,.F./*lHeaderPage*/,.F./*lHeaderBreak*/)
-                                                          
 
-TRCell():New(oSection1,"ZZR_DTPLAN"       ,,"Dt. Planejada"       , ,020                               ,.F.,)
-TRCell():New(oSection1,"ZZR_DTREAL"       ,,"Dt. Realizada"       , ,020                               ,.F.,)
 TRCell():New(oSection1,"ZZR_PRODUT"       ,,"Produto"             , ,020                               ,.F.,)
 TRCell():New(oSection1,"ZZR_DESCRI"       ,,"Descrição"           , ,050                               ,.F.,)
 TRCell():New(oSection1,"ZZR_TIPO"         ,,"Tipo"                , ,002                               ,.F.,)
 TRCell():New(oSection1,"ZZR_LOCAL"        ,,"Almoxarifado"        , ,002                               ,.F.,)
-TRCell():New(oSection1,"ZZR_CLASSI"       ,,"Classificação"       , ,002                               ,.F.,)
-TRCell():New(oSection1,"ZZR_QTD"          ,,"Inventários Periodo" , ,010                               ,.F.,)
-TRCell():New(oSection1,"ZZR_ULT"          ,,"Ultimo Inventário"   , ,008                               ,.F.,)
+TRCell():New(oSection1,"VALDEV"           ,,"Valor Devolução"     , ,010                               ,.F.,)
+TRCell():New(oSection1,"VALREQ"           ,,"Valor Requisição"    , ,010                               ,.F.,)
+TRCell():New(oSection1,"VALAJU"           ,,"Valor Ajuste"        , ,010                               ,.F.,)
+TRCell():New(oSection1,"QTDITINV"         ,,"Qtd. Inventariada"   , ,010                               ,.F.,)
+TRCell():New(oSection1,"QTDNINV"          ,,"Qtd. N Inventariada" , ,010                               ,.F.,)
+TRCell():New(oSection1,"VLR_ARM"           ,,"Valor Armazem"      , ,010                               ,.F.,)
+TRCell():New(oSection1,"QTD_ARM"           ,,"Qtd Armazem"        , ,010                               ,.F.,)
+TRCell():New(oSection1,"PERCAJU"          ,,"Perc. Ajuste"        , ,010                               ,.F.,)
 
 
 //TRCell():New(oSection1,"ESTOQUE"        ,,"ESTOQUE"         , ,010                               ,.F.,)
@@ -82,52 +84,82 @@ Private cPerFil    := mv_par02+''+mv_par01
 BeginSql Alias _cAlias
 
 
-	SELECT CAST(DEMA_TOT AS VARCHAR)  AS ZZR_DTPLAN, CAST(DEMA_ATU AS VARCHAR) AS ZZR_DTREAL, CAST(DEMA_REA AS VARCHAR) AS ZZR_PRODUT, 
-	CAST(ROUND(((DEMA_REA *100)/DEMA_ATU),2) AS VARCHAR)  AS ZZR_DESCRI,  '' AS ZZR_TIPO, '' AS ZZR_LOCAL, '' AS ZZR_CLASSI, 0 AS ZZR_QTD, '' AS ZZR_ULT
-	FROM
-
-
-	(
-	SELECT COUNT(*) AS DEMA_TOT,
-
-		( SELECT COUNT(*) FROM ZZR010  (NOLOCK) ZZRA 
-		  WHERE D_E_L_E_T_ = ''  AND ZZR_DTPLAN<= CONVERT(VARCHAR(10), GETDATE()+800, 112)  AND ZZR_PERIOD= %Exp:cPerFil% ) AS DEMA_ATU,
-
-
-			( SELECT COUNT(*) FROM ZZR010  (NOLOCK) ZZRA 
-			WHERE D_E_L_E_T_ = ''  AND ZZR_DTREAL<> '' AND ZZR_PERIOD= %Exp:cPerFil% ) AS DEMA_REA
-
-
-	FROM ZZR010 (NOLOCK) ZZR
-	WHERE D_E_L_E_T_ = '' AND ZZR_PERIOD= %Exp:cPerFil% 
-
-	) AS FINAL
-
-
-	UNION ALL
-
-
-	SELECT ZZR_DTPLAN, ZZR_DTREAL, ZZR_PRODUT, ZZR_DESCRI, ZZR_TIPO, ZZR_LOCAL, ZZR_CLASSI, 
-
-	( SELECT COUNT(*) FROM ZZR010  (NOLOCK) ZZRA 
-	WHERE D_E_L_E_T_ = '' AND ZZRA.ZZR_PRODUT= ZZR.ZZR_PRODUT
-	AND ZZRA.ZZR_LOCAL= ZZR.ZZR_LOCAL AND ZZR_DTREAL<> ''	
-	AND LEFT(ZZRA.ZZR_DTPLAN,4)=LEFT(ZZR.ZZR_DTPLAN,4) ) AS ZZR_QTD, 
 	
-	( SELECT MAX(ZZR_DTREAL) FROM ZZR010  (NOLOCK) ZZRA 
-	WHERE D_E_L_E_T_ = '' AND ZZRA.ZZR_PRODUT= ZZR.ZZR_PRODUT
-	AND ZZRA.ZZR_LOCAL= ZZR.ZZR_LOCAL 
-	AND LEFT(ZZRA.ZZR_DTPLAN,4)=LEFT(ZZR.ZZR_DTPLAN,4) ) AS ZZR_ULT
 
 
-	FROM ZZR010 (NOLOCK) ZZR
-	WHERE D_E_L_E_T_ = ''
-	AND ZZR_PERIOD =  %Exp:cPerFil% 
-	AND ZZR_PRODUT >= %Exp:mv_par03%
-	AND ZZR_PRODUT <= %Exp:mv_par04%                                                                                  
-	AND ZZR_LOCAL  >= %Exp:mv_par05%
-	AND ZZR_LOCAL  <= %Exp:mv_par06%
-	AND ZZR_FILIAL =  %Exp:_cFilial% 
+SELECT '' AS ZZR_PRODUT, '' AS ZZR_DESCRI, '' AS ZZR_TIPO,
+
+ZZR_LOCAL, VALDEV, VALREQ, VALAJU, QTDITINV, QTDNINV, VLR_ARM,'' AS QTD_ARM, ROUND((VALAJU / VLR_ARM)* 100,2) AS PERCAJU FROM 
+
+(
+
+SELECT ZZR_LOCAL, SUM(ZZR_VALDEV) AS VALDEV, SUM(ZZR_VALREQ) AS VALREQ, SUM(ZZR_VALAJU) AS VALAJU, 
+(SELECT COUNT(*) FROM ZZR010 (NOLOCK) ZZCOUN WHERE ZZCOUN.ZZR_DTREAL <> '' AND ZZCOUN.ZZR_LOCAL=ZZR.ZZR_LOCAL) AS QTDITINV, 
+(SELECT COUNT(*) FROM ZZR010 (NOLOCK) ZZCOUN WHERE ZZCOUN.ZZR_DTREAL = '' AND ZZCOUN.ZZR_LOCAL=ZZR.ZZR_LOCAL) AS QTDNINV,
+
+(
+SELECT ROUND(SUM(B9_VINI1),2) FROM SB9010 (NOLOCK) AS SB9 WHERE SB9.D_E_L_E_T_='' AND B9_QINI<>0 
+
+AND B9_LOCAL=ZZR.ZZR_LOCAL AND B9_FILIAL='01' AND B9_DATA = 
+
+(
+SELECT X6_CONTEUD FROM SX6010 (NOLOCK) AS SX6 WHERE SX6.D_E_L_E_T_='' AND X6_VAR='MV_ULMES'AND X6_FIL='01'
+)
+
+) AS VLR_ARM
+
+FROM ZZR010 (NOLOCK) AS ZZR
+WHERE ZZR.D_E_L_E_T_=''
+
+GROUP BY ZZR_LOCAL
+
+) AS FINAL
+
+UNION ALL
+
+
+
+SELECT *, ROUND((VALAJU / VLR_ARM)* 100,2) AS PERCAJU FROM 
+
+(
+
+SELECT ZZR_PRODUT, ZZR_DESCRI, ZZR_TIPO, ZZR_LOCAL, SUM(ZZR_VALDEV) AS VALDEV, SUM(ZZR_VALREQ) AS VALREQ, SUM(ZZR_VALAJU) AS VALAJU, 
+
+(SELECT COUNT(*) FROM ZZR010 (NOLOCK) ZZCOUN WHERE ZZCOUN.ZZR_DTREAL <> '' AND ZZCOUN.ZZR_LOCAL=ZZR.ZZR_LOCAL
+AND ZZCOUN.ZZR_PRODUT=ZZR.ZZR_PRODUT) AS QTDITINV, 
+
+(SELECT COUNT(*) FROM ZZR010 (NOLOCK) ZZCOUN WHERE ZZCOUN.ZZR_DTREAL = '' AND ZZCOUN.ZZR_LOCAL=ZZR.ZZR_LOCAL 
+AND ZZCOUN.ZZR_PRODUT=ZZR.ZZR_PRODUT) AS QTDNINV, 
+
+(
+SELECT ROUND(SUM(B9_VINI1),2) FROM SB9010 (NOLOCK) AS SB9 WHERE SB9.D_E_L_E_T_='' AND B9_QINI<>0 
+
+AND B9_LOCAL=ZZR.ZZR_LOCAL AND B9_COD= ZZR.ZZR_PRODUT AND B9_FILIAL='01' AND B9_DATA = 
+
+(
+SELECT X6_CONTEUD FROM SX6010 (NOLOCK) AS SX6 WHERE SX6.D_E_L_E_T_='' AND X6_VAR='MV_ULMES'AND X6_FIL='01'
+)
+
+) AS VLR_ARM,
+
+
+(
+SELECT ROUND(SUM(B9_QINI),2) FROM SB9010 (NOLOCK) AS SB9 WHERE SB9.D_E_L_E_T_='' AND B9_QINI<>0 
+
+AND B9_LOCAL=ZZR.ZZR_LOCAL AND B9_COD= ZZR.ZZR_PRODUT AND B9_FILIAL='01' AND B9_DATA = 
+
+(
+SELECT X6_CONTEUD FROM SX6010 (NOLOCK) AS SX6 WHERE SX6.D_E_L_E_T_='' AND X6_VAR='MV_ULMES'AND X6_FIL='01'
+)
+
+) AS QTD_ARM
+
+FROM ZZR010 (NOLOCK) AS ZZR
+WHERE ZZR.D_E_L_E_T_=''
+
+GROUP BY ZZR_LOCAL, ZZR_PRODUT, ZZR_DESCRI, ZZR_TIPO
+
+) AS FINAL
 	
 	
 EndSql
@@ -161,42 +193,44 @@ While !oReport:Cancel() .And. (_cAlias)->(!Eof())
 	If lFirst
 		lFirst := .f.
 		
-		oSection1:Cell("ZZR_DTPLAN")  :SetValue('')	
-		oSection1:Cell("ZZR_DTREAL")  :SetValue('')	
 		oSection1:Cell("ZZR_PRODUT")  :SetValue('')	
-		oSection1:Cell("ZZR_DESCRI")  :SetValue('')
-		oSection1:Cell("ZZR_QTD")     :SetValue('')
+		oSection1:Cell("ZZR_DESCRI")  :SetValue('')	
+		oSection1:Cell("ZZR_TIPO")    :SetValue('')	
+		
 
 		oSection1:PrintLine()
 		oReport:SkipLine()
 
-		oSection1:Cell("ZZR_DTPLAN")  :SetValue('')	
-		oSection1:Cell("ZZR_DTREAL")  :SetValue('')	
 		oSection1:Cell("ZZR_PRODUT")  :SetValue('')	
-		oSection1:Cell("ZZR_DESCRI")  :SetValue('')
-		oSection1:Cell("ZZR_QTD")     :SetValue('')
-
+		oSection1:Cell("ZZR_DESCRI")  :SetValue('')	
+		oSection1:Cell("ZZR_TIPO")    :SetValue('')	
+		
 		oSection1:PrintLine()
 		oReport:SkipLine()
 	
 		
 		
 
-		oSection1:Cell("ZZR_DTPLAN")  :SetValue('TOTAL ITENS'              )	
-		oSection1:Cell("ZZR_DTREAL")  :SetValue('DEMANDA ATÉ '+DTOC(DDATABASE) )	
-		oSection1:Cell("ZZR_PRODUT")  :SetValue('Itens Inventariados'           		    )	
-		oSection1:Cell("ZZR_DESCRI")  :SetValue('Percentual'								)
-		oSection1:Cell("ZZR_QTD")     :SetValue('')
+		//oSection1:Cell("ZZR_DTPLAN")  :SetValue('TOTAL ITENS'              )	
+		//oSection1:Cell("ZZR_DTREAL")  :SetValue('DEMANDA ATÉ '+DTOC(DDATABASE) )	
+		//oSection1:Cell("ZZR_PRODUT")  :SetValue('Itens Inventariados'           		    )	
+		//oSection1:Cell("ZZR_DESCRI")  :SetValue('Percentual'								)
+		//oSection1:Cell("ZZR_QTD")     :SetValue('')
 
 		oSection1:PrintLine()
 		oReport:SkipLine()
 	
 
-		oSection1:Cell("ZZR_DTPLAN")  :SetValue((_cAlias)->ZZR_DTPLAN             )	
-		oSection1:Cell("ZZR_DTREAL")  :SetValue((_cAlias)->ZZR_DTREAL             )	
-		oSection1:Cell("ZZR_PRODUT")  :SetValue((_cAlias)->ZZR_PRODUT             )	
-		oSection1:Cell("ZZR_DESCRI")  :SetValue(((_cAlias)->ZZR_DESCRI) + '%'     )
-		oSection1:Cell("ZZR_QTD")     :SetValue('')
+		oSection1:Cell("ZZR_LOCAL")  :SetValue((_cAlias)->ZZR_LOCAL        )	
+		oSection1:Cell("VALDEV")     :SetValue((_cAlias)->VALDEV           )	
+		oSection1:Cell("VALREQ")     :SetValue((_cAlias)->VALREQ           )	
+		oSection1:Cell("VALAJU")     :SetValue((_cAlias)->VALAJU           )
+		oSection1:Cell("QTDITINV")   :SetValue((_cAlias)->QTDITINV         )
+		oSection1:Cell("QTDNINV")    :SetValue((_cAlias)->QTDNINV          )
+		oSection1:Cell("VLR_ARM")    :SetValue((_cAlias)->VLR_ARM          )
+		oSection1:Cell("QTD_ARM")    :SetValue((_cAlias)->QTD_ARM          )
+		oSection1:Cell("PERCAJU")   :SetValue((_cAlias)->PERCAJU         )
+		
 
 		oSection1:PrintLine()
 		oReport:SkipLine()
@@ -206,16 +240,18 @@ While !oReport:Cancel() .And. (_cAlias)->(!Eof())
 
 	EndIF
 	                          
-	oSection1:Cell("ZZR_DTPLAN")  :SetValue(SubStr((_cAlias)->ZZR_DTPLAN,7,2)+"/"+SubStr((_cAlias)->ZZR_DTPLAN,5,2)+"/"+SubStr((_cAlias)->ZZR_DTPLAN,1,4))
-	oSection1:Cell("ZZR_DTREAL")  :SetValue(SubStr((_cAlias)->ZZR_DTREAL,7,2)+"/"+SubStr((_cAlias)->ZZR_DTREAL,5,2)+"/"+SubStr((_cAlias)->ZZR_DTREAL,1,4))
-	oSection1:Cell("ZZR_PRODUT")  :SetValue((_cAlias)->ZZR_PRODUT             )	
-	oSection1:Cell("ZZR_DESCRI")  :SetValue((_cAlias)->ZZR_DESCRI             )
-	oSection1:Cell("ZZR_TIPO")    :SetValue((_cAlias)->ZZR_TIPO               )
-	oSection1:Cell("ZZR_LOCAL")   :SetValue((_cAlias)->ZZR_LOCAL              )
-	oSection1:Cell("ZZR_CLASSI")  :SetValue((_cAlias)->ZZR_CLASSI             )                               		
-	oSection1:Cell("ZZR_QTD")     :SetValue((_cAlias)->ZZR_QTD                )
-	oSection1:Cell("ZZR_ULT")     :SetValue(SubStr((_cAlias)->ZZR_ULT,7,2)+"/"+SubStr((_cAlias)->ZZR_ULT,5,2)+"/"+SubStr((_cAlias)->ZZR_ULT,1,4))
-	
+ 	oSection1:Cell("ZZR_PRODUT") :SetValue((_cAlias)->ZZR_PRODUT       )	
+	oSection1:Cell("ZZR_DESCRI") :SetValue((_cAlias)->ZZR_DESCRI       )	
+	oSection1:Cell("ZZR_TIPO")   :SetValue((_cAlias)->ZZR_TIPO         )	
+	oSection1:Cell("ZZR_LOCAL")  :SetValue((_cAlias)->ZZR_LOCAL        )	
+	oSection1:Cell("VALDEV")     :SetValue((_cAlias)->VALDEV           )	
+	oSection1:Cell("VALREQ")     :SetValue((_cAlias)->VALREQ           )	
+	oSection1:Cell("VALAJU")     :SetValue((_cAlias)->VALAJU           )
+	oSection1:Cell("QTDITINV")   :SetValue((_cAlias)->QTDITINV         )
+	oSection1:Cell("QTDNINV")    :SetValue((_cAlias)->QTDNINV          )
+	oSection1:Cell("VLR_ARM")    :SetValue((_cAlias)->VLR_ARM          )
+	oSection1:Cell("QTD_ARM")    :SetValue((_cAlias)->QTD_ARM          )
+	oSection1:Cell("PERCAJU")   :SetValue((_cAlias)->PERCAJU         )	
 	
 	oSection1:PrintLine()
 	oReport:SkipLine()
@@ -235,10 +271,10 @@ Local i, j
 	i:=j:=0
 	aRegistros:={}
 //                1      2    3                  4  5      6     7  8  9  10  11  12 13     14  15    16 17 18 19 20     21  22 23 24 25   26 27 28 29  30       31 32 33 34 35  36 37 38 39    40 41 42 43 44
-AADD(aRegistros,{_cPerg,"01","Mês            ","","","mv_ch1","C",02,00,00,"G","((Val(Mv_Par01)>0).And.(Val(Mv_Par01)<=12))","Mv_Par01","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
-AADD(aRegistros,{_cPerg,"02","Ano            ","","","mv_ch2","C",04,00,00,"G","(Len(AllTrim(Mv_Par02))==4)","Mv_Par02","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
-AADD(aRegistros,{_cPerg,"03","Do  Produto   ?","","","mv_ch3","C",15,00,00,"G","","Mv_Par03","","","","","","","","","","","","","","","","","","","","","","","","","SB1","","","","",""})
-AADD(aRegistros,{_cPerg,"04","Até Produto   ?","","","mv_ch4","C",15,00,00,"G","","Mv_Par04","","","","","","","","","","","","","","","","","","","","","","","","","SB1","","","","",""})
+AADD(aRegistros,{_cPerg,"01","Mês de         ","","","mv_ch1","C",02,00,00,"G","((Val(Mv_Par01)>0).And.(Val(Mv_Par01)<=12))","Mv_Par01","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
+AADD(aRegistros,{_cPerg,"02","Ano de         ","","","mv_ch2","C",04,00,00,"G","(Len(AllTrim(Mv_Par02))==4)","Mv_Par02","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
+AADD(aRegistros,{_cPerg,"03","Mês Até        ","","","mv_ch3","C",02,00,00,"G","((Val(Mv_Par03)>0).And.(Val(Mv_Par03)<=12))","Mv_Par03","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
+AADD(aRegistros,{_cPerg,"04","Ano Até        ","","","mv_ch4","C",04,00,00,"G","(Len(AllTrim(Mv_Par04))==4) .and. mv_par04==mv_par02","Mv_Par04","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
 AADD(aRegistros,{_cPerg,"05","Do  Local     ?","","","mv_ch5","C",02,00,00,"G","","Mv_Par05","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
 AADD(aRegistros,{_cPerg,"06","Até Local     ?","","","mv_ch6","C",02,00,00,"G","","Mv_Par06","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
 
