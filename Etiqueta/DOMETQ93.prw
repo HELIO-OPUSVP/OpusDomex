@@ -56,7 +56,7 @@ Local cPorta     := "LPT2"
 Local cRotacao   := "N"      //(N,R,I,B)
 Local cAliasSB1  := SB1->(GetArea())
 Local cAliasSC2  := SC2->(GetArea())
-                              
+Local nX		 := 0                              
 //Chamando função da impressora ZEBRA
 If !lControl
 	cPorta := "LPT1"
