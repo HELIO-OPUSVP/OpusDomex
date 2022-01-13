@@ -538,8 +538,12 @@ Static Function ValidaEtiq(lTeste)
 				//³Verifica se o Cliente é TELEFONICA							³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 				lTelefonic := .F.
-				If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) //.And. _cGrupoUso <> "PCON"   PCON retirado em 04/11/21 por Helio/Ricardo
-					lTelefonic := .T.
+				If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) ; // INICIO DA ALTERAÇÃO
+				  .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))  
+				  // FINAL DA ALTERAÇÃO -> Realizada em 13/01/22 por Ricardo roda referente ao 
+				  // CHAMADO: 030187 INTERAÇÃO:001 | 05/01/22 | 12:19:46 | Monique Garcia  
+				  
+				  	lTelefonic := .T.
 					SC5->(dbSeek(xFilial("SC5")+SC2->C2_PEDIDO))
 					cPedTel := SC5->C5_ESP1
 				Else
@@ -635,7 +639,11 @@ Static Function ValidaEtiq(lTeste)
 							//³Verifica se o Cliente é TELEFONICA							³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 							lTelefonic := .F.
-							If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) //.And. _cGrupoUso <> "PCON"  PCON retirado em 04/11/21 por Helio/Ricardo
+							If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))); // INICIO DA ALTERAÇÃO
+							  .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))    
+								// FINAL DA ALTERAÇÃO -> Realizada em 13/01/22 por Ricardo roda referente ao 
+								// CHAMADO: 030187 INTERAÇÃO:001 | 05/01/22 | 12:19:46 | Monique Garcia  
+				
 								lTelefonic := .T.
 								SC5->(dbSeek(xFilial("SC5")+SC2->C2_PEDIDO))
 								cPedTel := SC5->C5_ESP1
@@ -2727,7 +2735,11 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		//³Verifica se o Cliente é TELEFONICA							³
 		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 		lTelefonic := .F.
-		If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) //.And. _cGrupoUso <> "PCON"
+		If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) ; // INICIO DA ALTERAÇÃO
+				   .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))  
+				  // FINAL DA ALTERAÇÃO -> Realizada em 13/01/22 por Ricardo roda referente ao 
+				  // CHAMADO: 030187 INTERAÇÃO:001 | 05/01/22 | 12:19:46 | Monique Garcia  
+
 			SC5->(dbSeek(xFilial("SC5")+SC2->C2_PEDIDO))
 			cPedTel := SC5->C5_ESP1
 			U_DOMETQ93(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, __mv_par04, dDataBase, .F., "", 0)
