@@ -3577,7 +3577,7 @@ Static Function fButtCel()
 
 	@ 187, 018 BUTTON oButton11 PROMPT "DROP" SIZE 119, 043 OF oDlg ACTION (cCel := "DROP", oDlg:end() ) PIXEL
 	oButton11:setCSS(cCSSBtN1)
-	@ 187, 151 BUTTON oButton10 PROMPT "TRUNK" SIZE 119, 043 OF oDlg ACTION (cCel := "TRUNK 1", oDlg:end() ) PIXEL
+	@ 187, 151 BUTTON oButton10 PROMPT "TRUNK" SIZE 119, 043 OF oDlg ACTION (cCel := "LINHA TRUNK", oDlg:end() ) PIXEL
 	oButton10:setCSS(cCSSBtN1)
 
 
