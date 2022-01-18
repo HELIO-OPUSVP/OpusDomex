@@ -55,6 +55,7 @@ User Function DOMACD46()
 	Private oImprime
 	Private lEhFuruka := .F.
 	Private lEhClaro  := .F.
+	Private cOpAtual  := ""
 	Public cDomEtDl31_CancEtq := ""
 
 //здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
@@ -235,8 +236,20 @@ Static Function ValidaEtiq(lTeste)
 				SC2->(dbSeek(xFilial()+XD1->XD1_OP))
 				cNumPed   := (cAliasSC6)->C6_NUM
 				cItemC6	  := (cAliasSC6)->C6_ITEM
+				
 				(cAliasSC6)->(dbCloseArea())
 
+				If !Empty(cOpAtual) .Or. cOpAtual == SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN
+					cOpAtual  := SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN
+				else
+					U_MsgColetor("NЦo И possМvel misturar OP na PaletizaГЦo")
+					cEtiqueta := Space(_nTamEtiq)
+					oEtiqueta:Refresh()
+					oEtiqueta:SetFocus()
+					(cAliasSC6)->(dbCloseArea())
+					Return (.f.)	
+				Endif
+				
 				//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
 				//ЁVerifica se o Cliente И FURUKAWA						Ё
 				//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды

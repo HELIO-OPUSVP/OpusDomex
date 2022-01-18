@@ -301,17 +301,7 @@ Static Function ColetorMenu(cDep)
 		EndIf
 	EndIf
 
-	If 'JACKSON.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
-		If aScan(aAcessos,22) <> 0
-			Private oBtn04 := Nil
-			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico (Filial MG)"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACD46(), U_DOMACD46())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
-			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
-				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
-				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
-			oBtn04:SetCSS( cCSSBtN1 )
-			nLin += nSkipLin
-		EndIf
-	EndIf
+	
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn05 := Nil
@@ -795,6 +785,18 @@ Static Function ColetorMenu(cDep)
 		oBtn22:SetCSS( cCSSBtN1 )
 		nLin += nSkipLin
 	EndIf
+	If 'JACKSON.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
+		If aScan(aAcessos,22) <> 0
+			Private oBtn04 := Nil
+			@ nLin, nCol BUTTON oBtn04 PROMPT "Paletizacao-Sem Misturar OP"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACD46(), U_DOMACD46())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
+				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
+				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
+			oBtn04:SetCSS( cCSSBtN1 )
+			nLin += nSkipLin
+		EndIf
+	EndIf
+
 	ACTIVATE MSDIALOG oDlgMenu01 // ON INIT EnchoiceBar( oDlgMenu01,{|| nOpca := 0,oDlgMenu01:End()},{|| nOpca := 0,oDlgMenu01:End()} ) //CENTER
 
 	If nOpca == 20
