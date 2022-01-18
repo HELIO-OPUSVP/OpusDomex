@@ -182,11 +182,11 @@ While !oReport:Cancel() .And. (_cAlias)->(!Eof())
 		
 		
 
-		oSection1:Cell("ZZR_DTPLAN")  :SetValue('TOTAL ITENS'              )	
-		oSection1:Cell("ZZR_DTREAL")  :SetValue('DEMANDA ATÉ '+DTOC(DDATABASE) )	
-		oSection1:Cell("ZZR_PRODUT")  :SetValue('Itens Inventariados'           		    )	
-		oSection1:Cell("ZZR_DESCRI")  :SetValue('Percentual'								)
-		oSection1:Cell("ZZR_QTD")     :SetValue('')
+		oSection1:Cell("ZZR_DTPLAN")  :SetValue('TOTAL ITENS'             		 	)	
+		oSection1:Cell("ZZR_DTREAL")  :SetValue('DEMANDA ATÉ '+DTOC(DDATABASE) 		)	
+		oSection1:Cell("ZZR_PRODUT")  :SetValue('Itens Inventariados'           	)	
+		oSection1:Cell("ZZR_DESCRI")  :SetValue('Percentual'						)
+		oSection1:Cell("ZZR_QTD")     :SetValue(''									)
 
 		oSection1:PrintLine()
 		oReport:SkipLine()
@@ -196,7 +196,7 @@ While !oReport:Cancel() .And. (_cAlias)->(!Eof())
 		oSection1:Cell("ZZR_DTREAL")  :SetValue((_cAlias)->ZZR_DTREAL             )	
 		oSection1:Cell("ZZR_PRODUT")  :SetValue((_cAlias)->ZZR_PRODUT             )	
 		oSection1:Cell("ZZR_DESCRI")  :SetValue(((_cAlias)->ZZR_DESCRI) + '%'     )
-		oSection1:Cell("ZZR_QTD")     :SetValue('')
+		oSection1:Cell("ZZR_QTD")     :SetValue(''								  )
 
 		oSection1:PrintLine()
 		oReport:SkipLine()

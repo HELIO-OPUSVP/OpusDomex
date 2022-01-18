@@ -1267,6 +1267,9 @@ If !Empty(_cEtiqueta)
 	XD1->( dbSetOrder(1))
 	If XD1->( dbSeek( xFilial("XD1") + _cEtiqueta ) )
 		SB1->( dbSetOrder(1) )
+		If Empty(alltrim(_cProduto))
+			_cProduto := XD1->XD1_COD
+		EndIF
 		IF _cProduto<>XD1->XD1_COD //.AND. !EMPTY(_cProduto)
 			U_MsgColetor("Produto Etiqueta diferente do processo")
 			RETURN

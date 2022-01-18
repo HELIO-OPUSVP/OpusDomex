@@ -181,15 +181,15 @@ User Function ESTPRODOM(cVerPeca,lVerSldAtu,lVerEmbala)
 														cArquivo := Nil
 														U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
 													Else
-														cTxtMsg  := " Gravação do C2_QUJE Ok." + Chr(13)
-														cTxtMsg  += " OP = " + QUERYSD3->D3_OP + Chr(13)
-														cTxtMsg  += " Etiqueta = " + QUERYSD3->D3_XXPECA  + Chr(13)
-														cAssunto := "Não houve erro na gravação no C2_QUJE no estorno de etiquetas"
-														cTexto   := StrTran(cTxtMsg,Chr(13),"<br>")
-														cPara    := 'denis.vieira@rdt.com.br;fulgencio.muniz@rosenbergerdomex.com.br'
-														cCC      := 'helio@opusvp.com.br;jackson.santos@opusvp.com.br'
-														cArquivo := Nil
-														U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
+														// cTxtMsg  := " Gravação do C2_QUJE Ok." + Chr(13)
+														// cTxtMsg  += " OP = " + QUERYSD3->D3_OP + Chr(13)
+														// cTxtMsg  += " Etiqueta = " + QUERYSD3->D3_XXPECA  + Chr(13)
+														// cAssunto := "Não houve erro na gravação no C2_QUJE no estorno de etiquetas"
+														// cTexto   := StrTran(cTxtMsg,Chr(13),"<br>")
+														// cPara    := 'denis.vieira@rdt.com.br;fulgencio.muniz@rosenbergerdomex.com.br'
+														// cCC      := 'helio@opusvp.com.br;jackson.santos@opusvp.com.br'
+														// cArquivo := Nil
+														// U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
 													EndIf
 												EndIf
 											EndIf

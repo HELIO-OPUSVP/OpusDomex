@@ -64,7 +64,7 @@ User Function MNUCOLETOR(cDep, cFilDOM) // MostraFunc(OK)
 	nWebPx2:= 1
 
 	cAmbiente:= UPPER(GETENVSERV())
-	IF cAmbiente $ U_WEBCOL()
+	IF U_WEBCOL(cAmbiente)
 		nWebPx:= 1.5
 		nWebPx2:= 1.3
 		nFont1:= 17*nWebPx
@@ -117,17 +117,17 @@ User Function MNUCOLETOR(cDep, cFilDOM) // MostraFunc(OK)
 //AADD(aUsuarios,'Helio')
 
 
-	IF cAmbiente $ U_WEBCOL()
+	IF U_WEBCOL(cAmbiente)
 		if Alltrim(cAmbiente) =="WEBCOL" .and. cFilDOM == '01'
 			cImgFundo:= "Coletor01.jpg"
 		elseif Alltrim(cAmbiente) =="WEBCOL_VALIDACAO"
 			cImgFundo:= "Coletor01V.jpg"
 		elseif Alltrim(cAmbiente) =="WEBCOL" .and. cFilDOM == '02'
 			cImgFundo:= "Coletor02.jpg"
-		elseif Alltrim(cAmbiente) =="WEBCOLMG_VALIDACAO" 
+		elseif Alltrim(cAmbiente) =="WEBCOLMG_VALIDACAO"
 			cImgFundo:= "Coletor02V.jpg"
 		Endif
-		
+
 
 		oTBitmap := TBitmap():New(0,0,450,302,,cStartPath+cImgFundo,.T.,oDlgMenu02,{|| nLinUsr := 0},,.F.,.F.,,,.F.,,.T.,,.F.)
 		oTBitmap:lAutoSize := .T.
@@ -237,7 +237,7 @@ Static Function ColetorMenu(cDep)
 		AADD(aAcessos, 12)
 		AADD(aAcessos, 13)
 		//AADD(aAcessos, 14)
-		
+
 	EndIf
 
 //U_MostraFunc(ProcName(),'MNU01COLETOR')
@@ -252,7 +252,7 @@ Static Function ColetorMenu(cDep)
 // Rotina 20
 	If aScan(aAcessos,20) <> 0
 		Private oBtn03 := Nil
-		@ nLin, nCol BUTTON oBtn03 PROMPT "Endereçamento Recebimento" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW01(), U_DOMACD01())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn03 PROMPT "Endereçamento Recebimento" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW01(), U_DOMACD01())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 := "QPushButton{background-image: url(rpo:armazem.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:armazem.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:armazem.png);"+cHover
@@ -269,7 +269,7 @@ Static Function ColetorMenu(cDep)
 // Rotina 22
 	If aScan(aAcessos,22) <> 0
 		Private oBtn04 := Nil
-		@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário por Produto"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW03(), U_DOMACD03())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário por Produto"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW03(), U_DOMACD03())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
@@ -280,7 +280,7 @@ Static Function ColetorMenu(cDep)
 	If 'JONAS.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
 		If aScan(aAcessos,22) <> 0
 			Private oBtn04 := Nil
-			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico (Matriz)"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACD45("01"), U_DOMACD45("01"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico (Matriz)"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACD45("01"), U_DOMACD45("01"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
 				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
 				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
@@ -292,7 +292,7 @@ Static Function ColetorMenu(cDep)
 	If 'JONAS.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
 		If aScan(aAcessos,22) <> 0
 			Private oBtn04 := Nil
-			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico (Filial MG)"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACD45("02"), U_DOMACD45("02"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico (Filial MG)"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACD45("02"), U_DOMACD45("02"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
 				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
 				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
@@ -301,11 +301,21 @@ Static Function ColetorMenu(cDep)
 		EndIf
 	EndIf
 
-	
+	If 'JACKSON.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
+		If aScan(aAcessos,22) <> 0
+			Private oBtn04 := Nil
+			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico (Filial MG)"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACD46(), U_DOMACD46())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
+				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
+				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
+			oBtn04:SetCSS( cCSSBtN1 )
+			nLin += nSkipLin
+		EndIf
+	EndIf
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn05 := Nil
-		@ nLin, nCol BUTTON oBtn05 PROMPT "Pagamento de OP" ACTION Processa( {||  IF(cAmbiente $ U_WEBCOL(), U_DOMACW05(), U_DOMACD05())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn05 PROMPT "Pagamento de OP" ACTION Processa( {||  IF(U_WEBCOL(cAmbiente), U_DOMACW05(), U_DOMACD05())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:bmpcpo.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:bmpcpo.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:bmpcpo.png);"+cHover
@@ -319,7 +329,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn06 := Nil
-		@ nLin, nCol BUTTON oBtn06 PROMPT "Kamban"   ACTION Processa( {||  IF(cAmbiente $ U_WEBCOL(), U_DOMACW06(), U_DOMACD06()) } ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn06 PROMPT "Kamban"   ACTION Processa( {||  IF(U_WEBCOL(cAmbiente), U_DOMACW06(), U_DOMACD06()) } ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:trmimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:trmimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:trmimg32.png);"+cHover
@@ -330,7 +340,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		oBtn06 := Nil
-		@ nLin, nCol BUTTON oBtn06 PROMPT "Kamban Filial MG"   ACTION Processa( {||  IF(cAmbiente $ U_WEBCOL(), U_DOMACW43(), U_DOMACD43()) } ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn06 PROMPT "Kamban Filial MG"   ACTION Processa( {||  IF(U_WEBCOL(cAmbiente), U_DOMACW43(), U_DOMACD43()) } ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:trmimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:trmimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:trmimg32.png);"+cHover
@@ -342,7 +352,7 @@ Static Function ColetorMenu(cDep)
 	//jonas - perda 96
 	If aScan(aAcessos,23) <> 0
 		Private oBtn07 := Nil
-		@ nLin, nCol BUTTON oBtn07 PROMPT "Pagamento de Perdas"   ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW35(), U_DOMACD35())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn07 PROMPT "Pagamento de Perdas"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW35(), U_DOMACD35())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:mdirun.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:mdirun.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:mdirun.png);"+cHover
@@ -353,7 +363,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn08 := Nil
-		@ nLin, nCol BUTTON oBtn08 PROMPT "Inventário GERAL" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW18(), U_DOMACD18()) } ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn08 PROMPT "Inventário GERAL" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW18(), U_DOMACD18()) } ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:s4wb007n_mdi.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:s4wb007n_mdi.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:s4wb007n_mdi.png);"+cHover
@@ -364,7 +374,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn09 := Nil
-		@ nLin, nCol BUTTON oBtn09 PROMPT "Pagamento de Senf"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW12(), U_DOMACD12())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn09 PROMPT "Pagamento de Senf"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW12(), U_DOMACD12())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:lojimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:lojimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:lojimg32.png);"+cHover
@@ -374,7 +384,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn10 := Nil
-		@ nLin, nCol BUTTON oBtn10 PROMPT "Transferênc.Entre Endereços"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW10(), U_DOMACD10())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn10 PROMPT "Transferênc.Entre Endereços"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW10(), U_DOMACD10())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:destinos_mdi.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:destinos_mdi.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:destinos_mdi.png);"+cHover
@@ -384,7 +394,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn11 := Nil
-		@ nLin, nCol BUTTON oBtn11 PROMPT "Devolução MP p/ Estoque"      ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW14(), U_DOMACD14())}  ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn11 PROMPT "Devolução MP p/ Estoque"      ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW14(), U_DOMACD14())}  ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avgbox1.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:avgbox1.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:avgbox1.png);"+cHover
@@ -394,7 +404,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn12 := Nil
-		@ nLin, nCol BUTTON oBtn12 PROMPT "Devolução PA/PI p/ Estoque"   ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW15(), U_DOMACD15())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn12 PROMPT "Devolução PA/PI p/ Estoque"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW15(), U_DOMACD15())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avgbox1.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:avgbox1.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:avgbox1.png);"+cHover
@@ -404,7 +414,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn15 := Nil
-		@ nLin, nCol BUTTON oBtn15 PROMPT "Aponta Produção DIO" ACTION Processa( {||IF(cAmbiente $ U_WEBCOL(), U_DOMACW21(), U_DOMACD21())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn15 PROMPT "Aponta Produção DIO" ACTION Processa( {||IF(U_WEBCOL(cAmbiente), U_DOMACW21(), U_DOMACD21())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:iceimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:iceimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:iceimg32.png);"+cHover
@@ -414,7 +424,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn16 := Nil
-		@ nLin, nCol BUTTON oBtn16 PROMPT "Paletização" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW22(), U_DOMACD22())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn16 PROMPT "Paletização" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW22(), U_DOMACD22())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:armimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:armimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:armimg32.png);"+cHover
@@ -424,7 +434,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn13 := Nil
-		@ nLin, nCol BUTTON oBtn13 PROMPT "Reimprime Etiq. Expedição" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW20(), U_DOMACD20())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn13 PROMPT "Reimprime Etiq. Expedição" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW20(), U_DOMACD20())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:s4wb010n.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:s4wb010n.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:s4wb010n.png);"+cHover
@@ -434,7 +444,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn20 := Nil
-		@ nLin, nCol BUTTON oBtn20 PROMPT "Montagem KIT Expedição" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW27(), U_DOMACD27())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn20 PROMPT "Montagem KIT Expedição" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW27(), U_DOMACD27())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:qipimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:qipimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:qipimg32.png);"+cHover
@@ -445,7 +455,7 @@ Static Function ColetorMenu(cDep)
 	If aScan(aAcessos,23) <> 0 ;
 
 		Private oBtn22 := Nil
-		@ nLin, nCol BUTTON oBtn22 PROMPT "Desmonta Embalagem" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW29(), U_DOMACD29())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn22 PROMPT "Desmonta Embalagem" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW29(), U_DOMACD29())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avgarmazem.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:avgarmazem.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:avgarmazem.png);"+cHover
@@ -455,7 +465,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn17 := Nil
-		@ nLin, nCol BUTTON oBtn17 PROMPT "Faturamento de Pedidos" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW23(), U_DOMACD23())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn17 PROMPT "Faturamento de Pedidos" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW23(), U_DOMACD23())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:preco_mdi.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:preco_mdi.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:preco_mdi.png);"+cHover
@@ -465,7 +475,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		oBtn20 := Nil
-		@ nLin, nCol BUTTON oBtn20 PROMPT "Conferencia de Carga" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW26(), U_DOMACD26())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn20 PROMPT "Conferencia de Carga" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW26(), U_DOMACD26())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:tmsimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:tmsimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:tmsimg32.png);"+cHover
@@ -475,7 +485,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn19 := Nil
-		@ nLin, nCol BUTTON oBtn19 PROMPT "Etiqueta TELEFONICA"   ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW25(), U_DOMACD25())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn19 PROMPT "Etiqueta TELEFONICA"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW25(), U_DOMACD25())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:totvsprinter_spool.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:totvsprinter_spool.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:totvsprinter_spool.png);"+cHover
@@ -485,7 +495,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn35 := Nil
-		@ nLin, nCol BUTTON oBtn35 PROMPT "Etiqueta OI S/A"   ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW36(), U_DOMACD36())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn35 PROMPT "Etiqueta OI S/A"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW36(), U_DOMACD36())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:totvsprinter_spool.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:totvsprinter_spool.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:totvsprinter_spool.png);"+cHover
@@ -495,7 +505,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn21 := Nil
-		@ nLin, nCol BUTTON oBtn21 PROMPT "Embalagem Nivel 3"   ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW28(), U_DOMACD28())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn21 PROMPT "Embalagem Nivel 3"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW28(), U_DOMACD28())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:pcocube.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:pcocube.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:pcocube.png);"+cHover
@@ -505,7 +515,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn18 := Nil
-		@ nLin, nCol BUTTON oBtn18 PROMPT "Embalagem para SENF" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW24(), U_DOMACD24())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn18 PROMPT "Embalagem para SENF" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW24(), U_DOMACD24())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:wmsimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:wmsimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:wmsimg32.png);"+cHover
@@ -515,7 +525,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn14 := Nil
-		@ nLin, nCol BUTTON oBtn14 PROMPT "Embalagem"   ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW19(), U_DOMACD19())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn14 PROMPT "Embalagem"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW19(), U_DOMACD19())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:estimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:estimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:estimg32.png);"+cHover
@@ -525,7 +535,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn30 := Nil
-		@ nLin, nCol BUTTON oBtn30 PROMPT "Consulta Etiqueta"   ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW30(), U_DOMACD30())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn30 PROMPT "Consulta Etiqueta"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW30(), U_DOMACD30())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:bmpcons.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:bmpcons.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:bmpcons.png);"+cHover
@@ -535,7 +545,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn31 := Nil
-		@ nLin, nCol BUTTON oBtn31 PROMPT "Entrega de Bobinas Matriz"  ACTION Processa( {||IF(cAmbiente $ U_WEBCOL(), U_DOMACW31(), U_DOMACD31())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn31 PROMPT "Entrega de Bobinas Matriz"  ACTION Processa( {||IF(U_WEBCOL(cAmbiente), U_DOMACW31(), U_DOMACD31())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:sdunew.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:sdunew.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:sdunew.png);"+cHover
@@ -546,7 +556,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		oBtn41 := Nil
-		@ nLin, nCol BUTTON oBtn31 PROMPT "Entrega de Bobinas Filial MG"  ACTION Processa( {||IF(cAmbiente $ U_WEBCOL(), U_DOMACW41(), U_DOMACD41())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn31 PROMPT "Entrega de Bobinas Filial MG"  ACTION Processa( {||IF(U_WEBCOL(cAmbiente), U_DOMACW41(), U_DOMACD41())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:sdunew.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:sdunew.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:sdunew.png);"+cHover
@@ -556,7 +566,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn32 := Nil
-		@ nLin, nCol BUTTON oBtn32 PROMPT "Devolução de Bobinas"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW32(), U_DOMACD32())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn32 PROMPT "Devolução de Bobinas"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW32(), U_DOMACD32())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:sduimport.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:sduimport.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:sduimport.png);"+cHover
@@ -568,7 +578,7 @@ Static Function ColetorMenu(cDep)
 	//joao cozer - montagem de KIT
 	If aScan(aAcessos,23) <> 0
 		Private oBtn34 := Nil
-		@ nLin, nCol BUTTON oBtn34 PROMPT "Montagem Kit - Obra"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW34(), U_DOMACD34())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn34 PROMPT "Montagem Kit - Obra"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW34(), U_DOMACD34())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avg_embm.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:avg_embm.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:avg_embm.png);"+cHover
@@ -579,7 +589,7 @@ Static Function ColetorMenu(cDep)
 	If aScan(aAcessos,24) <> 0
 		oBtn35 := Nil
 
-		@ nLin, nCol BUTTON oBtn35 PROMPT "Huawei - Etiqueta Externa"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW37(), U_DOMACD37())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn35 PROMPT "Huawei - Etiqueta Externa"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW37(), U_DOMACD37())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:BONUS.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:BONUS.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:BONUS.png);"+cHover
@@ -590,7 +600,7 @@ Static Function ColetorMenu(cDep)
 	If aScan(aAcessos,25) <> 0
 		Private oBtn36 := Nil
 
-		@ nLin, nCol BUTTON oBtn36 PROMPT "Devolução KIT PIG p/Estoque"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW38(), U_DOMACD38())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn36 PROMPT "Devolução KIT PIG p/Estoque"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW38(), U_DOMACD38())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avgbox1.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:avgbox1.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:avgbox1.png);"+cHover
@@ -603,7 +613,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,25) <> 0
 		oBtn36 := Nil
-		@ nLin, nCol BUTTON oBtn36 PROMPT "Pagto. OP Picklist (Matriz)"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW39("01"), U_DOMACD39("01"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn36 PROMPT "Pagto. OP Picklist (Matriz)"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW39("01"), U_DOMACD39("01"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avgbox1.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:avgbox1.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:avgbox1.png);"+cHover
@@ -614,7 +624,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,25) <> 0
 		oBtn36 := Nil
-		@ nLin, nCol BUTTON oBtn36 PROMPT "Pagto. OP Picklist (Fil.MG)"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW39("02"), U_DOMACD39("02"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn36 PROMPT "Pagto. OP Picklist (Fil.MG)"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW39("02"), U_DOMACD39("02"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avgbox1.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:avgbox1.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:avgbox1.png);"+cHover
@@ -624,7 +634,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn40 := Nil
-		@ nLin, nCol BUTTON oBtn40 PROMPT "Re-Impres.Etq.PickList (Matriz)" ACTION Processa( {||  IF(cAmbiente $ U_WEBCOL(), U_DOMACW40(), U_DOMACD40())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn40 PROMPT "Re-Impres.Etq.PickList (Matriz)" ACTION Processa( {||  IF(U_WEBCOL(cAmbiente), U_DOMACW40(), U_DOMACD40())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:pcoimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:pcoimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:pcoimg32.png);"+cHover
@@ -634,7 +644,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		oBtn40 := Nil
-		@ nLin, nCol BUTTON oBtn40 PROMPT "Re-Impres.Etq.PickList (Fil.MG)"        ACTION Processa( {||  IF(cAmbiente $ U_WEBCOL(), U_DOMACW42(), U_DOMACD42())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn40 PROMPT "Re-Impres.Etq.PickList (Fil.MG)"        ACTION Processa( {||  IF(U_WEBCOL(cAmbiente), U_DOMACW42(), U_DOMACD42())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:pcoimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:pcoimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:pcoimg32.png);"+cHover
@@ -654,7 +664,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,02) <> 0
 		oBtn06 := Nil
-		@ nLin, nCol BUTTON oBtn06 PROMPT "Separação/Envio Matriz" ACTION Processa( {||  IF(cAmbiente $ U_WEBCOL(), U_DOMACW44(), U_DOMACD44()) } ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn06 PROMPT "Separação/Envio Matriz" ACTION Processa( {||  IF(U_WEBCOL(cAmbiente), U_DOMACW44(), U_DOMACD44()) } ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 := "QPushButton{background-image: url(rpo:DEVOLNF.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:DEVOLNF.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:DEVOLNF.png);"+cHover
@@ -664,7 +674,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,03) <> 0
 		oBtn07 := Nil
-		@ nLin, nCol BUTTON oBtn07 PROMPT "Endereçamento Receb.MG" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW01(), U_DOMACD01())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn07 PROMPT "Endereçamento Receb.MG" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW01(), U_DOMACD01())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 := "QPushButton{background-image: url(rpo:armazem.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:armazem.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:armazem.png);"+cHover
@@ -674,7 +684,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,04) <> 0
 		oBtn08 := Nil
-		@ nLin, nCol BUTTON oBtn08 PROMPT "Inventário por Produto MG"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW03(), U_DOMACD03())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn08 PROMPT "Inventário por Produto MG"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW03(), U_DOMACD03())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
@@ -684,7 +694,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,05) <> 0
 		oBtn09 := Nil
-		@ nLin, nCol BUTTON oBtn09 PROMPT "Kamban MG"   ACTION Processa( {||  IF(cAmbiente $ U_WEBCOL(), U_DOMACW06(), U_DOMACD06()) } ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn09 PROMPT "Kamban MG"   ACTION Processa( {||  IF(U_WEBCOL(cAmbiente), U_DOMACW06(), U_DOMACD06()) } ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:trmimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:trmimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:trmimg32.png);"+cHover
@@ -695,7 +705,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,06) <> 0
 		oBtn10 := Nil
-		@ nLin, nCol BUTTON oBtn10 PROMPT "Pagamento de Perdas MG"   ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW35(), U_DOMACD35())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn10 PROMPT "Pagamento de Perdas MG"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW35(), U_DOMACD35())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:mdirun.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:mdirun.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:mdirun.png);"+cHover
@@ -705,7 +715,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,07) <> 0
 		oBtn11 := Nil
-		@ nLin, nCol BUTTON oBtn11 PROMPT "Pagamento de Senf MG"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW12(), U_DOMACD12())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn11 PROMPT "Pagamento de Senf MG"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW12(), U_DOMACD12())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:lojimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:lojimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:lojimg32.png);"+cHover
@@ -715,7 +725,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,08) <> 0
 		oBtn12 := Nil
-		@ nLin, nCol BUTTON oBtn12 PROMPT "Pagto.OP Picklist MG"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW39("02"), U_DOMACD39("02"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn12 PROMPT "Pagto.OP Picklist MG"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW39("02"), U_DOMACD39("02"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avgbox1.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:avgbox1.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:avgbox1.png);"+cHover
@@ -727,7 +737,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,09) <> 0
 		oBtn13 := Nil
-		@ nLin, nCol BUTTON oBtn13 PROMPT "Re-Impres.Etq.PickList MG"  ACTION Processa( {||  IF(cAmbiente $ U_WEBCOL(), U_DOMACW42(), U_DOMACD42())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn13 PROMPT "Re-Impres.Etq.PickList MG"  ACTION Processa( {||  IF(U_WEBCOL(cAmbiente), U_DOMACW42(), U_DOMACD42())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:pcoimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:pcoimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:pcoimg32.png);"+cHover
@@ -737,7 +747,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,10) <> 0
 		oBtn14 := Nil
-		@ nLin, nCol BUTTON oBtn14 PROMPT "Devol. MP p/ Estoque MG"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW14(), U_DOMACD14())}  ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn14 PROMPT "Devol. MP p/ Estoque MG"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW14(), U_DOMACD14())}  ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avgbox1.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:avgbox1.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:avgbox1.png);"+cHover
@@ -747,7 +757,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,11) <> 0
 		oBtn15 := Nil
-		@ nLin, nCol BUTTON oBtn15 PROMPT "Devol.PA/PI p/ Estoque MG"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW15(), U_DOMACD15())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn15 PROMPT "Devol.PA/PI p/ Estoque MG"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW15(), U_DOMACD15())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avgbox1.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:avgbox1.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:avgbox1.png);"+cHover
@@ -757,7 +767,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,12) <> 0
 		oBtn16 := Nil
-		@ nLin, nCol BUTTON oBtn16 PROMPT "Transf.Entre Endereços MG"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW10(), U_DOMACD10())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn16 PROMPT "Transf.Entre Endereços MG"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW10(), U_DOMACD10())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:destinos_mdi.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:destinos_mdi.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:destinos_mdi.png);"+cHover
@@ -767,7 +777,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,13) <> 0
 		Private oBtn17 := Nil
-		@ nLin, nCol BUTTON oBtn17 PROMPT "Paletização MG" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW22(), U_DOMACD22())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn17 PROMPT "Paletização MG" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW22(), U_DOMACD22())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:armimg32.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:armimg32.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:armimg32.png);"+cHover
@@ -778,25 +788,13 @@ Static Function ColetorMenu(cDep)
 	If aScan(aAcessos,14) <> 0 ;
 
 		Private oBtn22 := Nil
-		@ nLin, nCol BUTTON oBtn22 PROMPT "Desmonta Embalagem MG" ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACW29(), U_DOMACD29())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn22 PROMPT "Desmonta Embalagem MG" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW29(), U_DOMACD29())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avgarmazem.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:avgarmazem.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:avgarmazem.png);"+cHover
 		oBtn22:SetCSS( cCSSBtN1 )
 		nLin += nSkipLin
 	EndIf
-	If 'JACKSON.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
-		If aScan(aAcessos,22) <> 0
-			Private oBtn04 := Nil
-			@ nLin, nCol BUTTON oBtn04 PROMPT "Paletizacao-Sem Misturar OP"  ACTION Processa( {|| IF(cAmbiente $ U_WEBCOL(), U_DOMACD46(), U_DOMACD46())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
-			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
-				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
-				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
-			oBtn04:SetCSS( cCSSBtN1 )
-			nLin += nSkipLin
-		EndIf
-	EndIf
-
 	ACTIVATE MSDIALOG oDlgMenu01 // ON INIT EnchoiceBar( oDlgMenu01,{|| nOpca := 0,oDlgMenu01:End()},{|| nOpca := 0,oDlgMenu01:End()} ) //CENTER
 
 	If nOpca == 20
@@ -922,7 +920,9 @@ User Function MsgColetor(cMsg,nSegundos)
 
 	cMsg := AllTrim(cMsg)
 	cAmbiente:= UPPER(GETENVSERV())
-	IF cAmbiente $ U_WEBCOL()
+	apMsgYesNo('Ambiente: ' + cAmbiente + ' - Mandar foto para Jonas')
+	IF U_WEBCOL(cAmbiente)
+		apMsgYesNo('Webcol - Mandar foto para Jonas')
 		nWebPx:= 1.5
 		nWebPx2:= 1.3
 		nFont1:= 17*nWebPx
@@ -942,6 +942,7 @@ User Function MsgColetor(cMsg,nSegundos)
 		cHover:="background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,stop: 0 gray, stop: 0.4 white,stop: 1 Black);color: #171717; font: bold "+cvaltochar(10*nWebPx)+"px Arial;"+;
 			"background-size:15% 60%;background-position: 1% 33%;background-repeat:no-repeat ;border-radius: 6px;}"
 	Else
+		apMsgYesNo('Windows - Mandar foto para Jonas')
 		nWebPx:= 1
 		nFont1:= 17
 		cPush:= "background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,stop: 0 gray, stop: 0.4 white,stop: 1 gray);color: #171717; font: bold "+cvaltochar(10*nWebPx)+"px Arial;"+;
@@ -1036,10 +1037,21 @@ Return _Retorno
 //Sleep(nSeg*1000)
 //Return
 
- User function WEBCOL()
+User Function WEBCOL(cAmbiente)
 
- Local cAmbiente:= "WEBCOL" 
- cAmbiente+= ",WEBCOLMG_VALIDACAO"
-  cAmbiente+= ",WEBCOL_VALIDACAO"
+	Local aAmbiente := {}
+	Local _Retorno  := .T.
 
- Return cAmbiente
+	cAmbiente := Upper(Alltrim(cAmbiente))
+
+	AADD(aAmbiente,"WEBCOL")
+	AADD(aAmbiente,"WEBCOLMG_VALIDACAO")
+	AADD(aAmbiente,"WEBCOL_VALIDACAO")
+
+	If aScan(aAmbiente,cAmbiente) <> 0
+		_Retorno := .T.
+	Else
+		_Retorno := .F.
+	EndIf
+
+Return cAmbiente
