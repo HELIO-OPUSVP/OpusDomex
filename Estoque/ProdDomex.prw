@@ -143,7 +143,7 @@ User Function ProdDomex(aVetOP)
 											EndIf
 										EndIf
 										//---------------------------------------------------
-										IF Subs(SD4->D4_OP,1,11)=='10288401001'//'10118720001'//'10151501001' //   '10224404001'
+										IF Subs(SD4->D4_OP,1,08)=='10696605' //' 10288401001'//'10118720001'//'10151501001' //   '10224404001'
 											//
 										ELSE
 											x := 0 //mls , LINHA RETIRADA EM 02122020 PARA APONATAR OP E DEPOIS VOLTAR

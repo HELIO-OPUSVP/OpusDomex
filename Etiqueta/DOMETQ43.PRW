@@ -37,6 +37,7 @@ User Function DOMETQ43(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	Local cMVPAR01a:= ""
 	Local cMVPAR01b:= ""
 	Local cMVPAR01c:= ""
+	Local _i
 
 	Private cCdAnat1   := ""        //Codigo Anatel 1
 	Private cCdAnat2   := ""        //Codigo Anatel 2
@@ -182,17 +183,17 @@ EndIf
 		ETQ->(dbGoTop())
 
 
-		aTemp := U_QuebraString(SB1->B1_DESC,28)
+		aTemp := QuebraString(SB1->B1_DESC,23)
 
-		cMVPAR01a := aTemp[1]
+		// cMVPAR01a := aTemp[1]
 
-		if len(aTemp) > 1
-			cMVPAR01b := aTemp[2]
-		Endif
+		// if len(aTemp) > 1
+		// 	cMVPAR01b := aTemp[2]
+		// Endif
 
-		If len(aTemp) > 2
-			cMVPAR01c := aTemp[3]
-		Endif
+		// If len(aTemp) > 2
+		// 	cMVPAR01c := aTemp[3]
+		// Endif
 
 		cMVPAR02 := " "
 		cMVPAR03 := "PN:"+SB1->B1_COD
@@ -201,39 +202,6 @@ EndIf
 		cMVPAR06 := " "
 
 		cParam   := cMVPAR01a+cMVPAR01b+cMVPAR01c+";"+cMVPAR02+";"+cMVPAR03+";"+cMVPAR04+";"+cMVPAR05+";"+cMVPAR06+";"
-
-		// AADD(_aArq,'CT~~CD,~CC^~CT~'+ CRLF)
-		// AADD(_aArq,'^XA'+ CRLF)
-		// AADD(_aArq,'~TA000'+ CRLF)
-		// AADD(_aArq,'~JSN'+ CRLF)
-		// AADD(_aArq,'^LT0'+ CRLF)
-		// AADD(_aArq,'^MNW'+ CRLF)
-		// AADD(_aArq,'^MTT'+ CRLF)
-		// AADD(_aArq,'^PON'+ CRLF)
-		// AADD(_aArq,'^PMN'+ CRLF)
-		// AADD(_aArq,'^LH0,0'+ CRLF)
-		// AADD(_aArq,'^JMA'+ CRLF)
-		// AADD(_aArq,'^PR6,6'+ CRLF)
-		// AADD(_aArq,'^JUS'+ CRLF)
-		// AADD(_aArq,'^LRN'+ CRLF)
-		// AADD(_aArq,'^CI27'+ CRLF)
-		// AADD(_aArq,'^PA0,1,1,0'+ CRLF)
-		// AADD(_aArq,'^XZ'+ CRLF)
-		// AADD(_aArq,'^XA'+ CRLF)
-		// AADD(_aArq,'^MMT'+ CRLF)
-		// AADD(_aArq,'^PW591'+ CRLF)
-		// AADD(_aArq,'^LL295'+ CRLF)
-		// AADD(_aArq,'^LS0'+ CRLF)
-		// AADD(_aArq,'^FT201,287^A0B,23,23^FH\^CI28^FD'+cMVPAR01a+'^FS^CI27'+ CRLF)
-		// AADD(_aArq,'^FT235,287^A0B,23,23^FH\^CI28^FD'+cMVPAR01b+'^FS^CI27'+ CRLF)
-		// AADD(_aArq,'^FT268,287^A0B,23,23^FH\^CI28^FD'+cMVPAR01c+'^FS^CI27'+ CRLF)
-		// AADD(_aArq,'^FT469,287^A0B,26,28^FH\^CI28^FD'+cMVPAR03+'^FS^CI27'+ CRLF)
-		// AADD(_aArq,'^FT505,287^A0B,26,28^FH\^CI28^FD'+cMVPAR04+'^FS^CI27'+ CRLF)
-		// AADD(_aArq,'^FT542,287^A0B,27,28^FH\^CI28^FD'+cMVPAR05+'^FS^CI27'+ CRLF)
-		// AADD(_aArq,'^FO76,37^GFA,805,2880,12,:Z64:eJyl1UFu4yAUBmCQpbKb1wNU5hqpZNlXmWNkEclIs8i1PJpFZjW5gqsuuhy6w2omDCjA+92xp42CFOWTY+ABjxch/t++MuXIVmACd+C+2EhfPFR+yLbky9un7lzsvQWPYMOjc1ehT2DuKnp47j3aLPrcs0+aPSr2ULGFubgNH/opivUvdne8uI7xJOs47/HSl8LXn2QV1v16uFjPLVeei+nInq+Lwyx75UI8aZuryZR9o2kQymaPpZ+ebIjJFHfJ3aMrczUb9HbFLk79j/WjZfu5t8kUzj/PSyF1+uQqfGdLv3ym2jvwGcb3ZsUDepdjUPsxx1DLH2Me80E+FTcrbqvn4m7/MuYYtX8Z8p5Hl7PwB5PPiPze5LNT/o7P9DRfr0u5GvPNUrG0Cpyex9xz4HN3MQ2cM3H/e3COJzrHGU2OzesK73NoEn6qfHpfToZ8GlNNQ3HIPZ1joMnqtxxD8JDuZrTJ6904LZKbaMre1st2xS1Yv1nNecIOubdo5YfikHvF4h6MDeqQgt+JS2HoOIJ507q8adGS3YIbsewHwePUkk1cyglq7bW+utG7PFly9wm3MCa6XjGhR/ZaDNd61iZmyG2eF+rq+xq75JCfxc3M2w+NfWONXYqZIN/QCnKywlzmv+d5q5h3xH2/aB6z7uyiW3CzgzXueC2b7bIbx+4c3BHcz9dl0xPHpr5zzLN2z5TwX7p2f2nl/urfkMMSc/jj+4vvYF8cc/1MOTaMGdey0uSJypjVmc9I+R78iVpx4LpH3+yKxxtsyyHdUsduqWl/AaRH9RE=:49F5'+ CRLF)
-		// AADD(_aArq,'^PQ1,0,1,Y'+ CRLF)
-		// AADD(_aArq,'^XZ'+ CRLF)
-		//
 
 		AADD(_aArq,'^XA'+ CRLF)
 		AADD(_aArq,'~TA000'+ CRLF)
@@ -246,7 +214,6 @@ EndIf
 		AADD(_aArq,'^LH0,0'+ CRLF)
 		AADD(_aArq,'^JMA'+ CRLF)
 		AADD(_aArq,'^PR6,6'+ CRLF)
-		//AADD(_aArq,'~SD15'+ CRLF)
 		AADD(_aArq,'^JUS'+ CRLF)
 		AADD(_aArq,'^LRN'+ CRLF)
 		AADD(_aArq,'^CI27'+ CRLF)
@@ -258,9 +225,13 @@ EndIf
 		AADD(_aArq,'^PW400'+ CRLF)
 		AADD(_aArq,'^LL200'+ CRLF)
 		AADD(_aArq,'^LS0'+ CRLF)
-		AADD(_aArq,'^FT137,194^A0B,16,15^FH\^CI28^FD'+cMVPAR01a+'^FS^CI27'+ CRLF)
-		AADD(_aArq,'^FT159,194^A0B,16,15^FH\^CI28^FD'+cMVPAR01b+'^FS^CI27'+ CRLF)
-		AADD(_aArq,'^FT182,194^A0B,16,15^FH\^CI28^FD'+cMVPAR01c+'FS^CI27'+ CRLF)
+		nLin:= 137
+		for _i := 1 to len(aTemp)
+			AADD(_aArq,'^FT'+cValtoChar(nLin)+',194^A0B,16,15^FH\^CI28^FD'+aTemp[_i]+'^FS^CI27'+ CRLF)
+			nLin+= 23 
+		Next
+		//AADD(_aArq,'^FT159,194^A0B,16,15^FH\^CI28^FD'+cMVPAR01b+'^FS^CI27'+ CRLF)
+		//AADD(_aArq,'^FT182,194^A0B,16,15^FH\^CI28^FD'+cMVPAR01c+'FS^CI27'+ CRLF)
 		AADD(_aArq,'^FT317,194^A0B,17,18^FH\^CI28^FD'+cMVPAR03+'^FS^CI27'+ CRLF)
 		AADD(_aArq,'^FT341,194^A0B,17,18^FH\^CI28^FD'+cMVPAR04+'^FS^CI27'+ CRLF)
 		AADD(_aArq,'^FT366,194^A0B,18,18^FH\^CI28^FD'+cMVPAR05+'^FS^CI27'+ CRLF)
@@ -269,6 +240,9 @@ EndIf
 		AADD(_aArq,'^XZ'+ CRLF)
 		AaDd(aCodEtq,_aArq)
 		_aArq:= {}
+
+		nSomaSer := Soma1(nSomaSer)
+
 	Next x
 
 		For nY:=1 To Len(aCodEtq)
@@ -281,10 +255,39 @@ EndIf
 	
 		MSCBEND()
 
-		nSomaSer := Soma1(nSomaSer)
 
 	
 	MSCBCLOSEPRINTER()
 	ETQ->(dbCloseArea())
 
 Return ( .T. )
+
+
+
+Static Function QuebraString(cString,nStep)// Considerando espaços
+
+Local aRetorno := {}
+Local d, b
+
+cString := StrTran(cString,Chr(13)," ")
+
+cString += Space(200)
+
+For d := 1 to 500 Step(nStep)
+	If !Empty(Subs(cString,d,nStep))
+		nStep2 := nStep
+		nvar   := 0
+		For b := 1 to 30
+			If !Subs(cString,d+nStep2-1,1) == ' '
+				nStep2  -= 1
+				nvar    += 1
+			Else
+				b := 30
+			EndIf
+		Next b
+		AADD(aRetorno, Subs(cString,d,nStep2) )
+		d -= nvar
+	EndIf
+Next
+
+Return aRetorno

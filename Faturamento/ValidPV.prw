@@ -28,7 +28,7 @@ User Function ValidPV(cPedido,lMsg)
 	Local cParaTI		:= "osmar@opusvp.com.br;denis.vieira@rosenbergerdomex.com.br;"      ///"denis.vieira@rdt.com.br;"  // "marco.aurelio@opusvp.com.br;"
 	Local cParaVEN		:= "dayse.paschoal@rosenbergerdomex.com.br;"      //"dayse.paschoal@rdt.com.br;"   // Chamado 024389
 	Local cParaEXP		:= ""     // "sergio.santos@rdt.com.br;thalita.rufino@rdt.com.br;luiz.pavret@rdt.com.br;"
-	Local cParaFIN		:= "juliane.jordao@rdt.com.br;patricia.vieira@rdt.com.br;adriana.souza@rosenbergerdomex.com.br;" 				 // "juliane.jordao@rosenbergerdomex.com.br;"     // "patricia.vieira@rdt.com.br;juliane.jordao@rdt.com.br;adriana.souza@rdt.com.br;carlos.sepinho@rdt.com.br;"
+	Local cParaFIN		:= "juliane.jordao@rdt.com.br;patricia.vieira@rdt.com.br;adriana.souza@rosenbergerdomex.com.br;" 	 // "juliane.jordao@rosenbergerdomex.com.br;"     // "patricia.vieira@rdt.com.br;juliane.jordao@rdt.com.br;adriana.souza@rdt.com.br;carlos.sepinho@rdt.com.br;"
 	Local cParaFAT		:= ""     // "priscila.silva@rdt.com.br;juliana.gomes@rdt.com.br;"
 	Local cParaCred	    := cParaFIN  + cParaVEN + cParaTI + cParaEXP + cParaFAT
 
@@ -55,7 +55,12 @@ User Function ValidPV(cPedido,lMsg)
 			cTexto 	 := "Cliente BLOQUEADO no cadastro para a OF "+SC5->C5_NUM+ " - " +  cNomeCli+ " / " +SC5->C5_CLIENTE+"-"+SC5->C5_LOJACLI+ Chr(13)+ Chr(13)
 			cTexto   := StrTran(cTexto,Chr(13),"<br>")
 
-			cPara    := cParaCred //+ UsrRetMail(SC5->C5_USER)
+			If U_Validacao("OSMAR")
+				cPara    := cParaCred + UsrRetMail(SC5->C5_USER)
+			Else
+				cPara    := cParaCred
+			EndIf
+
 			cCC      := ""
 			cArquivo := ""
 			If lMsg
@@ -148,7 +153,12 @@ User Function ValidPV(cPedido,lMsg)
 					cTexto 	+= "Limite de Crédito: " + Alltrim(Transform(nLC,"@E 999,999,999.99")) + Chr(13) + Chr(13)
 					//cTexto   := StrTran(cTexto,Chr(13),"<br>")
 
-					cPara    := cParaCred //+ UsrRetMail(SC5->C5_USER)
+					If U_Validacao("OSMAR")
+						cPara    := cParaCred + UsrRetMail(SC5->C5_USER)
+					Else
+						cPara    := cParaCred
+					EndIf
+		
 					cCC      := ""
 					cArquivo := ""
 					If lMsg
@@ -246,7 +256,13 @@ User Function ValidPV(cPedido,lMsg)
 						cTexto += " Condição de Pagamento de Adiantamento INTERNACIONAL utilizada na OF "+SC5->C5_NUM+ " - " +  cNomeCli+ " / " +SC5->C5_CLIENTE+"-"+SC5->C5_LOJACLI+ Chr(13)+ Chr(13)
 						cTexto += " * Em função de Diferenças Cambiais, esta Condição não avalia se os valores Adiantados estão corretos."+ Chr(13)
 						cTexto   := StrTran(cTexto,Chr(13),"<br>")
-						cPara    := cParaFIN + cParaFAT + cParaTI // +UsrRetMail(SC5->C5_USER)
+
+						If U_Validacao("OSMAR")
+							cPara    := cParaFIN + cParaFAT + cParaTI + UsrRetMail(SC5->C5_USER)
+						Else
+						    cPara    := cParaFIN + cParaFAT + cParaTI //+ UsrRetMail(SC5->C5_USER)
+						EndIf
+						
 						cCC      := ""
 						cArquivo := ""
 						If lMsg
@@ -267,7 +283,12 @@ User Function ValidPV(cPedido,lMsg)
 							cTexto 	+= " RA + Cartão Crédito: " + Alltrim(Transform((nAdiant+nVlrCartao),"@E 999,999,999.99")) + Chr(13) + Chr(13)
 							//cTexto   := StrTran(cTexto,Chr(13),"<br>")
 
-							cPara    := cParaCred //+ UsrRetMail(SC5->C5_USER)
+							If U_Validacao("OSMAR")
+								cPara    := cParaCred + UsrRetMail(SC5->C5_USER)
+							Else
+								cPara    := cParaCred //+ UsrRetMail(SC5->C5_USER)
+							EndIf
+
 							cCC      := ""
 							cArquivo := ""
 							If lMsg

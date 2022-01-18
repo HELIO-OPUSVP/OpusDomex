@@ -172,9 +172,9 @@ User Function DOMETDLG()
 					SC5->(dbSeek(xFilial()+SUBSTR(MV_PAR03,1,6)))
 					SC6->(dbSetOrder(1))
 					SC6->(dbSeek(xFilial()+ALLTRIM(MV_PAR03)))
-					U_DOMETQ93(mv_par03,SC6->C6_PRODUTO, SC5->C5_NUM   , mv_par05, dDataBase, .F., '', 0, .F., mv_par04) // Layout 93 - Por Michel A. Sander TELEFONICA
+					U_DOMETQ93(mv_par03,SC6->C6_PRODUTO, SC5->C5_NUM   , mv_par05, dDataBase, .F., '', 0, .T., mv_par04) // Layout 93 - Por Michel A. Sander TELEFONICA
 				Else
-					U_DOMETQ93(mv_par02,SC2->C2_PRODUTO, SC2->C2_PEDIDO, mv_par05, dDataBase, .F., '', 0) // Layout 93 - Por Michel A. Sander TELEFONICA
+					U_DOMETQ93(mv_par02,SC2->C2_PRODUTO, SC2->C2_PEDIDO, mv_par05, dDataBase, .F., '', 0, .T., mv_par04) // Layout 93 - Por Michel A. Sander TELEFONICA
 				EndIf
 			ElseIf mv_par06 == "94"
 				U_DOMETQ94(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie) //Layout 94 - Por Michel A. Sander (ERICSSON JUMPER)
@@ -213,28 +213,37 @@ User Function DOMETDLG()
 				U_DOMET112(mv_par02,mv_par03,mv_par04,mv_par05,/*cNivel*/,/*aFilhas*/{},/*lImpressao*/.T.,/*nPesoVol*/1,/*cVolumeAtu*/,/*lColetor*/.F.)
 			ElseIf mv_par06 == "113" // Layout 113 - (ID CORTE - AVULSA))
 				U_DOMET113(mv_par02,mv_par05,mv_par07)
-			 
+
 			ElseIf mv_par06 == "39" // Layout 39 COPIA DO LAYOUT 002 COM QRCODE
 				U_DOMETQ39(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie)
 			ElseIf mv_par06 == "40"  // Layout 40 COPIA DO LAYOUT 004 COM QRCODE
-				U_DOMETQ40(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie) 
+				U_DOMETQ40(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie)
 			ElseIf mv_par06 == "41"  // Layout Ericsson Zebra
-				U_DOMETQ41(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie) 
+				U_DOMETQ41(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie)
 			ElseIf mv_par06 == "42"
-				U_DOMETQ42(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07) 
+				U_DOMETQ42(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07)
 			ElseIf mv_par06 == "43" // Layout 43 - (NOVO LAYOUT SUBSTITUTO DA 107) Ricardo Roda
 				U_DOMETQ43(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07)
 			ElseIf mv_par06 == "44" // Layout 44 - (NOVO LAYOUT SUBSTITUTO DA 83) Ricardo Roda
 				U_DOMETQ44(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07)
+
+			ElseIf mv_par06 == "45" // Layout 44 - (NOVO LAYOUT SUBSTITUTO DA 83) Ricardo Roda
+				U_DOMETQ45(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07) //Antigo Layout 88 - COM DATAMATRIX e Impressora ZEBRA
+			ElseIf mv_par06 == "46" // Layout 44 - (NOVO LAYOUT SUBSTITUTO DA 83) Ricardo Roda
+				U_DOMETQ46(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07) //Antigo Layout 88 - COM DATAMATRIX e Impressora ZEBRA
+			ElseIf mv_par06 == "47" // Layout 47 - Ricardo Roda
+				U_DOMETQ47(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07)
+
+
 			ElseIf mv_par06 == "115"  // Layout 115 - (ID CORTE FURUKAWA - AVULSA))
 				U_DOMET115(mv_par02,mv_par05,mv_par07)
 			ElseIf mv_par06 == "117"  // Layout 117 - (TELECOM ARGENTINA )
-				U_DOMET117(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie) 
-			EndIf 
+				U_DOMET117(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie)
+			EndIf
 
 
 		EndIf
- 
+
 	End
 
 Return

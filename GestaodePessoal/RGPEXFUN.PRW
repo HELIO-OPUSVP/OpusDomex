@@ -111,7 +111,8 @@ Local nQtdDHome := 0
 		   nValDom := If(SRA->RA_XXREFEI=="S",((nSalUso*0.5)/100),0)
 		   
 		   nDesconto := (nCafe + nValDom)
-		EndIf  
+		EndIf 
+		
 		//Verificar os dias de home Office
 		/*
 		cQryHome := " SELECT TMP.PC_MAT,COUNT(*) QTDABO FROM ( "
@@ -139,7 +140,11 @@ Local nQtdDHome := 0
 		//EndIf
    		//If SRA->RA_SITFOLH == "F" .or. SRA->RA_SITFOLH == "A"
 		   //FGeraVerba( aCodfol[0050,1],(nDesconto/30)*DIASTRAB,,,,"V",,,,dDataBase)
-		FGeraVerba( "419",iif(((nDesconto/30)*(DIASTRAB - nQtdDHome)) >50,50,((nDesconto/30)*(DIASTRAB - nQtdDHome))) ,,,,"V",,,,dDataBase)
+		If SRA->RA_FILIAL == "02" //Filial 02 descontar 1 real.
+			FGeraVerba( "419",1.00 ,,,,"V",,,,dDataBase)
+		Else
+			FGeraVerba( "419",iif(((nDesconto/30)*(DIASTRAB - nQtdDHome)) >50,50,((nDesconto/30)*(DIASTRAB - nQtdDHome))) ,,,,"V",,,,dDataBase)
+		EndIF
 		//Else
 		   //FGeraVerba( aCodfol[0050,1],nDesconto,,,,"V",,,,dDataBase)
 		   //FGeraVerba( "419",nDesconto,,,,"V",,,,dDataBase)

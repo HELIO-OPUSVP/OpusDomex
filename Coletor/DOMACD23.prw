@@ -883,10 +883,26 @@ If U_uMsgYesNo("Deseja gerar NOTA FISCAL?")
 
 				if U_VALIDACAO("MAURESI")
 					_lGnreOK := .T.
+					cAssunto  := "DOMACD23 - 01 - Validacao COLETOR" + SF2->F2_DOC
+					cTexto    := "Entrou na Validacao do Coletor. Usuario:" +Alltrim(UsrRetName(__cUserID))
+					cPara     := "marco.aurelio@opusvp.com.br"
+					cCC       := ""
+					cArquivo  := ""
+					U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
 				endif
 
 				If SF2->F2_FIMP == 'T'  .or. _lGnreOK // Status de NF transmitida   // MARESI 06/12/21			
 //				If SF2->F2_FIMP == 'T'  // Status de NF transmitida
+
+				if U_VALIDACAO("MAURESI")
+					cAssunto  := "DOMACD23 - 02 - Dentro do IF " + SF2->F2_DOC
+					cTexto    := "Dentro do IF na Validacao do Coletor. Usuario:" +Alltrim(UsrRetName(__cUserID))
+					cPara     := "marco.aurelio@opusvp.com.br"
+					cCC       := ""
+					cArquivo  := ""
+					U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
+				endif
+
 					
 					__cNumGuia := 0
 					If SF2->F2_EST <> 'SP' .And. ( SF2->F2_ICMSRET > 0 )

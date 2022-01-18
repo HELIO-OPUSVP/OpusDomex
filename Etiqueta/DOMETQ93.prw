@@ -56,7 +56,8 @@ Local cPorta     := "LPT2"
 Local cRotacao   := "N"      //(N,R,I,B)
 Local cAliasSB1  := SB1->(GetArea())
 Local cAliasSC2  := SC2->(GetArea())
-                              
+Local nX		 := 0 
+Local nEtqQtdI   := 1                             
 //Chamando função da impressora ZEBRA
 If !lControl
 	cPorta := "LPT1"
@@ -77,6 +78,9 @@ EndIf
    
 If !lManual 
    nEtqQtd := 1
+else
+	nEtqQtdI := nEtqQtd
+	nEtqQtd := 1
 EndIf
 
 For nX := 1 to nEtqQtd
@@ -93,12 +97,19 @@ For nX := 1 to nEtqQtd
 		MSCBPRINTER(cModelo,cPorta,,,.F.)
 		MSCBChkStatus(.F.)
 		//	MSCBLOADGRF("ANATEL2.GRF")
+	else
+		MSCBPRINTER(cModelo,cPorta,,,.F.)
+		MSCBChkStatus(.F.)	
 	Endif
 	MSCBLOADGRF("RDT2.GRF")
 	
 	//Inicia impressão da etiqueta
-	MSCBBEGIN(1,5)
-	
+	If !lManual
+		MSCBBEGIN(1,5)	
+	Else
+
+		MSCBBEGIN(nEtqQtdI,5)
+	EndIf
 	nCol    := 06
 	nLin    := 13
 	nLinFim := 85
