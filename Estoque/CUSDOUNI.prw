@@ -1706,11 +1706,11 @@ oFwMsEx:AddColumn( aWorkSheet, aTable , "CUSTO MEDIO " 		, 1,1)
 
 If nContPer == 0   
 	cQry := " SELECT B2_COD AS PRODUTO, B2_LOCAL AS ARMAZEM, replace(B2_QFIM, '.',',') AS QFIM, replace(B2_VFIM1, '.',',') AS VFIM, replace(B2_CM1,'.',',') AS CM  FROM SB2010 AS SB2 "
-	cQry += " WHERE SB2.D_E_L_E_T_='' "
+	cQry += " WHERE SB2.D_E_L_E_T_=''  AND B2_FILIAL='"+xFilial("SB2")+"' "
 	cQry += " AND B2_QFIM<>0 "
 Else
     cQry := " SELECT B9_COD AS PRODUTO, B9_LOCAL AS ARMAZEM, replace(B9_QINI, '.',',') AS QFIM, replace(B9_VINI1, '.',',') AS VFIM, replace(B9_CM1,'.',',') AS CM  FROM SB9010 AS SB9 "
-	 cQry += " WHERE SB9.D_E_L_E_T_='' AND LEFT(B9_DATA,6)='"+cPerAtu+"' "
+	 cQry += " WHERE SB9.D_E_L_E_T_='' AND B9_FILIAL='"+xFilial("SB9")+"' AND LEFT(B9_DATA,6)='"+cPerAtu+"' "
 	 cQry += " AND B9_QINI<>0 "
 EndIf
 If Select("SUPP")>0
@@ -1760,8 +1760,8 @@ If nContPer == 0
 	cQry += " FROM SB9010 AS B9A "
 	cQry += " INNER JOIN SB2010 As SB2 ON B9A.B9_COD=SB2.B2_COD AND B9A.B9_LOCAL=SB2.B2_LOCAL "
 	cQry += " WHERE B9A.D_E_L_E_T_='' AND B9A.B9_DATA='"+DTOS(dMvUlmes)+"' "
-	cQry += " AND SB2.D_E_L_E_T_='' " 
-	cQry += " AND B9A.B9_QINI>0 "     
+	cQry += " AND SB2.D_E_L_E_T_='' AND SB2.B2_FILIAL='"+xFilial("SB2")+"' " 
+	cQry += " AND B9A.B9_QINI>0 AND B9A.B9_FILIAL='"+xFilial("SB9")+"' "     
 Else
 	cQry := " SELECT B9A.B9_COD as PRODUTO, SB9.B9_LOCAL AS ARMAZEM, REPLACE(B9A.B9_QINI, '.',',') AS QTD_MESANTERIOR, REPLACE(B9A.B9_VINI1, '.',',') VL_MESANTERIOR, "
 	cQry += " REPLACE(B9A.B9_CM1, '.',',') CM_MESANTERIOR, REPLACE(SB9.B9_QINI, '.',',') AS QTD_MESATUAL, REPLACE(SB9.B9_VINI1, '.',',') VL_MESATUAL, "
@@ -1769,8 +1769,8 @@ Else
 	cQry += " FROM SB9010 AS B9A "
 	cQry += " INNER JOIN SB9010 As SB9 ON B9A.B9_COD=SB9.B9_COD AND B9A.B9_LOCAL=SB9.B9_LOCAL and LEFT(SB9.B9_DATA,6)='"+cPerAtu+"'  "
 	cQry += " WHERE B9A.D_E_L_E_T_='' AND left(B9A.B9_DATA,6)='"+cPeriodoIni+"'  "  //cPerAnt  :=	AnoMes(MonthSub(dGet1,((1+nContPer)*-1)))
-	cQry += " AND SB9.D_E_L_E_T_='' "
-	cQry += " AND B9A.B9_QINI>0 "     
+	cQry += " AND SB9.D_E_L_E_T_='' AND SB9.B9_FILIAL='"+xFilial("SB9")+"' "
+	cQry += " AND B9A.B9_QINI>0 AND B9A.B9_FILIAL='"+xFilial("SB9")+"' "     
 EndIf
 If Select("SUPP")>0
 	SUPP->( DbCloseArea() )
@@ -1819,12 +1819,12 @@ oFwMsEx:AddColumn( cWorkSheet, cTable , "CUSTO MEDIO " 		, 1,1)
     
 If nContPer == 0   
 	cQry := " SELECT B2_COD AS PRODUTO, B2_LOCAL AS ARMAZEM, replace(B2_QFIM, '.',',') AS QFIM, replace(B2_VFIM1, '.',',') AS VFIM, replace(B2_CM1,'.',',') AS CM  FROM SB2010 AS SB2 "
-	cQry += " WHERE SB2.D_E_L_E_T_='' "
+	cQry += " WHERE SB2.D_E_L_E_T_='' AND B2_FILIAL='"+xFilial("SB2")+"' "
 	cQry += " AND B2_QFIM<>0 "
 	cQry += " and B2_COD IN ('50010100','50010100D','50010100DR','50010100F','50010100J','50010100T') "
 Else
     cQry := " SELECT B9_COD AS PRODUTO, B9_LOCAL AS ARMAZEM, replace(B9_QINI, '.',',') AS QFIM, replace(B9_VINI1, '.',',') AS VFIM, replace(B9_CM1,'.',',') AS CM  FROM SB9010 AS SB9 "
-	 cQry += " WHERE SB9.D_E_L_E_T_='' AND LEFT(B9_DATA,6)='"+cPerAtu+"' "
+	 cQry += " WHERE SB9.D_E_L_E_T_='' AND B9_FILIAL='"+xFilial("SB9")+"' AND LEFT(B9_DATA,6)='"+cPerAtu+"' "
 	 cQry += " AND B9_QINI<>0 "
     cQry += " and B9_COD IN ('50010100','50010100D','50010100DR','50010100F','50010100J','50010100T') "
 EndIf
@@ -1882,13 +1882,13 @@ If nContPer == 0
 	cQry := " SELECT D3_TM, D3_COD, D3_UM, REPLACE(D3_QUANT, '.',',') AS D3_QUANT, D3_CF, D3_CONTA, D3_OP, D3_LOCAL, D3_DOC, D3_EMISSAO, D3_HORA, D3_GRUPO, "
 	cQry += " REPLACE(D3_CUSTO1, '.',',') AS D3_CUSTO1, D3_NUMSEQ, D3_TIPO, D3_USUARIO, D3_LOTECTL, D3_LOCALIZ "
 	cQry += " FROM SD3010 (NOLOCK) AS SD3 "
-	cQry += " WHERE SD3.D_E_L_E_T_='' AND D3_EMISSAO BETWEEN '"+DTOS(dGet1)+"'  AND '"+DTOS(dGet2)+"' AND D3_ESTORNO<>'S' "
+	cQry += " WHERE SD3.D_E_L_E_T_='' AND D3_FILIAL='"+xFilial("SD3")+"' AND  D3_EMISSAO BETWEEN '"+DTOS(dGet1)+"'  AND '"+DTOS(dGet2)+"' AND D3_ESTORNO<>'S' "
 	cQry += " AND D3_CF IN ('RE4','DE4') "        
 Else
 	cQry := " SELECT D3_TM, D3_COD, D3_UM, REPLACE(D3_QUANT, '.',',') AS D3_QUANT, D3_CF, D3_CONTA, D3_OP, D3_LOCAL, D3_DOC, D3_EMISSAO, D3_HORA, D3_GRUPO, "
 	cQry += " REPLACE(D3_CUSTO1, '.',',') AS D3_CUSTO1, D3_NUMSEQ, D3_TIPO, D3_USUARIO, D3_LOTECTL, D3_LOCALIZ "
 	cQry += " FROM SD3010 (NOLOCK) AS SD3 "
-	cQry += " WHERE SD3.D_E_L_E_T_='' AND LEFT(D3_EMISSAO,6)= '"+cPerAtu+"'   AND D3_ESTORNO<>'S' "
+	cQry += " WHERE SD3.D_E_L_E_T_='' AND D3_FILIAL='"+xFilial("SD3")+"' AND LEFT(D3_EMISSAO,6)= '"+cPerAtu+"'   AND D3_ESTORNO<>'S' "
 	cQry += " AND D3_CF IN ('RE4','DE4') "        
 EndIf
 

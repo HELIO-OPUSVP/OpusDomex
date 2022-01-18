@@ -7,7 +7,7 @@
 			"name": "Domex",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
-			"smartclientBin": "C:/Dropbox/Clientes/Domex/remote interno/smartclient64/smartclient.exe",
+			"smartclientBin": "C://Totvs//Protheus//Protheus//bin//smartclient//smartclient.exe",
 			"isMultiSession": true,
 			"enableTableSync": true
 		},
@@ -17,7 +17,7 @@
 			"name": "LOCAL",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
-			"smartclientBin": "C:/Totvs/Protheus/Protheus/bin/smartclient/smartclient.exe",
+			"smartclientBin": "C:/TOTVS/bin/smartclient/smartclient.exe",
 			"isMultiSession": true,
 			"enableTableSync": true
 		}
@@ -122,9 +122,5 @@
 			"description": "<nil>"
 		}
 	],
-<<<<<<< HEAD
-	"lastProgramExecuted": "sigaadv"
-=======
-	"lastProgramExecuted": "SIGAMDI"
->>>>>>> 868e141f33cd682ce0593f7c1b38c0893c81bf80
+	"lastProgramExecuted": "u_mnucoletor"
 }
