@@ -1037,7 +1037,7 @@ Return _Retorno
 //Sleep(nSeg*1000)
 //Return
 
-User function WEBCOL(cAmbiente)
+User Function WEBCOL(cAmbiente)
 
 	Local aAmbiente := {}
 	Local _Retorno  := .T.
