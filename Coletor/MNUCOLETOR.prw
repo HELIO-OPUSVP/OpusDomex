@@ -920,7 +920,7 @@ User Function MsgColetor(cMsg,nSegundos)
 
 	cMsg := AllTrim(cMsg)
 	cAmbiente:= UPPER(GETENVSERV())
-	apMsgYesNo('Ambiente: ' + cAmbiente + ' - Mandar foto para Jonas')
+	//apMsgYesNo('Ambiente: ' + cAmbiente + ' - Mandar foto para Jonas')
 	IF U_WEBCOL(cAmbiente)
 	//	apMsgYesNo('Webcol - Mandar foto para Jonas')
 		nWebPx:= 1.5
@@ -942,7 +942,7 @@ User Function MsgColetor(cMsg,nSegundos)
 		cHover:="background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,stop: 0 gray, stop: 0.4 white,stop: 1 Black);color: #171717; font: bold "+cvaltochar(10*nWebPx)+"px Arial;"+;
 			"background-size:15% 60%;background-position: 1% 33%;background-repeat:no-repeat ;border-radius: 6px;}"
 	Else
-		apMsgYesNo('Windows - Mandar foto para Jonas')
+		//apMsgYesNo('Windows - Mandar foto para Jonas')
 		nWebPx:= 1
 		nFont1:= 17
 		cPush:= "background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,stop: 0 gray, stop: 0.4 white,stop: 1 gray);color: #171717; font: bold "+cvaltochar(10*nWebPx)+"px Arial;"+;
