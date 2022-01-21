@@ -1054,4 +1054,4 @@ User Function WEBCOL(cAmbiente)
 		_Retorno := .F.
 	EndIf
 
-Return cAmbiente
+Return _Retorno
