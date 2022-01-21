@@ -922,7 +922,7 @@ User Function MsgColetor(cMsg,nSegundos)
 	cAmbiente:= UPPER(GETENVSERV())
 	apMsgYesNo('Ambiente: ' + cAmbiente + ' - Mandar foto para Jonas')
 	IF U_WEBCOL(cAmbiente)
-		apMsgYesNo('Webcol - Mandar foto para Jonas')
+	//	apMsgYesNo('Webcol - Mandar foto para Jonas')
 		nWebPx:= 1.5
 		nWebPx2:= 1.3
 		nFont1:= 17*nWebPx
