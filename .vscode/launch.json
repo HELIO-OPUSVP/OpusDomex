@@ -7,7 +7,7 @@
 			"name": "TOTVS LOCAL",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
-			"smartclientBin": "C:/Users/jadar/Meu Drive/projetos/Domex/smartclient64/smartclient.exe",
+			"smartclientBin": "C:/TOTVS/bin/smartclient/smartclient.exe",
 			"isMultiSession": true,
 			"enableTableSync": true
 		}
@@ -21,7 +21,12 @@
 		{
 			"label": "sigaadv",
 			"description": "<nil>"
+		},
+		{
+			"args": [],
+			"label": "u_mnucoletor",
+			"description": ""
 		}
 	],
-	"lastProgramExecuted": "sigaadv"
+	"lastProgramExecuted": "u_mnucoletor"
 }

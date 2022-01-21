@@ -432,8 +432,8 @@ Return
 *---------------------------------------------------------------------------------------------
 Static Function fOkProc()
 *---------------------------------------------------------------------------------------------
-If !Empty(_aCols)
-	fOkGrava()
+If !Empty(_aCols)	
+	MsgRun("Processando","Aguarde...",{|| fOkGrava() })
 Else
 	U_MsgColetor("Não existem informações para serem processadas.")
 	RETURN
@@ -768,7 +768,7 @@ For x := 1 to len(aRecSB7)
     If aRecSB7[x][1] == SB7->(RECNO())
         If SD3->(DBSeek(xFilial("SD3")+SB7->B7_DOC+SB7->B7_COD))
             While SD3->(!EOF()) .AND. SB7->B7_DOC == SD3->D3_DOC .AND. SB7->B7_COD== SD3->D3_COD
-                If SD3->D3_EMISSAO == SB7->B7_DATA .AND. SD3->D3_LOCAL == SB7->B7_LOCAL
+                If SD3->D3_EMISSAO == SB7->B7_DATA .AND. SD3->D3_LOCAL == SB7->B7_LOCAL .AND. SD3->D3_LOCALIZ=SB7->B7_LOCALIZ
                     AADD(aDadosINV, {SD3->D3_COD, SD3->D3_LOCAL, SD3->D3_NUMSEQ, SD3->D3_TM, SD3->D3_QUANT, SD3->D3_CUSTO1} )
                 EndIf
             SD3->(DBSKIP())
@@ -782,8 +782,8 @@ Next x
 
 For x := 1 to len(aDadosINV)
 
-    nPos  := aScan(aDadosZZR,{|x| Alltrim(x[1])==alltrim(aDadosINV[x][1]) .AND. Alltrim(x[2])==alltrim(aDadosINV[x][2]) })
-
+    nPos  := aScan(aDadosZZR,{|aVet| Alltrim(aVet[1])==alltrim(aDadosINV[x][1]) .AND. Alltrim(aVet[2])==alltrim(aDadosINV[x][2]) })
+ 			// aScan( aVetSZY, { |aVet| aVet[1] == SZY->ZY_PRODUTO } )
     If !Empty(nPos)
         If aDadosINV[x][4] == '999'
            aDadosZZR[nPos][3] += "','"+aDadosINV[x][3] 
