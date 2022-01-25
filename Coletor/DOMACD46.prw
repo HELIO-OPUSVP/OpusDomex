@@ -240,7 +240,17 @@ Static Function ValidaEtiq(lTeste)
 				(cAliasSC6)->(dbCloseArea())
 
 				If !Empty(cOpAtual) .Or. cOpAtual == SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN
-					cOpAtual  := SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN
+					If cOpAtual == SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN					
+						cOpAtual  := SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN
+					else
+						U_MsgColetor("Não é possível misturar OP na Paletização")
+						cEtiqueta := Space(_nTamEtiq)
+						oEtiqueta:Refresh()
+						oEtiqueta:SetFocus()
+						(cAliasSC6)->(dbCloseArea())
+						Return (.f.)	
+						
+					Endif
 				else
 					U_MsgColetor("Não é possível misturar OP na Paletização")
 					cEtiqueta := Space(_nTamEtiq)
