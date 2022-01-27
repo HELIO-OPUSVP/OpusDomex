@@ -870,6 +870,10 @@ If U_uMsgYesNo("Deseja gerar NOTA FISCAL?")
 			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 			//³Transmite a nota fiscal								 ³
 			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			
+
+			// MAURESI - IF de geração de NF INIBIDO EM 19/01/2022 para poder gerar as GUIAS GNRE 
+			/*
 			If U_uMsgYesNo("Nota Fiscal '"+SF2->F2_DOC+"' série '"+SF2->F2_SERIE+"' gerada. Deseja transmitir ao SEFAZ?")
 				
 				
@@ -878,32 +882,14 @@ If U_uMsgYesNo("Deseja gerar NOTA FISCAL?")
 				else
 					AutoNfeEnv(cEmpAnt,SF2->F2_FILIAL,"0","1",SF2->F2_SERIE,SF2->F2_DOC,SF2->F2_DOC)
 				endif
-				
-				_lGnreOK := .F.
+			*/	
 
-				if U_VALIDACAO("MAURESI")
-					_lGnreOK := .T.
-					cAssunto  := "DOMACD23 - 01 - Validacao COLETOR" + SF2->F2_DOC
-					cTexto    := "Entrou na Validacao do Coletor. Usuario:" +Alltrim(UsrRetName(__cUserID))
-					cPara     := "marco.aurelio@opusvp.com.br"
-					cCC       := ""
-					cArquivo  := ""
-					U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
-				endif
+			    U_MsgColetor("Nota Fiscal '"+SF2->F2_DOC+"' série '"+SF2->F2_SERIE+"' gerada.")   //MAURESI - Adicionado em 21/01/2022
+
+				_lGnreOK := .T. //.F.
 
 				If SF2->F2_FIMP == 'T'  .or. _lGnreOK // Status de NF transmitida   // MARESI 06/12/21			
-//				If SF2->F2_FIMP == 'T'  // Status de NF transmitida
-
-				if U_VALIDACAO("MAURESI")
-					cAssunto  := "DOMACD23 - 02 - Dentro do IF " + SF2->F2_DOC
-					cTexto    := "Dentro do IF na Validacao do Coletor. Usuario:" +Alltrim(UsrRetName(__cUserID))
-					cPara     := "marco.aurelio@opusvp.com.br"
-					cCC       := ""
-					cArquivo  := ""
-					U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
-				endif
-
-					
+				
 					__cNumGuia := 0
 					If SF2->F2_EST <> 'SP' .And. ( SF2->F2_ICMSRET > 0 )
 						
@@ -964,6 +950,7 @@ If U_uMsgYesNo("Deseja gerar NOTA FISCAL?")
 							SF6->F6_CODPROD := If ( AllTrim(SF2->F2_EST) $ GetMv("MV_GNREPRO") , 46, 0)
 							SF6->F6_DTPAGTO := SF2->F2_EMISSAO
 							SF6->F6_REF		 := "1" // Mensal -  Tratar GNRE de Sergipe.   Mauresi - 01/08/2017.
+							SF6->F6_INSC	:= Posicione("SA1",1,xFilial("SA1")+SF2->F2_CLIENTE+SF2->F2_LOJA,"A1_INSCR")   // MAURESI - 19/01/2022
 
 							// Alimenta campos novos na Guia para não dar erro de transmissao, após atualizacao de 15/10/2020
 							IF SF2->F2_EST $ "AC/AL/AP/BA/CE/DF/GO/MA/MG/MS/MT/PA/PI/PR/RO/RR/SE/TO/"
@@ -1054,10 +1041,10 @@ If U_uMsgYesNo("Deseja gerar NOTA FISCAL?")
 					
 					//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 					//³Atualiza dados de exportação									³
-       			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ               
-       			If SuperGetMV("MV_XANACRE")    // Parâmetro geral de liga/desliga análise de Crédito Domex
-		       	   U_TRATASE1(SF2->F2_DOC,SF2->F2_SERIE,SF2->F2_CLIENTE,SF2->F2_LOJA)
-		       	EndIf
+					//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ               
+					If SuperGetMV("MV_XANACRE")    // Parâmetro geral de liga/desliga análise de Crédito Domex
+					U_TRATASE1(SF2->F2_DOC,SF2->F2_SERIE,SF2->F2_CLIENTE,SF2->F2_LOJA)
+					EndIf
 				Else
 					
 					U_MsgColetor("Nota Fiscal não transmitida.")
@@ -1071,14 +1058,17 @@ If U_uMsgYesNo("Deseja gerar NOTA FISCAL?")
 					lFatRet := .F.
 					
 				EndIf
-				
+
+			//MAURESI - Final do IF  inibido em 19/01/2022 para poder gerar as Guias GNRE	
+			/*
 			Else
 				
 				U_MsgColetor("Transmissão cancelada.")
 				lFatRet := .F.
 				
 			EndIf
-			
+			*/
+
 		Else
 			
 			U_MsgColetor("Nota gerada mas não encontrada no SF2.")
