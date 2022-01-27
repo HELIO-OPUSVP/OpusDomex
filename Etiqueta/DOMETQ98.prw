@@ -127,9 +127,9 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 				//Alert('cSetor '+ cSetor)
 				//If !U_Validacao()
 					If !Empty(cSetor)
-						MSCBSAY(30,01,cSetor,"N","1","1,2")
+						MSCBSAY(30,03,cSetor,"N","1","1,2")
 					Else
-						MSCBSAY(30,01,cSetor,"N","1","1,2")
+						MSCBSAY(30,03,cSetor,"N","1","1,2")
 					EndIf
 
 					MSCBSayBar(30,10,AllTrim(XD1->XD1_XXPECA),"N","MB04",10,.F.,.T.,.F.,,3,Nil,Nil,Nil,Nil,Nil)
