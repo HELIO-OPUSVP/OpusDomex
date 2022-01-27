@@ -20,7 +20,7 @@ Default nMaxReg := 10
 //MSGALERT('<F5> Desabilitado, rotina de sincronismo por Scheduler') //mls 23/04/2021
 MsgRun("Sincronizando...","Favor Aguardar.....",{|| ProcRun2(nMaxReg) }) //mls 23/04/2021
 //MsgRun("Sincronizando...","Favor Aguardar.....",{|| U_SITBOPS2() }) //mls 03/11/2021
-MsgRun("Sincronizando...","Favor Aguardar.....",{|| U_SITBOPUS() }) 
+
 
 Return 
 
