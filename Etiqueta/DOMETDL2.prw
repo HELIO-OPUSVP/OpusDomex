@@ -177,7 +177,7 @@ User Function DOMETDL2()
 			ElseIf mv_par06 == "90"
 				U_DOMETQ90(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,_PesoAuto,lColetor,cNumSerie,NIL) //Layout 90 - Por Michel A. Sander
 			ElseIf mv_par06 == "93"
-				U_DOMETQ93(mv_par02,SC2->C2_PRODUTO, SC2->C2_PEDIDO, mv_par05, dDataBase, .F., '', 0)   // Layout 93 - Por Michel A. Sander TELEFONICA
+				U_DOMETQ93(mv_par02,SC2->C2_PRODUTO, SC2->C2_PEDIDO, mv_par05, dDataBase, .F., '', 0,.T.)   // Layout 93 - Por Michel A. Sander TELEFONICA
 			ElseIf mv_par06 == "94"
 				U_DOMETQ94(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,_PesoAuto,lColetor,cNumSerie,NIL) //Layout 94 - Por Michel A. Sander (Ericsson)
 				Sleep(5000)		// Delay de 5 segundos para buffer

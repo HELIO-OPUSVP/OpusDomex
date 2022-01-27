@@ -38,6 +38,17 @@ User Function M410LIOK()
 	aAreaSB1  := SB1->( GetArea() )
 	aAreaSF4  := SF4->( GetArea() )
 	aAreaSD4  := SD4->( GetArea() )
+	aAreaSA1  := SA1->( GetArea() )
+
+	If U_Validacao("OSMAR")
+		SA1->(dbSetOrder(01))
+		SA1->( dbSeek(xFilial()+M->C5_CLIENTE+M->C5_LOJACLI) )
+		If SA1->A1_XMARGEM > 0
+			nMargem := SA1->A1_XMARGEM
+		Else
+			nMargem := GetMV("MV_XMARGEM")
+		Endif
+	EndIf
 
 	nPC6_ITEM    := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_ITEM"    } )
 	nPC6_PRODUTO := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_PRODUTO" } )
@@ -210,7 +221,7 @@ _Retorno := .F.
 		EndIf
 	EndIf
 */
-
+	RestArea(aAreaSA1)
 	RestArea(aAreaSD4)
 	RestArea(aAreaSF4)
 	RestArea(aAreaSB1)

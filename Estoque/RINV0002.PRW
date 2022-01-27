@@ -78,7 +78,8 @@ TRCell():New(oSection1,"PERCAJU"          ,,"Perc. Ajuste"        , ,010        
 oSection1:SetHeaderPage(.T.)
 
 Private _cAlias    := GetNextAlias()              
-Private cPerFil    := mv_par02+''+mv_par01
+Private cPerIni    := mv_par03+''+mv_par01+'01'
+Private cPerFim    := DTOS(LASTDAY(STOD(mv_par03+''+mv_par02+'01')))
 
 
 BeginSql Alias _cAlias
@@ -110,6 +111,9 @@ SELECT X6_CONTEUD FROM SX6010 (NOLOCK) AS SX6 WHERE SX6.D_E_L_E_T_='' AND X6_VAR
 
 FROM ZZR010 (NOLOCK) AS ZZR
 WHERE ZZR.D_E_L_E_T_=''
+AND ZZR_DTPLAN BETWEEN %Exp:cPerIni%  AND  %Exp:cPerFim% 
+
+
 
 GROUP BY ZZR_LOCAL
 
@@ -156,7 +160,7 @@ SELECT X6_CONTEUD FROM SX6010 (NOLOCK) AS SX6 WHERE SX6.D_E_L_E_T_='' AND X6_VAR
 
 FROM ZZR010 (NOLOCK) AS ZZR
 WHERE ZZR.D_E_L_E_T_=''
-
+AND ZZR_DTPLAN BETWEEN %Exp:cPerIni%  AND  %Exp:cPerFim% 
 GROUP BY ZZR_LOCAL, ZZR_PRODUT, ZZR_DESCRI, ZZR_TIPO
 
 ) AS FINAL
@@ -272,11 +276,11 @@ Local i, j
 	aRegistros:={}
 //                1      2    3                  4  5      6     7  8  9  10  11  12 13     14  15    16 17 18 19 20     21  22 23 24 25   26 27 28 29  30       31 32 33 34 35  36 37 38 39    40 41 42 43 44
 AADD(aRegistros,{_cPerg,"01","Mês de         ","","","mv_ch1","C",02,00,00,"G","((Val(Mv_Par01)>0).And.(Val(Mv_Par01)<=12))","Mv_Par01","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
-AADD(aRegistros,{_cPerg,"02","Ano de         ","","","mv_ch2","C",04,00,00,"G","(Len(AllTrim(Mv_Par02))==4)","Mv_Par02","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
-AADD(aRegistros,{_cPerg,"03","Mês Até        ","","","mv_ch3","C",02,00,00,"G","((Val(Mv_Par03)>0).And.(Val(Mv_Par03)<=12))","Mv_Par03","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
-AADD(aRegistros,{_cPerg,"04","Ano Até        ","","","mv_ch4","C",04,00,00,"G","(Len(AllTrim(Mv_Par04))==4) .and. mv_par04==mv_par02","Mv_Par04","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
-AADD(aRegistros,{_cPerg,"05","Do  Local     ?","","","mv_ch5","C",02,00,00,"G","","Mv_Par05","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
-AADD(aRegistros,{_cPerg,"06","Até Local     ?","","","mv_ch6","C",02,00,00,"G","","Mv_Par06","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
+//AADD(aRegistros,{_cPerg,"02","Ano de         ","","","mv_ch2","C",04,00,00,"G","(Len(AllTrim(Mv_Par02))==4)","Mv_Par02","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
+AADD(aRegistros,{_cPerg,"02","Mês Até        ","","","mv_ch2","C",02,00,00,"G","((Val(Mv_Par02)>0).And.(Val(Mv_Par02)<=12))","Mv_Par02","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
+AADD(aRegistros,{_cPerg,"03","Ano           ","","","mv_ch3","C",04,00,00,"G","(Len(AllTrim(Mv_Par03))==4) ","Mv_Par03","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
+AADD(aRegistros,{_cPerg,"04","Do  Local     ?","","","mv_ch4","C",02,00,00,"G","","Mv_Par04","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
+AADD(aRegistros,{_cPerg,"05","Até Local     ?","","","mv_ch5","C",02,00,00,"G","","Mv_Par05","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""})
 
 
 DbSelectArea("SX1")

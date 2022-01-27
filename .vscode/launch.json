@@ -4,20 +4,10 @@
 		{
 			"type": "totvs_language_debug",
 			"request": "launch",
-			"name": "Domex",
+			"name": "TOTVS LOCAL",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
-			"smartclientBin": "C:/Dropbox/Clientes/Domex/remote interno/smartclient64/smartclient.exe",
-			"isMultiSession": true,
-			"enableTableSync": true
-		},
-		{
-			"type": "totvs_language_debug",
-			"request": "launch",
-			"name": "LOCAL",
-			"program": "${command:AskForProgramName}",
-			"cwb": "${workspaceFolder}",
-			"smartclientBin": "C:/Totvs/Protheus/Protheus/bin/smartclient/smartclient.exe",
+			"smartclientBin": "C:/TOTVS/bin/smartclient/smartclient.exe",
 			"isMultiSession": true,
 			"enableTableSync": true
 		}
@@ -25,26 +15,7 @@
 	"lastPrograms": [
 		{
 			"args": [],
-			"label": "u_M460FIM",
-			"description": ""
-		},
-		{
-			"args": [],
 			"label": "sigaadv",
-			"description": ""
-		},
-		{
-			"args": [],
-			"label": "u_mnucoletor",
-			"description": ""
-		},
-		{
-			"label": "u_mnucoletor",
-			"description": "<nil>"
-		},
-		{
-			"args": [],
-			"label": "u_LayGrid",
 			"description": ""
 		},
 		{
@@ -52,79 +23,10 @@
 			"description": "<nil>"
 		},
 		{
-			"label": "SIGAESP",
-			"description": "<nil>"
-		},
-		{
 			"args": [],
-			"label": "u_LayLinear",
+			"label": "u_mnucoletor",
 			"description": ""
-		},
-		{
-			"args": [],
-			"label": "U_WMSA033",
-			"description": ""
-		},
-		{
-			"label": "VTDEBUG",
-			"description": "<nil>"
-		},
-		{
-			"label": "SIGA",
-			"description": "<nil>"
-		},
-		{
-			"label": "u_WEBCOL",
-			"description": "<nil>"
-		},
-		{
-			"label": "SIGAEST",
-			"description": "<nil>"
-		},
-		{
-			"label": "SIGApcp",
-			"description": "<nil>"
-		},
-		{
-			"label": "SIGAfat",
-			"description": "<nil>"
-		},
-		{
-			"label": "U",
-			"description": "<nil>"
-		},
-		{
-			"label": "U_WEB",
-			"description": "<nil>"
-		},
-		{
-			"label": "SIGACFG",
-			"description": "<nil>"
-		},
-		{
-			"label": "APSDU",
-			"description": "<nil>"
-		},
-		{
-			"label": "U_",
-			"description": "<nil>"
-		},
-		{
-			"label": "u_we",
-			"description": "<nil>"
-		},
-		{
-			"label": "u_mnu02coletor",
-			"description": "<nil>"
-		},
-		{
-			"label": "SIGAMDI",
-			"description": "<nil>"
 		}
 	],
-<<<<<<< HEAD
-	"lastProgramExecuted": "sigaadv"
-=======
-	"lastProgramExecuted": "SIGAMDI"
->>>>>>> 868e141f33cd682ce0593f7c1b38c0893c81bf80
+	"lastProgramExecuted": "u_mnucoletor"
 }

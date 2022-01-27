@@ -172,9 +172,9 @@ User Function DOMETDLG()
 					SC5->(dbSeek(xFilial()+SUBSTR(MV_PAR03,1,6)))
 					SC6->(dbSetOrder(1))
 					SC6->(dbSeek(xFilial()+ALLTRIM(MV_PAR03)))
-					U_DOMETQ93(mv_par03,SC6->C6_PRODUTO, SC5->C5_NUM   , mv_par05, dDataBase, .F., '', 0, .F., mv_par04) // Layout 93 - Por Michel A. Sander TELEFONICA
+					U_DOMETQ93(mv_par03,SC6->C6_PRODUTO, SC5->C5_NUM   , mv_par05, dDataBase, .F., '', 0, .T., mv_par04) // Layout 93 - Por Michel A. Sander TELEFONICA
 				Else
-					U_DOMETQ93(mv_par02,SC2->C2_PRODUTO, SC2->C2_PEDIDO, mv_par05, dDataBase, .F., '', 0) // Layout 93 - Por Michel A. Sander TELEFONICA
+					U_DOMETQ93(mv_par02,SC2->C2_PRODUTO, SC2->C2_PEDIDO, mv_par05, dDataBase, .F., '', 0, .T., mv_par04) // Layout 93 - Por Michel A. Sander TELEFONICA
 				EndIf
 			ElseIf mv_par06 == "94"
 				U_DOMETQ94(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie) //Layout 94 - Por Michel A. Sander (ERICSSON JUMPER)
