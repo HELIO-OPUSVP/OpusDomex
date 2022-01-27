@@ -299,7 +299,7 @@ Static Function BuscaEmpOp(__cFilial)
 				EndIf
 			Next ns
 		Endif
-
+//
 		cQryProd := U_fRetQryw39("1"/*cTipoCon*/,cGrupoProd,dData,"",Nil,__cFilial)
 
 		If Select("TEMPS") > 0
@@ -983,7 +983,7 @@ User Function FRetQryw39(cTipoCon,cGrupoProd,dData,cCodProdut,cNumOpCon,__cFilia
 	Local cRet := ""
 	Default cTipoCon := '1' //1-Produto,2-OP's
 	Default cNumOpCon := ""
-	
+	//If (Upper(GetEnvServ()) == 'HOMOLOGACAO') .OR. .T.
 
 	If cTipoCon == '1'
 		cRet :=         " SELECT EMPOP.*,ISNULL(SB2.B2_QATU,0) QTDEST , ISNULL(B2_RESERVA + B2_QEMP + B2_QEMPSA,0) RESERVAS FROM ( "

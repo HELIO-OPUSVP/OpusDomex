@@ -239,24 +239,22 @@ Static Function ValidaEtiq(lTeste)
 				
 				(cAliasSC6)->(dbCloseArea())
 
-				If !Empty(cOpAtual) .Or. cOpAtual == SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN
-					If cOpAtual == SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN					
+				If Empty(cOpAtual) .Or. cOpAtual == SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN
+					//If cOpAtual == SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN					
 						cOpAtual  := SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN
-					else
+					/*else
 						U_MsgColetor("Nгo й possнvel misturar OP na Paletizaзгo")
 						cEtiqueta := Space(_nTamEtiq)
 						oEtiqueta:Refresh()
-						oEtiqueta:SetFocus()
-						(cAliasSC6)->(dbCloseArea())
+						oEtiqueta:SetFocus()					
 						Return (.f.)	
 						
-					Endif
+					Endif*/
 				else
 					U_MsgColetor("Nгo й possнvel misturar OP na Paletizaзгo")
 					cEtiqueta := Space(_nTamEtiq)
 					oEtiqueta:Refresh()
-					oEtiqueta:SetFocus()
-					(cAliasSC6)->(dbCloseArea())
+					oEtiqueta:SetFocus()					
 					Return (.f.)	
 				Endif
 				
@@ -403,7 +401,7 @@ SB1->(dbSetOrder(1))
 	EndIf
 
 	//conforme solicitaзгo do Denis em 15/10/2021 quando o cliente for a claro e a filial 02 imprimir este layout  
-	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) $ "DROP/PCON" )
+	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) $ "DROP/PCON/FTTA" )
 		//ЪДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДї
 		//іLAYOUT 94 - Etiqueta Nivel 3												   	і
 		//АДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДДЩ

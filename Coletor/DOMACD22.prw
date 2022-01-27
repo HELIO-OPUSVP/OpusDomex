@@ -380,7 +380,7 @@ SB1->(dbSetOrder(1))
 	EndIf
 
 	//conforme solicita豫o do Denis em 15/10/2021 quando o cliente for a claro e a filial 02 imprimir este layout  
-	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) $ "DROP/PCON" )
+	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) $ "DROP/PCON/FTTA")
 		//旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커
 		//쿗AYOUT 94 - Etiqueta Nivel 3												   	�
 		//읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸

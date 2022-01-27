@@ -1550,7 +1550,7 @@ User Function EtPgOP39(cNumOp,cCodProd,cDescProd,nQtdProd,lParcial,nSeqEtq,nQtdT
 	MSCBSay(28,05,"Descr:"+cDescProd,"N","2","1,1")
 	//      C  L
 	MSCBSay(28,18," QTD: "                           ,"N","2","1,1")
-	MSCBSay(35,18,Transform(nQtdProd,"@E 99,999"),"N","4","1,1")
+	MSCBSay(35,18,Transform(nQtdProd,"@E 9999.99"),"N","4","1,1")
 
 	MSCBSay(50,18,"OP: " + cNumOp     ,"N","2","1,1")
 
