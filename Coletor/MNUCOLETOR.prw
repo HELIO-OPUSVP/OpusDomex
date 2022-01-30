@@ -237,6 +237,7 @@ Static Function ColetorMenu(cDep)
 		AADD(aAcessos, 12)
 		AADD(aAcessos, 13)
 		//AADD(aAcessos, 14)
+		AADD(aAcessos, 15)
 
 	EndIf
 
@@ -304,7 +305,7 @@ Static Function ColetorMenu(cDep)
 	If 'JACKSON.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
 		If aScan(aAcessos,22) <> 0
 			Private oBtn04 := Nil
-			@ nLin, nCol BUTTON oBtn04 PROMPT "Paletização Produção"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACD46(), U_DOMACD46())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			@ nLin, nCol BUTTON oBtn04 PROMPT "Paletização Produção"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW46(), U_DOMACD46())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
 				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
 				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
@@ -785,8 +786,7 @@ Static Function ColetorMenu(cDep)
 		nLin += nSkipLin
 	EndIf
 
-	If aScan(aAcessos,14) <> 0 ;
-
+	If aScan(aAcessos,14) <> 0
 		Private oBtn22 := Nil
 		@ nLin, nCol BUTTON oBtn22 PROMPT "Desmonta Embalagem MG" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW29(), U_DOMACD29())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avgarmazem.png);"+cPush+;
@@ -795,6 +795,18 @@ Static Function ColetorMenu(cDep)
 		oBtn22:SetCSS( cCSSBtN1 )
 		nLin += nSkipLin
 	EndIf
+	If 'RICARDO.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
+		If aScan(aAcessos,15) <> 0
+			Private oBtn04 := Nil
+			@ nLin, nCol BUTTON oBtn04 PROMPT "Paletização Produção MG"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW46(), U_DOMACD46())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
+				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
+				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
+			oBtn04:SetCSS( cCSSBtN1 )
+			nLin += nSkipLin
+		EndIf
+	EndIf
+
 	ACTIVATE MSDIALOG oDlgMenu01 // ON INIT EnchoiceBar( oDlgMenu01,{|| nOpca := 0,oDlgMenu01:End()},{|| nOpca := 0,oDlgMenu01:End()} ) //CENTER
 
 	If nOpca == 20
@@ -922,7 +934,7 @@ User Function MsgColetor(cMsg,nSegundos)
 	cAmbiente:= UPPER(GETENVSERV())
 	//apMsgYesNo('Ambiente: ' + cAmbiente + ' - Mandar foto para Jonas')
 	IF U_WEBCOL(cAmbiente)
-	//	apMsgYesNo('Webcol - Mandar foto para Jonas')
+		//	apMsgYesNo('Webcol - Mandar foto para Jonas')
 		nWebPx:= 1.5
 		nWebPx2:= 1.3
 		nFont1:= 17*nWebPx
