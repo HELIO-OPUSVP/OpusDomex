@@ -101,7 +101,7 @@ Static Function ExplCusSG1(cProduto,cCod,nQtde,nCusTotal)
 			Endif
 
 			//Guarda o produto com custo zerado
-			If nCusto = 0 .And. (cProduto <> SG1->G1_COMP)
+			If nCusto = 0  .And.  SB1->B1_TIPO <> "PI"        // .And. (cProduto <> SG1->G1_COMP)
 				//AADD(aCustErros,{SG1->G1_COMP,'Componente sem custo!!'})
 				lOk := .F.
 			EndIf
