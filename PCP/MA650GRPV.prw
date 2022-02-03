@@ -57,18 +57,36 @@ User Function MA650GRPV()
 	SC2->(dbSetOrder(1))
 	SC5->(dbSetOrder(1))
 	If SC5->(dbSeek(xFilial("SC5")+SC6->C6_NUM))
-		If SA1->(dbSeek(xFilial("SA1")+SC5->C5_CLIENTE))
-			If SC2->(dbSeek(xFilial("SC2")+cNumOp+cItemOp))
-				While SC2->(!EOF()) .and. SC2->C2_FILIAL+SC2->C2_NUM+SC2->C2_ITEM == xFilial("SC2")+cNumOp+cItemOp
-					If Reclock("SC2",.F.)
-						SC2->C2_CLIENT := SA1->A1_COD
-						SC2->C2_NCLIENT := SA1->A1_NOME
-						SC2->(msUnlock())
-					Endif
-					SC2->(dbSkip())
-				Enddo
+		If U_VALIDACAO("HELIO")
+			If SA1->(dbSeek(xFilial("SA1")+SC5->C5_CLIENTE+SC5->C5_LOJACLI))
+				If SC2->(dbSeek(xFilial()+cNumOp+cItemOp))
+					While SC2->(!EOF()) .and. SC2->C2_FILIAL+SC2->C2_NUM+SC2->C2_ITEM == xFilial("SC2")+cNumOp+cItemOp
+						If Reclock("SC2",.F.)
+							SC2->C2_CLIENT  := SA1->A1_COD
+							If SC2->( FieldPos("C2_XLOJA") ) > 0
+								SC2->C2_XLOJA   := SA1->A1_LOJA
+							EndIf
+							SC2->C2_NCLIENT := SA1->A1_NOME
+							SC2->(msUnlock())
+						Endif
+						SC2->(dbSkip())
+					Enddo
+				Endif
 			Endif
-		Endif
+		Else
+			If SA1->(dbSeek(xFilial("SA1")+SC5->C5_CLIENTE))
+				If SC2->(dbSeek(xFilial("SC2")+cNumOp+cItemOp))
+					While SC2->(!EOF()) .and. SC2->C2_FILIAL+SC2->C2_NUM+SC2->C2_ITEM == xFilial("SC2")+cNumOp+cItemOp
+						If Reclock("SC2",.F.)
+							SC2->C2_CLIENT := SA1->A1_COD
+							SC2->C2_NCLIENT := SA1->A1_NOME
+							SC2->(msUnlock())
+						Endif
+						SC2->(dbSkip())
+					Enddo
+				Endif
+			Endif
+		EndIf
 	Endif
 
 	RestArea(aAreaSA1)
