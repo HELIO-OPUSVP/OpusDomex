@@ -26,7 +26,9 @@ User Function VldMarge(lMsg,lWflow)
 	Local cPara      := ""
 	Local cCC        := ""
 	Local cArquivo   := ""
+	Local cMudouMargem := ""
 	Local aAreaSA1   := SA1->( GetArea() )
+	Local aAreaZZF   := ZZF->( GetArea() )
 
 	U_xGrvPrnet()
 
@@ -61,9 +63,16 @@ User Function VldMarge(lMsg,lWflow)
 		EndIf
 	EndIf
 
-	If lWflow .And. cTexto <> ""
+
+	cMudouMargem := ""
+
+	If ZZF->( dbSeek(xFilial()+"MRG" + M->C5_NUM ) )
+		cMudouMargem := ZZF->ZZF_STACUS
+	EndIf
+
+	If lWflow .And. cTexto <> "" .And. cMudouMargem = "T"
 		cAssunto := "Pedido de Venda "+M->C5_NUM+ " BLOQUEADO - Margem Abaixo do Padrão "
-		cPara := "osmar@opusvp.com.br;dayse.paschoal@rosenbergerdomex.com.br"
+		cPara := "osmar@opusvp.com.br;dayse.paschoal@rosenbergerdomex.com.br"	
 		cCC := ""
 		cArquivo := ""
 		cTexto := "CLIENTE: "+M->C5_CLIENTE+"/"+M->C5_LOJACLI+" - "+ SA1->A1_NREDUZ + Chr(13)+;
@@ -78,7 +87,7 @@ User Function VldMarge(lMsg,lWflow)
 	If cTexto == ""
 	   Alert("Margem de lucro dentro dos parametros!...")
 	EndIf
-
+	RestArea(aAreaZZF)
 	RestArea(aAreaSA1)
 Return(lRet)
 
