@@ -161,7 +161,7 @@ User Function DOMCORT()
 
 	@ 160, 095 BUTTON oButton2 PROMPT "Iniciar" 		SIZE 030, 027 OF oDlg ACTION (fCortIni(),MontaaLbx() ) FONT oFont14 PIXEL
 	@ 200, 095 BUTTON oButton4 PROMPT "Zerar" 			SIZE 030, 027 OF oDlg ACTION (fZera() ) FONT oFont14 PIXEL
-	@ 240, 095 BUTTON oButton3 PROMPT "Concluir" 		SIZE 030, 027 OF oDlg ACTION (fVldApont(cCodOP,cCFibra,nApont), nApont:= 0 ) FONT oFont14 PIXEL
+	@ 240, 095 BUTTON oButton3 PROMPT "Concluir" 		SIZE 030, 027 OF oDlg ACTION (iif(U_VALIDACAO("RODA") .OR. .T.,fVldApont2(cCodOP,cCFibra,nApont),fVldApont(cCodOP,cCFibra,nApont)), nApont:= 0 ) FONT oFont14 PIXEL
 
 	aHeader := {}
 	aCols   := {}
@@ -958,6 +958,9 @@ Static Function fVldApont(cCodOp,cCFibra, nApont)
 								XD4->XD4_NOMUSR	:= cUserSis
 								XD4->XD4_DOC    := _cPrxDoc
 								XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
+								IF U_VALIDACAO("RODA").OR. .T.
+									XD4->XD4_PRODUT	:= cCFibra
+								ENDIF
 								XD4->(MsUnlock())
 								_cNumSerie += 1
 							Next _i
@@ -1080,6 +1083,9 @@ Static Function fVldApont(cCodOp,cCFibra, nApont)
 						XD4->XD4_NOMUSR	:= cUserSis
 						XD4->XD4_DOC      := _cPrxDoc
 						XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
+						IF U_VALIDACAO("RODA") .OR. .T.
+							XD4->XD4_PRODUT	:= cCFibra
+						ENDIF
 						XD4->(MsUnlock())
 						_cNumSerie += 1
 				Next _i
@@ -1112,6 +1118,7 @@ If nPos > 0
 	
 Endif
 
+
 oQtdOp:Refresh()
 oQtdProd:Refresh()
 oQtdRest:Refresh()
@@ -1123,6 +1130,198 @@ oGetDados:Refresh()
 fVldEti(cEtiqOfc)
 
 Return
+
+Static Function fVldApont2(cCodOp,cCFibra, nApont)
+
+	Local nTransf:= 0
+	Local lImpEti:= .F.
+	Local nQtLbSup:= SuperGetMv("MV_XQTLSUP",.F.,0)
+	Local _i
+
+	Begin Transaction
+
+		If !empty(cCodOp) .and. !empty(cCFibra) .and. nApont > 0
+			dbSelectArea("ZZ4")
+			dbSetOrder(2)
+			if ZZ4->(dbSeek(xFilial("ZZ4")+Alltrim(cCodOp)+PADR(alltrim(cCFibra),nTamPro)+PADR(__cUserId,8)+cArm))
+
+				If (nApont > ZZ4->ZZ4_QEMCRT )
+					MyMsg("Quantidade apontada excede a quantidade em Corte.",1)
+					nApont:=0
+					Return
+				Endif
+
+				If ((ZZ4->ZZ4_QTCORT + nApont)>ZZ4->ZZ4_QTDORI )
+					MyMsg("Quantidade apontada excede o empenho.",1)
+					nApont:=0
+					Return
+				Endif
+
+				If ((ZZ4->ZZ4_QTCORT + nApont)<= ZZ4->ZZ4_QTDORI )
+					If  nTamRolo - (nApont * nTamCort) < 0
+						If MyMsg ("Quantidade apontada excede a quantidade do Rolo!"+Enter+"Confirma o apontamento?",2)
+							nQtAjusM:= Criavar("D3_QUANT")
+							//*****   Tela liberação supervisor   ***
+							IF ((nApont * nTamCort) - nTamRolo) <  nQtLbSup
+								_lcontinua:= .T.
+							Else
+								AjustSup(cCFibra,cValtoChar(nTamRolo),(nApont * nTamCort),cNFibra,cEtiqOfc,"G" )
+								if lAjusteOk
+									_lcontinua:= .T.
+								Else
+									MYMSG("A Liberação da Gerência foi recusada e por isso o apontamento não será realizado!",1)
+									_lcontinua:= .F.
+								Endif
+							Endif
+						Endif
+					ElseIf  nTamRolo - (nApont * nTamCort) >= 0
+						_lcontinua:= .T.
+					Endif
+
+					If _lContinua
+
+						ZZ4->(RecLock("ZZ4",.F.))
+						ZZ4->ZZ4_QTCORT += nApont
+						ZZ4->ZZ4_QEMCRT -= nApont
+						ZZ4->ZZ4_STATUS := "2"
+						ZZ4->ZZ4_QTDUSR += nApont
+						ZZ4->( MsUnlock() )
+
+						if cArm == "96"
+							SZA->(DbSetOrder(RetOrder("SZA",ZA_FILIAL+ZA_OP+ZA_PRODUTO)))
+							IF SZA->(Dbseek("SZA",xFilial("SZA")+Alltrim(cCodOp)+PADR(alltrim(cCFibra),nTamPro)))
+								Reclock("SZA",.F.)
+								SZA->ZA_SALDO := (SZA->ZA_SALDO - nApont)
+								SZA->( msUnlock() )
+							else
+								MYMSG("Perda não encontrada para atualização do status!",1)
+							endif
+						Endif
+
+						dbSelectArea("ZZ4")
+						ZZ4->(DbSetOrder(2))
+						if ZZ4->(dbSeek(xFilial("ZZ4")+Alltrim(cCodOp)+PADR(alltrim(cCFibra),nTamPro)+PADR(__cUserId,8)+cArm))
+							nQtdSD3:= fQtdSD3((ZZ4->ZZ4_QTDMTR/ZZ4->ZZ4_QTDORI))
+						Endif
+						nTamRolo := nTamRolo - (nApont * nTamCort)
+						nTransf  := (nApont * nTamCort)
+						//2) Verificar rolo  e transferir quantidade apontada
+						lImpEti := fTrfRolo(cCFibra,nTransf,cEtiq)
+					Endif
+
+					//) imprimir etiquetas
+					if !lImpEti
+						Disarmtransaction()
+					Else
+						DbSelectArea("SC2")
+						DbSetOrder(1)
+						dbSeek(xFilial("SC2")+cCodOP)
+
+						//Coleta o ultimo serial e incrementa o apontamento
+						_cNumSerie:= VAL(SC2->C2_XXSERIA)+ 1
+						Reclock("SC2", .F.)
+						//SC2->C2_XSERIAL := C2->C2_XSERIAL + nApont
+						SC2->C2_XXSERIA := CVALTOCHAR(VAL(SC2->C2_XXSERIA) + nApont)
+						SC2->(MsUnlock())
+
+						_cProxNiv    := '1'
+						_aQtdBip     := {}
+						_lImpressao  := .T.
+						_nPesoBip    := 0
+						_lColetor    := .F.
+
+						IF (nApont+nQtdProd) == nQtdOp
+							lImpEti:= .T.
+						Endif
+
+
+						// ALTERAÇÃO PARA IMPRIMIR APENAS QUANDO O APONTAMENTO FOR DA PRIMEIRA LINHA DA GETDADOS
+						IF aScan(ogetdados:aCols,{ |x| x[GdFieldPos("FIBRA")] == cCFibra}) >= 2 .AND. Posicione("SB1",1, xFilial("SB1")+cCFibra,"B1_GRUPO")<> "FOFS"
+
+							//Alteração para verificar se a OP é PRECON
+							if U_VALIDACAO()
+								If Posicione("SB1",1, xFilial("SB1")+cCodPA,"B1_GRUPO") == "PCON"
+									lImpEti:= .T.
+								Else
+									lImpEti:= .F.
+								Endif
+							else
+								lImpEti:= .F.
+							Endif
+							//FIM DA ALTERAÇÃO
+						Endif
+
+						if lFurukawa
+							U_DOMETI02(cCodOP,nApont,_cNumSerie,cLocImp,cCodFuruk,Len(cvaltochar(nQtdOp)))
+						Else
+							U_DOMETI01(cCodOP,nApont,_cNumSerie,cLocImp)
+						Endif
+						_cPrxDoc:= fPrxDoc()
+						For _i := 1 to nApont
+							Reclock("XD4", .T.)
+							XD4->XD4_FILIAL	:= xFilial("XD4")
+							XD4->XD4_SERIAL	:= _cNumSerie
+							XD4->XD4_STATUS	:= '6'
+							XD4->XD4_OP	   	:= cCodOP
+							XD4->XD4_NOMUSR	:= cUserSis
+							XD4->XD4_DOC    := _cPrxDoc
+							XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
+							IF U_VALIDACAO("RODA").OR. .T.
+								XD4->XD4_PRODUT	:= cCFibra
+							ENDIF
+							XD4->(MsUnlock())
+							_cNumSerie += 1
+						Next _i
+					Endif
+
+				Endif
+			Else
+				MyMsg("Fibra "+Alltrim(cCFibra)+" não encontrada na OP:"+Alltrim(cCodOp),1)
+			Endif
+
+		Endif
+
+	End transaction
+
+	nApont  :=0
+	nEmCort := 0
+	fVldOp(2)
+
+	nPfibra := aScan(aHeader,{|aVet| Alltrim(aVet[2]) == "FIBRA"})
+	nPID    := aScan(aHeader,{|aVet| Alltrim(aVet[2]) == "USERAP"})
+
+	nPos := aScan(oGetDados:aCols,{|x| Alltrim(x[nPfibra]) == alltrim(cCFibra) .and. alltrim(x[nPID]) == Alltrim(__cUserId) })
+
+	If nPos > 0
+
+		nQtdOp	:= oGetDados:aCols[nPos,ascan(aHeader,{|x| alltrim(x[2])=="QTDTOP"})]
+		nQtdProd:= oGetDados:aCols[nPos,ascan(aHeader,{|x| alltrim(x[2])=="QTDCOR"})]
+		nEmCort:= oGetDados:aCols[nPos,ascan(aHeader,{|x| alltrim(x[2])=="QEMCRT"})]
+		oGetDados:aCols[nPos,ascan(aHeader,{|x| alltrim(x[2])=="QTDRES"})]:= (nQtdOp - nQtdProd)
+		nQtdRest:= oGetDados:aCols[nPos,ascan(aHeader,{|x| alltrim(x[2])=="QTDRES"})]
+
+
+	Endif
+
+
+	oQtdOp:Refresh()
+	oQtdProd:Refresh()
+	oQtdRest:Refresh()
+	oTamRolo:Refresh()
+	oEmCort:Refresh()
+	oApont:Refresh()
+	oGetDados:Refresh()
+
+	fVldEti(cEtiqOfc)
+
+Return
+
+
+
+
+
+
+
 
 
 /*/{Protheus.doc} MyMsg
@@ -1176,11 +1375,8 @@ Static Function MyMsg(cAviso,nOpc)
 (examples)
 @see (links_or_references)
 /*/
-
 Static Function fTrfRolo(cCFibra,nTransf,cEtiq)
 
-	//Local aVetor      := {}
-	//Local aEmpen      := {}
 	Local lFimRolo    := .F.
 	Local nFimRolo    := 0
 	Local lMsErroAuto := .F.
@@ -1196,186 +1392,136 @@ Static Function fTrfRolo(cCFibra,nTransf,cEtiq)
 	PRIVATE nPerImp   := CriaVar("D3_PERIMP")
 	Private _cDoC     := U_NEXTDOC()
 
-
-//Begin Transaction
-
 	dbSelectArea("XD1")
-	dbsetorder(1)
-	if dbseek(xFilial("XD1")+cEtiq)
-		//Dados para Transferencia
-		nQtde      := nTransf
-		cProduto   := XD1->XD1_COD 					//-- Codigo do Produto Origem    - Obrigatorio
-		cLocOrig   := XD1->XD1_LOCAL			   	//-- Almox Origem                - Obrigatorio
-		cLocDest   := cArm   					   	//-- Almox Destino               - Obrigatorio
-		cDocumento := _cDoC      		    		   //-- Documento                   - Obrigatorio
-		cNumLote   := "" 						       	//-- Sub-Lote                    - Obrigatorio se usa Rastro "S"
-		cLoteCtl   := Alltrim(XD1->XD1_LOTECT)		//-- Lote                        - Obrigatorio se usa Rastro
-		dDtValid   := fBuscaLote(cProduto,cLoteCtl,cLocOrig) 	//-- Validade                    - Obrigatorio se usa Rastro
-		cEndOrig   := Alltrim(XD1->XD1_LOCALI)		//-- Localizacao Origem
-		cEndDest   := cLocaliz 						   //-- Endereco Destino            - Obrigatorio p/a Transferencia
-		//lcontinua  :=  fSldLcaliz(cProduto,nQtde,cLocOrig,cEndOrig, cLoteCtl)
-		cSerOrig   := ""				 			      //-- Numero de Serie
-		cEtiqueta  := XD1->XD1_XXPECA
+	XD1->(dbsetorder(1))
+	XD1->(dbseek(xFilial("XD1")+cEtiq))
+	//Dados para Transferencia
+	nQtde      := nTransf
+	cProduto   := XD1->XD1_COD 					//-- Codigo do Produto Origem    - Obrigatorio
+	cLocOrig   := XD1->XD1_LOCAL			   	//-- Almox Origem                - Obrigatorio
+	cLocDest   := cArm   					   	//-- Almox Destino               - Obrigatorio
+	cDocumento := _cDoC      		    		   //-- Documento                   - Obrigatorio
+	cNumLote   := "" 						       	//-- Sub-Lote                    - Obrigatorio se usa Rastro "S"
+	cLoteCtl   := Alltrim(XD1->XD1_LOTECT)		//-- Lote                        - Obrigatorio se usa Rastro
+	dDtValid   := fBuscaLote(cProduto,cLoteCtl,cLocOrig) 	//-- Validade                    - Obrigatorio se usa Rastro
+	cEndOrig   := Alltrim(XD1->XD1_LOCALI)		//-- Localizacao Origem
+	cEndDest   := cLocaliz 						   //-- Endereco Destino            - Obrigatorio p/a Transferencia
+	cSerOrig   := ""				 			      //-- Numero de Serie
+	cEtiqueta  := XD1->XD1_XXPECA
 
-		//if lContinua
-		// Ricardo incluir alteração
+	nFimRolo := nTamRolo //- nTransf
 
-		//Alert("Tamanho do rolo depois da transferência: " + Str(nTamRolo) )
-		//Alert("Quantidade da transferência: " + Str(nTransf) )
+	If nFimRolo > 0  // Se a quantidade do rolo não for suficiente, não precisa perguntar se é fim de rolo
+		If MyMsg("É o final do rolo",2)
 
-		nFimRolo := nTamRolo //- nTransf
+			AjustSup(cCFibra,cValtoChar(nTamRolo),(nApont * nTamCort),cNFibra,cEtiqOfc,"S" )
+			if lAjusteOk
+				lFimRolo:= .T.
+			Else
+				MYMSG("A Liberação da Supervisão foi recusada e por isso o ajute do rolo não será realizado!",1)
+				lFimRolo:= .F.
+			Endif
+		Endif
+	EndIf
 
-		If nFimRolo > 0  // Se a quantidade do rolo não for suficiente, não precisa perguntar se é fim de rolo
-			If MyMsg("É o final do rolo",2)
+	if nFimRolo > 0 .and. lFimRolo
+		// movimento interno para zerar a quantidade do rolo
 
-				AjustSup(cCFibra,cValtoChar(nTamRolo),(nApont * nTamCort),cNFibra,cEtiqOfc,"S" )
-				if lAjusteOk
-					lFimRolo:= .T.
-				Else
-					MYMSG("A Liberação da Supervisão foi recusada e por isso o ajute do rolo não será realizado!",1)
-					lFimRolo:= .F.
+		//Alert("Quantidade do ajuste de baixa de saldo (requisição) " + Str(nFimRolo) )
+		lContinua:= fAjusSld(cTmSai,cProduto,nFimRolo, cLocOrig,cEndOrig,cDocumento,cLoteCtl,dDtValid,cEtiqueta)
+
+		//Zera Etiqueta
+		Reclock("XD1", .F.)
+		XD1->XD1_QTDATU := 0
+		XD1->XD1_OCORRE := '5'
+		XD1->(MsUnlock())
+
+	Elseif nFimRolo <  0 //.and. !lFimRolo
+		// movimento interno para ajustar quantidade do apontamento na posição
+		// Hélio - Troquei a quantidade para nFimRolo. Estava nQtde, o que gerada ajustes a maior
+
+		lContinua:=  fAjusSld(cTmEnt,cProduto,nFimRolo*(-1), cLocOrig,cEndOrig,cDocumento,cLoteCtl,dDtValid,cEtiqueta)
+
+		//Inclui saldo na etiqueta
+		Reclock("XD1", .F.)
+		XD1->XD1_QTDATU := 0
+		XD1->XD1_OCORRE := '5'
+		XD1->(MsUnlock())
+
+		nTamRolo := 0
+
+	Elseif nFimRolo ==  0 //.and. !lFimRolo
+		Reclock("XD1", .F.)
+		XD1->XD1_QTDATU := 0
+		XD1->XD1_OCORRE := '5'
+		XD1->(MsUnlock())
+	Else
+		//Atualiza o saldo da etiqueta
+		Reclock("XD1", .F.)
+		XD1->XD1_QTDATU := XD1-> XD1_QTDATU -  nTransf
+		XD1->(MsUnlock())
+	Endif
+
+	lcontinua  :=  fSldLcaliz(cProduto,nQtde,cLocOrig,cEndOrig, cLoteCtl)
+
+	if !lContinua
+		Return .f.
+	Else
+		//TRANSFERE
+		a260Processa(cProduto, ; 	//-- Codigo do Produto Origem    - Obrigatorio
+		cLocOrig, ;                      	//-- Almox Origem                - Obrigatorio
+		nQtde, ;                           	//-- Quantidade 1a UM            - Obrigatorio
+		cDocumento, ;                      	//-- Documento                   - Obrigatorio
+		dDataBase, ;                       	//-- Data                        - Obrigatorio
+		ConvUm(cProduto, nQtde, 0, 2), ;   //-- Quantidade 2a UM
+		cNumLote, ;                        	//-- Sub-Lote                    - Obrigatorio se usa Rastro "S"
+		cLoteCtl, ;                        	//-- Lote                        - Obrigatorio se usa Rastro
+		dDtValid, ;                        	//-- Validade                    - Obrigatorio se usa Rastro
+		cSerOrig, ;                        	//-- Numero de Serie
+		cEndOrig, ;                        	//-- Localizacao Origem
+		cProduto, ;                        	//-- Codigo do Produto Destino   - Obrigatorio
+		cLocDest, ;                        	//-- Almox Destino               - Obrigatorio
+		cEndDest, ;                       	//-- Endereco Destino            - Obrigatorio p/a Transferencia
+		.F., ;                             	//-- Indica se movimento e estorno
+		Nil, ;                             	//-- Numero do registro origem no SD3  - Obrigatorio se for Estorno
+		Nil, ;                             	//-- Numero do registro destino no SD3 - Obrigatorio se for Estorno
+		'MATA260', ;                       	//-- Indicacao do programa que originou os lancamentos
+		,,,,,,,,,,,,,,,,U_RETLOTC6(cCodOP),StoD("20491231"))
+
+		if !lContinua .or. lMsErroAuto
+			MyMsg("Erro na Transferência! "+chr(13)+chr(10)+"Procure o administrador do sistema.",1)
+			Return .f.
+		Else
+			dbSelectArea("SD3")
+			SD3->( dbSetOrder(2) )  // D3_FILIAL + D3_DOC
+			If SD3->( dbSeek( xFilial() + _cDoc ) )
+				While !SD3->( EOF() ) .and. ALLTRIM(SD3->D3_DOC) == ALLTRIM(_cDoc)    //MLS ALTERADO MOTIVO DOCUMENTO COM 9 DIGITOS
+					If SD3->D3_CF == 'RE4' .or. SD3->D3_CF == 'DE4'
+						Reclock("SD3",.F.)
+						SD3->D3_XXPECA  := XD1->XD1_XXPECA
+						SD3->D3_XXOP    := cCodOP
+						SD3->D3_XHRINI	 := cHrIni
+						//SD3->D3_USUARIO := cUsuario
+						SD3->D3_HORA    := Time()
+						SD3->( msUnlock() )
+					EndIf
+					SD3->( dbSkip() )
+				End
+				nQtdMod:= 0
+				//Denis 25/02/2021 - requisitar somente quando não for Fibra falsa
+				lFofs := Posicione("SB1",1, xFilial("SB1")+cCFibra,"B1_GRUPO") <> "FOFS"
+				if lFofs
+					Processa( {|| fReqMOD(cCodOP,nQtdMod,nApont) },"Gravando MOD")
 				Endif
 			Endif
-		EndIf
-
-		if nFimRolo > 0 .and. lFimRolo
-			// movimento interno para zerar a quantidade do rolo
-
-			//Alert("Quantidade do ajuste de baixa de saldo (requisição) " + Str(nFimRolo) )
-			lContinua:= fAjusSld(cTmSai,cProduto,nFimRolo, cLocOrig,cEndOrig,cDocumento,cLoteCtl,dDtValid,cEtiqueta)
-
-			//Zera Etiqueta
-			Reclock("XD1", .F.)
-			XD1->XD1_QTDATU := 0
-			XD1->XD1_OCORRE := '5'
-			XD1->(MsUnlock())
-
-		Elseif nFimRolo <  0 //.and. !lFimRolo
-			// movimento interno para ajustar quantidade do apontamento na posição
-			// Hélio - Troquei a quantidade para nFimRolo. Estava nQtde, o que gerada ajustes a maior
-
-			//Alert("Quantidade do ajuste de entrada de saldo (devolução) " + Str(nFimRolo*(-1)) )
-
-
-			lContinua:=  fAjusSld(cTmEnt,cProduto,nFimRolo*(-1), cLocOrig,cEndOrig,cDocumento,cLoteCtl,dDtValid,cEtiqueta)
-
-			//Inclui saldo na etiqueta
-			Reclock("XD1", .F.)
-			XD1->XD1_QTDATU := 0
-			XD1->XD1_OCORRE := '5'
-			XD1->(MsUnlock())
-
-			nTamRolo := 0
-
-		Elseif nFimRolo ==  0 //.and. !lFimRolo
-			Reclock("XD1", .F.)
-			XD1->XD1_QTDATU := 0
-			XD1->XD1_OCORRE := '5'
-			XD1->(MsUnlock())
-
-		Else
-			//Atualiza o saldo da etiqueta
-			Reclock("XD1", .F.)
-			XD1->XD1_QTDATU := XD1-> XD1_QTDATU -  nTransf
-			XD1->(MsUnlock())
 		Endif
-		//Endif
 
-		lcontinua  :=  fSldLcaliz(cProduto,nQtde,cLocOrig,cEndOrig, cLoteCtl)
+		if Posicione("SB1",1, xFilial("SB1")+cCFibra,"B1_GRUPO") == 'FOFS'
+			lContinua:= .F.
+		Endif
+	Endif
 
-		if lContinua
-			//TRANSFERE
-			a260Processa(cProduto, ; 	//-- Codigo do Produto Origem    - Obrigatorio
-			cLocOrig, ;                      	//-- Almox Origem                - Obrigatorio
-			nQtde, ;                           	//-- Quantidade 1a UM            - Obrigatorio
-			cDocumento, ;                      	//-- Documento                   - Obrigatorio
-			dDataBase, ;                       	//-- Data                        - Obrigatorio
-			ConvUm(cProduto, nQtde, 0, 2), ;   //-- Quantidade 2a UM
-			cNumLote, ;                        	//-- Sub-Lote                    - Obrigatorio se usa Rastro "S"
-			cLoteCtl, ;                        	//-- Lote                        - Obrigatorio se usa Rastro
-			dDtValid, ;                        	//-- Validade                    - Obrigatorio se usa Rastro
-			cSerOrig, ;                        	//-- Numero de Serie
-			cEndOrig, ;                        	//-- Localizacao Origem
-			cProduto, ;                        	//-- Codigo do Produto Destino   - Obrigatorio
-			cLocDest, ;                        	//-- Almox Destino               - Obrigatorio
-			cEndDest, ;                       	//-- Endereco Destino            - Obrigatorio p/a Transferencia
-			.F., ;                             	//-- Indica se movimento e estorno
-			Nil, ;                             	//-- Numero do registro origem no SD3  - Obrigatorio se for Estorno
-			Nil, ;                             	//-- Numero do registro destino no SD3 - Obrigatorio se for Estorno
-			'MATA260', ;                       	//-- Indicacao do programa que originou os lancamentos
-			,,,,,,,,,,,,,,,,U_RETLOTC6(cCodOP),StoD("20491231"))
-			/*Nil,;                              	//-- Estrutura Fisica Padrao
-					Nil,;                              	//-- Servico
-					Nil,;                              	//-- Tarefa
-					Nil,;                              	//-- Atividade
-					Nil,;                              	//-- Anomalia
-					Nil,;                              	//-- Estrutura Fisica Destino
-					cEndDest,;                         	//-- Endereco Destino
-					Nil,;                              	//-- Hora Inicio
-					'S',;                              	//-- Atualiza Estoque
-					Nil,;                              	//-- Numero da Carga
-					Nil,;                              	//-- Numero do Unitizador
-					Nil,;                              	//-- Ordem da Tarefa
-					Nil,;                              	//-- Ordem da Atividade
-					Nil,;                              	//-- Recurso Humano
-					Nil)                               	//-- Recurso Fisico
-					*/
-									//
-
-
-
-
-								Endif
-							Endif
-
-							if !lContinua .or. lMsErroAuto
-								MyMsg("Erro na Transferência! "+chr(13)+chr(10)+"Procure o administrador do sistema.",1)
-//	Disarmtransaction()
-							Else
-								dbSelectArea("SD3")
-								SD3->( dbSetOrder(2) )  // D3_FILIAL + D3_DOC
-								If SD3->( dbSeek( xFilial() + _cDoc ) )
-									While !SD3->( EOF() ) .and. ALLTRIM(SD3->D3_DOC) == ALLTRIM(_cDoc)    //MLS ALTERADO MOTIVO DOCUMENTO COM 9 DIGITOS
-										If SD3->D3_CF == 'RE4' .or. SD3->D3_CF == 'DE4'
-											Reclock("SD3",.F.)
-											SD3->D3_XXPECA  := XD1->XD1_XXPECA
-											SD3->D3_XXOP    := cCodOP
-											SD3->D3_XHRINI	 := cHrIni
-											//SD3->D3_USUARIO := cUsuario
-											SD3->D3_HORA    := Time()
-											SD3->( msUnlock() )
-
-										EndIf
-										SD3->( dbSkip() )
-									End
-
-		/*/If Type("ZZ4->ZZ4_DTINI") <> 'U'
-									nQtdMod:= fSubHr(Date(),cHrIni,ZZ4->ZZ4_DTINI,Time())  //Hrs2Min(ELAPTIME (cHrIni , Time()))
-								else
-									nQtdMod:= fSubHr(Date(),cHrIni,Date(),Time())
-								EndIf
-		*/
-
-								//nQtdMod:= (SD4->D4_QTDORI / SC2->C2_QUANT ) * nApont
-								nQtdMod:= 0
-								//Denis 25/02/2021 - requisitar somente quando não for Fibra falsa
-								lFofs := Posicione("SB1",1, xFilial("SB1")+cCFibra,"B1_GRUPO") <> "FOFS"
-
-								if lFofs
-									Processa( {|| fReqMOD(cCodOP,nQtdMod,nApont) },"Gravando MOD")
-								Endif
-
-							Endif
-
-						Endif
-
-//End transaction
-
-						if Posicione("SB1",1, xFilial("SB1")+cCFibra,"B1_GRUPO") == 'FOFS'
-							lContinua:= .F.
-						Endif
-
-						Return lContinua
+Return lContinua
 
 /*/{Protheus.doc} fBuscaLote
 //TODO valida se o lote é existente
@@ -1722,6 +1868,9 @@ NIL)*/
 	XD4->XD4_NOMUSR	:= cUserSis
 	XD4->XD4_DOC	:= _cPrxDoc
 	XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
+	IF U_VALIDACAO("RODA").OR. .T.
+		XD4->XD4_PRODUT	:= cCFibra
+	ENDIF
 	XD4->(MsUnlock())
 	
 	_cNumSerie += 1
@@ -2447,39 +2596,6 @@ Static Function fReqMOD(cCodOP,nQtdMod,nApont)
 
 Return
 
-Static Function fSubHr(dDtIni,cHrIni,dDtFim,cHrfim)
-	Local _Retorno
-	Local nSegIni := 0
-	Local nSegFim := 0
-
-	nSegIni += (dDtIni - StoD('20200101')) * 24 * 60 * 60
-	nSegIni += Val(Subs(cHrIni,1,2)) * 60 * 60
-	nSegIni += Val(Subs(cHrIni,4,2)) * 60
-	nSegIni += Val(Subs(cHrIni,7,2))
-
-
-	nSegFim += (dDtFim - StoD('20200101')) * 24 * 60 * 60
-	nSegFim += Val(Subs(cHrfim,1,2)) * 60 * 60
-	nSegFim += Val(Subs(cHrfim,4,2)) * 60
-	nSegFim += Val(Subs(cHrfim,7,2))
-
-	nDifSeg := nSegFim - nSegIni
-
-	_Retorno := nDifSeg / 60
-
-//nhora := Int(nDifSeg / 3600)
-
-//nDifSeg -=  (nhora * 3600)
-
-//nMinutos := Int(nDifSeg / 60)
-
-//nDifSeg -= (nMinutos * 60)
-
-//Retorno := Strzero(nhora,2)+':'+Strzero(nMinutos,2)+':'+StrZero(nDifSeg,2)
-
-Return _Retorno
-
-
 Static function fImpEtqFF()
 Local _i
 	if Posicione("SB1",1, xFilial("SB1")+cCFibra,"B1_GRUPO") <> "FOFS"
@@ -2520,6 +2636,9 @@ Local _i
 		XD4->XD4_NOMUSR	:= cUserSis
 		XD4->XD4_DOC    := _cPrxDoc
 		XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
+		IF U_VALIDACAO("RODA").OR. .T.
+			XD4->XD4_PRODUT	:= cCFibra
+		ENDIF
 		XD4->(MsUnlock())
 		_cNumSerie += 1
 	Next _i
