@@ -242,7 +242,7 @@ User Function GeraNFS(cNumPV, cSerie, dData, lHuawei)
 							cAssunto := "NF teste 4% ICMS realizado"
 							cTxtMsg  := "NF: " + SD2->D2_DOC + Chr(13)
 							cTxtMsg  += "Lembrar de pedir para a Priscila validar o ICMS"
-							
+
 							cTexto   := StrTran(cTxtMsg,Chr(13),"<br>")
 							cPara    := 'denis.vieira@rdt.com.br;fulgencio.muniz@rosenbergerdomex.com.br'
 							cCC      := 'helio@opusvp.com.br'
