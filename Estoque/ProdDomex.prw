@@ -86,6 +86,10 @@ User Function ProdDomex(aVetOP)
 
 	//U_RPCSETENV()
 
+	If U_VALIDACAO("HELIO")
+		StartJob("U_FC2_QUJE",getenvserver(), .F. , cOP)
+	EndIf
+
 	aAreaGER := GetArea()
 	aAreaSC2 := SC2->( GetArea() )
 
@@ -564,6 +568,10 @@ User Function ProdDomex(aVetOP)
 			EndIf
 		Next x
 
+	EndIf
+
+	If U_VALIDACAO("HELIO")
+		StartJob("U_FC2_QUJE",getenvserver(), .F. )
 	EndIf
 
 	RestArea(aAreaSC2)
