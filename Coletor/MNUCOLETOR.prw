@@ -238,6 +238,9 @@ Static Function ColetorMenu(cDep)
 		AADD(aAcessos, 13)
 		//AADD(aAcessos, 14)
 		AADD(aAcessos, 15)
+		AADD(aAcessos, 16)
+		AADD(aAcessos, 17)
+		//AADD(aAcessos, 18)
 
 	EndIf
 
@@ -795,7 +798,9 @@ Static Function ColetorMenu(cDep)
 		oBtn22:SetCSS( cCSSBtN1 )
 		nLin += nSkipLin
 	EndIf
+
 	If 'RICARDO.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
+
 		If aScan(aAcessos,15) <> 0
 			Private oBtn04 := Nil
 			@ nLin, nCol BUTTON oBtn04 PROMPT "Paletização Produção MG"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW46(), U_DOMACD46())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
@@ -805,6 +810,37 @@ Static Function ColetorMenu(cDep)
 			oBtn04:SetCSS( cCSSBtN1 )
 			nLin += nSkipLin
 		EndIf
+
+		If aScan(aAcessos,16) <> 0
+			Private oBtn21 := Nil
+			@ nLin, nCol BUTTON oBtn21 PROMPT "Emb.Nivel 3 MG"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW28(), U_MsgColetor("ROTINA NÃO PREPARADA PARA COLETOR WINDOWS"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			cCSSBtN1 :=  "QPushButton{background-image: url(rpo:pcocube.png);"+cPush+;
+				"QPushButton:pressed {background-image: url(rpo:pcocube.png);"+cPressed+;
+				"QPushButton:hover {background-image: url(rpo:pcocube.png);"+cHover
+			oBtn21:SetCSS( cCSSBtN1 )
+			nLin += nSkipLin
+		EndIf
+
+		If aScan(aAcessos,17) <> 0
+			Private oBtn22 := Nil
+			@ nLin, nCol BUTTON oBtn22 PROMPT "Embalagem MG"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW19(), U_MsgColetor("ROTINA NÃO PREPARADA PARA COLETOR WINDOWS"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			cCSSBtN1 :=  "QPushButton{background-image: url(rpo:estimg32.png);"+cPush+;
+				"QPushButton:pressed {background-image: url(rpo:estimg32.png);"+cPressed+;
+				"QPushButton:hover {background-image: url(rpo:estimg32.png);"+cHover
+			oBtn22:SetCSS( cCSSBtN1 )
+			nLin += nSkipLin
+		EndIf
+
+		If aScan(aAcessos,18) <> 0
+			Private oBtn23 := Nil
+			@ nLin, nCol BUTTON oBtn23 PROMPT "Faturamento MG" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW23(),  U_MsgColetor("ROTINA NÃO PREPARADA PARA COLETOR WINDOWS"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			cCSSBtN1 :=  "QPushButton{background-image: url(rpo:preco_mdi.png);"+cPush+;
+				"QPushButton:pressed {background-image: url(rpo:preco_mdi.png);"+cPressed+;
+				"QPushButton:hover {background-image: url(rpo:preco_mdi.png);"+cHover
+			oBtn23:SetCSS( cCSSBtN1 )
+			nLin += nSkipLin
+		EndIf
+
 	EndIf
 
 	ACTIVATE MSDIALOG oDlgMenu01 // ON INIT EnchoiceBar( oDlgMenu01,{|| nOpca := 0,oDlgMenu01:End()},{|| nOpca := 0,oDlgMenu01:End()} ) //CENTER
