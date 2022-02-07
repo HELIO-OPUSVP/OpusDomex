@@ -84,7 +84,7 @@ else
 EndIf
 
 For nX := 1 to nEtqQtd
-	
+
 	if lManual
 		cFila := SuperGetMv("MV_XFILEXP",.F.,"000005")
 		IF !CB5SetImp(cFila,.F.)
@@ -97,9 +97,9 @@ For nX := 1 to nEtqQtd
 		MSCBPRINTER(cModelo,cPorta,,,.F.)
 		MSCBChkStatus(.F.)
 		//	MSCBLOADGRF("ANATEL2.GRF")
-	else
-		MSCBPRINTER(cModelo,cPorta,,,.F.)
-		MSCBChkStatus(.F.)	
+	//else
+	//	MSCBPRINTER(cModelo,cPorta,,,.F.)
+	//	MSCBChkStatus(.F.)	
 	Endif
 	MSCBLOADGRF("RDT2.GRF")
 	
@@ -107,7 +107,6 @@ For nX := 1 to nEtqQtd
 	If !lManual
 		MSCBBEGIN(1,5)	
 	Else
-
 		MSCBBEGIN(nEtqQtdI,5)
 	EndIf
 	nCol    := 06
@@ -209,7 +208,7 @@ For nX := 1 to nEtqQtd
 	MSCBSAY(nCol   , nLin+10 , "   PERMITIDO:"                          ,cRotacao,"0","35,35")
 	//	MSCBSAY(nCol+40, nLin+2, cSemana  				                 ,cRotacao,"0","35,35")
 	
-	MSCBInfoEti("DOMEX","80X60")
+	//MSCBInfoEti("DOMEX","80X60")
 	
 	//Finaliza impressão da etiqueta
 	MSCBEND()
