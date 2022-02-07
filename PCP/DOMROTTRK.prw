@@ -23,7 +23,7 @@ User Function DOMROTTRK(cTipo,nMaxLinhas)
 	Local oLeg2
 	Local oLeg3
 
-	Private cUserSis   := Upper(Alltrim(Substr(cUsuario,7,15)))
+	Private cUserSis   := Upper(AllTrim(Substr(cUsuario,7,15)))
 	Private oSayHuawei
 	Private oBitmapH
 	Private cCodHuawei := ""
@@ -53,7 +53,7 @@ User Function DOMROTTRK(cTipo,nMaxLinhas)
 	Private oOk      	:= LoadBitmap( GetResources(), "VERDE" )
 	Private oNo      	:= LoadBitmap( GetResources(), "VERMELHO" )
 	Private oIn      	:= LoadBitmap( GetResources(), "AMARELO" )
-
+	private cCodProd	:= ""
 	Private c2Leg1      := "1"
 	Private n2Leg1      := RGB(176,224,230)
 	Private c2Leg2      := "2"
@@ -68,15 +68,19 @@ User Function DOMROTTRK(cTipo,nMaxLinhas)
 	Private cTpProd	    := ""
 
 	Private cComp 		:= CriaVar("B1_COD")
-	Private nCelula		:= fButtCel(nMaxLinhas)
+	Private nCelula		:= 0
 	Private dDataIni	:= dDataBase
 	Private cLocOP 		:= CRIAVAR("D4_OP")
 	Private oDtIni
 	Private oLocOp
 	Private lCheckBo1	:= .F.
+	Private cNotTps 		:= ""
+	Private _cTitulo
 
+	Default nMaxLinhas:= 1
 	Static oDlg
 
+	nCelula				:= fButtCel(nMaxLinhas)
 	cFileErro			:= cStartPath + 'errado.png'
 	cFileok				:= cStartPath + 'certo.png'
 	cFileLogo			:= cStartPath + 'logo.png'
@@ -89,11 +93,21 @@ User Function DOMROTTRK(cTipo,nMaxLinhas)
 	cPerc99			    := cStartPath + 'PERC99.png'
 	cLogoHu				:= cStartPath + 'huawei_lg.png'
 
-
-	cTpProd  := "'TRUE', 'TRUN'"
-	_cTitulo := "ROTEIRO DE PRODUÇÃO TRUNK - LINHA "+cValToChar(nCelula)
-
-
+	IF U_VALIDACAO("RODA")
+		IF cTipo == "TRUNK"
+			cTpProd  := "'TRUE', 'TRUN'"
+			cNotTps := "'PA','ME'"  //,'PI'"
+			_cTitulo := "ROTEIRO DE PRODUÇÃO TRUNK - LINHA "+cValToChar(nCelula)
+		ElseIF cTipo == "DIO"
+			cTpProd  := "'DIO'"
+			cNotTps := "'PA','ME'"
+			_cTitulo := "ROTEIRO DE PRODUÇÃO DIO - LINHA " + cValToChar(nCelula)
+		Endif
+	ELSE
+		cTpProd  := "'TRUE', 'TRUN'"
+		cNotTps := "'PA','ME'"  //,'PI'"
+		_cTitulo := "ROTEIRO DE PRODUÇÃO TRUNK - LINHA "+cValToChar(nCelula)
+	ENDIF
 
 	DEFINE MSDIALOG oDlg TITLE "" FROM 000, 000  TO 800, 1366 COLORS 0, 16777215 PIXEL
 	oDlg:lMaximized := .T.
@@ -212,7 +226,7 @@ Return
 
 Static Function CorGd02(nLinha)
 	Local nRet := 16777215
-	Local nPosOp	:= aScan(oGetDados2:aHeader,{|_y| Alltrim(_y[2]) == "OP"  })
+	Local nPosOp	:= aScan(oGetDados2:aHeader,{|_y| AllTrim(_y[2]) == "OP"  })
 
 	If oGetDados2:aCols[nLinha,nPosOp] == cCodOP
 		nRet := n2Leg1
@@ -238,7 +252,7 @@ Static Function fVldEti(cEtiqOfc)
 	Local lTroca:= .F.
 	Local _x
 
-	if Empty(Alltrim(cEtiqOfc))
+	if Empty(AllTrim(cEtiqOfc))
 		Return .F.
 	Endif
 
@@ -266,7 +280,21 @@ Static Function fVldEti(cEtiqOfc)
 			fStatus()
 
 			IF lContinua
-				nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+
+				If U_VALIDACAO("RODA")
+					XD4->(dbSetorder(3))
+					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+						cCodProd:= XD4->XD4_PRODUT
+					ENDIF
+
+					if !Empty(cCodProd)
+						nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosComp]) == AllTrim(cCodProd) })
+					Else
+						nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+					Endif
+				else
+					nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+				Endif
 				oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 				For _x := 1 to len(oGetDados:aCols)
@@ -280,10 +308,10 @@ Static Function fVldEti(cEtiqOfc)
 				Next _x
 			Endif
 
-		ElseIf !empty(cCodOp) .and. alltrim(Subs(cEtiqOfc,2,8)) <> cCodOp
+		ElseIf !empty(cCodOp) .and. AllTrim(Subs(cEtiqOfc,2,8)) <> cCodOp
 
-			if len (alltrim(cEtiqOfc)) > 12
-				MyMsg("Etiqueta pertence a outra ordem de produção: Nº OP "+alltrim(Subs(cEtiqOfc,2,8)) ,2)
+			if len (AllTrim(cEtiqOfc)) > 12
+				MyMsg("Etiqueta pertence a outra ordem de produção: Nº OP "+AllTrim(Subs(cEtiqOfc,2,8)) ,2)
 			Endif
 
 			lTroca:= MyMsg("Deseja trocar de ordem de produção?"  ,2)
@@ -311,7 +339,21 @@ Static Function fVldEti(cEtiqOfc)
 
 
 				IF lContinua
-					nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+
+					If U_VALIDACAO("RODA")
+						XD4->(dbSetorder(3))
+						IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+							cCodProd:= XD4->XD4_PRODUT
+						ENDIF
+
+						if !Empty(cCodProd)
+							nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosComp]) == AllTrim(cCodProd) })
+						Else
+							nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+						Endif
+					else
+						nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+					Endif
 					oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 					For _x := 1 to len(oGetDados:aCols)
@@ -335,7 +377,7 @@ Static Function fVldEti(cEtiqOfc)
 				Return .F.
 			Endif
 
-		ElseIf !empty(cCodOp) .and. alltrim(Subs(cEtiqOfc,2,8)) == cCodOp
+		ElseIf !empty(cCodOp) .and. AllTrim(Subs(cEtiqOfc,2,8)) == cCodOp
 			_nSerie:= Subs(cEtiqOfc,13,Len(cEtiqOfc))
 			lContinua:= fVldXd4St(cCodOp,_nSerie)
 			fVldXd1St(cCodOp)
@@ -343,7 +385,21 @@ Static Function fVldEti(cEtiqOfc)
 
 
 			IF lContinua
-				nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+
+				If U_VALIDACAO("RODA")
+					XD4->(dbSetorder(3))
+					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+						cCodProd:= XD4->XD4_PRODUT
+					ENDIF
+
+					if !Empty(cCodProd)
+						nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosComp]) == AllTrim(cCodProd) })
+					Else
+						nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+					Endif
+				else
+					nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+				Endif
 				oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 				For _x := 1 to len(oGetDados:aCols)
@@ -359,13 +415,13 @@ Static Function fVldEti(cEtiqOfc)
 		Endif
 
 		/*/Etiq. Furukawa/*/
-	Elseif Substring(cEtiqOfc,LEN(alltrim(cEtiqOfc)),1) == "X"
+	Elseif Substring(cEtiqOfc,LEN(AllTrim(cEtiqOfc)),1) == "X"
 
 		If Empty(cCodOp)
 
 			XD4->(DBSETORDER(3))
-			XD4->(DBSEEK(xFilial("XD4")+ALLTRIM(cEtiqOfc)))
-			cCodOp:= subs(ALLTRIM(XD4->XD4_OP),1,8)
+			XD4->(DBSEEK(xFilial("XD4")+AllTrim(cEtiqOfc)))
+			cCodOp:= subs(AllTrim(XD4->XD4_OP),1,8)
 
 			DbSelectArea("SC2")
 			SC2->(DbSetOrder(1))
@@ -387,7 +443,21 @@ Static Function fVldEti(cEtiqOfc)
 			fStatus()
 
 			IF lContinua
-				nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+
+				If U_VALIDACAO("RODA")
+					XD4->(dbSetorder(3))
+					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+						cCodProd:= XD4->XD4_PRODUT
+					ENDIF
+
+					if !Empty(cCodProd)
+						nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosComp]) == AllTrim(cCodProd) })
+					Else
+						nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+					Endif
+				else
+					nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+				Endif
 				oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 				For _x := 1 to len(oGetDados:aCols)
@@ -404,14 +474,14 @@ Static Function fVldEti(cEtiqOfc)
 		ElseIf !empty(cCodOp)
 
 			XD4->(DBSETORDER(3))
-			XD4->(DBSEEK(xFilial("XD4")+ALLTRIM(cEtiqOfc)))
-			cCodOp:=subs(ALLTRIM(XD4->XD4_OP),1,8)
+			XD4->(DBSEEK(xFilial("XD4")+AllTrim(cEtiqOfc)))
+			cCodOp:=subs(AllTrim(XD4->XD4_OP),1,8)
 
-			IF  ALLTRIM(XD4->XD4_OP)  <> ALLTRIM(cCodOp)
-				lTroca:= MyMsg("Etiqueta pertence a outra ordem de produção: Nº da OP"+ALLTRIM(XD4->XD4_OP)+chr(13)+chr(10)+"  Deseja trocar de ordem de produção?"  ,2)
+			IF  AllTrim(XD4->XD4_OP)  <> AllTrim(cCodOp)
+				lTroca:= MyMsg("Etiqueta pertence a outra ordem de produção: Nº da OP"+AllTrim(XD4->XD4_OP)+chr(13)+chr(10)+"  Deseja trocar de ordem de produção?"  ,2)
 
 				If lTroca
-					cCodOp:=  subs(ALLTRIM(XD4->XD4_OP),1,8)
+					cCodOp:=  subs(AllTrim(XD4->XD4_OP),1,8)
 					DbSelectArea("SC2")
 					DbSetOrder(1)
 					if !dbSeek(xFilial("SC2")+cCodOP)
@@ -433,7 +503,21 @@ Static Function fVldEti(cEtiqOfc)
 
 
 					IF lContinua
-						nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+
+						If U_VALIDACAO("RODA")
+							XD4->(dbSetorder(3))
+							IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+								cCodProd:= XD4->XD4_PRODUT
+							ENDIF
+
+							if !Empty(cCodProd)
+								nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosComp]) == AllTrim(cCodProd) })
+							Else
+								nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+							Endif
+						else
+							nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+						Endif
 						oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 						For _x := 1 to len(oGetDados:aCols)
@@ -457,14 +541,28 @@ Static Function fVldEti(cEtiqOfc)
 					Return .F.
 				Endif
 
-			ElseIf ALLTRIM(XD4->XD4_OP)  == ALLTRIM(cCodOp)
+			ElseIf AllTrim(XD4->XD4_OP)  == AllTrim(cCodOp)
 				_nSerie:= XD4->XD4_SERIAL
 				lContinua:= fVldXd4St(cCodOp,cValtochar(_nSerie))
 				fVldXd1St(cCodOp)
 				fStatus()
 
 				IF lContinua
-					nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+
+					If U_VALIDACAO("RODA")
+						XD4->(dbSetorder(3))
+						IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+							cCodProd:= XD4->XD4_PRODUT
+						ENDIF
+
+						if !Empty(cCodProd)
+							nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosComp]) == AllTrim(cCodProd) })
+						Else
+							nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+						Endif
+					else
+						nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+					Endif
 					oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 					For _x := 1 to len(oGetDados:aCols)
@@ -481,7 +579,7 @@ Static Function fVldEti(cEtiqOfc)
 		Endif
 	Else
 		cEtiq:= "0"+Subs(cEtiqOfc,1,11)
-		if  Alltrim(cEtiq) <> Alltrim(cEtiqOfc)
+		if  AllTrim(cEtiq) <> AllTrim(cEtiqOfc)
 			cEtiqAtu:= cEtiq
 		Endif
 
@@ -491,8 +589,8 @@ Static Function fVldEti(cEtiqOfc)
 		if XD1->(dbseek(xFilial("XD1")+cEtiq))
 
 
-			If empty(alltrim(XD1->XD1_OP)) .and. empty(cCodOp)
-				MyMsg("1º Etiqueta lida deve pertencer a uma ordem de produção!  "+alltrim(XD1->XD1_OP)  ,1)
+			If empty(AllTrim(XD1->XD1_OP)) .and. empty(cCodOp)
+				MyMsg("1º Etiqueta lida deve pertencer a uma ordem de produção!  "+AllTrim(XD1->XD1_OP)  ,1)
 				@ nLBitm, nPosBitm BITMAP oBitmap10 SIZE 100, 098 OF oDlg FILENAME cFileErro NOBORDER PIXEL
 				cEtiq := SPACE(20)
 				cEtiqOfc := SPACE(30)
@@ -500,12 +598,12 @@ Static Function fVldEti(cEtiqOfc)
 				oEtiq:Refresh()
 				oEtiq:setfocus()
 				Return .F.
-			ElseIf !empty(cCodOp) .and.   !empty(alltrim(XD1->XD1_OP)) .and. alltrim(XD1->XD1_OP) <> cCodOp
-				MyMsg("Etiqueta pertence a outra ordem de produção: Nº OP "+alltrim(XD1->XD1_OP)  ,1)
+			ElseIf !empty(cCodOp) .and.   !empty(AllTrim(XD1->XD1_OP)) .and. AllTrim(XD1->XD1_OP) <> cCodOp
+				MyMsg("Etiqueta pertence a outra ordem de produção: Nº OP "+AllTrim(XD1->XD1_OP)  ,1)
 				lTroca:= MyMsg("Deseja trocar de ordem de produção?"  ,2)
 
 				If lTroca
-					cCodOp:=  subs(ALLTRIM(XD1->XD1_OP),1,8)
+					cCodOp:=  subs(AllTrim(XD1->XD1_OP),1,8)
 					montatela()
 					fVldXd4St(cCodOp,'0')
 					fVldXd1St(cCodOp)
@@ -530,7 +628,7 @@ Static Function fVldEti(cEtiqOfc)
 				oEtiq:setfocus()
 				Return .F.
 			ElseIf empty(cCodOp)
-				cCodOp:= subs(ALLTRIM(XD1->XD1_OP),1,8)
+				cCodOp:= subs(AllTrim(XD1->XD1_OP),1,8)
 				montatela()
 				fVldXd4St(cCodOp,'0')
 				fVldXd1St(cCodOp)
@@ -548,9 +646,9 @@ Static Function fVldEti(cEtiqOfc)
 				Return .F.
 			Endif
 
-			cComp  := Alltrim(XD1->XD1_COD)
+			cComp  := AllTrim(XD1->XD1_COD)
 			nQtdEti:= XD1->XD1_QTDATU
-			nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosComp]) == alltrim(cComp)})
+			nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosComp]) == AllTrim(cComp)})
 
 
 			IF nPos > 0
@@ -679,7 +777,7 @@ Static Function MontaTela()
 	cQuery:= " SELECT D4_PRODUTO, B1_GRUPO, D4_COD,B1_DESC,SUM(D4_QTDEORI) D4_QTDEORI  "
 	cQuery+= " FROM "+RETSQLNAME("SD4")+" SD4 "
 	cQuery+= " INNER JOIN "+RETSQLNAME("SB1")+" SB1 ON B1_COD = D4_COD  "
-	cQuery+= " AND SB1.D_E_L_E_T_ = '' AND B1_TIPO NOT IN ('PA','ME','PI')  AND B1_APROPRI <> 'I' "
+	cQuery+= " AND SB1.D_E_L_E_T_ = '' AND B1_TIPO NOT IN ("+cNotTps+")  AND B1_APROPRI <> 'I' "
 	cQuery+= " WHERE D4_OP LIKE'"+cCodOP+"%' "
 	cQuery+= " AND D4_QTDEORI > 0 "
 	cQuery+= " AND D4_LOCAL = '97'  "
@@ -701,7 +799,7 @@ Static Function MontaTela()
 		DbSelectArea("SC2")
 		DbSetOrder(1)
 		dbSeek(xFilial("SC2")+cCodOP)
-		cCLiente:= SC2->C2_CLIENT+" - " +ALLTRIM(SC2->C2_NCLIENT )
+		cCLiente:= SC2->C2_CLIENT+" - " +AllTrim(SC2->C2_NCLIENT )
 		nQtdOri := SC2->C2_QUANT
 		nQtdEnt := SC2->C2_QUJE
 		cCodPai := SC2->C2_PRODUTO
@@ -736,7 +834,7 @@ Static Function MontaTela()
 
 		While QRY2->(!eof())
 
-			IF ALLTRIM(QRY2->B1_GRUPO) $ 'FO|FOFS'
+			IF AllTrim(QRY2->B1_GRUPO) $ 'FO|FOFS'
 				DbSelectArea("SG1")
 				SG1->(DbSetOrder(1))
 				IF SG1->(DbSeek(xFilial("SG1")+PADR(QRY2->D4_PRODUTO,TamSX3("D4_PRODUTO")[1])+QRY2->D4_COD))
@@ -749,35 +847,35 @@ Static Function MontaTela()
 				nQtdOp:= QRY2->D4_QTDEORI
 			Endif
 
-			nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[2]) == ALLTRIM(QRY2->D4_COD) })
+
+			nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[2]) == AllTrim(QRY2->D4_COD) })
 			IF nPos > 0
-				oGetDados:aCols[nPos,aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'QTDOP' })] += nQtdOp
+				oGetDados:aCols[nPos,aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'QTDOP' })] += nQtdOp
 			Else
 				AADD(oGetDados:aCols,Array(Len(oGetDados:aHeader)+1))
-				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'FLAG'  })] := oNo
-				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'COMP'  })] := ALLTRIM(QRY2->D4_COD)
-				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'DESC2' })] := ALLTRIM(QRY2->B1_DESC)
-				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'QTDOP' })] := nQtdOp// QRY2->D4_QUANT
-				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'QTDENT'})] := 0
-				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'DTPROG'})] := DTOC(dDatabase)
-				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'GRUPO' })] := ALLTRIM(QRY2->B1_GRUPO)
+				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'FLAG'  })] := oNo
+				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'COMP'  })] := AllTrim(QRY2->D4_COD)
+				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'DESC2' })] := AllTrim(QRY2->B1_DESC)
+				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'QTDOP' })] := nQtdOp// QRY2->D4_QUANT
+				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'QTDENT'})] := 0
+				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'DTPROG'})] := DTOC(dDatabase)
+				oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'GRUPO' })] := AllTrim(QRY2->B1_GRUPO)
 				oGetDados:aCols[Len(oGetDados:aCols),Len(oGetDados:aHeader)+1 ] := .F.
-				
+
 			Endif
 			QRY2->(DbSkip())
 		EndDo
 	Else
 		AADD(oGetDados:aCols,Array(Len(oGetDados:aHeader)+1))
-		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'FLAG'  })] := oNo
-		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'COMP'  })] := ""
-		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'DESC2' })] := ""
-		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'QTDOP' })] := 0
-		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'QTDENT'})] := 0
-		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'DTPROG'})] := DTOC(dDatabase)
-		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'GRUPO' })] := ""
+		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'FLAG'  })] := oNo
+		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'COMP'  })] := ""
+		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'DESC2' })] := ""
+		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'QTDOP' })] := 0
+		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'QTDENT'})] := 0
+		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'DTPROG'})] := DTOC(dDatabase)
+		oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| AllTrim(aVet[2]) == 'GRUPO' })] := ""
 		oGetDados:aCols[Len(oGetDados:aCols),Len(oGetDados:aHeader)+1 ] := .T.
 	EndIf
-
 
 	oCodOp:Refresh()
 	oQtdOri:Refresh()
@@ -850,26 +948,26 @@ Static Function MontaTela2(nMaxLinhas)
 
 		While QRY->(!eof())
 
-			cStatus:= IIF (EMPTY(ALLTRIM(QRY->C2_ORDSEP)), "1",ALLTRIM(QRY->C2_ORDSEP))
+			cStatus:= IIF (EMPTY(AllTrim(QRY->C2_ORDSEP)), "1",AllTrim(QRY->C2_ORDSEP))
 
 			AADD(oGetDados2:aCols,Array(Len(oGetDados2:aHeader)+1))
-			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'FLAG2'  })] := iif(QRY->C2_QUJE == 0, oNo,IIF(QRY->C2_QUJE > 0 .and. QRY->C2_QUANT<> QRY->C2_QUJE,oIn,oOK ))
-			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'FLAG3'  })] := iif(cStatus == '1', oNo,IIF(cStatus == '2',oIn,oOK ))
-			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'OP'  })] := ALLTRIM(QRY->OP)
-			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'QTDORIG' })] := QRY->C2_QUANT
-			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'QTDAPONT' })] := QRY->C2_QUJE
-			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'DTPROG2'})] := DTOC(STOD(QRY->DTPROG))
+			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'FLAG2'  })] := iif(QRY->C2_QUJE == 0, oNo,IIF(QRY->C2_QUJE > 0 .and. QRY->C2_QUANT<> QRY->C2_QUJE,oIn,oOK ))
+			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'FLAG3'  })] := iif(cStatus == '1', oNo,IIF(cStatus == '2',oIn,oOK ))
+			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'OP'  })] := AllTrim(QRY->OP)
+			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'QTDORIG' })] := QRY->C2_QUANT
+			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'QTDAPONT' })] := QRY->C2_QUJE
+			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'DTPROG2'})] := DTOC(STOD(QRY->DTPROG))
 			oGetDados2:aCols[Len(oGetDados2:aCols),Len(oGetDados2:aHeader)+1 ] := .F.
 			QRY->(DbSkip())
 		EndDo
 	Else
 		AADD(oGetDados2:aCols,Array(Len(oGetDados2:aHeader)+1))
-		oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'FLAG2'  })] := oNo
-		oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'FLAG3'  })] := oNo
-		oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'OP'  })] := ""
-		oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'QTDORIG' })] := 0
-		oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'QTDAPONT' })] := 0
-		oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'DTPROG2'})] := DTOC(dDatabase)
+		oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'FLAG2'  })] := oNo
+		oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'FLAG3'  })] := oNo
+		oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'OP'  })] := ""
+		oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'QTDORIG' })] := 0
+		oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'QTDAPONT' })] := 0
+		oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'DTPROG2'})] := DTOC(dDatabase)
 		oGetDados2:aCols[Len(oGetDados2:aCols),Len(oGetDados2:aHeader)+1 ] := .T.
 	EndIf
 
@@ -945,7 +1043,7 @@ Return nCelula
 Static function fVldXd4St(cCodOp,_nSerie)
 	Local cQuery:=""
 	Local lRet:= .T.
-	//Local nPosComp	:= GdFieldPos( "COMP" )
+	Local nPosComp	:= GdFieldPos( "COMP" )
 	Local nPosGpr	:= GdFieldPos( "GRUPO" )
 	Local nPQtdent	:= GdFieldPos( "QTDENT" )
 	//Local nPQtdOp	:= GdFieldPos( "QTDOP" )
@@ -962,14 +1060,28 @@ Static function fVldXd4St(cCodOp,_nSerie)
 	IF val(_nSerie) == 0
 		cQuery+=" 	SELECT COUNT(*) QTDLID "
 		cQuery+=" 	FROM "+RETSQLNAME("XD4")+" XD4 (NOLOCK)  "
-		cQuery+=" 	WHERE XD4_OP LIKE  '"+ALLTRIM(cCodOp)+"%' "
+		cQuery+=" 	WHERE XD4_OP LIKE  '"+AllTrim(cCodOp)+"%' "
 		cQuery+=" 	AND XD4_STATUS = '2'   "
 		cQuery+=" 	AND XD4_FILIAL = '"+xFilial("XD4")+"' "
 		cQuery+=" 	AND XD4.D_E_L_E_T_ = '' "
 		dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"QRY",.T.,.T.)
 
 		if QRY->(!Eof())
-			nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+
+			If U_VALIDACAO("RODA")
+				XD4->(dbSetorder(3))
+				IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+					cCodProd:= XD4->XD4_PRODUT
+				ENDIF
+
+				if !Empty(cCodProd)
+					nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosComp]) == AllTrim(cCodProd) })
+				Else
+					nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+				Endif
+			else
+				nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+			Endif
 			IF nPos > 0
 				oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
 			Endif
@@ -986,11 +1098,11 @@ Static function fVldXd4St(cCodOp,_nSerie)
 	cQuery:=" SELECT XD4_STATUS, R_E_C_N_O_ REC
 	cQuery+=" 		,(SELECT COUNT(*)
 	cQuery+=" 		FROM "+RETSQLNAME("XD4")+" XD4
-	cQuery+=" 		 WHERE XD4_OP LIKE  '"+ALLTRIM(cCodOp)+"%' "
+	cQuery+=" 		 WHERE XD4_OP LIKE  '"+AllTrim(cCodOp)+"%' "
 	cQuery+=" 		 AND XD4_STATUS = '2'
 	cQuery+=" 		 AND XD4.D_E_L_E_T_ = '') QTDLID
 	cQuery+=" FROM "+RetSqlName("XD4")+" XD4 "
-	cQuery+=" WHERE XD4_OP LIKE  '"+ALLTRIM(cCodOp)+"%' "
+	cQuery+=" WHERE XD4_OP LIKE  '"+AllTrim(cCodOp)+"%' "
 	cQuery+=" AND XD4_SERIAL = "+_nSerie+" 	"
 	cQuery+=" AND XD4_FILIAL = '"+xFilial("XD4")+"' "
 	cQuery+=" AND XD4.D_E_L_E_T_ = ''
@@ -1005,8 +1117,32 @@ Static function fVldXd4St(cCodOp,_nSerie)
 		lRet:= .F.
 	Endif
 
-	nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
-	oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
+
+	If U_VALIDACAO("RODA")
+		XD4->(dbSetorder(3))
+		IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+			cCodProd:= XD4->XD4_PRODUT
+		ENDIF
+
+		if !Empty(cCodProd)
+			nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosComp]) == AllTrim(cCodProd) })
+		Else
+			nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+		Endif
+	else
+		nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosGpr]) $ "FO|FOFS"})
+	Endif
+
+	if nPos > 0
+		IF QRY->QTDLID == 0
+			oGetDados:aCols[nPos,nPQtdent]:= 1
+		Else
+			oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
+		Endif
+	Else
+		MyMsg("Etiqueta não localizada" ,1,.T.)
+		lRet:= .f.
+	ENDIF
 
 	if lRet
 		dbSelectArea("XD4")
@@ -1039,8 +1175,8 @@ Static Function fStatus()
 	Local nPQtdent	:= GdFieldPos( "QTDENT" )
 	Local nPQtdOp	:= GdFieldPos( "QTDOP" )
 	Local nPosFlag	:= GdFieldPos( "FLAG" )
-	Local nPosOp	:= aScan(oGetDados2:aHeader,{|aVet| Alltrim(avet[2]) == "OP"  })
-	Local nLinha 	:= aScan(oGetDados2:acols,{|aVet| Alltrim(aVet[nPosOp]) == alltrim(cCodOP)  })
+	Local nPosOp	:= aScan(oGetDados2:aHeader,{|aVet| AllTrim(avet[2]) == "OP"  })
+	Local nLinha 	:= aScan(oGetDados2:acols,{|aVet| AllTrim(aVet[nPosOp]) == AllTrim(cCodOP)  })
 	Local nToReg:= len(oGetDados:aCols)
 	Local nRegOk:= 0
 	//Local nPerc := 0
@@ -1084,13 +1220,13 @@ Static Function fStatus()
 	If nLinha > 0
 		if !empty(cCodOP)
 			If nQtdProds == 0
-				oGetDados2:aCols[nLinha,aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'FLAG3'  })] :=  oNo
+				oGetDados2:aCols[nLinha,aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'FLAG3'  })] :=  oNo
 				cStatus:= '1'
 			ElseIf nQtdProds >= 1 .and. nQtdProds < nTotProds
-				oGetDados2:aCols[nLinha,aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'FLAG3'  })] :=  oIn
+				oGetDados2:aCols[nLinha,aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'FLAG3'  })] :=  oIn
 				cStatus:= '2'
 			ElseIf nQtdProds == nTotProds
-				oGetDados2:aCols[nLinha,aScan(oGetDados2:aHeader,{|aVet| Alltrim(aVet[2]) == 'FLAG3'  })] :=  oOk
+				oGetDados2:aCols[nLinha,aScan(oGetDados2:aHeader,{|aVet| AllTrim(aVet[2]) == 'FLAG3'  })] :=  oOk
 				cStatus:= '3'
 			Endif
 
@@ -1116,8 +1252,8 @@ Return
 //--------------------------------------------------------------
 
 Static Function fAtuPgOp()
-	Local nPosOP	:= aScan(oGetDados2:aHeader,{|_y| Alltrim(_y[2]) == "OP"  })
-	Local nPosQtApon:= aScan(oGetDados2:aHeader,{|_y| Alltrim(_y[2]) == "QTDAPONT"  })
+	Local nPosOP	:= aScan(oGetDados2:aHeader,{|_y| AllTrim(_y[2]) == "OP"  })
+	Local nPosQtApon:= aScan(oGetDados2:aHeader,{|_y| AllTrim(_y[2]) == "QTDAPONT"  })
 	Local _y:= 0
 
 
@@ -1125,7 +1261,7 @@ Static Function fAtuPgOp()
 		SC2->(DbSetOrder(1))
 		if SC2->(dbSeek(xFilial("SC2")+oGetDados2:aCols[_y,nPosOP]))
 			oGetDados2:aCols[_y,nPosQtApon] := SC2->C2_QUJE
-			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|_y| Alltrim(_y[2]) == 'FLAG2'  })] := iif(SC2->C2_QUJE == 0, oNo,IIF(SC2->C2_QUJE > 0 .and. SC2->C2_QUANT<> SC2->C2_QUJE,oIn,oOK ))
+			oGetDados2:aCols[Len(oGetDados2:aCols),aScan(oGetDados2:aHeader,{|_y| AllTrim(_y[2]) == 'FLAG2'  })] := iif(SC2->C2_QUJE == 0, oNo,IIF(SC2->C2_QUJE > 0 .and. SC2->C2_QUANT<> SC2->C2_QUJE,oIn,oOK ))
 		Endif
 
 	Next _y
@@ -1135,7 +1271,7 @@ Return
 
 /*/Protheus.doc fVldXd1St
 	description
-	type function
+type function
 	version
 	author Ricardo Roda
 	since 06/08/2020
@@ -1158,7 +1294,7 @@ Static function fVldXd1St(cCodOp)
 
 	cQuery+=" 	SELECT XD1_COD,SUM(XD1_QTDATU) QTDLID "
 	cQuery+=" 	FROM "+RETSQLNAME("XD1")+" XD1 "
-	cQuery+=" 	WHERE XD1_OP LIKE  '"+ALLTRIM(cCodOp)+"%' "
+	cQuery+=" 	WHERE XD1_OP LIKE  '"+AllTrim(cCodOp)+"%' "
 	cQuery+=" 	AND XD1_OCORRE = '7'   "
 	cQuery+=" 	AND XD1_FILIAL = '"+xFilial("XD1")+"' "
 	cQuery+=" 	AND XD1.D_E_L_E_T_ = '' "
@@ -1168,15 +1304,18 @@ Static function fVldXd1St(cCodOp)
 
 	if QRY->(!Eof())
 		WHILE QRY->(!EOF())
-			nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosComp]) == alltrim(XD1_COD) })
-			oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
+			nPos:= aScan(oGetDados:aCols,{|x| AllTrim(x[nPosComp]) == AllTrim(XD1_COD) })
 
-			if	oGetDados:aCols[nPos,nPQtdent] == oGetDados:aCols[nPos,nPQtdOp]
-				oGetDados:aCols[nPos,nPosFlag] := oOk
-			Elseif oGetDados:aCols[nPos,nPQtdent] == 0
-				oGetDados:aCols[nPos,nPosFlag] := oNo
-			Elseif oGetDados:aCols[nPos,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
-				oGetDados:aCols[nPos,nPosFlag] := oIn
+			IF nPos > 0
+				oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
+
+				if	oGetDados:aCols[nPos,nPQtdent] == oGetDados:aCols[nPos,nPQtdOp]
+					oGetDados:aCols[nPos,nPosFlag] := oOk
+				Elseif oGetDados:aCols[nPos,nPQtdent] == 0
+					oGetDados:aCols[nPos,nPosFlag] := oNo
+				Elseif oGetDados:aCols[nPos,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
+					oGetDados:aCols[nPos,nPosFlag] := oIn
+				Endif
 			Endif
 
 			QRY->(DbSkip())
