@@ -12,6 +12,9 @@
 ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
 ฑฑบDesc.     ณ Tela de montagem da embalagem nivel 3                 	  บฑฑ
 ฑฑบ          ณ Para grupos que nใo possuem calculo de embalagem final     บฑฑ
+ฑฑบ          ณ                                                            บฑฑ
+ฑฑบ          ณ  U_VALIDACAO("RODA")  Fonte todo alterado e compilado em   บฑฑ
+ฑฑบ          ณ  valida็ใo. Pendente passar para produ็ใo                  บฑฑ
 ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
 ฑฑบUso       ณ AP                                                         บฑฑ
 ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
