@@ -311,7 +311,7 @@ Static Function VldEtiq()
 						//³Verifica se o Cliente é TELEFONICA							³
 						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 						lTelefonic := .F.
-						If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))
+						If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ)) .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
 							lTelefonic := .T.
 						EndIf
 
@@ -516,10 +516,13 @@ Static Function VldEtiq()
 												END ZY_VOLUME_FINAL
 											From %table:SZY% SZY (NOLOCK)
 											JOIN %table:SG1% SG1 (NOLOCK)
-											ON G1_FILIAL = '' AND G1_COD = ZY_PRODUTO
+											ON G1_FILIAL = %Exp:xFilial("SG1")% 
+											AND G1_COD = ZY_PRODUTO
 											JOIN %table:SB1% SB1 (NOLOCK)
-											ON B1_FILIAL = '' AND B1_COD = ZY_PRODUTO
-											WHERE SG1.%NotDel%
+											ON B1_FILIAL = %Exp:xFilial("SB1")% 
+											AND B1_COD = ZY_PRODUTO
+											WHERE ZY_FILIAL = %Exp:xFilial("SZ1")% 
+											AND SG1.%NotDel%
 											And SZY.%NotDel%
 											And SB1.%NotDel%
 											And %Exp:cWhere%
@@ -531,8 +534,10 @@ Static Function VldEtiq()
 											SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT-ZY_QUJE) ZY_VOLUMES
 											From %table:SZY% SZY (NOLOCK)
 											JOIN %table:SB1% SB1 (NOLOCK)
-											ON B1_FILIAL = '' AND B1_COD = ZY_PRODUTO
-											WHERE SZY.%NotDel%
+											ON B1_FILIAL = %Exp:xFilial("SB1")% 
+											AND B1_COD = ZY_PRODUTO
+											WHERE ZY_FILIAL = %Exp:xFilial("SZ1")%  
+											AND SZY.%NotDel%
 											And SB1.%NotDel%
 											And %Exp:cWhere%
 											And %Exp:cWhereSZY%
@@ -547,12 +552,14 @@ Static Function VldEtiq()
 											cQuery += "   WHEN (ZY_QUANT*G1_QUANT) <> CAST((ZY_QUANT*G1_QUANT) as INT) THEN CAST(((ZY_QUANT*G1_QUANT)+1) as INT) " 	+ Chr(13)
 											cQuery += "   WHEN (ZY_QUANT*G1_QUANT)  = CAST((ZY_QUANT*G1_QUANT) as INT) THEN CAST((ZY_QUANT*G1_QUANT) as INT)  " 		+ Chr(13)
 											cQuery += "END ZY_VOLUME_FINAL " + Chr(13)
-											cQuery += "			From SZY010 SZY (NOLOCK) "                                                      + Chr(13)
-											cQuery += "			JOIN SG1010 SG1 (NOLOCK) "                                                      + Chr(13)
+											cQuery += "			From "+RetSqlName("SZY")+" SZY (NOLOCK) "                                                      + Chr(13)
+											cQuery += "			JOIN "+RetSqlName("SG1")+" SG1 (NOLOCK) "                                                      + Chr(13)
 											cQuery += "			ON G1_FILIAL = '"+xFilial("SG1")+"' AND G1_COD = ZY_PRODUTO   "                 + Chr(13)
-											cQuery += "			JOIN SB1010 SB1 (NOLOCK) "                                                      + Chr(13)
+											cQuery += "			JOIN "+RetSqlName("SB1")+" SB1 (NOLOCK) "                                                      + Chr(13)
 											cQuery += "			ON B1_COD = ZY_PRODUTO   "                                                      + Chr(13)
+											cQuery += "			AND B1_FILIAL = '"+xFilial("SB1")+"' "
 											cQuery += "			WHERE SG1.D_E_L_E_T_ = '' "                                                     + Chr(13)
+											cQuery += "			AND ZY_FILIAL = '"+xFilial("SZY")+"' "
 											cQuery += "					And SZY.D_E_L_E_T_ = '' "                                                 + Chr(13)
 											cQuery += "					And SB1.D_E_L_E_T_ = '' "                                                 + Chr(13)
 											cQuery += "					And " + StrTran(cWhere    ,'%','')                                        + Chr(13)
@@ -560,10 +567,12 @@ Static Function VldEtiq()
 											cQuery += "					ORDER BY G1_COD "                                                         + Chr(13)
 										Else
 											cQuery := "SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT-ZY_QUJE) ZY_VOLUMES "  + Chr(13)
-											cQuery += "			From SZY010 SZY (NOLOCK) "                                                      + Chr(13)
-											cQuery += "			JOIN SB1010 SB1 (NOLOCK) "                                                      + Chr(13)
+											cQuery += "			From "+RetSqlName("SZY")+" SZY (NOLOCK) "                                                      + Chr(13)
+											cQuery += "			JOIN "+RetSqlName("SB1")+" SB1 (NOLOCK) "                                                      + Chr(13)
 											cQuery += "			ON B1_COD = ZY_PRODUTO   "                                                      + Chr(13)
+											cQuery += "			AND B1_FILIAL = '"+xFilial("SB1")+"' "
 											cQuery += "			WHERE	SZY.D_E_L_E_T_ = '' "                                                 	  + Chr(13)
+											cQuery += "			AND ZY_FILIAL = '"+xFilial("SZY")+"' "
 											cQuery += "					And SB1.D_E_L_E_T_ = '' "                                                 + Chr(13)
 											cQuery += "					And " + StrTran(cWhere    ,'%','')                                        + Chr(13)
 											cQuery += "					And " + StrTran(cWhereSZY ,'%','')                                        + Chr(13)
@@ -595,7 +604,7 @@ Static Function VldEtiq()
 									//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 									//³Validação entre Previsão de Faturamento e Pedido de vendas  ³
 									//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-									cQuery   := "SELECT ZY_PEDIDO, ZY_ITEM, SUM(ZY_QUANT) AS ZY_QUANT FROM SZY010 WHERE ZY_PEDIDO ='"+cOpPedido+"' AND D_E_L_E_T_ = '' GROUP BY ZY_PEDIDO, ZY_ITEM ORDER BY ZY_ITEM "
+									cQuery   := "SELECT ZY_PEDIDO, ZY_ITEM, SUM(ZY_QUANT) AS ZY_QUANT FROM "+RetSqlName("SZY")+" WHERE ZY_PEDIDO ='"+cOpPedido+"' AND D_E_L_E_T_ = '' GROUP BY ZY_PEDIDO, ZY_ITEM ORDER BY ZY_ITEM "
 									If Select("QUERYSZY") <> 0
 										QUERYSZY->( dbCloseArea() )
 									EndIf

@@ -225,11 +225,11 @@ Static Function VldEtiq(_cNumEtqPA)
 		lBuscaProd := .F.
 		lBuscaGrup := .F.
 		ZA1->(dbSetOrder(1))
-		If ZA1->(dbSeek(xFilial()+XD1->XD1_COD))
+		If ZA1->(dbSeek(xFilial("ZA1")+XD1->XD1_COD))
 			lBuscaProd := .T.
 		EndIf
 		ZA1->(dbSetOrder(2))
-		If ZA1->(dbSeek(xFilial()+SB1->B1_GRUPO+SB1->B1_SUBCLAS))
+		If ZA1->(dbSeek(xFilial("ZA1")+SB1->B1_GRUPO+SB1->B1_SUBCLAS))
 			lBuscaGrup := .T.
 		EndIf
 
@@ -272,471 +272,476 @@ Static Function VldEtiq(_cNumEtqPA)
 						SA1->(dbSeek(xFilial("SA1")+SC2->C2_CLIENT))
 						If ("CLARO" $ Upper(SA1->A1_NOME)) .Or. ("CLARO" $ Upper(SA1->A1_NREDUZ))
 							lEhClaro := .T.
-						EndI
+							EndI
 
-						SB1->(dbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
-
-						//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-						//ЁVerifica se o Cliente И HUAWEI								Ё
-						//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-						lSelPorItem := If("HUAWEI" $ SA1->A1_NOME, .T., .F.)
-						If !lSelPorItem
-							If ("ALCATEL" $ SA1->A1_NOME)
-								lSelPorItem := .T.
-							EndIf
-							If GetMv("MV_XVERTEL")
-								If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ SA1->A1_NREDUZ)
-									lSelPorItem := .T.
-								EndIf
-								If ("ERICSSON" $ SA1->A1_NOME)
-									lSelPorItem := .T.
-								EndIf
-							EndIf
-							If GetMv("MV_XVEROI")
-								If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
-									lSelPorItem := .T.
-								EndIf
-							EndIf
-
-							//Verifica se И clietne CLARO
-							If GetMv("MV_XVERCLA")
-								If ("CLARO" $ Upper(SA1->A1_NOME)) .Or. ("CLARO" $ Upper(SA1->A1_NREDUZ))
-									lSelPorItem := .T.
-								EndIf
-							EndIf
-						EndIf
-
-
-						//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-						//ЁVerifica se o Cliente И HUAWEI								Ё
-						//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-						lHuawei := If("HUAWEI" $ SA1->A1_NOME, .T., .F.)
-						lPadTec := If("PADTEC" $ SA1->A1_NOME, .T., .F.)
-
-						//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-						//ЁVerifica se o Cliente И TELEFONICA							Ё
-						//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-						lTelefonic := .F.
-						If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))
-							lTelefonic := .T.
-						EndIf
-
-						//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-						//ЁVerifica pedido de venda										Ё
-						//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-						If !Empty(_cNumPed)
-							If ( SC2->C2_PEDIDO <> _cNumPed ) .And. !Empty(_cNumPed)
-								U_MsgColetor("Pedido diferente da coleta atual.")
-								_cNumEtqPA := Space(_nTamEtiq)
-								oGetOp:Refresh()
-								//oGetOp:SetFocus()
-								Return(.F.)
-							EndIf
-						Else
-							//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-							//ЁVerifica se trocou de pedido entre volumes				Ё
-							//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-
-							If nTotalGrupo > 0
-								cVolumeAtu := SPACE(20)
-								nTotalGrupo := 0
-								aEmbPed     := {}
-								aEmb        := {}
-							EndIf
-
-						EndIf
-
-						//здддддддддддддддддддддддддддддддддддддддддддддддддд©
-						//ЁBusca Nivel de Embalagem para Faturamento 		  Ё
-						//юдддддддддддддддддддддддддддддддддддддддддддддддддды
-						SC6->(dbSetOrder(7))
-						If !SC6->(dbSeek(xFilial("SC6")+SC2->C2_NUM+SC2->C2_ITEM))
-							U_MsgColetor("NЦo existem pedidos para esse item.")
-							_cNumEtqPA := Space(_nTamEtiq)
-							oGetOp:Refresh()
-							//oGetOp:SetFocus()
-							Return(.F.)
-						Else
+							SB1->(dbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
 
 							//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-							//ЁVerifica se coleta pedido por Item							Ё
+							//ЁVerifica se o Cliente И HUAWEI								Ё
 							//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-							If lSelPorItem
-								If !Empty(cGrupoItem)
-									If ( SC6->C6_NUM+SC6->C6_ITEM <> cGrupoItem ) .And. !Empty(cGrupoItem)
-										U_MsgColetor("Item "+SC6->C6_ITEM+" diferente da coleta atual do item "+SubStr(cGrupoItem,7,3))
-										_cNumEtqPA := Space(_nTamEtiq)
-										oGetOp:Refresh()
-										//oGetOp:SetFocus()
-										Return(.F.)
+							lSelPorItem := If("HUAWEI" $ SA1->A1_NOME, .T., .F.)
+							If !lSelPorItem
+								If ("ALCATEL" $ SA1->A1_NOME)
+									lSelPorItem := .T.
+								EndIf
+								If GetMv("MV_XVERTEL")
+									If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ SA1->A1_NREDUZ)  .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
+										lSelPorItem := .T.
+									EndIf
+									If ("ERICSSON" $ SA1->A1_NOME)
+										lSelPorItem := .T.
+									EndIf
+								EndIf
+								If GetMv("MV_XVEROI")
+									If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
+										lSelPorItem := .T.
+									EndIf
+								EndIf
+
+								//Verifica se И clietne CLARO
+								If GetMv("MV_XVERCLA")
+									If ("CLARO" $ Upper(SA1->A1_NOME)) .Or. ("CLARO" $ Upper(SA1->A1_NREDUZ))
+										lSelPorItem := .T.
 									EndIf
 								EndIf
 							EndIf
 
 
-							If SC6->C6_PRODUTO == SC2->C2_PRODUTO
+							//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+							//ЁVerifica se o Cliente И HUAWEI								Ё
+							//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+							lHuawei := If("HUAWEI" $ SA1->A1_NOME, .T., .F.)
+							lPadTec := If("PADTEC" $ SA1->A1_NOME, .T., .F.)
 
-								If lSelPorItem
-									cGrupoItem := SC6->C6_NUM+SC6->C6_ITEM
-								Else
-									cGrupoItem := SB1->B1_GRUPO
+							//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+							//ЁVerifica se o Cliente И TELEFONICA							Ё
+							//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+							lTelefonic := .F.
+							If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ)) .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
+								lTelefonic := .T.
+							EndIf
+
+							//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+							//ЁVerifica pedido de venda										Ё
+							//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+							If !Empty(_cNumPed)
+								If ( SC2->C2_PEDIDO <> _cNumPed ) .And. !Empty(_cNumPed)
+									U_MsgColetor("Pedido diferente da coleta atual.")
+									_cNumEtqPA := Space(_nTamEtiq)
+									oGetOp:Refresh()
+									//oGetOp:SetFocus()
+									Return(.F.)
 								EndIf
+							Else
+								//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+								//ЁVerifica se trocou de pedido entre volumes				Ё
+								//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+								If nTotalGrupo > 0
+									cVolumeAtu := SPACE(20)
+									nTotalGrupo := 0
+									aEmbPed     := {}
+									aEmb        := {}
+								EndIf
+
+							EndIf
+
+							//здддддддддддддддддддддддддддддддддддддддддддддддддд©
+							//ЁBusca Nivel de Embalagem para Faturamento 		  Ё
+							//юдддддддддддддддддддддддддддддддддддддддддддддддддды
+							SC6->(dbSetOrder(7))
+							If !SC6->(dbSeek(xFilial("SC6")+SC2->C2_NUM+SC2->C2_ITEM))
+								U_MsgColetor("NЦo existem pedidos para esse item.")
+								_cNumEtqPA := Space(_nTamEtiq)
+								oGetOp:Refresh()
+								//oGetOp:SetFocus()
+								Return(.F.)
+							Else
 
 								//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-								//ЁVerifica se coleta o mesmo produto para calculo peso	Ё
+								//ЁVerifica se coleta pedido por Item							Ё
 								//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-								If aScan(aProdEmb,SC6->C6_PRODUTO) == 0
-									AADD(aProdEmb,SC6->C6_PRODUTO)
-								EndIf
-
-								_nQtdEmp   := SC6->C6_QTDVEN
-								cOpPedido  := SC6->C6_NUM
-								cOPItemPV  := SC6->C6_ITEM
-
-								//здддддддддддддддддддддддддддддддддддддддддддддддддд©
-								//ЁBusca Nivel de Embalagem para Faturamento 		  Ё
-								//юдддддддддддддддддддддддддддддддддддддддддддддддддды
-								dbSelectArea("SB1")
-								If Empty(SB1->B1_XXNIVFT)
-									cNivelFat := "3"
-								Else
-									cNivelFat :=SB1->B1_XXNIVFT
+								If lSelPorItem
+									If !Empty(cGrupoItem)
+										If ( SC6->C6_NUM+SC6->C6_ITEM <> cGrupoItem ) .And. !Empty(cGrupoItem)
+											U_MsgColetor("Item "+SC6->C6_ITEM+" diferente da coleta atual do item "+SubStr(cGrupoItem,7,3))
+											_cNumEtqPA := Space(_nTamEtiq)
+											oGetOp:Refresh()
+											//oGetOp:SetFocus()
+											Return(.F.)
+										EndIf
+									EndIf
 								EndIf
 
 
-								//здддддддддддддддддддддддддддддддддддддддддддддддддд©
-								//ЁAcumula o total dos grupos do pedido				  Ё
-								//юдддддддддддддддддддддддддддддддддддддддддддддддддды
-								If aScan(aEmbPed,{ |x| x[1] == cGrupoItem }) == 0
+								If SC6->C6_PRODUTO == SC2->C2_PRODUTO
 
-									nTotCx2PV  := 0
-									nCx2SepPv  := 0
-									nQtdPed    := 0
-
-									SZY->(dbSetOrder(1))
-									If !SZY->(dbSeek(xFilial("SZY")+SC6->C6_NUM))
-										U_MsgColetor("NЦo existe programaГЦo de faturamento para esse produto.")
-										_cNumEtqPA := Space(_nTamEtiq)
-										oGetOp:Refresh()
-										//oGetOp:SetFocus()
-										Return(.F.)
+									If lSelPorItem
+										cGrupoItem := SC6->C6_NUM+SC6->C6_ITEM
 									Else
-										lDataFat  := .F.
-										lFatData  := .F.
-										cPedAuxZY := AllTrim(SZY->ZY_PEDIDO )
-										Do While SZY->(!Eof()) .And. SZY->ZY_PEDIDO == SC6->C6_NUM
-											If SZY->ZY_PRVFAT == _cDtaFat .and. SZY->ZY_ITEM == SC6->C6_ITEM
-												lDataFat := .T.
-												If Empty(SZY->ZY_NOTA)
-													lFatData := .T.
-												EndIf
-												Exit
-											EndIf
-											SZY->(dbSkip())
-										EndDo
-										If !lDataFat
-											U_MsgColetor("NЦo existe programaГЦo de faturamento do Pedido/Item "+cPedAuxZY+" para '"+DtoC(_cDtaFat)+"'.")
+										cGrupoItem := SB1->B1_GRUPO
+									EndIf
+
+									//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+									//ЁVerifica se coleta o mesmo produto para calculo peso	Ё
+									//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+									If aScan(aProdEmb,SC6->C6_PRODUTO) == 0
+										AADD(aProdEmb,SC6->C6_PRODUTO)
+									EndIf
+
+									_nQtdEmp   := SC6->C6_QTDVEN
+									cOpPedido  := SC6->C6_NUM
+									cOPItemPV  := SC6->C6_ITEM
+
+									//здддддддддддддддддддддддддддддддддддддддддддддддддд©
+									//ЁBusca Nivel de Embalagem para Faturamento 		  Ё
+									//юдддддддддддддддддддддддддддддддддддддддддддддддддды
+									dbSelectArea("SB1")
+									If Empty(SB1->B1_XXNIVFT)
+										cNivelFat := "3"
+									Else
+										cNivelFat :=SB1->B1_XXNIVFT
+									EndIf
+
+
+									//здддддддддддддддддддддддддддддддддддддддддддддддддд©
+									//ЁAcumula o total dos grupos do pedido				  Ё
+									//юдддддддддддддддддддддддддддддддддддддддддддддддддды
+									If aScan(aEmbPed,{ |x| x[1] == cGrupoItem }) == 0
+
+										nTotCx2PV  := 0
+										nCx2SepPv  := 0
+										nQtdPed    := 0
+
+										SZY->(dbSetOrder(1))
+										If !SZY->(dbSeek(xFilial("SZY")+SC6->C6_NUM))
+											U_MsgColetor("NЦo existe programaГЦo de faturamento para esse produto.")
 											_cNumEtqPA := Space(_nTamEtiq)
 											oGetOp:Refresh()
 											//oGetOp:SetFocus()
 											Return(.F.)
 										Else
-											If !lFatData
-												U_MsgColetor("ProgramaГЦo de faturamento do Pedido/Item "+cPedAuxZY+" para '"+DtoC(_cDtaFat)+"' jА faturada.")
+											lDataFat  := .F.
+											lFatData  := .F.
+											cPedAuxZY := AllTrim(SZY->ZY_PEDIDO )
+											Do While SZY->(!Eof()) .And. SZY->ZY_PEDIDO == SC6->C6_NUM
+												If SZY->ZY_PRVFAT == _cDtaFat .and. SZY->ZY_ITEM == SC6->C6_ITEM
+													lDataFat := .T.
+													If Empty(SZY->ZY_NOTA)
+														lFatData := .T.
+													EndIf
+													Exit
+												EndIf
+												SZY->(dbSkip())
+											EndDo
+											If !lDataFat
+												U_MsgColetor("NЦo existe programaГЦo de faturamento do Pedido/Item "+cPedAuxZY+" para '"+DtoC(_cDtaFat)+"'.")
 												_cNumEtqPA := Space(_nTamEtiq)
 												oGetOp:Refresh()
 												//oGetOp:SetFocus()
 												Return(.F.)
+											Else
+												If !lFatData
+													U_MsgColetor("ProgramaГЦo de faturamento do Pedido/Item "+cPedAuxZY+" para '"+DtoC(_cDtaFat)+"' jА faturada.")
+													_cNumEtqPA := Space(_nTamEtiq)
+													oGetOp:Refresh()
+													//oGetOp:SetFocus()
+													Return(.F.)
+												EndIf
 											EndIf
 										EndIf
-									EndIf
 
-									//здддддддддддддддддддддддддддддддддддддддддддддддддд©
-									//ЁCalcula a quantidade de volumes pela previsao 	 Ё
-									//юдддддддддддддддддддддддддддддддддддддддддддддддддды
-									cAliasSZY := "QUERYSZY1" // GetNextAlias()
-									//cWhere    := "%ZY_PEDIDO ='"+cOpPedido+"' AND B1_GRUPO ='"+cGrupoItem+"'%"
-									If !Empty(cGrupoItem)
-										If cNivelFat == '3'
-											If lSelPorItem
-												cWhere    := "%G1_XXEMBNI = '2' AND "+"ZY_PEDIDO ='"+cOpPedido+"' AND ZY_ITEM='"+cOPItemPV+"'%"
+										//здддддддддддддддддддддддддддддддддддддддддддддддддд©
+										//ЁCalcula a quantidade de volumes pela previsao 	 Ё
+										//юдддддддддддддддддддддддддддддддддддддддддддддддддды
+										cAliasSZY := "QUERYSZY1" // GetNextAlias()
+										//cWhere    := "%ZY_PEDIDO ='"+cOpPedido+"' AND B1_GRUPO ='"+cGrupoItem+"'%"
+
+										If !Empty(cGrupoItem)
+											If cNivelFat == '3'
+												If lSelPorItem
+													cWhere    := "%G1_XXEMBNI = '2' AND "+"ZY_PEDIDO ='"+cOpPedido+"' AND ZY_ITEM='"+cOPItemPV+"'%"
+												Else
+													cWhere    := "%B1_GRUPO ='"+cGrupoItem+"' AND G1_XXEMBNI = '2' AND "+"ZY_PEDIDO ='"+cOpPedido+"'%"
+												EndIf
 											Else
-												cWhere    := "%B1_GRUPO ='"+cGrupoItem+"' AND G1_XXEMBNI = '2' AND "+"ZY_PEDIDO ='"+cOpPedido+"'%"
+												If lSelPorItem
+													cWhere    := "%ZY_PEDIDO ='"+cOpPedido+"' AND ZY_ITEM='"+cOPItemPV+"'%"
+												Else
+													cWhere    := "%B1_GRUPO ='"+cGrupoItem+"' AND "+"ZY_PEDIDO ='"+cOpPedido+"'%"
+												EndIf
 											EndIf
 										Else
-											If lSelPorItem
-												cWhere    := "%ZY_PEDIDO ='"+cOpPedido+"' AND ZY_ITEM='"+cOPItemPV+"'%"
+											If cNivelFat == '3'
+												cWhere    := "%G1_XXEMBNI = '2' AND "+"ZY_PEDIDO ='"+cOpPedido+"'%"
 											Else
-												cWhere    := "%B1_GRUPO ='"+cGrupoItem+"' AND "+"ZY_PEDIDO ='"+cOpPedido+"'%"
+												cWhere    := "%ZY_PEDIDO ='"+cOpPedido+"'%"
 											EndIf
 										EndIf
-									Else
-										If cNivelFat == '3'
-											cWhere    := "%G1_XXEMBNI = '2' AND "+"ZY_PEDIDO ='"+cOpPedido+"'%"
-										Else
-											cWhere    := "%ZY_PEDIDO ='"+cOpPedido+"'%"
-										EndIf
-									EndIf
-									cWhereSZY   := "%ZY_PRVFAT ='"+Dtos(_cDtaFat)+"' AND ZY_NOTA = ''%"
+										cWhereSZY   := "%ZY_PRVFAT ='"+Dtos(_cDtaFat)+"' AND ZY_NOTA = ''%"
 
 
-									If lBeginSQL
-										If cNivelFat == "3"
-											BeginSQL Alias cAliasSZY
+										If lBeginSQL
+											If cNivelFat == "3"
+												BeginSQL Alias cAliasSZY
 											SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, G1_QUANT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT*G1_QUANT) ZY_VOLUMES,
 											CASE
 											WHEN (ZY_QUANT*G1_QUANT) <> CAST((ZY_QUANT*G1_QUANT) as INT) THEN CAST(((ZY_QUANT*G1_QUANT)+1) as INT) 
 											WHEN (ZY_QUANT*G1_QUANT)  = CAST((ZY_QUANT*G1_QUANT) as INT) THEN CAST((ZY_QUANT*G1_QUANT) as INT)  
 											END ZY_VOLUME_FINAL
-										From %table:SZY% SZY (NOLOCK)
-										JOIN %table:SG1% SG1 (NOLOCK)
-										ON G1_FILIAL = '' AND G1_COD = ZY_PRODUTO
-										JOIN %table:SB1% SB1 (NOLOCK)
-										ON B1_FILIAL = '' AND B1_COD = ZY_PRODUTO
-										WHERE SG1.%NotDel%
-										And SZY.%NotDel%
-										And SB1.%NotDel%
-										And %Exp:cWhere%
-										And %Exp:cWhereSZY%
-										ORDER BY G1_COD
-										EndSQL
-									Else
-										BeginSQL Alias cAliasSZY
+											From %table:SZY% SZY (NOLOCK)
+											JOIN %table:SG1% SG1 (NOLOCK) ON G1_FILIAL = %Exp:xFilial("SG1")% AND G1_COD = ZY_PRODUTO
+											JOIN %table:SB1% SB1 (NOLOCK) ON B1_FILIAL = %Exp:xFilial("SB1")% AND B1_COD = ZY_PRODUTO
+											WHERE ZY_FILIAL = %Exp:xFilial("SZY")%
+											AND SG1.%NotDel%
+											And SZY.%NotDel%
+											And SB1.%NotDel%
+											And %Exp:cWhere%
+											And %Exp:cWhereSZY%
+											ORDER BY G1_COD
+												EndSQL
+											Else
+												BeginSQL Alias cAliasSZY
 											SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, G1_QUANT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT-ZY_QUJE) ZY_VOLUMES
 											From %table:SZY% SZY (NOLOCK)
 											JOIN %table:SB1% SB1 (NOLOCK)
-											ON B1_FILIAL = '' AND B1_COD = ZY_PRODUTO
-											WHERE SZY.%NotDel%
+											ON B1_FILIAL = %Exp:xFilial("SB1")% AND B1_COD = ZY_PRODUTO
+											WHERE ZY_FILIAL = %Exp:xFilial("SZY")%
+											AND SZY.%NotDel%
 											And SB1.%NotDel%
 											And %Exp:cWhere%
 											And %Exp:cWhereSZY%
 											ORDER BY ZY_PRODUTO
-										EndSQL
-									EndIf
-								Else
-									// Query comentada por HИlio
-									If cNivelFat == '3'
-										cQuery := "SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, G1_QUANT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT*G1_QUANT) ZY_VOLUMES, " + Chr(13)
-										cQuery += "CASE "																																			+ Chr(13)
-										cQuery += "   WHEN (ZY_QUANT*G1_QUANT) <> CAST((ZY_QUANT*G1_QUANT) as INT) THEN CAST(((ZY_QUANT*G1_QUANT)+1) as INT) " 	+ Chr(13)
-										cQuery += "   WHEN (ZY_QUANT*G1_QUANT)  = CAST((ZY_QUANT*G1_QUANT) as INT) THEN CAST((ZY_QUANT*G1_QUANT) as INT)  " 		+ Chr(13)
-										cQuery += "END ZY_VOLUME_FINAL " + Chr(13)
-										cQuery += "			From SZY010 SZY (NOLOCK) "                                                      + Chr(13)
-										cQuery += "			JOIN SG1010 SG1 (NOLOCK) "                                                      + Chr(13)
-										cQuery += "			ON G1_FILIAL = '"+xFilial("SG1")+"' AND G1_COD = ZY_PRODUTO   "                 + Chr(13)
-										cQuery += "			JOIN SB1010 SB1 (NOLOCK) "                                                      + Chr(13)
-										cQuery += "			ON B1_COD = ZY_PRODUTO   "                                                      + Chr(13)
-										cQuery += "			WHERE SG1.D_E_L_E_T_ = '' "                                                     + Chr(13)
-										cQuery += "					And SZY.D_E_L_E_T_ = '' "                                                 + Chr(13)
-										cQuery += "					And SB1.D_E_L_E_T_ = '' "                                                 + Chr(13)
-										cQuery += "					And " + StrTran(cWhere    ,'%','')                                        + Chr(13)
-										cQuery += "					And " + StrTran(cWhereSZY ,'%','')                                        + Chr(13)
-										cQuery += "					ORDER BY G1_COD "                                                         + Chr(13)
-									Else
+												EndSQL
+											EndIf
+										Else
+											// Query comentada por HИlio
+											If cNivelFat == '3'
+												cQuery := "SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, G1_QUANT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT*G1_QUANT) ZY_VOLUMES, " + Chr(13)
+												cQuery += "CASE "																																			+ Chr(13)
+												cQuery += "   WHEN (ZY_QUANT*G1_QUANT) <> CAST((ZY_QUANT*G1_QUANT) as INT) THEN CAST(((ZY_QUANT*G1_QUANT)+1) as INT) " 	+ Chr(13)
+												cQuery += "   WHEN (ZY_QUANT*G1_QUANT)  = CAST((ZY_QUANT*G1_QUANT) as INT) THEN CAST((ZY_QUANT*G1_QUANT) as INT)  " 		+ Chr(13)
+												cQuery += "END ZY_VOLUME_FINAL " + Chr(13)
+												cQuery += "			From "+RetSqlName("SZY")+" SZY (NOLOCK) "                                                      + Chr(13)
+												cQuery += "			JOIN "+RetSqlName("SG1")+" SG1 (NOLOCK) "                                                      + Chr(13)
+												cQuery += "			ON G1_FILIAL = '"+xFilial("SG1")+"' AND G1_COD = ZY_PRODUTO   "                 + Chr(13)
+												cQuery += "			JOIN "+RetSqlName("SB1")+" SB1 (NOLOCK) "                                                      + Chr(13)
+												cQuery += "			ON B1_COD = ZY_PRODUTO "                                                      + Chr(13)
+												cQuery += "			AND B1_FILIAL = '"+xFilial("SB1")+"' "
+												cQuery += "			WHERE SG1.D_E_L_E_T_ = '' "                                                     + Chr(13)
+												cQuery += "			AND ZY_FILIAL = '"+xFilial("SZY")+"' "
+												cQuery += "					And SZY.D_E_L_E_T_ = '' "                                                 + Chr(13)
+												cQuery += "					And SB1.D_E_L_E_T_ = '' "                                                 + Chr(13)
+												cQuery += "					And " + StrTran(cWhere    ,'%','')                                        + Chr(13)
+												cQuery += "					And " + StrTran(cWhereSZY ,'%','')                                        + Chr(13)
+												cQuery += "					ORDER BY G1_COD "                                                         + Chr(13)
+											Else
 
-										cQuery := "SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT-ZY_QUJE) ZY_VOLUMES "  + Chr(13)
-										cQuery += "			From SZY010 SZY (NOLOCK) "                                                      + Chr(13)
-										cQuery += "			JOIN SB1010 SB1 (NOLOCK) "                                                      + Chr(13)
-										cQuery += "			ON B1_COD = ZY_PRODUTO   "                                                      + Chr(13)
-										cQuery += "			WHERE	SZY.D_E_L_E_T_ = '' "                                                 	  + Chr(13)
-										cQuery += "					And SB1.D_E_L_E_T_ = '' "                                                 + Chr(13)
-										cQuery += "					And " + StrTran(cWhere    ,'%','')                                        + Chr(13)
-										cQuery += "					And " + StrTran(cWhereSZY ,'%','')                                        + Chr(13)
-										cQuery += "					ORDER BY ZY_PRODUTO "                                                     + Chr(13)
-									EndIf
-									TCQUERY cQuery new alias &(cAliasSZY)
-								EndIf
+												cQuery := "SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT-ZY_QUJE) ZY_VOLUMES "  + Chr(13)
+												cQuery += "			From "+RetSqlName("SZY")+" SZY (NOLOCK) "                                                      + Chr(13)
+												cQuery += "			JOIN "+RetSqlName("SB1")+" SB1 (NOLOCK) "                                                      + Chr(13)
+												cQuery += "			ON B1_COD = ZY_PRODUTO   "                                                      + Chr(13)
+												cQuery += "			AND B1_FILIAL = '"+xFilial("SB1")+"' "
+												cQuery += "			WHERE	SZY.D_E_L_E_T_ = '' "                                                 	  + Chr(13)
+												cQuery += "			AND ZY_FILIAL = '"+xFilial("SZY")+"' "
+												cQuery += "					And SB1.D_E_L_E_T_ = '' "                                                 + Chr(13)
+												cQuery += "					And " + StrTran(cWhere    ,'%','')                                        + Chr(13)
+												cQuery += "					And " + StrTran(cWhereSZY ,'%','')                                        + Chr(13)
+												cQuery += "					ORDER BY ZY_PRODUTO "                                                     + Chr(13)
+											EndIf
+											TCQUERY cQuery new alias &(cAliasSZY)
+										EndIf
 
-								//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-								//ЁValidando apenas uma progrmaГЦo de fatuamento para cada item de PV
-								//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
-								aTemp := {}
+										//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+										//ЁValidando apenas uma progrmaГЦo de fatuamento para cada item de PV
+										//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+										aTemp := {}
 
-								Do While (cAliasSZY)->(!Eof())
-									If aScan(aTemp, (cAliasSZY)->(ZY_PEDIDO+ZY_ITEM+ZY_PRVFAT) ) == 0
-										AADD(aTemp,(cAliasSZY)->(ZY_PEDIDO+ZY_ITEM+ZY_PRVFAT) )
-									Else
-										U_MsgColetor("Existem duas previsУes de faturamento para o mesmo item de Pedido com esta data")
-										_cNumEtqPA := Space(_nTamEtiq)
-										oGetOp:Refresh()
-										//oGetOp:SetFocus()
-										Return(.F.)
-									EndIf
-									(cAliasSZY)->(dbSkip())
-								EndDo
+										Do While (cAliasSZY)->(!Eof())
+											If aScan(aTemp, (cAliasSZY)->(ZY_PEDIDO+ZY_ITEM+ZY_PRVFAT) ) == 0
+												AADD(aTemp,(cAliasSZY)->(ZY_PEDIDO+ZY_ITEM+ZY_PRVFAT) )
+											Else
+												U_MsgColetor("Existem duas previsУes de faturamento para o mesmo item de Pedido com esta data")
+												_cNumEtqPA := Space(_nTamEtiq)
+												oGetOp:Refresh()
+												//oGetOp:SetFocus()
+												Return(.F.)
+											EndIf
+											(cAliasSZY)->(dbSkip())
+										EndDo
 
-								//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-								//ЁValidaГЦo entre PrevisЦo de Faturamento e Pedido de vendas  Ё
-								//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
-								cQuery   := "SELECT ZY_PEDIDO, ZY_ITEM, SUM(ZY_QUANT) AS ZY_QUANT FROM SZY010 WHERE ZY_PEDIDO ='"+cOpPedido+"' AND D_E_L_E_T_ = '' GROUP BY ZY_PEDIDO, ZY_ITEM ORDER BY ZY_ITEM "
-								If Select("QUERYSZY2") <> 0
-									QUERYSZY2->( dbCloseArea() )
-								EndIf
-								TCQUERY cQuery NEW ALIAS 'QUERYSZY2'
-								nTemp1 := 0
-								nTemp2 := 0
-								While !QUERYSZY2->( EOF() )
-									nTemp1++
-									QUERYSZY2->(dbSkip())
-								End
-								SC6->( dbSetOrder(1) )
-								If SC6->( dbSeek( xFilial() + cOpPedido ) )
-									While !SC6->( EOF() ) .and. SC6->C6_NUM == cOpPedido
-										nTemp2++
-										SC6->( dbSkip() )
-									End
-								EndIf
-								If nTemp1 <> nTemp2
-									U_MsgColetor("NЗmero de Itens do Pedido de Vendas ("+Alltrim(Str(nTemp2))+") diferente da PrevisЦo de Faturamento ("+Alltrim(Str(nTemp1))+").")
-									_cNumEtqPA := Space(_nTamEtiq)
-									oGetOp:Refresh()
-									//oGetOp:SetFocus()
-									Return(.F.)
-								EndIf
-								QUERYSZY2->( dbGoTop() )
-								While !QUERYSZY2->( EOF() )
-									If SC6->( dbSeek( xFilial() + QUERYSZY2->ZY_PEDIDO + QUERYSZY2->ZY_ITEM ) )
-										If QUERYSZY2->ZY_QUANT <> SC6->C6_QTDVEN
-											U_MsgColetor("Quantidade do Pedido diferente da PrevisЦo de Faturamento. Pedido/Item: " + QUERYSZY2->ZY_PEDIDO + '/' + QUERYSZY2->ZY_ITEM+'.')
+										//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+										//ЁValidaГЦo entre PrevisЦo de Faturamento e Pedido de vendas  Ё
+										//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+										cQuery   := "SELECT ZY_PEDIDO, ZY_ITEM, SUM(ZY_QUANT) AS ZY_QUANT FROM "+RetSqlName("SZY")+" WHERE ZY_PEDIDO ='"+cOpPedido+"' AND D_E_L_E_T_ = '' GROUP BY ZY_PEDIDO, ZY_ITEM ORDER BY ZY_ITEM "
+										If Select("QUERYSZY2") <> 0
+											QUERYSZY2->( dbCloseArea() )
+										EndIf
+										TCQUERY cQuery NEW ALIAS 'QUERYSZY2'
+										nTemp1 := 0
+										nTemp2 := 0
+										While !QUERYSZY2->( EOF() )
+											nTemp1++
+											QUERYSZY2->(dbSkip())
+										End
+										SC6->( dbSetOrder(1) )
+										If SC6->( dbSeek( xFilial("SC6") + cOpPedido ) )
+											While !SC6->( EOF() ) .and. SC6->C6_NUM == cOpPedido
+												nTemp2++
+												SC6->( dbSkip() )
+											End
+										EndIf
+										If nTemp1 <> nTemp2
+											U_MsgColetor("NЗmero de Itens do Pedido de Vendas ("+Alltrim(Str(nTemp2))+") diferente da PrevisЦo de Faturamento ("+Alltrim(Str(nTemp1))+").")
 											_cNumEtqPA := Space(_nTamEtiq)
 											oGetOp:Refresh()
 											//oGetOp:SetFocus()
 											Return(.F.)
 										EndIf
-									Else
-										U_MsgColetor("NЦo foi encontrada PrevisЦo de Faturamento para o Pedido/Item: " + QUERYSZY2->ZY_PEDIDO + '/' + QUERYSZY2->ZY_ITEM+'.')
-										_cNumEtqPA := Space(_nTamEtiq)
-										oGetOp:Refresh()
-										//oGetOp:SetFocus()
-										Return(.F.)
+										QUERYSZY2->( dbGoTop() )
+										While !QUERYSZY2->( EOF() )
+											If SC6->( dbSeek( xFilial("SC6") + QUERYSZY2->ZY_PEDIDO + QUERYSZY2->ZY_ITEM ) )
+												If QUERYSZY2->ZY_QUANT <> SC6->C6_QTDVEN
+													U_MsgColetor("Quantidade do Pedido diferente da PrevisЦo de Faturamento. Pedido/Item: " + QUERYSZY2->ZY_PEDIDO + '/' + QUERYSZY2->ZY_ITEM+'.')
+													_cNumEtqPA := Space(_nTamEtiq)
+													oGetOp:Refresh()
+													//oGetOp:SetFocus()
+													Return(.F.)
+												EndIf
+											Else
+												U_MsgColetor("NЦo foi encontrada PrevisЦo de Faturamento para o Pedido/Item: " + QUERYSZY2->ZY_PEDIDO + '/' + QUERYSZY2->ZY_ITEM+'.')
+												_cNumEtqPA := Space(_nTamEtiq)
+												oGetOp:Refresh()
+												//oGetOp:SetFocus()
+												Return(.F.)
+											EndIf
+											QUERYSZY2->( dbSkip() )
+										End
+
+										//здддддддддддддддддддддддддддддддддддддддддддддддддд©
+										//ЁDesconta caixas separadas								  Ё
+										//юдддддддддддддддддддддддддддддддддддддддддддддддддды
+										SC6->( dbSetOrder(1) )
+										(cAliasSZY)->( dbGoTop() )
+										//aCx2SepPv := {}
+										aVetGeral := {}
+										cZY_SEQ   := ""
+
+										Do While (cAliasSZY)->(!Eof())
+
+											If Alltrim((cAliasSZY)->ZY_PEDIDO) == Alltrim(cOpPedido) .AND. Alltrim((cAliasSZY)->ZY_ITEM) == Alltrim(cOPItemPV)
+												cZY_SEQ := (cAliasSZY)->ZY_SEQ
+											EndIf
+
+											SC6->( dbSeek( xFilial("SC6") + (cAliasSZY)->ZY_PEDIDO + (cAliasSZY)->ZY_ITEM ) )
+											nDisponiveis := DispToSep(Alltrim(SC6->C6_NUMOP+SC6->C6_ITEMOP),ZA1->ZA1_NIVEL,'')
+											nSeparadas 	 := Separadas((cAliasSZY)->ZY_PEDIDO, (cAliasSZY)->ZY_ITEM,ZA1->ZA1_NIVEL)
+
+											// aVetGeral 	1 - Numero do Pedido
+											//					2 - Codigo do Item do Pedido
+											//					3 - Quantidade do Item do Pedido
+											//					4 - Quantidade de Volumes Calculado para Expedicao
+											//					5 - NЗmero de caixas separadas
+											//					6 - Numero de caixas DisponМveis
+											AADD(aVetGeral,{(cAliasSZY)->ZY_PEDIDO,(cAliasSZY)->ZY_ITEM, (cAliasSZY)->ZY_QUANT, (cAliasSZY)->ZY_VOLUMES, nSeparadas , nDisponiveis  })
+
+											(cAliasSZY)->(dbSkip())
+										EndDo
+
+										nQtdPed := 0
+										For _nxy := 1 to Len(aVetGeral)
+											nQtdPed    += aVetGeral[_nxy,3] // ZY_QUANT
+										Next _nxy
+
+										nCx2SepPv  := 0
+										For _nxy := 1 to Len(aVetGeral)
+											nCx2SepPv  += aVetGeral[_nxy,5] // caixas separadas
+										Next
+
+										nDisponivel := 0
+										For _nxy := 1 to Len(aVetGeral)
+											nDisponivel += aVetGeral[_nxy,6] // caixinhas disponМveis
+										Next
+
+										nTotCx2PV := 0
+										For _nxy := 1 to Len(aVetGeral)
+											nInteiro   := Int(aVetGeral[_nxy,4])
+											nResto     := Int(aVetGeral[_nxy,4]) - Int(aVetGeral[_nxy,4])
+											nVolUso    := 0
+											If nResto >= 0.0001 .And. nResto <= 0.0009
+												nVolUso := nInteiro
+											Else
+												nVolUso := ( nInteiro + 1)
+											EndIf
+
+											nTemp      := If( Int(aVetGeral[_nxy,4]) <> aVetGeral[_nxy,4], nVolUso, aVetGeral[_nxy,4] ) // ZY_VOLUMES
+											nTotCx2PV  += nTemp
+										Next _nxy
+
+										If Empty(cZY_SEQ)
+											U_MsgColetor("SequЙncia nЦo localizada.")
+											_cNumEtqPA := Space(_nTamEtiq)
+											oGetOp:Refresh()
+											//oGetOp:SetFocus()
+											(cAliasSZY)->(dbCloseArea())
+											Return(.F.)
+										EndIf
+
+										(cAliasSZY)->(dbCloseArea())
+
+										aEmb := {}
+										AADD(aEmb, { "5000722281465  ", XD1->XD1_QTDATU, Posicione("SB1",1,xFilial("SB1")+"5000722281465  ","B1_PESO") } )
+
+
+										//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+										//Calcula a quantidade de volumes do pedido										  Ё
+										//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+										AADD(aEmbPed,{ cGrupoItem, (nTotCx2PV - nCx2SepPv) })
+
+										nTotalGrupo := nDisponivel
+										nSaldoGrupo := Separadas(SC2->C2_PEDIDO,'', ZA1->ZA1_NIVEL ,'6')+1
+										cVolumeAtu  := PADL(AllTrim(Str(nSaldoGrupo))+"/"+AllTrim(Str(nTotalGrupo)),18)
+										oSldGrupo:Refresh()
+
 									EndIf
-									QUERYSZY2->( dbSkip() )
-								End
 
-								//здддддддддддддддддддддддддддддддддддддддддддддддддд©
-								//ЁDesconta caixas separadas								  Ё
-								//юдддддддддддддддддддддддддддддддддддддддддддддддддды
-								SC6->( dbSetOrder(1) )
-								(cAliasSZY)->( dbGoTop() )
-								//aCx2SepPv := {}
-								aVetGeral := {}
-								cZY_SEQ   := ""
+								Else
 
-								Do While (cAliasSZY)->(!Eof())
-
-									If Alltrim((cAliasSZY)->ZY_PEDIDO) == Alltrim(cOpPedido) .AND. Alltrim((cAliasSZY)->ZY_ITEM) == Alltrim(cOPItemPV)
-										cZY_SEQ := (cAliasSZY)->ZY_SEQ
-									EndIf
-
-									SC6->( dbSeek( xFilial() + (cAliasSZY)->ZY_PEDIDO + (cAliasSZY)->ZY_ITEM ) )
-									nDisponiveis := DispToSep(Alltrim(SC6->C6_NUMOP+SC6->C6_ITEMOP),ZA1->ZA1_NIVEL,'')
-									nSeparadas 	 := Separadas((cAliasSZY)->ZY_PEDIDO, (cAliasSZY)->ZY_ITEM,ZA1->ZA1_NIVEL)
-
-									// aVetGeral 	1 - Numero do Pedido
-									//					2 - Codigo do Item do Pedido
-									//					3 - Quantidade do Item do Pedido
-									//					4 - Quantidade de Volumes Calculado para Expedicao
-									//					5 - NЗmero de caixas separadas
-									//					6 - Numero de caixas DisponМveis
-									AADD(aVetGeral,{(cAliasSZY)->ZY_PEDIDO,(cAliasSZY)->ZY_ITEM, (cAliasSZY)->ZY_QUANT, (cAliasSZY)->ZY_VOLUMES, nSeparadas , nDisponiveis  })
-
-									(cAliasSZY)->(dbSkip())
-								EndDo
-
-								nQtdPed := 0
-								For _nxy := 1 to Len(aVetGeral)
-									nQtdPed    += aVetGeral[_nxy,3] // ZY_QUANT
-								Next _nxy
-
-								nCx2SepPv  := 0
-								For _nxy := 1 to Len(aVetGeral)
-									nCx2SepPv  += aVetGeral[_nxy,5] // caixas separadas
-								Next
-
-								nDisponivel := 0
-								For _nxy := 1 to Len(aVetGeral)
-									nDisponivel += aVetGeral[_nxy,6] // caixinhas disponМveis
-								Next
-
-								nTotCx2PV := 0
-								For _nxy := 1 to Len(aVetGeral)
-									nInteiro   := Int(aVetGeral[_nxy,4])
-									nResto     := Int(aVetGeral[_nxy,4]) - Int(aVetGeral[_nxy,4])
-									nVolUso    := 0
-									If nResto >= 0.0001 .And. nResto <= 0.0009
-										nVolUso := nInteiro
-									Else
-										nVolUso := ( nInteiro + 1)
-									EndIf
-
-									nTemp      := If( Int(aVetGeral[_nxy,4]) <> aVetGeral[_nxy,4], nVolUso, aVetGeral[_nxy,4] ) // ZY_VOLUMES
-									nTotCx2PV  += nTemp
-								Next _nxy
-
-								If Empty(cZY_SEQ)
-									U_MsgColetor("SequЙncia nЦo localizada.")
+									U_MsgColetor("Produto do Pedido de Venda: "+SC6->C6_NUM+" item: "+ SC6->C6_ITEM + " Produto: " + SC6->C6_PRODUTO + " diferente do produto da OP: "+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN+" Produto: " + SC2->C2_PRODUTO)
 									_cNumEtqPA := Space(_nTamEtiq)
 									oGetOp:Refresh()
 									//oGetOp:SetFocus()
-									(cAliasSZY)->(dbCloseArea())
 									Return(.F.)
+
 								EndIf
-
-								(cAliasSZY)->(dbCloseArea())
-
-								aEmb := {}
-								AADD(aEmb, { "5000722281465  ", XD1->XD1_QTDATU, Posicione("SB1",1,xFilial("SB1")+"5000722281465  ","B1_PESO") } )
-
-
-								//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-								//Calcula a quantidade de volumes do pedido										  Ё
-								//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
-								AADD(aEmbPed,{ cGrupoItem, (nTotCx2PV - nCx2SepPv) })
-
-								nTotalGrupo := nDisponivel
-								nSaldoGrupo := Separadas(SC2->C2_PEDIDO,'', ZA1->ZA1_NIVEL ,'6')+1
-								cVolumeAtu  := PADL(AllTrim(Str(nSaldoGrupo))+"/"+AllTrim(Str(nTotalGrupo)),18)
-								oSldGrupo:Refresh()
 
 							EndIf
 
-						Else
+							//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+							//ЁAtualiza dados para o coletor									Ё
+							//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+							SB1->(dbSeek(xFilial("SB1")+SC6->C6_PRODUTO))
+							nSaldoEmb := aEmb[1,2]
+							_cEmbalag := aEmb[1,1]
+							nPesoEmb  := aEmb[1,3]
+							_cNomCli  := "  "+SUBSTR(SA1->A1_NOME,1,15)
+							_cNumPed  := SC6->C6_NUM
+							_cProdEmp := SB1->B1_COD
+							_cDescric := SB1->B1_DESC
+							SB1->(dbSeek(xFilial("SB1")+aEmb[1,1]))
+							_cDescEmb := SUBSTR(SB1->B1_DESC,1,27)
 
-							U_MsgColetor("Produto do Pedido de Venda: "+SC6->C6_NUM+" item: "+ SC6->C6_ITEM + " Produto: " + SC6->C6_PRODUTO + " diferente do produto da OP: "+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN+" Produto: " + SC2->C2_PRODUTO)
-							_cNumEtqPA := Space(_nTamEtiq)
-							oGetOp:Refresh()
-							//oGetOp:SetFocus()
-							Return(.F.)
+							//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+							//ЁColeta etiqueta bipada											Ё
+							//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+							//_nQtd     += 1
+							nQtdCaixa += XD1->XD1_QTDATU
+							AADD(aEmbBip,{_cNumEtqPA,SC6->C6_NUM,SC6->C6_ITEM,SC6->C6_ITEM})
+							AADD(aSeqBib,cZY_SEQ)
 
-						EndIf
-
-					EndIf
-
-					//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-					//ЁAtualiza dados para o coletor									Ё
-					//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-					SB1->(dbSeek(xFilial("SB1")+SC6->C6_PRODUTO))
-					nSaldoEmb := aEmb[1,2]
-					_cEmbalag := aEmb[1,1]
-					nPesoEmb  := aEmb[1,3]
-					_cNomCli  := "  "+SUBSTR(SA1->A1_NOME,1,15)
-					_cNumPed  := SC6->C6_NUM
-					_cProdEmp := SB1->B1_COD
-					_cDescric := SB1->B1_DESC
-					SB1->(dbSeek(xFilial("SB1")+aEmb[1,1]))
-					_cDescEmb := SUBSTR(SB1->B1_DESC,1,27)
-
-					//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-					//ЁColeta etiqueta bipada											Ё
-					//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-					//_nQtd     += 1
-					nQtdCaixa += XD1->XD1_QTDATU
-					AADD(aEmbBip,{_cNumEtqPA,SC6->C6_NUM,SC6->C6_ITEM,SC6->C6_ITEM})
-					AADD(aSeqBib,cZY_SEQ)
-
-					//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-					//ЁImprime etiqueta nivel 3										Ё
-					//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
+							//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+							//ЁImprime etiqueta nivel 3										Ё
+							//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
 					/*If _nQtd == nDisponivel
 
 						//зддддддддддддд ддддддддддддддддддддддддддддддддддддддддд©
@@ -1172,7 +1177,7 @@ Static Function FechaNiv3()
 
 	if _nQtd < nDisponivel
 		if !U_UMsgYesNo('Confirma a geraГЦo da caixa com '+cvaltochar(_nQtd)+' produtos ?')
-			Return(.T.)				
+			Return(.T.)
 		Endif
 	Endif
 
@@ -1282,10 +1287,10 @@ Static Function DispToSep(cOP,cNivelSep,cPVSENF)
 	LOCAL nSepara   := 0
 	Local cAliasTmp := GetNextAlias()
 	Local cIndice   := "%WITH(INDEX(" + cIndexQry + "))%"
-	Local cWhere    := "%XD1_FILIAL = '01' AND XD1_PVSEP  = '' AND XD1_OCORRE ='4' AND XD1_NIVEMB ='"+cNivelSep+"' AND XD1_OP = '"+cOP+"001' AND D_E_L_E_T_= '' %"
+	Local cWhere    := "%XD1_FILIAL = '"+xFilial("XD1")+"' AND XD1_PVSEP  = '' AND XD1_OCORRE ='4' AND XD1_NIVEMB ='"+cNivelSep+"' AND XD1_OP = '"+cOP+"001' AND D_E_L_E_T_= '' %"
 
 	If !Empty(cPVSENF)
-		cWhere := "%XD1_FILIAL = '01' AND XD1_PVSEP  = '' AND XD1_OCORRE ='4' AND XD1_NIVEMB ='"+cNivelSep+"' AND XD1_PVSENF='"+cPVSENF+"' AND D_E_L_E_T_= ''%"
+		cWhere := "%XD1_FILIAL = '"+xFilial("XD1")+"' AND XD1_PVSEP  = '' AND XD1_OCORRE ='4' AND XD1_NIVEMB ='"+cNivelSep+"' AND XD1_PVSENF='"+cPVSENF+"' AND D_E_L_E_T_= ''%"
 	EndIf
 
 	If lBeginSQL
@@ -1346,8 +1351,8 @@ Static Function Separadas(cPedido, cItem, cNivelSep, cOcorrencia,lPeso)
 	SC6->( dbSetOrder(1) )
 	SB1->( dbSetOrder(1) )
 
-	SC6->( dbSeek( xFilial() + cPedido + cItem ) )
-	SB1->( dbSeek( xFilial() + SC6->C6_PRODUTO ) )
+	SC6->( dbSeek( xFilial("SC6") + cPedido + cItem ) )
+	SB1->( dbSeek( xFilial("SB1") + SC6->C6_PRODUTO ) )
 
 	cWhere := "%XD1_FILIAL = '"+xFilial("XD1")+"' AND SUBSTRING(XD1_PVSEP,1,"+Alltrim(Str(Len(cPedido+cItem)))+") = '"+cPedido+cItem+"' "
 	If lPeso
