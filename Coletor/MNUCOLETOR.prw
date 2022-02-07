@@ -799,7 +799,7 @@ Static Function ColetorMenu(cDep)
 		nLin += nSkipLin
 	EndIf
 
-	If 'RICARDO.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
+	If U_VALIDACAO("RODA")
 
 		If aScan(aAcessos,15) <> 0
 			Private oBtn04 := Nil
