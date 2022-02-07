@@ -91,7 +91,8 @@ User Function IMPZZU()
 	@ C(015),C(018) Say cMsn  Size C(192),C(050) COLOR CLR_BLACK PIXEL OF oDlg
 	@ C(071),C(188) Button "Cancelar" Size C(037),C(012) ACTION (nOpc:=1,oDlg:End()) PIXEL OF oDlg
 	@ C(072),C(005) Button "Importar" Size C(037),C(012) ACTION (nOpc:=2,oDlg:End()) PIXEL OF oDlg
-	@ C(055),C(024) CHECKBOX oCheckBox1 VAR lCheckBox1 PROMPT "Sobrepor planilha já importada" SIZE C(150), C(008) OF oDlg COLORS 0, 16777215 PIXEL 	ON CHANGE (Processa( {||fVldOP()},"Verificando..."))
+	@ C(055),C(024) CHECKBOX oCheckBox1 VAR lCheckBox1 PROMPT "Sobrepor planilha AMAZON" SIZE C(150), C(008) OF oDlg COLORS 0, 16777215 PIXEL 	
+	//ON CHANGE (Processa( {||fVldOP()},"Verificando..."))
 
 	ACTIVATE MSDIALOG oDlg CENTERED
 
