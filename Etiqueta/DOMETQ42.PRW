@@ -192,7 +192,7 @@ User Function DOMETQ42(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	AADD(_aArq,'^LL886'+CRLF)
 	AADD(_aArq,'^LS0'+CRLF)
 
-	nlin:= 15
+	nlin:= 17
 	nCol:= 15
 	AADD(_aArq,'^FT'+cValtoChar(nCol+27)+','+cValtoChar(nlin+148)+'^A0N,25,30^FH\^CI28^FD'+cMVPAR01+'^FS^CI27'+CRLF)
 	AADD(_aArq,'^FT'+cValtoChar(nCol+319)+','+cValtoChar(nlin+148)+'^A0N,25,30^FH\^CI28^FD'+cMVPAR05+'^FS^CI27'+CRLF)
