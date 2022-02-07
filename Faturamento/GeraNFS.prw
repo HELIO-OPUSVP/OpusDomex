@@ -206,7 +206,8 @@ User Function GeraNFS(cNumPV, cSerie, dData, lHuawei)
 		SetFunName("MATA461") // mauresi 09/08/2019
 		cNota := MaPvlNfs(aPvlNfs,cSerie, .F., .F., .F., .T., .F., 0, 0, .T., .F.,,,,,,dDataBase)   // Alterado por Mauresi em 29/03/17
 
-		If !U_VALIDACAO("HELIO")
+		If U_VALIDACAO("HELIO")
+			// Este trecho estava compilado em produção alterando a alíquota de icms. Retirado e compilado em produção
 			nValICM := 0
 			SD2->( dbSetOrder(3) )
 			If SD2->( dbSeek( xFilial() + cNota + cSerie ) )
@@ -231,9 +232,29 @@ User Function GeraNFS(cNumPV, cSerie, dData, lHuawei)
 				SF2->F2_VALICM := nValICM
 				SF2->( msUnlock() )
 			EndIf
-
+		Else
+			SD2->( dbSetOrder(3) )
+			If SD2->( dbSeek( xFilial() + cNota + cSerie ) )
+				While !SD2->( EOF() ) .and. SD2->D2_DOC == cNota .and. SD2->D2_SERIE == cSerie
+					SB1->( dbSeek( xFilial() + SD2->D2_COD ) )
+					If SB1->B1_ORIGEM == '1'	// Alterado por Mauresi em 30/05/2017    //If SB1->B1_ORIGEM <> '0' .and. !Empty(SB1->B1_ORIGEM)
+						If SA1->A1_EST <> 'SP'
+							cAssunto := "NF teste 4% ICMS realizado"
+							cTxtMsg  := "NF: " + SD2->D2_DOC + Chr(13)
+							cTxtMsg  += "Lembrar de pedir para a Priscila validar o ICMS"
+							
+							cTexto   := StrTran(cTxtMsg,Chr(13),"<br>")
+							cPara    := 'denis.vieira@rdt.com.br;fulgencio.muniz@rosenbergerdomex.com.br'
+							cCC      := 'helio@opusvp.com.br'
+							cArquivo := Nil
+							U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
+						EndIf
+					EndIf
+					SD2->( dbSkip() )
+				End
+			EndIf
 		EndIf
-		
+
 		//NMODULO      := nTempNMODULO
 
 		If Select("TEMP") <> 0
