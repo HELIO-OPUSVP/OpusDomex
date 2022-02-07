@@ -206,7 +206,7 @@ User Function GeraNFS(cNumPV, cSerie, dData, lHuawei)
 		SetFunName("MATA461") // mauresi 09/08/2019
 		cNota := MaPvlNfs(aPvlNfs,cSerie, .F., .F., .F., .T., .F., 0, 0, .T., .F.,,,,,,dDataBase)   // Alterado por Mauresi em 29/03/17
 
-		If U_VALIDACAO("HELIO")
+		If U_VALIDACAO("HELIO")   // Não subir para produção
 			// Este trecho estava compilado em produção alterando a alíquota de icms. Retirado e compilado em produção
 			nValICM := 0
 			SD2->( dbSetOrder(3) )
