@@ -240,8 +240,9 @@ Static Function ColetorMenu(cDep)
 		AADD(aAcessos, 15)
 		AADD(aAcessos, 16)
 		AADD(aAcessos, 17)
-		//AADD(aAcessos, 18)
-
+		If Date() >= StoD('20220208')
+		   AADD(aAcessos, 18)
+		EndIf
 	EndIf
 
 //U_MostraFunc(ProcName(),'MNU01COLETOR')
