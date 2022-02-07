@@ -12,6 +12,9 @@
 ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
 ฑฑบDesc.     ณ Tela de montagem da embalagem para faturamento (expedi็ใo) บฑฑ
 ฑฑบ          ณ 											                  บฑฑ
+ฑฑบ          ณ                                                            บฑฑ
+ฑฑบ          ณ  U_VALIDACAO("RODA")  Fonte todo alterado e compilado em   บฑฑ
+ฑฑบ          ณ  valida็ใo. Pendente passar para produ็ใo                  บฑฑ
 ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
 ฑฑบUso       ณ AP                                                         บฑฑ
 ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
@@ -282,7 +285,7 @@ Static Function VldEtiq()
 								lSelPorItem := .T.
 							EndIf
 							If GetMv("MV_XVERTEL")
-								If ("TELEFONICA" $ SA1->A1_NREDUZ)
+								If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ)) .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
 									lSelPorItem := .T.
 								EndIf
 								If ("ERICSSON" $ SA1->A1_NOME)
