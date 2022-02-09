@@ -13,7 +13,7 @@ Default cServidor := ""
 	// 	MsgYesNo("Rodando de dentro do servidor")
 	// EndIf
 
-	MsgRun("# RpcSetEnv()","Favor Aguardar.....",{|| fIniAmbiente() })
+	MsgRun("# RpcSetEnv() - (Produção)","Favor Aguardar.....",{|| fIniAmbiente() })
 	
 	//cRetorno := U_CompQuent()   // Não adianta depurar se não foi local no servidor
 	//cRetorno := startjob("U_CompQuent",getenvserver(), .T. , cMensagem)

@@ -77,9 +77,8 @@ User Function FC2_QUJE(cOP)
 			cTxtMsg  += "OP CORRIGIDA!"
 
 			cTexto   := StrTran(cTxtMsg,Chr(13),"<br>")
-			//cPara    := 'denis.vieira@rdt.com.br;fulgencio.muniz@rosenbergerdomex.com.br'
-			cPara    := 'helio@opusvp.com.br'
-			cCC      := ''
+			cPara    := 'denis.vieira@rosenbergerdomex.com.br;fulgencio.muniz@rosenbergerdomex.com.br'
+			cCC      := 'helio@opusvp.com.br'
 			cArquivo := Nil
             
             U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
