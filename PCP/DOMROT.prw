@@ -21,7 +21,12 @@ User Function DOMROT01()  // CORD
 Return
 
 User Function DOMROT02()  // DIO
-	U_DOMROT("DIO",1)
+	If U_VALIDACAO("RODA") 
+		U_DOMROTTRK("DIO",1)
+	else
+		U_DOMROT("DIO",1)
+	Endif
+
 Return
 
 User Function DOMROT03()  // Drop

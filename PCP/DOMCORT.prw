@@ -1250,28 +1250,30 @@ Static Function fVldApont2(cCodOp,cCFibra, nApont)
 							Endif
 							//FIM DA ALTERAÇÃO
 						Endif
-
-						if lFurukawa
-							U_DOMETI02(cCodOP,nApont,_cNumSerie,cLocImp,cCodFuruk,Len(cvaltochar(nQtdOp)))
-						Else
-							U_DOMETI01(cCodOP,nApont,_cNumSerie,cLocImp)
+		
+						if Posicione("SB1",1, xFilial("SB1")+cCFibra,"B1_GRUPO") <> 'FOFS'
+							if lFurukawa
+								U_DOMETI02(cCodOP,nApont,_cNumSerie,cLocImp,cCodFuruk,Len(cvaltochar(nQtdOp)))
+							Else
+								U_DOMETI01(cCodOP,nApont,_cNumSerie,cLocImp)
+							Endif
+							_cPrxDoc:= fPrxDoc()
+							For _i := 1 to nApont
+								Reclock("XD4", .T.)
+								XD4->XD4_FILIAL	:= xFilial("XD4")
+								XD4->XD4_SERIAL	:= _cNumSerie
+								XD4->XD4_STATUS	:= '6'
+								XD4->XD4_OP	   	:= cCodOP
+								XD4->XD4_NOMUSR	:= cUserSis
+								XD4->XD4_DOC    := _cPrxDoc
+								XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
+								IF U_VALIDACAO("RODA").OR. .T.
+									XD4->XD4_PRODUT	:= cCFibra
+								ENDIF
+								XD4->(MsUnlock())
+								_cNumSerie += 1
+							Next _i
 						Endif
-						_cPrxDoc:= fPrxDoc()
-						For _i := 1 to nApont
-							Reclock("XD4", .T.)
-							XD4->XD4_FILIAL	:= xFilial("XD4")
-							XD4->XD4_SERIAL	:= _cNumSerie
-							XD4->XD4_STATUS	:= '6'
-							XD4->XD4_OP	   	:= cCodOP
-							XD4->XD4_NOMUSR	:= cUserSis
-							XD4->XD4_DOC    := _cPrxDoc
-							XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
-							IF U_VALIDACAO("RODA").OR. .T.
-								XD4->XD4_PRODUT	:= cCFibra
-							ENDIF
-							XD4->(MsUnlock())
-							_cNumSerie += 1
-						Next _i
 					Endif
 
 				Endif
@@ -1516,9 +1518,9 @@ Static Function fTrfRolo(cCFibra,nTransf,cEtiq)
 			Endif
 		Endif
 
-		if Posicione("SB1",1, xFilial("SB1")+cCFibra,"B1_GRUPO") == 'FOFS'
-			lContinua:= .F.
-		Endif
+		// if Posicione("SB1",1, xFilial("SB1")+cCFibra,"B1_GRUPO") == 'FOFS'
+		// 	lContinua:= .F.
+		// Endif
 	Endif
 
 Return lContinua
@@ -2598,50 +2600,72 @@ Return
 
 Static function fImpEtqFF()
 Local _i
+Local nQtEtiFF:= 0
+Local oFont1 := TFont():New("Arial",,025,,.F.,,,,,.F.,.F.)
+Local oGet1
+Local oSay1
+Static oDlgx
+
+	if EMPTY(ALLTRIM(cEtiqOfc))
+		myMsg("Informe a etiqueta do rolo de fibra falsa para imprimir as etiquetas", 1)
+		Return
+	Endif
+
 	if Posicione("SB1",1, xFilial("SB1")+cCFibra,"B1_GRUPO") <> "FOFS"
 		myMsg("Informe a fibra falsa para imprimir as etiquetas", 1)
 		Return
 	Endif
 
-	DbSelectArea("SC2")
-	DbSetOrder(1)
-	dbSeek(xFilial("SC2")+cCodOP)
+  DEFINE MSDIALOG oDlgx TITLE "Etiqueta de Fibra Falsa" FROM 000, 000  TO 200, 500 COLORS 0, 16777215 PIXEL
 
-	//Coleta o ultimo serial e incrementa o apontamento
-	_cNumSerie:= VAL(SC2->C2_XXSERIA)+ 1
-	Reclock("SC2", .F.)
+    @ 009, 037 SAY oSay1 PROMPT "Digite a quantidade de etiquetas de        fibra falsa que deseja imprimir" SIZE 186, 026 OF oDlgx FONT oFont1 COLORS 0, 16777215 PIXEL
+    @ 047, 071 MSGET oGet1 VAR nQtEtiFF PICTURE "@E 999,999" SIZE 105, 017 OF oDlgx COLORS 0, 16777215 FONT oFont1 PIXEL
+ 	@ 067, 074 BUTTON oButton1 PROMPT "OK" ACTION (oDlgx:end()) SIZE 096, 028 OF oDlgx FONT oFont1 PIXEL
 
-	SC2->C2_XXSERIA := CVALTOCHAR(VAL(SC2->C2_XXSERIA) + SC2->C2_QUANT)
-	SC2->(MsUnlock())
+  ACTIVATE MSDIALOG oDlgx CENTERED
 
-	_cProxNiv    := '1'
-	_aQtdBip     := {}
-	_lImpressao  := .T.
-	_nPesoBip    := 0
-	_lColetor    := .F.
+	if nQtEtiFF > 0 
+		DbSelectArea("SC2")
+		DbSetOrder(1)
+		dbSeek(xFilial("SC2")+cCodOP)
 
-	if lFurukawa
-		U_DOMETI02(cCodOP,nApont,_cNumSerie,cLocImp,cCodFuruk,Len(cvaltochar(nQtdOp)))
-	Else
-		U_DOMETI01(cCodOP,nApont,_cNumSerie,cLocImp)
+		//Coleta o ultimo serial e incrementa o apontamento
+		_cNumSerie:= VAL(SC2->C2_XXSERIA)+ 1
+		Reclock("SC2", .F.)
+
+		SC2->C2_XXSERIA := CVALTOCHAR(VAL(SC2->C2_XXSERIA) + nQtEtiFF)
+		SC2->(MsUnlock())
+
+		_cProxNiv    := '1'
+		_aQtdBip     := {}
+		_lImpressao  := .T.
+		_nPesoBip    := 0
+		_lColetor    := .F.
+
+		if lFurukawa
+			U_DOMETI02(cCodOP,nQtEtiFF,_cNumSerie,cLocImp,cCodFuruk,Len(cvaltochar(nQtdOp)))
+		Else
+			U_DOMETI01(cCodOP,nQtEtiFF,_cNumSerie,cLocImp)
+		Endif
+
+		_cPrxDoc:= fPrxDoc()
+		For _i := 1 to nQtEtiFF
+			Reclock("XD4", .T.)
+			XD4->XD4_FILIAL	:= xFilial("XD4")
+			XD4->XD4_SERIAL	:= _cNumSerie
+			XD4->XD4_STATUS	:= '6'
+			XD4->XD4_OP	   	:= cCodOP
+			XD4->XD4_NOMUSR	:= cUserSis
+			XD4->XD4_DOC    := _cPrxDoc
+			XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
+			IF U_VALIDACAO("RODA").OR. .T.
+				XD4->XD4_PRODUT	:= cCFibra
+			ENDIF
+			XD4->(MsUnlock())
+			_cNumSerie += 1
+		Next _i
 	Endif
 
-	_cPrxDoc:= fPrxDoc()
-	For _i := 1 to SC2->C2_QUANT
-		Reclock("XD4", .T.)
-		XD4->XD4_FILIAL	:= xFilial("XD4")
-		XD4->XD4_SERIAL	:= _cNumSerie
-		XD4->XD4_STATUS	:= '6'
-		XD4->XD4_OP	   	:= cCodOP
-		XD4->XD4_NOMUSR	:= cUserSis
-		XD4->XD4_DOC    := _cPrxDoc
-		XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
-		IF U_VALIDACAO("RODA").OR. .T.
-			XD4->XD4_PRODUT	:= cCFibra
-		ENDIF
-		XD4->(MsUnlock())
-		_cNumSerie += 1
-	Next _i
 Return
 
 

@@ -55,7 +55,7 @@ User Function ValidPV(cPedido,lMsg)
 			cTexto 	 := "Cliente BLOQUEADO no cadastro para a OF "+SC5->C5_NUM+ " - " +  cNomeCli+ " / " +SC5->C5_CLIENTE+"-"+SC5->C5_LOJACLI+ Chr(13)+ Chr(13)
 			cTexto   := StrTran(cTexto,Chr(13),"<br>")
 
-			If U_Validacao("OSMAR")
+			If U_Validacao("OSMAR",.T.) //09/02/2022
 				cPara    := cParaCred + UsrRetMail(SC5->C5_USER)
 			Else
 				cPara    := cParaCred
@@ -153,7 +153,7 @@ User Function ValidPV(cPedido,lMsg)
 					cTexto 	+= "Limite de Crédito: " + Alltrim(Transform(nLC,"@E 999,999,999.99")) + Chr(13) + Chr(13)
 					//cTexto   := StrTran(cTexto,Chr(13),"<br>")
 
-					If U_Validacao("OSMAR")
+					If U_Validacao("OSMAR",.T.) //09/02/2022
 						cPara    := cParaCred + UsrRetMail(SC5->C5_USER)
 					Else
 						cPara    := cParaCred
@@ -257,10 +257,10 @@ User Function ValidPV(cPedido,lMsg)
 						cTexto += " * Em função de Diferenças Cambiais, esta Condição não avalia se os valores Adiantados estão corretos."+ Chr(13)
 						cTexto   := StrTran(cTexto,Chr(13),"<br>")
 
-						If U_Validacao("OSMAR")
+						If U_Validacao("OSMAR",.T.) //09/02/2022
 							cPara    := cParaFIN + cParaFAT + cParaTI + UsrRetMail(SC5->C5_USER)
 						Else
-						    cPara    := cParaFIN + cParaFAT + cParaTI //+ UsrRetMail(SC5->C5_USER)
+						    cPara    := cParaFIN + cParaFAT + cParaTI 
 						EndIf
 						
 						cCC      := ""
@@ -283,7 +283,7 @@ User Function ValidPV(cPedido,lMsg)
 							cTexto 	+= " RA + Cartão Crédito: " + Alltrim(Transform((nAdiant+nVlrCartao),"@E 999,999,999.99")) + Chr(13) + Chr(13)
 							//cTexto   := StrTran(cTexto,Chr(13),"<br>")
 
-							If U_Validacao("OSMAR")
+							If U_Validacao("OSMAR",.T.) //09/02/2022
 								cPara    := cParaCred + UsrRetMail(SC5->C5_USER)
 							Else
 								cPara    := cParaCred //+ UsrRetMail(SC5->C5_USER)

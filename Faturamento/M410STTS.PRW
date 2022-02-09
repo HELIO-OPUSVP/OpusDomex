@@ -46,7 +46,7 @@ User Function M410STTS()
 					SC6->( dbSkip() )
 				EndDo
 			Else	//Aprovado pela analise de crédito do cliente
-				If U_Validacao("OSMAR")
+				If U_Validacao("OSMAR",.T.) //09/02/2022
 					SC6->( dbSetOrder(1) )
 					SC6->(dbSeek(xFilial()+SC5->C5_NUM))
 					While SC6->(!Eof()) .And. SC6->C6_NUM == SC5->C5_NUM
@@ -64,7 +64,7 @@ User Function M410STTS()
 		EndIf
 	EndIf
 
-	If U_Validacao("OSMAR")
+	If U_Validacao("OSMAR",.T.) //09/02/2022
 		If SC5->C5_EMISSAO >= SToD('20220125')  //Bloqueia os pedidos a partir de 25/01/2022
 			If (_nOper == 3) .Or. (_nOper == 4)  //Inclusão / Alteração
 				If SC5->C5_TIPO == 'N'

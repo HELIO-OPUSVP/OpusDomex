@@ -20,7 +20,7 @@ User Function A415LIOK
 	Local lRetorno := .t.
 	Local nMargem  := GetMV("MV_XMARGEM") //Percentual mínimo aceito como margem de lucro
 
-	If U_Validacao("OSMAR")
+	If U_Validacao("OSMAR",.T.) //09/02/2022
 		SA1->(dbSetOrder(01))
 		SA1->( dbSeek(xFilial()+M->CJ_CLIENTE+M->CJ_LOJA) )
 

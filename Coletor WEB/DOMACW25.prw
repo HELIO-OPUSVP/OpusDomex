@@ -215,7 +215,7 @@ If XD1->(dbSeek(xFilial("XD1")+_cNumEtqPA))
 			//³Verifica se o Cliente é TELEFONICA							³
 			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 			lTelefonic := .F.
-			If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))
+			If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ)) .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
 			   lTelefonic := .T.
 			   cPedTel := SC5->C5_ESP1
 			Else
@@ -247,7 +247,9 @@ If XD1->(dbSeek(xFilial("XD1")+_cNumEtqPA))
 				    // 06 - Muda impressora de etiqueta para EXPEDIÇÃO
 				    // 07 - Número da Nota Fiscal
 				    // 08 - Peso do Item
-		          U_DOMETQ93(_cOPImp, aDesmonta[nQ,1], _cNumPed, aDesmonta[nQ,3], dDataBase, .T., IIF(!Empty(XD1->XD1_ZYNOTA),XD1->XD1_ZYNOTA,""), XD1->XD1_PESOB )
+
+				   //DOMETQ93(cEtqOp,  cEtqProd       , cEtqPed , nEtqQtd        , dDataFab , lControl, cNfDanfe                                       , nPesoDanfe    , lManual , nQtdEmbal)
+		          U_DOMETQ93(_cOPImp, aDesmonta[nQ,1], _cNumPed, aDesmonta[nQ,3], dDataBase, .T.     , IIF(!Empty(XD1->XD1_ZYNOTA),XD1->XD1_ZYNOTA,""), XD1->XD1_PESOB,.T. )
 				Next nQ
 		   EndIf
 		   

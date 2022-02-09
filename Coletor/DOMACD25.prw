@@ -195,7 +195,7 @@ If XD1->(dbSeek(xFilial("XD1")+_cNumEtqPA))
 			//³Verifica se o Cliente é TELEFONICA							³
 			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 			lTelefonic := .F.
-			If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))
+			If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ)) .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
 			   lTelefonic := .T.
 			   cPedTel := SC5->C5_ESP1
 			Else

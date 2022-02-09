@@ -11,6 +11,9 @@ user function MA410MNU()
 	
 	If U_Validacao("OSMAR")
 	   aadd(aRotina,{"Anexos do P.V."     ,"U_AnexosPV(SC5->C5_NUM)", 0 , 3, 0 , Nil})
+	EndIf   
+
+	If U_Validacao("OSMAR",.T.) //08/02/2022
 	   aadd(aRotina,{"Desbl. Margem/P.V." ,"U_DesBlqPv(SC5->C5_NUM)", 0 , 3, 0 , Nil})
 	EndIf   
 
