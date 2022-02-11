@@ -33,7 +33,7 @@ User Function M410AGRV()
 		For x:= 1 To Len(aCols)
 
 			If SC6->( dbSeek(xFilial() + M->C5_NUM + aCols[x,nPC6_ITEM]) )				
-				If aCols[x,nPC6_PRCVEN] <> SC6->C6_PRCVEN .Or. aCols[x,nPC6_XMARGEM] <> SC6->C6_XMARGEM
+				If aCols[x,nPC6_PRCVEN] <> SC6->C6_PRCVEN .Or. Round(aCols[x,nPC6_XMARGEM],2) <> SC6->C6_XMARGEM
 					lMudou := .T.  //Houve alteração no preço
 				EndIf
             Else

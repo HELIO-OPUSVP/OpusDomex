@@ -1073,7 +1073,7 @@ Static Function ValidaEtiq(lTeste)
 				lValidaRot := .F.
 				If U_VALIDACAO("HELIO")
 					If cFilAnt == '01'
-						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
+						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/TRUE" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 							lValidaRot := .T.
 						EndIf
 					EndIf
@@ -1571,7 +1571,7 @@ Static Function ValidaEtiq(lTeste)
 				lValidaRot := .F.
 				If U_VALIDACAO()
 					If cFilAnt == '01'
-						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
+						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/TRUE" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 							lValidaRot := .T.
 						EndIf
 					EndIf

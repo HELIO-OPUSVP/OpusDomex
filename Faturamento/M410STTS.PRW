@@ -86,7 +86,6 @@ User Function M410STTS()
 							EndDo
 
 						Else  //Margem fora dos parametros
-
 							SC6->( dbSetOrder(1) )
 							SC6->(dbSeek(xFilial()+SC5->C5_NUM))
 							If SC6->C6_XANEXO <> "A" //Não esta liberado pela adm vendas
