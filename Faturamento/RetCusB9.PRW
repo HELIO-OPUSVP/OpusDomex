@@ -31,9 +31,10 @@ User Function RetCusB9(cCodigo,cGera)
 	cQry += "From "+ RetSQLTab("SB9") +" With(Nolock) "
 	cQry += "Inner Join "+RetSQLTab("SB1") +" With(Nolock) On B1_FILIAL = '"+xFilial("SB1")+"' AND B9_FILIAL = '"+xFilial("SB9")+"' And B1_COD = B9_COD And SB1.D_E_L_E_T_ = '' And B9_LOCAL = B1_LOCPAD "
 	cQry += "Where B9_FILIAL = '"+xFilial("SB9")+"' And B9_COD = '"+cCodigo+"' And SB9.D_E_L_E_T_ = '' And "
-	cQry += "	   B9_DATA = ( Select MAX(B9_DATA) As B9_DATA "
+	cQry += "	   B9_DATA = ( Select MAX(B9_DATA) As UltData "
 	cQry += "				  From "+ RetSQLTab("SB9") +" With(Nolock) "
-	cQry += "		          Where B9_FILIAL = '"+xFilial("SB9")+"' And B9_COD = '"+cCodigo+"' And D_E_L_E_T_='')"
+	cQry += "				  Inner Join "+RetSQLTab("SB1") +" With(Nolock) On B1_FILIAL = '"+xFilial("SB1")+"' AND B9_FILIAL = '"+xFilial("SB9")+"' And B1_COD = B9_COD And SB1.D_E_L_E_T_ = '' And B9_LOCAL = B1_LOCPAD "
+	cQry += "		          Where B9_FILIAL = '"+xFilial("SB9")+"' And B9_COD = '"+cCodigo+"' And SB9.D_E_L_E_T_='')"
 
 	If Select("CUS") <> 0
 		CUS->( dbCloseArea() )
@@ -45,7 +46,7 @@ User Function RetCusB9(cCodigo,cGera)
 	CUS->(dbCloseArea())
 
 	// Verificar NF de entrada
-	IF Empty(nValor)
+	If nValor = 0
 
 		cQry := " Select Top 1 D1_COD, D1_QUANT As QTDE, D1_CUSTO As Custo "
 		cQry += " From "+RetSQLTab("SD1")+" With(Nolock) "
@@ -60,7 +61,7 @@ User Function RetCusB9(cCodigo,cGera)
 	EndIf
 
 	// Verificar se já tem o PC colocado
-	If Empty(nValor)
+	If nValor = 0
 		cQry := "Select C7_PRODUTO, C7_PRECO As PRECO "
 		cQry += "From " +RetSQLTab("SC7")+" With(Nolock) "
 		cQry += "Where C7_FILIAL = '"+xFilial("SC7")+"' And D_E_L_E_T_ = '' And C7_PRODUTO = '"+cCodigo+"'"
@@ -73,7 +74,7 @@ User Function RetCusB9(cCodigo,cGera)
 	EndIf
 
 	// Verificar se já tem SC para esse produto com cotação e com valor
-	If Empty(nValor)
+	If nValor = 0
 		cQry := "Select Top 1 C1_NUM, C1_PRODUTO, C1_QUANT, C8_PRECO As PRECO, "
 		cQry += " 		C8_NUM As COTACAO, C8_FORNECE "
 		cQry += "From "+RetSQLTab("SC1")+" With(Nolock) "
@@ -89,9 +90,9 @@ User Function RetCusB9(cCodigo,cGera)
 		cNumSC := C8CUS->C1_NUM
 	EndIf
 
-	If U_VALIDACAO("OSMAR")
+	If U_VALIDACAO("OSMAR",.t.) // 09/02/2022
 		//Verifica se o item não é M.O. criado dentro do mes
-		If Empty(nValor)
+		If nValor = 0
 			cQry := " Select Top 1 B1_COD, B2_CM1 As PRECO "
 			cQry += " From " +RetSQLTab("SB1")+ " With(Nolock) "
 			cQry += " Inner join " +RetSQLTab("SB2")+ " With(Nolock) On SB2.D_E_L_E_T_ = '' And B2_FILIAL = '"+xFilial("SB2")+"' AND B2_COD = B1_COD And B2_LOCAL = B1_LOCPAD "
@@ -280,12 +281,5 @@ User Function FatMail1(cCotacao,cProduto)
 	U_EnvMailto("Cotação Pendente " ,cMsg,cEmail,"",)
 
 Return
-
-
-
-
-
-
-
 
 
