@@ -67,7 +67,7 @@ User Function FC2_QUJE(cOP)
 		TCSQLEXEC(cUpdate)
 
 		If Alltrim(QC2->C2OP )  <> '10343702008'
-			cAssunto := "Domex - Erro na gravação do C2_QUJE"
+			cAssunto := "Domex - Erro na gravacao do C2_QUJE"
 
 			cTxtMsg  := " OP : "          + QC2->C2OP                                      + Chr(13)
 			cTxtMsg  += " QTD APTO SD3: " + Transform(QC2->D3_APTO ,"@E 999,999,999.9999") + Chr(13)

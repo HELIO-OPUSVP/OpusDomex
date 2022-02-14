@@ -8933,10 +8933,10 @@ Return
 Static Function fGerRlcTES(cCodCliFor,cLojCliFor,cNomCliFor,cCadOPER,cCadTES)
 
 
-//Variaveis do tamanho a tela
+    //Variaveis do tamanho a tela
 	Local aDlgTela     := {000,000,343,505} //{000,000,410,505} //{000,000,343,505}
 
-//Divisões dentro da tela
+    //Divisões dentro da tela
 	Local aDlgCabc     := {005,005,040,250}
 	Local aDlgCorp1    := {045,005,092,250}
 	Local aDlgCorp2    := {097,005,130,250} //{097,005,144,250}
@@ -8967,8 +8967,8 @@ Static Function fGerRlcTES(cCodCliFor,cLojCliFor,cNomCliFor,cCadOPER,cCadTES)
 
 	Default cCodProdut := Space(fX3Ret("B1_COD","X3_TAMANHO"))
 	Private cCadPrdCod := cCodProdut
-//Private cCadTES	 := ""
-//Private cCadOPER	 := ""
+    //Private cCadTES	 := ""
+    //Private cCadOPER	 := ""
 	Private cCadPrdDes := ""
 
 
