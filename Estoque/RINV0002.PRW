@@ -197,20 +197,20 @@ While !oReport:Cancel() .And. (_cAlias)->(!Eof())
 	If lFirst
 		lFirst := .f.
 		
-		oSection1:Cell("ZZR_PRODUT")  :SetValue('')	
-		oSection1:Cell("ZZR_DESCRI")  :SetValue('')	
-		oSection1:Cell("ZZR_TIPO")    :SetValue('')	
+		//oSection1:Cell("ZZR_PRODUT")  :SetValue('')	
+		//oSection1:Cell("ZZR_DESCRI")  :SetValue('')	
+		//oSection1:Cell("ZZR_TIPO")    :SetValue('')	
 		
 
-		oSection1:PrintLine()
-		oReport:SkipLine()
+		//oSection1:PrintLine()
+		//oReport:SkipLine()
 
-		oSection1:Cell("ZZR_PRODUT")  :SetValue('')	
-		oSection1:Cell("ZZR_DESCRI")  :SetValue('')	
-		oSection1:Cell("ZZR_TIPO")    :SetValue('')	
+		//oSection1:Cell("ZZR_PRODUT")  :SetValue('')	
+		//oSection1:Cell("ZZR_DESCRI")  :SetValue('')	
+		//oSection1:Cell("ZZR_TIPO")    :SetValue('')	
 		
-		oSection1:PrintLine()
-		oReport:SkipLine()
+		//oSection1:PrintLine()
+		//oReport:SkipLine()
 	
 		
 		
@@ -221,8 +221,8 @@ While !oReport:Cancel() .And. (_cAlias)->(!Eof())
 		//oSection1:Cell("ZZR_DESCRI")  :SetValue('Percentual'								)
 		//oSection1:Cell("ZZR_QTD")     :SetValue('')
 
-		oSection1:PrintLine()
-		oReport:SkipLine()
+		//oSection1:PrintLine()
+		//oReport:SkipLine()
 	
 
 		oSection1:Cell("ZZR_LOCAL")  :SetValue((_cAlias)->ZZR_LOCAL        )	
