@@ -48,6 +48,12 @@ User Function M460FIM()
 		U_AtuXD1(XFILIAL("SD2"),SF2->F2_DOC,SF2->F2_SERIE,SF2->F2_CLIENTE,SF2->F2_LOJA)
 	EndIf
 
+		//validacao novo calculo imposto
+	If U_VALIDACAO('JONAS') 
+		U_FVALICMPI(SF2->F2_CLIENTE, SF2->F2_LOJA, SD2->D2_PEDIDO,.F.) //CLIENTE + LOJA + PROCESSAMENTO ANTES DA NF
+	EndIf
+
+
 
 
 /////////////
@@ -190,4 +196,31 @@ User Function AtuXD1(cFilNF, cDocNF, cSerieNF, cCliNF, cLojaNF)
 
 
 	RestArea(aArea)
+Return
+
+User Function fValicmpi(cCliente, cLOJA, cPedido,lAntes)
+aAreaSC5 := GetArea()
+
+
+SA1->(dbsetorder(1))
+SC5->(dbsetorder(1))
+If SC5->( dbSeek( xFilial("SC5") + cPedido))
+	If SA1->( FieldPos("A1_XICMPIS") )  > 0
+		If SA1->( dbSeek( xFilial("SA1") + cCliente + cLOJA))
+			If !EMPTY(SA1->A1_XICMPIS)
+				If SC5->C5_EMISSAO >= SA1->A1_XICMPIS
+					If lAntes
+						PutMv("MV_DEDBPIS",	'I')
+						PutMv("MV_DEDBCOF", 'I')
+					Else
+						PutMv("MV_DEDBPIS",	'N')
+						PutMv("MV_DEDBCOF", 'N')
+					EndIf
+				Endif
+			EndIf
+		EndIf
+	EndIf
+EndIf
+
+RestArea(aAreaSC5)
 Return

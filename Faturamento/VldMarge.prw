@@ -68,17 +68,22 @@ User Function VldMarge(lMsg,lWflow)
 
 	If ZZF->( dbSeek(xFilial()+"MRG" + M->C5_NUM ) )
 		cMudouMargem := ZZF->ZZF_STACUS
+	Else
+		cMudouMargem := "T"
 	EndIf
 
-	If lWflow .And. cTexto <> "" .And. cMudouMargem = "T"
+	If lWflow .And. cTexto <> ""  //.And. cMudouMargem = "T"
 		cAssunto := "Pedido de Venda "+M->C5_NUM+ " BLOQUEADO - Margem Abaixo do Padrão "
-		cPara := "osmar@opusvp.com.br;dayse.paschoal@rosenbergerdomex.com.br"	
+		cPara := "osmar@opusvp.com.br;dayse.paschoal@rosenbergerdomex.com.br;" + UsrRetMail(M->C5_USER)	
 		cCC := ""
 		cArquivo := ""
 		cTexto := "CLIENTE: "+M->C5_CLIENTE+"/"+M->C5_LOJACLI+" - "+ SA1->A1_NREDUZ + Chr(13)+;
 			"MARGEM PADRÃO: "+Str(nPerMargem)+"%" + Chr(13) + Chr(13) + cTexto
 		cTexto   := StrTran(cTexto,Chr(13),"<br>")
-		U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
+		
+		If cMudouMargem = "T"
+		   U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
+		EndIf
 
 		lRet := .f.  // Irá travar o pedido de venda
 
@@ -107,6 +112,7 @@ User Function xGrvPrNet()
 	Local nPrcNet    := 0
 	Local nMargem    := 0
 	Local cProdVenda := ""
+	Local aAreaSC6   := SC6->( GetArea() )
 
 //Posiciona no cabeçalho do pedido de venda
 
@@ -275,5 +281,6 @@ User Function xGrvPrNet()
 	MaFisEnd()
 	MaFisRestore()
 
+ RestArea(aAreaSC6)
 Return
 

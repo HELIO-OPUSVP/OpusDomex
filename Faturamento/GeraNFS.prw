@@ -202,9 +202,18 @@ User Function GeraNFS(cNumPV, cSerie, dData, lHuawei)
 		//Fonte p12 X	cNota := MaPvlNfs(aPvlNfs,cSerie,lMostraCtb,lAglutCtb,lCtbOnLine,lCtbCusto,lReajusta,nCalAcrs,nArredPrcLis,lAtuSA7,lECF,,,,,,dDataMoe)
 		//Y	cNota := MaPvlNfs(aPvlNfs,cSerie, .F.      , .F.     , .F.      , .T.     , .F.     , 0      , 0          , .T.   , .F.)
 		//	cNota := MaPvlNfs(aPvlNfs,cSerie, .F., .F., .F., .T., .F., 0, 0, .T., .F.)
+		//validacao novo calculo imposto
+		If U_VALIDACAO('JONAS') 
+			U_FVALICMPI(SC5->C5_CLIENTE, SC5->C5_LOJACLI, SC5->C5_NUM, .T.) //CLIENTE + LOJA + PEDIDO + PROCESSAMENTO ANTES DA NF
+		EndIf
 
 		SetFunName("MATA461") // mauresi 09/08/2019
 		cNota := MaPvlNfs(aPvlNfs,cSerie, .F., .F., .F., .T., .F., 0, 0, .T., .F.,,,,,,dDataBase)   // Alterado por Mauresi em 29/03/17
+
+				//validacao novo calculo imposto
+		If U_VALIDACAO('JONAS') 
+			U_FVALICMPI(SC5->C5_CLIENTE, SC5->C5_LOJACLI, SC5->C5_NUM, .F.) //CLIENTE + LOJA + PEDIDO + PROCESSAMENTO ANTES DA NF
+		EndIf
 
 		If U_VALIDACAO("HELIO")   // Não subir para produção
 			// Este trecho estava compilado em produção alterando a alíquota de icms. Retirado e compilado em produção

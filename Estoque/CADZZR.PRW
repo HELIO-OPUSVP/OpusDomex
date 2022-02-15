@@ -51,7 +51,7 @@ User Function fLegZZR()
 
 	BrwLegenda("","Legenda",{;
 		{"BR_CINZA"      ,"Inventário Gerado" 							   },; // 1
-	{"BR_VERDE"      ,"Inventário Realizado"                           }})  // 2
+    	{"BR_VERDE"      ,"Inventário Realizado"                           }})  // 2
 
 
 Return
@@ -97,7 +97,7 @@ Static function fProcCla()
 
 	dInicio := FirstDate(dInicio)
 
-	If MsgYesNo("Confirma a reclassificação da CURVA ABC dos produtos?")
+	
 
 		//classificando valor
 		cQuery := " "
@@ -411,7 +411,7 @@ Static function fProcCla()
 			Endif
 			TMP->(dbskip())
 		Enddo
-	EndIf
+	//EndIf
 
 
 
@@ -473,9 +473,10 @@ Return
 //Funcao para geração de inventario
 User Function ZZRGER01()
 
-
-    FWMsgRun(, {|oSay| fProcCla() }, "Processando", "Classificando produtos...")         
-	FWMsgRun(, {|oSay| fProcInv() }, "Processando", "Gerando inventario...")
+	If MsgYesNo("Confirma a reclassificação da CURVA ABC dos produtos e geração do inventario?")
+    	FWMsgRun(, {|oSay| fProcCla() }, "Processando", "Classificando produtos...")         
+		FWMsgRun(, {|oSay| fProcInv() }, "Processando", "Gerando inventario...")
+	EndIf
 
 Return
 
@@ -506,6 +507,9 @@ Static function fProcInv()
 	local dDiaFim   := LastDate(DDATABASE)
 	Local dPriDiaAno := STOD(str(YEAR(DATE()))+'0101') 
 	Local nCount     := 0
+	Local aZZR       := {}
+	lOCAL dFirst     := cPeriodo	
+	Local aRecZZR    := {}
 	
 
 //SELECIONA ULTIMO INVENTARIO CICLICO GERADO
@@ -662,6 +666,8 @@ Static function fProcInv()
 			If Nx < Len(aLSTDias)
 				If aLSTDias[Nx][2] != 0 	
 				    nCount	+= 1			
+					AADD(aZZR,{aLstFinal[Nz][1],aLSTDias[Nx][1],aLstFinal[Nz][3],aLstFinal[Nz][4],aLstFinal[Nz][5],aLstFinal[Nz][6],aLstFinal[Nz][8]})
+					/*
 					Reclock("ZZR",.t.)
 					ZZR->ZZR_FILIAL  := aLstFinal[Nz][1]
 					ZZR->ZZR_DTPLAN  := aLSTDias[Nx][1]
@@ -674,11 +680,14 @@ Static function fProcInv()
 					ZZR->ZZR_SEQ     := STRZERO(nCount,4)
 					ZZR->ZZR_STATUS  := "G"
 					ZZR->(MsUnlock())			
+					*/
 					aLSTDias[Nx][2] := aLSTDias[Nx][2] - 1
 					Exit
 				EndIf
 			ElseIf  Nx == Len(aLSTDias)
 				nCount	+= 1
+				AADD(aZZR,{aLstFinal[Nz][1],aLSTDias[Nx][1],aLstFinal[Nz][3],aLstFinal[Nz][4],aLstFinal[Nz][5],aLstFinal[Nz][6],aLstFinal[Nz][8]})
+				/*
 				Reclock("ZZR",.t.)
 				ZZR->ZZR_FILIAL  := aLstFinal[Nz][1]
 				ZZR->ZZR_DTPLAN  := aLSTDias[Nx][1]
@@ -691,14 +700,72 @@ Static function fProcInv()
 				ZZR->ZZR_SEQ     := STRZERO(nCount,4)
 				ZZR->ZZR_STATUS  := "G"
 				ZZR->(MsUnlock())	
+				*/
 				aLSTDias[Nx][2] := aLSTDias[Nx][2] - 1
 				Exit
 			EndIf
 		Next Nx	
 	Next Nz	
 
+	
+	//aZZR := ASORT(aZZR,,,{ | x,y | x[2] < y[2] .AND. x[3] < y[3]} )
+
+
+	For Nf := 1 to len(aZZR)
+		If nf == 1
+			dFirsT := DTOS(aZZR[Nf][2])
+		EndiF
+		Reclock("ZZR",.t.)
+		ZZR->ZZR_FILIAL  := aZZR[Nf][1]
+		ZZR->ZZR_DTPLAN  := aZZR[Nf][2]
+		ZZR->ZZR_PRODUT  := aZZR[Nf][3]
+		ZZR->ZZR_DESCRI  := aZZR[Nf][4]
+		ZZR->ZZR_LOCAL   := aZZR[Nf][5]
+		ZZR->ZZR_CLASSI  := aZZR[Nf][6]
+		ZZR->ZZR_TIPO    := aZZR[Nf][7]
+		ZZR->ZZR_PERIOD  := SUBSTR(cPeriodo,1,6)
+		ZZR->ZZR_SEQ     := STRZERO(Nf,4)
+		ZZR->ZZR_STATUS  := "G"
+		ZZR->(MsUnlock())	
+	Next Nf
+
+
+
+	cQuery := " SELECT ZZR_PERIOD, ZZR_PRODUT, R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE ZZR_FILIAL='"+xFilial("ZZR")+"' AND D_E_L_E_T_='' AND ZZR_DTREAL='' " 
+	cQuery += " AND LEFT(ZZR_DTPLAN,6)='"+SUBSTR(cPeriodo,1,6)+"' "
+	cQuery += " ORDER BY  ZZR_PERIOD, ZZR_CLASSI, ZZR_PRODUT, R_E_C_N_O_ "
+
+	If Select("INV") <> 0
+		INV->( dbCloseArea() )
+	EndIf
+
+	TCQUERY cQuery NEW ALIAS "INV"
+
+
+   nCount :=0
 	ZZR->(dbSetOrder(1))
-	If ZZR->(dbSeek(xFilial("ZZR") + cPeriodo ))
+	If ZZR->(dbSeek(xFilial("ZZR") + INV->ZZR_PERIOD ))
+		While !INV->(EOF()) 
+			nCount += 1
+			ZZR->( dbGoTo(INV->REC) )
+			If INV->REC == ZZR->(RECNO())
+				Reclock("ZZR",.F.)
+				ZZR->ZZR_SEQ := STRZERO(nCount,4)
+				ZZR->(MsUnLock())
+			EndIf
+			//AADD(aRecZZR,{INV->REC})
+			INV->(dbskip())
+		Enddo
+		/*
+		For x:= 1 to len(aRecZZR)
+			ZZR->( dbGoTo(aRecZZR[x,1]) )
+			If aRecZZR[x,1] == ZZR->(RECNO())
+				Reclock("ZZR",.F.)
+				ZZR->ZZR_SEQ := STRZERO(x,4)
+				ZZR->(MsUnLock())
+			EndIf
+		NExt x
+		*/
 		APMSGINFO("Inventário cíclico gerado, perÍodo "+SUBSTR(cPeriodo,1,4))
 	EndIf
 

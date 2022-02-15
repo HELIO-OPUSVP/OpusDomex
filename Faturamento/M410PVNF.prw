@@ -25,6 +25,11 @@ If _Retorno
 EndIf
 
 
+//validacao novo calculo imposto
+If U_VALIDACAO('JONAS') 
+	U_FVALICMPI(SC5->C5_CLIENTE, SC5->C5_LOJACLI,  SC5->C5_NUM ,.T.) //CLIENTE + LOJA + PROCESSAMENTO ANTES DA NF
+EndIf
+
 // Jonas Validacao nova filial MG
 If (SC5->C5_CLIENTE == '700000' .AND. SC5->C5_LOJACLI == '01' .AND. fwfilial() == "01") .OR. (SC5->C5_CLIENTE == '001078' .AND. SC5->C5_LOJACLI == '01' .AND. fwfilial() == "02")
 	If SC6->( dbSeek( xFilial("SC6") + SC5->C5_NUM ))
@@ -75,3 +80,5 @@ If Select("QUERY") <> 0
 EndIf
 
 Return lValid
+
+
