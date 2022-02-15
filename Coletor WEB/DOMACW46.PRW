@@ -6,10 +6,10 @@
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
-±±ºPrograma  ³ DOMACD22 ºAutor  ³ Jackson Santos    º Data ³  13.01.2022 º±±
+±±ºPrograma  ³ DOMACW46 ºAutor  ³ Ricardo Roda       º Data ³  21.01.2022 º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
-±±ºDesc.     ³ Paletização via coletor de dados Ajustar para misturar    º±±
-±±º          ³ 	Produtos de outra OP.                                    º±±
+±±ºDesc.     ³ Paletização via coletor de dados Ajustar para misturar     º±±
+±±º          ³ 	Produtos de outra OP.                                     º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
 ±±ºUso       ³ P12                                                        º±±
 ±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
@@ -17,7 +17,7 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function DOMACD46()
+User Function DOMACW46()
 
 	Local lLoop     := .T.
 	Local lOk       := .F.
@@ -56,14 +56,23 @@ User Function DOMACD46()
 	Private lEhFuruka := .F.
 	Private lEhClaro  := .F.
 	Private cOpAtual  := ""
+	Private nWebPx:= 1.5
+	Private cPush:= "background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,stop: 0 gray, stop: 0.4 white,stop: 1 gray);color: #171717; font: bold "+cvaltochar(10*nWebPx)+"px Arial;"+;
+		"background-repeat:no-repeat ;border-radius: 6px;}"
+	Private cPressed:= "background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,stop: 0 gray, stop: 0.4 white,stop: 1 blue);color: #171717; font: bold "+cvaltochar(10*nWebPx)+"px Arial;"+;
+		"background-repeat:no-repeat ;border-radius: 6px;}"
+	Private cHover:="background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,stop: 0 gray, stop: 0.4 white,stop: 1 Black);color: #171717; font: bold "+cvaltochar(10*nWebPx)+"px Arial;"+;
+		"background-repeat:no-repeat ;border-radius: 6px;}"
+	
+
 	Public cDomEtDl31_CancEtq := ""
 
 //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 //³Posição inicial da tela principal							³
 //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	nLin := 15
-	nCol1 := 05
-	nCol2 := 95
+	nCol1 := 05*nWebPx
+	nCol2 := 95*nWebPx
 
 	If cUsuario == 'HELIO'
 		_cNumEtqPA := Space(_nTamEtiq)
@@ -73,53 +82,59 @@ User Function DOMACD46()
 //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 //³Tela de coleta														³
 //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-	DEFINE MSDIALOG oDlg01 TITLE OemToAnsi("Paletização") FROM 0,0 TO 293,233 PIXEL of oMainWnd PIXEL //300,400 PIXEL of oMainWnd PIXEL
+	DEFINE MSDIALOG oDlg01 TITLE OemToAnsi("Paletização") FROM 0,0 TO 450,302 PIXEL of oMainWnd PIXEL //300,400 PIXEL of oMainWnd PIXEL
 
-	@ 003,001 To 065,115 LABEL "Informações do Pedido" Pixel Of oMainWnd PIXEL
+	@ 003,001 To 065*nWebPx,115*(1.3) LABEL "Informações do Pedido" Pixel Of oMainWnd PIXEL
 	nLin := 013
 
-	@ nLin, nCol1	SAY oTexto1 Var 'Etiqueta:'    SIZE 100,10 PIXEL
-	oTexto1:oFont := TFont():New('Arial',,16,,.T.,,,,.T.,.F.)
-	@ nLin-2, nCol1+30 MSGET oEtiqueta VAR cEtiqueta  SIZE 75,08 WHEN .T. Valid ValidaEtiq() PIXEL
-	oEtiqueta:oFont := TFont():New('Courier New',,22,,.T.,,,,.T.,.F.)
-	nLin += 12
+	@ nLin, nCol1	SAY oTexto1 Var 'Etiq:'    SIZE 100*nWebPx,10*nWebPx PIXEL
+	oTexto1:oFont := TFont():New('Arial',,16*nWebPx,,.T.,,,,.T.,.F.)
+	@ nLin-(2*nWebPx), nCol1+(30) MSGET oEtiqueta VAR cEtiqueta  SIZE 75*nWebPx,08*nWebPx WHEN .T. Valid ValidaEtiq() PIXEL
+	oEtiqueta:oFont := TFont():New('Courier New',,22*nWebPx,,.T.,,,,.T.,.F.)
+	nLin += 12*nWebPx
 
-	@ nLin, nCol1	SAY oTexto10 Var 'Pedido:'    SIZE 100,10 PIXEL
-	oTexto10:oFont := TFont():New('Arial',,16,,.T.,,,,.T.,.F.)
-	@ nLin-2, nCol1+45 MSGET oNumPed VAR cNumPed  SIZE 60,08 WHEN .F. PIXEL
-	oNumPed:oFont := TFont():New('Courier New',,22,,.T.,,,,.T.,.F.)
-	nLin += 13
+	@ nLin, nCol1	SAY oTexto10 Var 'Pedido:'    SIZE 100*nWebPx,10*nWebPx PIXEL
+	oTexto10:oFont := TFont():New('Arial',,16*nWebPx,,.T.,,,,.T.,.F.)
+	@ nLin-(2*nWebPx), nCol1+(45) MSGET oNumPed VAR cNumPed  SIZE 60*nWebPx,08*nWebPx WHEN .F. PIXEL
+	oNumPed:oFont := TFont():New('Courier New',,22*nWebPx,,.T.,,,,.T.,.F.)
+	nLin += 13*nWebPx
 
-	@ nLin, nCol1	SAY oTexto11 Var 'Volumes:'    SIZE 100,10 PIXEL
-	oTexto11:oFont := TFont():New('Arial',,16,,.T.,,,,.T.,.F.)
-	@ nLin-2, nCol1+45 MSGET oPlTotVol VAR nPlTotVol  SIZE 60,08 WHEN .F. PIXEL
-	oPlTotVol:oFont := TFont():New('Courier New',,22,,.T.,,,,.T.,.F.)
-	nLin +=13
+	@ nLin, nCol1	SAY oTexto11 Var 'Volumes:'    SIZE 100*nWebPx,10*nWebPx PIXEL
+	oTexto11:oFont := TFont():New('Arial',,16*nWebPx,,.T.,,,,.T.,.F.)
+	@ nLin-(2*nWebPx), nCol1+(45) MSGET oPlTotVol VAR nPlTotVol  SIZE 60*nWebPx,08*nWebPx WHEN .F. PIXEL
+	oPlTotVol:oFont := TFont():New('Courier New',,22*nWebPx,,.T.,,,,.T.,.F.)
+	nLin +=13*nWebPx
 
-	@ nLin, nCol1	SAY oTexto12 Var 'Saldo:'    SIZE 100,10 PIXEL
-	oTexto12:oFont := TFont():New('Arial',,16,,.T.,,,,.T.,.F.)
-	@ nLin-2, nCol1+45 MSGET oSaldoVol VAR nSaldoVol  SIZE 60,08 WHEN .F. PIXEL
-	oSaldoVol:oFont := TFont():New('Courier New',,22,,.T.,,,,.T.,.F.)
-	nLin +=13
+	@ nLin, nCol1	SAY oTexto12 Var 'Saldo:'    SIZE 100*nWebPx,10*nWebPx PIXEL
+	oTexto12:oFont := TFont():New('Arial',,16*nWebPx,,.T.,,,,.T.,.F.)
+	@ nLin-(2*nWebPx), nCol1+(45) MSGET oSaldoVol VAR nSaldoVol  SIZE 60*nWebPx,08*nWebPx WHEN .F. PIXEL
+	oSaldoVol:oFont := TFont():New('Courier New',,22*nWebPx,,.T.,,,,.T.,.F.)
+	nLin +=13*nWebPx
 
-	@ nLin,001 To nLin+045,115 LABEL "Composição de Paletes" Pixel Of oMainWnd PIXEL
-	nLin += 015
-	@ nLin, nCol1	SAY oTexto13 Var 'Concluídos:'    SIZE 100,10 PIXEL
-	oTexto13:oFont := TFont():New('Arial',,16,,.T.,,,,.T.,.F.)
-	@ nLin-2, nCol1+45 MSGET oPalTot VAR nPalTot  SIZE 60,08 WHEN .F. PIXEL
-	oPalTot:oFont := TFont():New('Courier New',,22,,.T.,,,,.T.,.F.)
-	nLin += 33
+	@ nLin,001 To nLin+(045),115*(1.3) LABEL "Composição de Paletes" Pixel Of oMainWnd PIXEL
+	nLin += 015*nWebPx
+	@ nLin, nCol1	SAY oTexto13 Var 'Concluídos:'    SIZE 100*nWebPx,10*nWebPx PIXEL
+	oTexto13:oFont := TFont():New('Arial',,16*nWebPx,,.T.,,,,.T.,.F.)
+	@ nLin-(2*nWebPx), nCol1+(45) MSGET oPalTot VAR nPalTot  SIZE 60*(1.3),08*nWebPx WHEN .F. PIXEL
+	oPalTot:oFont := TFont():New('Courier New',,22*nWebPx,,.T.,,,,.T.,.F.)
+	nLin += 33*nWebPx
 
 //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 //³Botões de controle												³
 //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	cCSSBtN1 := "QPushButton{"+cPush+;
+		"QPushButton:pressed {"+cPressed+;
+		"QPushButton:hover {"+cHover
 	nCol1 := 007
-	@ nLin, nCol1 BUTTON oSair     PROMPT "Sair							" ACTION oDlg01:End() SIZE 100,10 PIXEL OF oDlg01
-	nLin += 12
-	@ nLin, nCol1 BUTTON oUltima   PROMPT "Cancelar Última Etiqueta" ACTION CanImpBip() SIZE 100,10 PIXEL OF oDlg01
-	nLin += 12
-	@ nLin, nCol1 BUTTON oImprime  PROMPT "Fechar PALETE           " ACTION Processa( {|| If(VerImpBip(), ImpNivelP(),{ cEtiqueta := Space(_nTamEtiq),oEtiqueta:Refresh(), oEtiqueta:SetFocus() } ) } ) SIZE 100,10 PIXEL OF oDlg01
-
+	@ nLin, nCol1 BUTTON oSair     PROMPT "Sair" ACTION oDlg01:End() SIZE 100*(1.3),10*nWebPx PIXEL OF oDlg01
+	oSair:setCSS(cCSSBtN1)
+    nLin += 12*nWebPx
+	@ nLin, nCol1 BUTTON oUltima   PROMPT "Cancelar Última Etiqueta" ACTION CanImpBip() SIZE 100*(1.3),10*nWebPx PIXEL OF oDlg01
+	oUltima:setCSS(cCSSBtN1)
+    nLin += 12*nWebPx
+	@ nLin, nCol1 BUTTON oImprime  PROMPT "Fechar PALETE" ACTION Processa( {|| If(VerImpBip(), ImpNivelP(),{ cEtiqueta := Space(_nTamEtiq),oEtiqueta:Refresh(), oEtiqueta:SetFocus() } ) } ) SIZE 100*(1.3),10*nWebPx PIXEL OF oDlg01
+    oImprime:setCSS(cCSSBtN1)
+    
 	oUltima:Disable()
 
 	ACTIVATE MSDIALOG oDlg01
@@ -236,10 +251,10 @@ Static Function ValidaEtiq(lTeste)
 				SC2->(dbSeek(xFilial()+XD1->XD1_OP))
 				cNumPed   := (cAliasSC6)->C6_NUM
 				cItemC6	  := (cAliasSC6)->C6_ITEM
-				
+
 				(cAliasSC6)->(dbCloseArea())
 
-				If Empty(cOpAtual) .Or. cOpAtual == SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN
+						If Empty(cOpAtual) .Or. cOpAtual == SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN
 					//If cOpAtual == SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN					
 						cOpAtual  := SC2->C2_NUM + SC2->C2_ITEM + SC2->C2_SEQUEN
 					/*else
@@ -249,15 +264,16 @@ Static Function ValidaEtiq(lTeste)
 						oEtiqueta:SetFocus()					
 						Return (.f.)	
 						
-					Endif*/
+					Endif*/		
 				else
 					U_MsgColetor("Não é possível misturar OP na Paletização")
 					cEtiqueta := Space(_nTamEtiq)
 					oEtiqueta:Refresh()
-					oEtiqueta:SetFocus()					
-					Return (.f.)	
+					oEtiqueta:SetFocus()
+					(cAliasSC6)->(dbCloseArea())
+					Return (.f.)
 				Endif
-				
+
 				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 				//³Verifica se o Cliente é FURUKAWA						³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
@@ -287,16 +303,16 @@ Static Function ValidaEtiq(lTeste)
 							lAchou := .T.
 							Exit
 						EndIf
-					
+
 						if !lAchou .and. _nLoop < 2
 							U_DMX_C6ZY()
 							_nLoop++
 						Else
 							SZY->(dbSkip())
 						Endif
-					
+
 					EndDo
-					
+
 					If !lAchou
 						U_MsgColetor("Produto não corresponde ao pedido.")
 						cEtiqueta := Space(_nTamEtiq)
@@ -310,7 +326,7 @@ Static Function ValidaEtiq(lTeste)
 				nQtdCaixa += XD1->XD1_QTDORI
 				oPlTotVol:Refresh()
 
-				AADD(aPalBip, { cEtiqueta, cNumPed, XD1->XD1_QTDORI,cItemC6  } ) 
+				AADD(aPalBip, { cEtiqueta, cNumPed, XD1->XD1_QTDORI,cItemC6  } )
 
 				oPalTot:Refresh()
 				oSaldoVol:Refresh()
@@ -391,23 +407,23 @@ Static Function ImpNivelP()
 	__mv_par06 := "92"
 	cVolumeAtu := STRZERO(nPalTot,2)
 
-SB1->(dbSetOrder(1))
+	SB1->(dbSetOrder(1))
 	SB1->(dbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
-	
-	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) == "DROP" ) //.OR. lEhClaro 
+
+	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) == "DROP" ) //.OR. lEhClaro
 		lColetor   := .F.
 	Else
 		lColetor   := .T.
 	EndIf
 
-	//conforme solicitação do Denis em 15/10/2021 quando o cliente for a claro e a filial 02 imprimir este layout  
-	If lEhFuruka .or.  ALLTRIM(SB1->B1_GRUPO) $ "DROP/PCON/FTTA" 
+	//conforme solicitação do Denis em 15/10/2021 quando o cliente for a claro e a filial 02 imprimir este layout
+	If lEhFuruka .or. (U_VALIDACAO() .AND. ALLTRIM(SB1->B1_GRUPO) $ "DROP/PCON/FTTA" )
 		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 		//³LAYOUT 94 - Etiqueta Nivel 3												   	³
 		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 		//lRotValid :=  U_DOMETQ92(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aPalBip,.F.,nPesoBruto,cVolumeAtu,lColetor) 			// Validações de Layout 92 - Palete
 		cProxNiv   := "P"
-		
+
 		__mv_par02 := AllTrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN)
 		__mv_par03 := Nil
 		__mv_par04 := nQtdCaixa//Len(aPalBip)
@@ -542,14 +558,14 @@ Static Function CalPesPal(cPedPeso,cProdPeso)
 
 	LOCAL nOpcPeso := 0
 
-	Define MsDialog oTelaPeso Title OemToAnsi("Peso da Embalagem") From 20,20 To 180,200 Pixel of oMainWnd PIXEL
+	Define MsDialog oTelaPeso Title OemToAnsi("Peso da Embalagem") From 20*nWebPx,20*nWebPx To 180*nWebPx,200*nWebPx Pixel of oMainWnd PIXEL
 	nLin := 025
-	@ nLin,005 Say oTxtPeso     Var "Peso" Pixel Of oTelaPeso
-	@ nLin-2,025 MsGet oGetPeso Var nPesoBruto Valid nPesoBruto > 0 When .T. Picture "@E 99,999,999.9" Size 60,10 Pixel Of oTelaPeso
-	oTxtPeso:oFont := TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
-	oGetPeso:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
-	nLin+= 010
-	@ nLin,025 Button oBotPeso PROMPT "Confirma" Size 35,15 Action {|| nOpcPeso:=1,oTelaPeso:End()} Pixel Of oTelaPeso
+	@ nLin,005*nWebPx Say oTxtPeso     Var "Peso" Pixel Of oTelaPeso
+	@ nLin-(2*nWebPx),025*nWebPx MsGet oGetPeso Var nPesoBruto Valid nPesoBruto > 0 When .T. Picture "@E 99,999,999.9" Size 60*nWebPx,10*nWebPx Pixel Of oTelaPeso
+	oTxtPeso:oFont := TFont():New('Arial',,17*nWebPx,,.T.,,,,.T.,.F.)
+	oGetPeso:oFont := TFont():New('Arial',,20*nWebPx,,.T.,,,,.T.,.F.)
+	nLin+= 010*nWebPx
+	@ nLin,025*nWebPx Button oBotPeso PROMPT "Confirma" Size 35*nWebPx,15*nWebPx Action {|| nOpcPeso:=1,oTelaPeso:End()} Pixel Of oTelaPeso
 	Activate MsDialog oTelaPeso
 
 	If nOpcPeso == 1
@@ -581,7 +597,7 @@ Static Function AlertC(cTexto)
 	Local cTemp := ''
 	Local lRet  := .T.
 	Local x 	:= 0
-	
+
 	For x := 1 to Len(aTemp)
 		cTemp += aTemp[x] + Chr(13)
 	Next x

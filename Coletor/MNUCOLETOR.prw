@@ -237,7 +237,12 @@ Static Function ColetorMenu(cDep)
 		AADD(aAcessos, 12)
 		AADD(aAcessos, 13)
 		//AADD(aAcessos, 14)
-
+		AADD(aAcessos, 15)
+		AADD(aAcessos, 16)
+		AADD(aAcessos, 17)
+		If Date() >= StoD('20220208')
+		   AADD(aAcessos, 18)
+		EndIf
 	EndIf
 
 //U_MostraFunc(ProcName(),'MNU01COLETOR')
@@ -304,7 +309,7 @@ Static Function ColetorMenu(cDep)
 	If 'JACKSON.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
 		If aScan(aAcessos,22) <> 0
 			Private oBtn04 := Nil
-			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico (Filial MG)"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACD46(), U_DOMACD46())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			@ nLin, nCol BUTTON oBtn04 PROMPT "Paletização Produção"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW46(), U_DOMACD46())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
 				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
 				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
@@ -785,8 +790,7 @@ Static Function ColetorMenu(cDep)
 		nLin += nSkipLin
 	EndIf
 
-	If aScan(aAcessos,14) <> 0 ;
-
+	If aScan(aAcessos,14) <> 0
 		Private oBtn22 := Nil
 		@ nLin, nCol BUTTON oBtn22 PROMPT "Desmonta Embalagem MG" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW29(), U_DOMACD29())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:avgarmazem.png);"+cPush+;
@@ -795,6 +799,51 @@ Static Function ColetorMenu(cDep)
 		oBtn22:SetCSS( cCSSBtN1 )
 		nLin += nSkipLin
 	EndIf
+
+	If U_VALIDACAO("RODA")
+
+		If aScan(aAcessos,15) <> 0
+			Private oBtn04 := Nil
+			@ nLin, nCol BUTTON oBtn04 PROMPT "Paletização Produção MG"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW46(), U_DOMACD46())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
+				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
+				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
+			oBtn04:SetCSS( cCSSBtN1 )
+			nLin += nSkipLin
+		EndIf
+
+		If aScan(aAcessos,16) <> 0
+			Private oBtn21 := Nil
+			@ nLin, nCol BUTTON oBtn21 PROMPT "Emb.Nivel 3 MG"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW28(), U_MsgColetor("ROTINA NÃO PREPARADA PARA COLETOR WINDOWS"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			cCSSBtN1 :=  "QPushButton{background-image: url(rpo:pcocube.png);"+cPush+;
+				"QPushButton:pressed {background-image: url(rpo:pcocube.png);"+cPressed+;
+				"QPushButton:hover {background-image: url(rpo:pcocube.png);"+cHover
+			oBtn21:SetCSS( cCSSBtN1 )
+			nLin += nSkipLin
+		EndIf
+
+		If aScan(aAcessos,17) <> 0
+			Private oBtn22 := Nil
+			@ nLin, nCol BUTTON oBtn22 PROMPT "Embalagem MG"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW19(), U_MsgColetor("ROTINA NÃO PREPARADA PARA COLETOR WINDOWS"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			cCSSBtN1 :=  "QPushButton{background-image: url(rpo:estimg32.png);"+cPush+;
+				"QPushButton:pressed {background-image: url(rpo:estimg32.png);"+cPressed+;
+				"QPushButton:hover {background-image: url(rpo:estimg32.png);"+cHover
+			oBtn22:SetCSS( cCSSBtN1 )
+			nLin += nSkipLin
+		EndIf
+
+		If aScan(aAcessos,18) <> 0
+			Private oBtn23 := Nil
+			@ nLin, nCol BUTTON oBtn23 PROMPT "Faturamento MG" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW23(),  U_MsgColetor("ROTINA NÃO PREPARADA PARA COLETOR WINDOWS"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			cCSSBtN1 :=  "QPushButton{background-image: url(rpo:preco_mdi.png);"+cPush+;
+				"QPushButton:pressed {background-image: url(rpo:preco_mdi.png);"+cPressed+;
+				"QPushButton:hover {background-image: url(rpo:preco_mdi.png);"+cHover
+			oBtn23:SetCSS( cCSSBtN1 )
+			nLin += nSkipLin
+		EndIf
+
+	EndIf
+
 	ACTIVATE MSDIALOG oDlgMenu01 // ON INIT EnchoiceBar( oDlgMenu01,{|| nOpca := 0,oDlgMenu01:End()},{|| nOpca := 0,oDlgMenu01:End()} ) //CENTER
 
 	If nOpca == 20
@@ -922,7 +971,7 @@ User Function MsgColetor(cMsg,nSegundos)
 	cAmbiente:= UPPER(GETENVSERV())
 	//apMsgYesNo('Ambiente: ' + cAmbiente + ' - Mandar foto para Jonas')
 	IF U_WEBCOL(cAmbiente)
-	//	apMsgYesNo('Webcol - Mandar foto para Jonas')
+		//	apMsgYesNo('Webcol - Mandar foto para Jonas')
 		nWebPx:= 1.5
 		nWebPx2:= 1.3
 		nFont1:= 17*nWebPx

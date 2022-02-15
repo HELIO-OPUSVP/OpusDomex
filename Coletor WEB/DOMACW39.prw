@@ -299,7 +299,7 @@ Static Function BuscaEmpOp(__cFilial)
 				EndIf
 			Next ns
 		Endif
-
+//
 		cQryProd := U_fRetQryw39("1"/*cTipoCon*/,cGrupoProd,dData,"",Nil,__cFilial)
 
 		If Select("TEMPS") > 0
@@ -983,7 +983,7 @@ User Function FRetQryw39(cTipoCon,cGrupoProd,dData,cCodProdut,cNumOpCon,__cFilia
 	Local cRet := ""
 	Default cTipoCon := '1' //1-Produto,2-OP's
 	Default cNumOpCon := ""
-	
+	//If (Upper(GetEnvServ()) == 'HOMOLOGACAO') .OR. .T.
 
 	If cTipoCon == '1'
 		cRet :=         " SELECT EMPOP.*,ISNULL(SB2.B2_QATU,0) QTDEST , ISNULL(B2_RESERVA + B2_QEMP + B2_QEMPSA,0) RESERVAS FROM ( "
@@ -1284,10 +1284,16 @@ Static Function ValidQtd(aOpsApagar,_nQtd)
 								PRIVATE aRegSD3	:= {}
 								PRIVATE nPerImp   := CriaVar("D3_PERIMP")
 								//ConOut("Antes do a260Processa" + Time())
-								a260Processa(XD1->XD1_COD,XD1->XD1_LOCAL,_nQtdOP,_cDoc,dDataBase,0,,XD1->XD1_LOTECTL,StoD("20491231"),,XD1->XD1_LOCALIZ,XD1->XD1_COD,cLocTransf,cEndProDom,.F.,Nil,Nil,"MATA260",,,,,,,,,,,,,,,,,U_RETLOTC6(SD4->D4_OP),StoD("20491231"))
+								If U_Validacao() 
+									nOpcAuto := 3 // Inclusao
+									MSExecAuto({|x,y| mata261(x,y)},_aAuto,nOpcAuto)
+								Else
+									a260Processa(XD1->XD1_COD,XD1->XD1_LOCAL,_nQtdOP,_cDoc,dDataBase,0,,XD1->XD1_LOTECTL,StoD("20491231"),,XD1->XD1_LOCALIZ,XD1->XD1_COD,cLocTransf,cEndProDom,.F.,Nil,Nil,"MATA260",,,,,,,,,,,,,,,,,U_RETLOTC6(SD4->D4_OP),StoD("20491231"))
+								EndIf
 								//ConOut("Depois do a260Processa" + Time())
-
-								If lMsErroAuto .and. .F.
+								
+	
+								If lMsErroAuto 
 									//MostraErro("\UTIL\LOG\Transferencia_Pagamento\error_log_pagamento_op_data_"+DtoS(Date())+"_hora_"+ Time()+ "_op_" + SD4->D4_OP +".TXT")
 									//DisarmTransaction()
 									If U_uMsgYesNo("Erro no pagamento (tranferência) para o "+cLocTransf+". Deseja mostrar o erro?")
@@ -1494,7 +1500,7 @@ User Function EtPgOPW39(cNumOp,cCodProd,cDescProd,nQtdProd,lParcial,nSeqEtq,nQtd
 	MSCBSay(28,05,"Descr:"+cDescProd,"N","2","1,1")
 	//      C  L
 	MSCBSay(28,18," QTD: "                           ,"N","2","1,1")
-	MSCBSay(35,18,Transform(nQtdProd,"@E 99,999"),"N","4","1,1")
+	MSCBSay(35,18,Transform(nQtdProd,"@E 9999.99"),"N","4","1,1")
 
 	MSCBSay(50,18,"OP: " + cNumOp     ,"N","2","1,1")
 

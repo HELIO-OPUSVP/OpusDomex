@@ -46,7 +46,7 @@ User Function M410STTS()
 					SC6->( dbSkip() )
 				EndDo
 			Else	//Aprovado pela analise de crédito do cliente
-				If U_Validacao("OSMAR")
+				If U_Validacao("OSMAR",.T.) //09/02/2022
 					SC6->( dbSetOrder(1) )
 					SC6->(dbSeek(xFilial()+SC5->C5_NUM))
 					While SC6->(!Eof()) .And. SC6->C6_NUM == SC5->C5_NUM
@@ -64,8 +64,8 @@ User Function M410STTS()
 		EndIf
 	EndIf
 
-	If U_Validacao("OSMAR")
-		If SC5->C5_EMISSAO >= SToD('20220110')  //Bloqueia os pedidos a partir de 10/01/2022
+	If U_Validacao("OSMAR",.T.) //09/02/2022
+		If SC5->C5_EMISSAO >= SToD('20220125')  //Bloqueia os pedidos a partir de 25/01/2022
 			If (_nOper == 3) .Or. (_nOper == 4)  //Inclusão / Alteração
 				If SC5->C5_TIPO == 'N'
 					SC6->( dbSetOrder(1) )
@@ -86,7 +86,6 @@ User Function M410STTS()
 							EndDo
 
 						Else  //Margem fora dos parametros
-
 							SC6->( dbSetOrder(1) )
 							SC6->(dbSeek(xFilial()+SC5->C5_NUM))
 							If SC6->C6_XANEXO <> "A" //Não esta liberado pela adm vendas
@@ -114,7 +113,7 @@ User Function M410STTS()
 
 									While SC6->(!Eof()) .And. SC6->C6_NUM == SC5->C5_NUM
 										If ZZF->( dbSeek(xFilial()+"BLQ"+SC6->C6_NUM+SC6->C6_ITEM))
-											If SC6->C6_XMARGEM < ZZF_MARGEM
+											If SC6->C6_XMARGEM < ZZF->ZZF_MARGEM
 												lAprov := .f.
 											EndIf
 										Else

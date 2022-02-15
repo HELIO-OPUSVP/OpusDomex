@@ -58,6 +58,10 @@ Static Function ReportDef()
 	TRCell():New(oSection1,"ZA_SALDO"         ,,"Saldo Pagamento"      , ,008,.F.,)
 	TRCell():New(oSection1,"ZA_RECURSO"       ,,"Recurso"      		   , ,008,.F.,)
 
+	if U_VALIDACAO("RODA") // Roda 17/12/21
+		TRCell():New(oSection1,"ZA_SERIAL"        ,,"Serial"      		   , ,008,.F.,)
+	ENDIF
+
 	If SZA->( FieldPos("ZA_USUARIO") ) > 0
 		TRCell():New(oSection1,"ZA_USUARIO"    ,,"Usuario"              , ,014,.F.,)
 	EndIf
@@ -118,6 +122,13 @@ Static Function ReportDef()
 		oSection1:Cell("ZA_USUARIO"):SetPicture("@R",14)
 	EndIf
 
+
+	if U_VALIDACAO("RODA") // Roda 17/12/21
+		oSection1:Cell("ZA_SERIAL"):SetHeaderAlign("LEFT")
+		oSection1:Cell("ZA_SERIAL"):SetAlign("LEFT")
+		oSection1:Cell("ZA_SERIAL"):SetSize(10)
+	Endif
+
 Return oReport
 
 //---------------------------------------------------------
@@ -126,16 +137,16 @@ Static Function ReportPrint(oReport)
 	Local oSection1 := oReport:Section(1)
 	Local nOrdem    := oSection1:GetOrder()
 	Local _cAlias   := GetNextAlias()
-	Local _cOrder   := "%ZA_OP,ZA_PRODUTO%"
+	Local _cOrder   := "%ZA_OP,ZA_PRODUTO,ZA_SERIAL%"
 
 	oReport:SetTitle(cTitulo)
 
 
 	If SZA->( FieldPos("ZA_USUARIO") ) > 0
 
-		If U_VALIDACAO() .or. .T.//Roda 30/07/2021
+		If U_VALIDACAO("RODA") //Roda 17/12/2021
 			BeginSql Alias _cAlias
-			SELECT  ZA_DOCUMEN,ZA_DATA,ZA_OP,ZA_PRODUTO,ZA_DESC,ZA_MOTIVO,ZA_DESCPER,ZA_OPERADO,ZA_SALDO,ZA_QTDORI,ZA_USUARIO,ZA_RECURSO
+			SELECT  ZA_DOCUMEN,ZA_DATA,ZA_OP,ZA_PRODUTO,ZA_DESC,ZA_MOTIVO,ZA_DESCPER,ZA_OPERADO,ZA_SALDO,ZA_QTDORI,ZA_USUARIO,ZA_RECURSO, ZA_SERIAL
 			FROM %table:SZA% SZA
 			WHERE SZA.%notDel%
 			AND ZA_DATA >= %Exp:mv_par01%
@@ -158,14 +169,15 @@ Static Function ReportPrint(oReport)
 			AND ZA_OP <= %Exp:mv_par04%
 			AND ZA_PRODUTO >= %Exp:mv_par05%
 			AND ZA_PRODUTO <= %Exp:mv_par06%
+			AND ZA_FILIAL = %Exp:xFilial("SZA")%
 			ORDER BY %Exp:_cOrder%
 			EndSql
 		Endif
 
 	Else
-		If U_VALIDACAO() .OR. .T.//Roda 30/07/2021
+		If U_VALIDACAO("RODA") //Roda 17/12/2021
 			BeginSql Alias _cAlias
-			SELECT  ZA_DOCUMEN,ZA_DATA,ZA_OP,ZA_PRODUTO,ZA_DESC,ZA_MOTIVO,ZA_DESCPER,ZA_OPERADO,ZA_SALDO,ZA_QTDORI,ZA_RECURSO
+			SELECT  ZA_DOCUMEN,ZA_DATA,ZA_OP,ZA_PRODUTO,ZA_DESC,ZA_MOTIVO,ZA_DESCPER,ZA_OPERADO,ZA_SALDO,ZA_QTDORI,ZA_RECURSO,ZA_SERIAL
 			FROM %table:SZA% SZA
 			WHERE SZA.%notDel%
 			AND ZA_DATA >= %Exp:mv_par01%
@@ -188,6 +200,7 @@ Static Function ReportPrint(oReport)
 			AND ZA_OP <= %Exp:mv_par04%
 			AND ZA_PRODUTO >= %Exp:mv_par05%
 			AND ZA_PRODUTO <= %Exp:mv_par06%
+			AND ZA_FILIAL = %Exp:xFilial("SZA")%
 			ORDER BY %Exp:_cOrder%
 			EndSql
 		Endif
@@ -220,7 +233,10 @@ Static Function ReportPrint(oReport)
 		oSection1:Cell("ZA_QTDORI") :SetValue((_cAlias)->ZA_QTDORI)
 		oSection1:Cell("ZA_SALDO")  :SetValue((_cAlias)->ZA_SALDO)
 		oSection1:Cell("ZA_RECURSO"):SetValue((_cAlias)->ZA_RECURSO)
-
+		
+		If U_VALIDACAO("RODA") //Roda 17/12/2021
+			oSection1:Cell("ZA_SERIAL"):SetValue((_cAlias)->ZA_SERIAL)
+		ENDIF
 
 		If SZA->( FieldPos("ZA_USUARIO") ) > 0
 			oSection1:Cell("ZA_USUARIO")  :SetValue((_cAlias)->ZA_USUARIO)

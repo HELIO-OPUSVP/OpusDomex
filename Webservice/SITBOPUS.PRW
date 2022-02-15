@@ -17,9 +17,10 @@
 
 User Function SITBOPUS(nMaxReg)
 Default nMaxReg := 10
-MSGALERT('<F5> Desabilitado, rotina de sincronismo por Scheduler') //mls 23/04/2021
-//MsgRun("Sincronizando...","Favor Aguardar.....",{|| ProcRun2(nMaxReg) }) //mls 23/04/2021
+//MSGALERT('<F5> Desabilitado, rotina de sincronismo por Scheduler') //mls 23/04/2021
+MsgRun("Sincronizando...","Favor Aguardar.....",{|| ProcRun2(nMaxReg) }) //mls 23/04/2021
 //MsgRun("Sincronizando...","Favor Aguardar.....",{|| U_SITBOPS2() }) //mls 03/11/2021
+
 
 Return 
 
@@ -41,6 +42,7 @@ EndIf
 
 
 cQuery := "SELECT ZJ_NUMCHAM FROM " + RetSqlName("SZJ") + " WHERE ZJ_TIPO = '1' AND ZJ_CLASSIF = '7' AND D_E_L_E_T_ = '' "
+//cQuery += "AND ZJ_NUMCHAM NOT IN ('030768') "
 
 If Select("QSZJ") <> 0
 	QSZJ->( dbCloseArea() )
@@ -64,6 +66,9 @@ If !QSZJ->( EOF() )
 					cTmpTXT   := SZK->ZK_DESCRIC
 					cTmpTXT   := StrTran(              Strtran(cTmpTXT,chr(10),"")         ,chr(13),"#$#$#$")
 					
+					cTmpTXT   := StrTran( cTmpTXT ,'{',"ABRECOLCHETES")
+					cTmpTXT   := StrTran( cTmpTXT ,'{',"FECHACOLCHETES")
+
 					aTmpTXT   := StrToKarr(cTmpTXT,"#$#$#$")
 					cTmpTXT   := ""
 					For x := 1 to Len(aTmpTXT)
@@ -106,7 +111,6 @@ If !QSZJ->( EOF() )
 				AADD(aVetorIn,{"SZ4","Z4_DTCAD"  , Date()                    })
 				AADD(aVetorIn,{"SZ4","Z4_DTAUTOR", Date()                    })
 				AADD(aVetorIn,{"SZ4","Z4_COBRANC", "2"                       })
-				AADD(aVetorIn,{"SZ4","Z4_TXTCHAM", cZ4_MEMO                  })
 				AADD(aVetorIn,{"SZ4","Z4_CHAMADO", SZJ->ZJ_NUMCHAM           })
 				AADD(aVetorIn,{"SZ4","Z4_ITEMCHA", cInteracao                })
 				AADD(aVetorIn,{"SZ4","Z4_RELATO" , "S"                       })
@@ -114,7 +118,8 @@ If !QSZJ->( EOF() )
 				AADD(aVetorIn,{"SZ4","Z4_CONSULT", SZJ->ZJ_Z4CONSU           })
 				//AADD(aVetorIn,{"SZ4","Z4_SEPFAT" , "000001"                  })
 				AADD(aVetorIn,{"SZ4","Z4_LINHA"  , "ZZZZZZZZZZZZZZZ"         })
-				
+				AADD(aVetorIn,{"SZ4","Z4_TXTCHAM", cZ4_MEMO                  })
+
 				//If MsgNoYes("Deseja aguardar o envio do chamado para o SistemOpus (Yes) ou coloca-lo na fila de envio (No)")
 				U_fWSOpus(aVetorIn,"R")
 				//	MsgInfo("Chamado gravado com sucesso")

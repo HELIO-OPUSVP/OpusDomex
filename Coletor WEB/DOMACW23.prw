@@ -10,8 +10,11 @@
 ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
 ฑฑบPrograma  ณDOMACD23  บAutor  ณMichel Sander       บ Data ณ  26.08.16   บฑฑ
 ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
-ฑฑบDesc.     ณ Tela de Faturamento de Pedidos					  			 	  บฑฑ
-ฑฑบ          ณ 														      			  บฑฑ
+ฑฑบDesc.     ณ Tela de Faturamento de Pedidos					  		  บฑฑ
+ฑฑบ          ณ 											 				  บฑฑ
+ฑฑบ          ณ                                                            บฑฑ
+ฑฑบ          ณ  U_VALIDACAO("RODA")  Fonte todo alterado e compilado em   บฑฑ
+ฑฑบ          ณ  valida็ใo. Pendente passar para produ็ใo                  บฑฑ
 ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
 ฑฑบUso       ณ AP                                                         บฑฑ
 ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
@@ -532,17 +535,21 @@ Static Function VerDispFat(cVerPedido, cVerProduto, dVerData)
 		SELECT ZY_PEDIDO, ZY_PRODUTO, ZY_QUANT, ZY_PRVFAT, ZY_NOTA
 		From %table:SZY% SZY (NOLOCK)
 		JOIN %table:SB1% SB1 (NOLOCK)
-		ON B1_FILIAL = '' AND B1_COD = ZY_PRODUTO
-		WHERE SZY.%NotDel%
+		ON B1_FILIAL =  %Exp:xFilial("SB1")%  
+		AND B1_COD = ZY_PRODUTO
+		WHERE ZY_FILIAL =  %Exp:xFilial("SZY")%  
+		AND SZY.%NotDel%
 		And SB1.%NotDel%
 		And %Exp:cWhere%
 		EndSQL
 	Else
 		cQuery := "SELECT ZY_PEDIDO, ZY_PRODUTO, ZY_QUANT, ZY_PRVFAT, ZY_NOTA " +Chr(13)+chr(10)
-		cQuery += "			From SZY010 SZY (NOLOCK) "                   + Chr(13)+chr(10)
-		cQuery += "			JOIN SB1010 SB1 (NOLOCK) "                   + Chr(13)+chr(10)
+		cQuery += "			From "+RetSqlName("SZY")+" SZY (NOLOCK) "                   + Chr(13)+chr(10)
+		cQuery += "			JOIN "+RetSqlName("SB1")+" SB1 (NOLOCK) "                   + Chr(13)+chr(10)
 		cQuery += "			ON B1_COD = ZY_PRODUTO   "                   + Chr(13)+chr(10)
+		cQuery += "			AND B1_FILIAL = '"+xFilial("SB1")+"' "
 		cQuery += "			WHERE SZY.D_E_L_E_T_ = '' "                  + Chr(13)+chr(10)
+		cQuery += "			AND ZY_FILIAL = '"+xFilial("SZY")+"' "
 		cQuery += "					And SB1.D_E_L_E_T_ = '' "              + Chr(13)+chr(10)
 		cQuery += "					And " + StrTran(cWhere    ,'%','')     + Chr(13)+chr(10)
 		dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),cAliasSZY,.T.,.F.)
