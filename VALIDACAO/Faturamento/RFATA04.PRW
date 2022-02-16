@@ -103,7 +103,7 @@ User Function RFATA04()
 	cGrupo3 := cAdmin
 	cGrupo3 += "000265 - ALAN CEPINHO"
 	cGrupo3 += "000592 - ALINE MELO"
-	cGrupo3 += "000909 - CAMILA CAMPOS"	
+	cGrupo3 += "000909 - CAMILA CAMPOS"
 	cGrupo3 += "000602 - CLAUDIO VINICIUS"
 	cGrupo3 += "000084 - DAYSE PACHOAL"
 	cGrupo3 += "000621 - DENISE DAMACENO"
@@ -111,9 +111,9 @@ User Function RFATA04()
 	cGrupo3 += "000157 - FARLEI SANTOS"
 	cGrupo3 += "000098 - FABIO RENNO"
 	cGrupo3 += "000515 - FERNANDA REIS"
-	cGrupo3 += "001055 - GABRIELA PRADO"              // Adicionado em 15/12/2021 - chamado 029662 	
+	cGrupo3 += "001055 - GABRIELA PRADO"              // Adicionado em 15/12/2021 - chamado 029662
 	cGrupo3 += "000053 - GEISE VALERIA"
-	cGrupo3 += "000876 - GUILHERME PEREIRA"	
+	cGrupo3 += "000876 - GUILHERME PEREIRA"
 	cGrupo3 += "000267 - HELENA FERRAZ"
 	cGrupo3 += "000312 - KEROLYNE PESTANA"
 	cGrupo3 += "000618 - EDER"  			    // Adicionado em 19/12/2019
@@ -397,12 +397,12 @@ Static Function Atu_aCols()
 				If RecLock("SZY",.F.)
 					//Para Huawei usa a data de previsão para o OTD
 					If ("HUAWEI" $ Upper( (cAlias)->A1_NOME)) .Or. ("HUAWEI" $ Upper((cAlias)->A1_NREDUZ))
-					   SZY->ZY_DTOTD := SZY->ZY_PRVFAT
+						SZY->ZY_DTOTD := SZY->ZY_PRVFAT
 					Else
-					   SZY->ZY_DTOTD := SZY->ZY_DTPCP
+						SZY->ZY_DTOTD := SZY->ZY_DTPCP
 					EndIf
-				
-				
+
+
 					SZY->(MsUnlock())
 				EndIf
 			EndIf
@@ -572,6 +572,10 @@ User Function RFAT04A()
 
 	Local lRet	      		:= .F.
 
+	Local dDtOld := Ctod("  /  /  ")
+	Local dDtNew := Ctod("  /  /  ")
+	Local aItEmail := {}
+
 	DbSelectArea("SC6")
 	SC6->(DbSetOrder(1))
 
@@ -690,12 +694,27 @@ User Function RFAT04A()
 
 			// Atualiza DATA PCP  no SC6
 			SC6->(DbSeek(xFilial("SC6")+AllTrim(cPedido)+AllTrim(cItemPd)))
+
+			If U_VALIDACAO("OSMAR")
+				If SC6->C6_ENTRE3 <> dGetData
+					dDtOld := SC6->C6_ENTRE3
+					dDtNew := dGetData
+					aaDD(aItEmail,{SC6->C6_NUM,SC6->C6_ITEM,dDtOld,dDtNew,'',''})
+				EndIf
+			End
+
 			If RecLock("SC6",.F.)
 				SC6->C6_ENTRE3 := dGetData  // mauresi nPosDTPCP  // Preenche a Data OTD no SC6
 				SC6->(MsUnlock())
 				lRet := .T.
 			EndIf
 
+			If U_VALIDACAO("OSMAR")
+				If Len(aItEmail) > 0
+					fDatMail(aItEmail)
+					aItEmail := {}
+				EndIf
+			EndIf
 		EndIf
 
 		//------------------------------------------
@@ -1087,6 +1106,10 @@ Static Function AltDtPCP()
 	Local nI	  := 0
 	Local lDtOk   := .T.
 
+	Local dDtOld := Ctod("  /  /  ")
+	Local dDtNew := Ctod("  /  /  ")
+	Local aItEmail := {}
+
 	For nI := 1 to Len(oGet:aCols)
 		If oGet:aCols[nI][nPosDTPRV] <> oGet:aCols[1][nPosDTPRV]
 			Alert("Existe mais de um dia no filtro, nao e possivel alteracao")
@@ -1129,14 +1152,30 @@ Static Function AltDtPCP()
 
 						// Atualiza DATA PCP (C6_ENTRE3) no SC6
 						SC6->(DbSeek(xFilial("SC6")+oGet:aCols[nI][nPosPEDIDO]+oGet:aCols[nI][nPosITEMPD]))
+
+						If U_VALIDACAO("OSMAR")
+							If SC6->C6_ENTRE3 <> dGetData
+								dDtOld := SC6->C6_ENTRE3
+								dDtNew := dGetData
+								aaDD(aItEmail,{SC6->C6_NUM,SC6->C6_ITEM,dDtOld,dDtNew,'',''})
+							EndIf
+						End
+
 						If RecLock("SC6",.F.)
-							SC6->C6_ENTRE3 		:= dGetData
+							SC6->C6_ENTRE3 := dGetData
 							SC6->(MsUnlock())
 						Endif
 					EndIf
 				EndIf
 			EndIf
 		Next nI
+
+		If U_VALIDACAO("OSMAR")
+			If Len(aItEmail) > 0
+				fDatMail(aItEmail)
+				aItEmail := {}
+			EndIf
+		EndIf
 
 	EndIF
 
@@ -1247,8 +1286,8 @@ Static Function AltDtOTD()
 					If RecLock("SZY",.F.)
 						//Para cliente Huawei considera a data de previsão de venda no OTD
 						If ("HUAWEI" $ Upper(oGet:aCols[nI][nPosNome]))
-							oGet:aCols[nI][nPosDTOTD] :=  oGet:aCols[nI][nPosDTPRV] 
-							SZY->ZY_DTOTD	 		  :=  oGet:aCols[nI][nPosDTPRV] 
+							oGet:aCols[nI][nPosDTOTD] :=  oGet:aCols[nI][nPosDTPRV]
+							SZY->ZY_DTOTD	 		  :=  oGet:aCols[nI][nPosDTPRV]
 							If SZY->(FieldPos("ZY_MOTOTD")) > 0
 								SZY->ZY_MOTOTD		   := Alltrim(cMotivo)			// Motivo de Alteracao do OTD
 							endif
@@ -1257,7 +1296,7 @@ Static Function AltDtOTD()
 							// Atualiza DATA OTD (C6_XXDTDEF) no SC6
 							SC6->(DbSeek(xFilial("SC6")+oGet:aCols[nI][nPosPEDIDO]+oGet:aCols[nI][nPosITEMPD]))
 							If RecLock("SC6",.F.)
-								SC6->C6_XXDTDEF 		:= oGet:aCols[nI][nPosDTPRV]  
+								SC6->C6_XXDTDEF 		:= oGet:aCols[nI][nPosDTPRV]
 								SC6->(MsUnlock())
 							Endif
 
@@ -1351,6 +1390,68 @@ Static Function fGrvTempo(cPedido)
 Return
 
 
+/*
+Envia email informando a troca de datas 
+*/
+//Static Function fDatMail(cNum,cItem,dtOld,dtNew)
+Static Function fDatMail(aItens)
+	Local cMsg	 := ""
+	Local cEmail := ""
+	Local x, y	 := 0
+	Local aElaborador := {}
+	Local lAchou := .F.
+	Local aAreaSC5 := SC5->( GetArea() )
+	Local aAreaSA1 := SA1->( GetArea() )
+
+	SC5->(dbSetOrder(01))
+	For x := 1 To Len(aItens)
+		SC5->(dbSeek(xFiliaL()+aItens[x,1]+aItens[x,2]))
+		aItens[x,5] := SC5->C5_ELABORA
+		aItens[x,6] := AllTrim(UsrRetMail(SC5->C5_USER))
+	Next x
+
+	For x := 1 To Len(aItens)
+		For y := 1 To Len(aElaborador)
+			If aItens[x,5] == aElaborador[y,1]
+				lAchou := .T.
+			EndIf
+		Next y
+		If !lAchou
+			aaDD(aElaborador,{aItens[x,5],aItens[x,6]})
+		EndIf
+	Next x
+
+
+	For y := 1 To Len(aElaborador)
+		cEmail := "osmar@opusvp.com.br;denis.vieira@rosenbergerdomex.com.br;" + AllTrim(aElaborador[y,2])
+		//cEmail := "osmar@opusvp.com.br"
+
+		cMsg := "Elaborador do Pedido de Venda: "+ aElaborador[y,1] +'<br>'
+		cMsg += "<br>"
+		cMsg += "Alteração feita em "+Dtoc(Date())+" - "+Time()+'<br>'
+		cMsg += "Por: "+ SubString(cUsuario,7,15)+'<br>'
+		cMsg += "<br>"
+
+		cMsg += "PEDIDO / ITEM"+'&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +;
+			"DE"+'&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' + "PARA" + '<br>'
+		SA1->( dbSetOrder(01) )
+		For x := 1 To Len(aItens)
+			If aElaborador[y,1] == aItens[x,5]
+
+				cMsg += aItens[x,1]+" / "+aItens[x,2]+'&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; '+Dtoc(aItens[x,3])+' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; '+Dtoc(aItens[x,4])+'<br>'
+
+			EndIf
+		Next x
+
+		Sleep(4000)
+		U_EnvMailto("Alteração de data (PCP) " ,cMsg,cEmail,"",)
+
+	Next y
+
+	RestArea(aAreaSA1)
+	RestArea(aAreaSC5)
+
+Return
 
 
 
