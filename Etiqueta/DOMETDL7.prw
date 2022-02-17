@@ -347,12 +347,12 @@ Static Function ValidaEtiq(lTeste)
 				XD4->(DbSetOrder(3))
 				If XD4->(DbSeek(xFilial("XD4") + UPPER(Alltrim(cEtiqOrig))))
 					cOPnSerie := Alltrim(XD4->XD4_OP)
-					If U_VALIDACAO()  .Or. .T. // validacao.Helio   26/07/21 - Producao 25/08/21
+					If U_VALIDACAO("HELIO",.T.,'26/07/21','25/08/21') // validacao.Helio   26/07/21 - Producao 25/08/21
 						lSerial := .T.
 					EndIf
 				Else
 					If UPPER(Subs(cEtiqOrig,1,1)) <> 'S'
-						If U_VALIDACAO()  .Or. .T. // validacao.Helio   26/07/21 - Producao 25/08/21
+						If U_VALIDACAO("HELIO",.T.,'26/07/21','25/08/21') // validacao.Helio   26/07/21 - Producao 25/08/21
 							If XD1->( dbSeek( xFilial() + Alltrim(cEtiqueta) ) )
 								cEtiqueta := Alltrim(cEtiqueta)
 
@@ -373,7 +373,7 @@ Static Function ValidaEtiq(lTeste)
 
 					Else
 						cOPnSerie := Subs(cEtiqOrig,2,11)
-						If U_VALIDACAO() .Or. .T.  // validacao.Helio   26/07/21 - Producao 25/08/21
+						If U_VALIDACAO("HELIO",.T.,'26/07/21','25/08/21')  // validacao.Helio   26/07/21 - Producao 25/08/21
 							lSerial := .T.
 						EndIf
 					EndIf
@@ -392,25 +392,26 @@ Static Function ValidaEtiq(lTeste)
 				EndIf
 			EndIf
 
-			If !U_VALIDACAO() .And. .F.   // validacao.Helio   26/07/21   Retirar esse trecho todo - Producao 25/08/21
-				If SC2->(dbSeek(xFilial("SC2")+cOPnSerie))
-					If SC2->C2_EMISSAO >= StoD('20170101')
-						lSerial := .T.
-					Else
+			/* Trecho comentado em 17/02/22
+			// If !U_VALIDACAO() .And. .F.   // validacao.Helio   26/07/21   Retirar esse trecho todo - Producao 25/08/21
+			// 	If SC2->(dbSeek(xFilial("SC2")+cOPnSerie))
+			// 		If SC2->C2_EMISSAO >= StoD('20170101')
+			// 			lSerial := .T.
+			// 		Else
 
-						cEtiqueta := "0"+cEtiqueta
-						cEtiqueta := Subs(cEtiqueta,1,12)
+			// 			cEtiqueta := "0"+cEtiqueta
+			// 			cEtiqueta := Subs(cEtiqueta,1,12)
 
-						lSerial   := .F.
-					EndIf
-				Else
+			// 			lSerial   := .F.
+			// 		EndIf
+			// 	Else
 
-					cEtiqueta := "0"+cEtiqueta
-					cEtiqueta := Subs(cEtiqueta,1,12)
-					lSerial   := .F.
-				EndIf
-			EndIf
-
+			// 		cEtiqueta := "0"+cEtiqueta
+			// 		cEtiqueta := Subs(cEtiqueta,1,12)
+			// 		lSerial   := .F.
+			// 	EndIf
+			// EndIf
+			*/
 		Else
 			if lOkFuruka
 				//XD4_FILIAL, XD4_KEY, R_E_C_N_O_, D_E_L_E_T_
@@ -538,7 +539,7 @@ Static Function ValidaEtiq(lTeste)
 				//³Verifica se o Cliente é TELEFONICA							³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 				lTelefonic := .F.
-				If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))  
+				If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .OR. (U_VALIDACAO("RODA",.T.,'','17/02/22') .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))  
 				  // FINAL DA ALTERAÇÃO -> Realizada em 13/01/22 por Ricardo roda referente ao 
 				  // CHAMADO: 030187 INTERAÇÃO:001 | 05/01/22 | 12:19:46 | Monique Garcia  
 				  
@@ -638,7 +639,7 @@ Static Function ValidaEtiq(lTeste)
 							//³Verifica se o Cliente é TELEFONICA							³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 							lTelefonic := .F.
-							If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))    
+							If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .OR. (U_VALIDACAO("RODA",.T.,'','17/02/22') .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))    
 								// FINAL DA ALTERAÇÃO -> Realizada em 13/01/22 por Ricardo roda referente ao 
 								// CHAMADO: 030187 INTERAÇÃO:001 | 05/01/22 | 12:19:46 | Monique Garcia  
 				
@@ -780,7 +781,7 @@ Static Function ValidaEtiq(lTeste)
 				SB1->( dbSeek( xFilial() + aRetEmbala[1] ) )
 				cProxEmb    := SB1->B1_DESC
 				If lOkFlex
-					If U_VALIDACAO("HELIO")  // 23/11/21
+					If U_VALIDACAO("HELIO",.T.,'23/11/21','17/02/22')
 						If Alltrim(SB1->B1_GRUPO) == "CORD"
 							nQProxEmb := Ceiling(aRetEmbala[2]/nQEmbAtu) //Arredondar para cima sempre
 						EndIf
@@ -1071,7 +1072,7 @@ Static Function ValidaEtiq(lTeste)
 
 				// Validações de Roteiro    Antigo if: //If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 				lValidaRot := .F.
-				If U_VALIDACAO("HELIO")
+				If U_VALIDACAO("HELIO",.T.,'','17/02/22')
 					If cFilAnt == '01'
 						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/TRUE" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 							lValidaRot := .T.
@@ -1569,7 +1570,7 @@ Static Function ValidaEtiq(lTeste)
 		
 			// Validações de Roteiro    Antigo if: //If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 				lValidaRot := .F.
-				If U_VALIDACAO()
+				If U_VALIDACAO("HELIO",.T.,'','17/02/22')
 					If cFilAnt == '01'
 						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/TRUE" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 							lValidaRot := .T.
@@ -1984,7 +1985,7 @@ Static Function ValidaEtiq(lTeste)
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 							If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX" ) .And. lEricsson
 								
-								if U_VALIDACAO() .OR. .T.// ricardo roda 04/11/2021
+								if U_VALIDACAO("RODA",.T.,'','04/11/21')
 									iF lEricsson		
 										U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 									Endif
@@ -1999,7 +2000,7 @@ Static Function ValidaEtiq(lTeste)
 							EndIf
 						Else
 							if lEricsson
-								if U_VALIDACAO() .OR. .T.
+								if U_VALIDACAO("RODA",.T.,'','')
 									IF lEricsson
 									U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 									Endif
@@ -2045,7 +2046,7 @@ Static Function ValidaEtiq(lTeste)
 						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 						If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .OR. SubStr(AllTrim(_cGrupoUso),1,4)=="FLEX")  .And. lEricsson
 							
-							if U_VALIDACAO() .OR. .T.// ricardo roda 04/11/2021
+							if U_VALIDACAO("RODA",.T.,'','04/11/21')// ricardo roda 04/11/2021
 							IF lEricsson
 								U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 							Endif
@@ -2100,7 +2101,7 @@ Static Function ValidaEtiq(lTeste)
 					ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T.,.T. )
 					
 				Else
-					If U_VALIDACAO() // ricardo roda 04/11/2021
+					If U_VALIDACAO("RODA",.T.,'04/11/21','17/02/22') // ricardo roda 04/11/2021
 					   IF lEricsson
 						   U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 					   Endif
@@ -2229,10 +2230,10 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		__mv_par04 := nQtdKit
 		__mv_par05 := 1
 
-		If !U_VALIDACAO()
-			__mv_par06 := SZG->ZG_LAYOUT   // TRATADO
-		Else
+		If U_VALIDACAO("",.T.,'','17/02/22')
 			__mv_par06 := SZG->ZG_LAYVALI
+		Else
+			__mv_par06 := SZG->ZG_LAYOUT   // TRATADO
 		EndIf
 
 	EndIf
@@ -2263,10 +2264,11 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		__mv_par03 := Nil
 		__mv_par04 := 1
 		__mv_par05 := 1
-		If !U_VALIDACAO()
-			__mv_par06 := SZG->ZG_LAYOUT  // TRATADO
-		Else
+		
+		If U_VALIDACAO("",.T.,'','17/02/22')
 			__mv_par06 := SZG->ZG_LAYVALI
+		Else
+			__mv_par06 := SZG->ZG_LAYOUT  // TRATADO
 		EndIf
 
 	EndIf
@@ -2466,7 +2468,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 			EndIf
 		EndIf
 	EndIf
-	If __mv_par06 == "39" .and. U_VALIDACAO() // HELIO/RICARDO 03/11/21  // layout criado a partir do 02
+	If __mv_par06 == "39" .and. U_VALIDACAO("HELIO",.T.,'03/11/21','17/02/22') // HELIO/RICARDO 03/11/21  // layout criado a partir do 02
 		cLayoutEnt := "39"
 		lRotValid :=  U_DOMETQ39(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL,lFinalOP) 			// Validações de Layout 02
 		If !lRotValid
@@ -2491,7 +2493,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		EndIf
 	EndIf
 
-	If __mv_par06 == "40" .and. U_VALIDACAO() // HELIO/RICARDO 03/11/21 // layout criado a partir do 04
+	If __mv_par06 == "40" .and. U_VALIDACAO("HELIO",.T.,'03/11/21','17/02/22') // HELIO/RICARDO 03/11/21 // layout criado a partir do 04
 		cLayoutEnt := "40"
 		lRotValid := U_DOMETQ40(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL)
 		If !lRotValid
@@ -2516,7 +2518,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		EndIf
 	EndIf
 
-	If __mv_par06 == "41" .and. lEricsson .and. U_VALIDACAO("RODA",.T.) // Ricardo Roda 04/11/21  // layout criado a partir do 94
+	If __mv_par06 == "41" .and. lEricsson .and. U_VALIDACAO("RODA",.T.,'','04/11/21') // Ricardo Roda 04/11/21  // layout criado a partir do 94
 		cLayoutEnt := "41"
 		lRotValid := U_DOMETQ41(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL,"000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 		If !lRotValid
@@ -2551,7 +2553,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	EndIf
 
 
-	if  U_VALIDACAO() .OR. .T. // RODA 16/09/2021  Etiqueta extra
+	if  U_VALIDACAO("RODA",.T.,'','16/09/21') // RODA 16/09/2021  Etiqueta extra
 		lGlobal := .F.
 
 		if !empty(SB1->B1_BASE)
@@ -2671,7 +2673,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	If __mv_par06 == "99"
 		cLayoutEnt := "99"
-		IF U_VALIDACAO() .Or. .T. // RODA 20/08/2021
+		IF U_VALIDACAO("RODA",.T.,'','20/08/21') // RODA 20/08/2021
 			lRotValid :=  U_DOMET87B(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) 			// Validações de Layout 01
 		Else
 			lRotValid :=  U_DOMETQ99(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) 			// Validações de Layout 01
@@ -2691,7 +2693,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 				Else
 					cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
 
-					IF U_VALIDACAO() .Or. .T. // RODA 20/08/2021
+					IF U_VALIDACAO("RODA",.T.,'','20/08/21') // RODA 20/08/2021
 						MsgRun("Imprimindo etiqueta Layout 87B","Aguarde...",{|| lRetEtq := U_DOMET87B(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) })  // Impressão de Etiqueta Layout 01
 					Else
 						MsgRun("Imprimindo etiqueta Layout 99","Aguarde...",{|| lRetEtq := U_DOMETQ99(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) })  // Impressão de Etiqueta Layout 01
@@ -2699,7 +2701,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 				EndIf
 			Else
 				cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
-				IF U_VALIDACAO()  .Or. .T.// RODA 20/08/2021
+				IF U_VALIDACAO("RODA",.T.,'','20/8/21') // RODA 20/08/2021
 					MsgRun("Imprimindo etiqueta Layout 87B","Aguarde...",{|| lRetEtq := U_DOMET87B(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) })  // Impressão de Etiqueta Layout 01
 				Else
 					MsgRun("Imprimindo etiqueta Layout 99","Aguarde...",{|| lRetEtq := U_DOMETQ99(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) })  // Impressão de Etiqueta Layout 01
@@ -2708,7 +2710,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		EndIf
 	EndIf
 
-	If U_VALIDACAO() // HELIO 03/11/21
+	If U_VALIDACAO("HELIO",.T.,'03/11/21','17/02/22') // HELIO 03/11/21
 		If Empty(cLayoutEnt)
 			MsgStop("Layout " + __mv_par06 + " não preparado para esta rotina.")
 		EndIf
@@ -2733,7 +2735,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		//³Verifica se o Cliente é TELEFONICA							³
 		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 		lTelefonic := .F.
-		If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))  
+		If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .OR. (U_VALIDACAO("RODA",.T.,'','17/02/22') .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))  
 				  // FINAL DA ALTERAÇÃO -> Realizada em 13/01/22 por Ricardo roda referente ao 
 				  // CHAMADO: 030187 INTERAÇÃO:001 | 05/01/22 | 12:19:46 | Monique Garcia  
 
@@ -2911,7 +2913,7 @@ Return
 			U_DOMETQ36(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie)		//Layout 36 - Por Michel A. Sander
 		EndIf
 
-		if  U_VALIDACAO() .OR. .T. // RODA 16/09/2021
+		if  U_VALIDACAO("RODA",.T.,'','16/09/21') // RODA 16/09/2021
 			lGlobal := .F.
 
 			//if !empty(SB1->B1_BASE)
@@ -2950,7 +2952,7 @@ Return
 			EndIf
 		EndIf
 		If cDomEtDl36_CancLay == "99"
-			IF U_VALIDACAO() .Or. .T. // RODA 20/08/2021
+			IF U_VALIDACAO("RODA",.T.,'','20/08/21')  // RODA 20/08/2021
 				U_DOMET87B(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie) //Layout 99 - Etiqueta Novo Layout HUAWEI
 			Else
 				U_DOMETQ99(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie) //Layout 99 - Etiqueta Novo Layout HUAWEI
@@ -3210,10 +3212,10 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			Return(.F.)
 		EndIf
 
-		If !U_VALIDACAO()
-			cLayout := SZG->ZG_LAYOUT   // TRATADO
-		Else
+		If U_VALIDACAO("",.T.,'','17/02/22')
 			cLayout := SZG->ZG_LAYVALI
+		Else
+			cLayout := SZG->ZG_LAYOUT   // TRATADO
 		EndIf
 
 		_PesoAuto := 0
@@ -3283,7 +3285,7 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			U_DOMETQ98(cOp,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 98 - Etiqueta Somente com CODBAR
 			U_DOMETQ94(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
 		ElseIf cLayout == "99"
-			IF U_VALIDACAO()  .Or. .T.// RODA 20/08/2021
+			IF U_VALIDACAO("RODA",.T.,'','20/08/21')  // RODA 20/08/2021
 				U_DOMET87B(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
 			Else
 				U_DOMETQ99(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
@@ -3297,7 +3299,7 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 			_Retorno := .F.
 		EndIf
 
-		if  U_VALIDACAO() .OR. .T. // RODA 16/09/2021
+		if  U_VALIDACAO("RODA",.T.,'','16/09/21') // RODA 16/09/2021
 			lGlobal := .F.
 
 			//if !empty(SB1->B1_BASE)
