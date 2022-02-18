@@ -96,16 +96,17 @@ User Function DOMROTTRK(cTipo,nMaxLinhas)
 	IF U_VALIDACAO("RODA")
 		IF cTipo == "TRUNK"
 			cTpProd  := "'TRUE', 'TRUN'"
-			cNotTps := "'PA','ME'"  //,'PI'"
+			cNotTps := "'PA','ME'"  
 			_cTitulo := "ROTEIRO DE PRODUÇÃO TRUNK - LINHA "+cValToChar(nCelula)
 		ElseIF cTipo == "DIO"
-			cTpProd  := "'DIO'"
-			cNotTps := "'PA','ME'"
+			cTpProd := "'DIO'"
+			cNotTps := "'PA','ME'" 
+			cNotGrp := "'FO','CON'" // grupo
 			_cTitulo := "ROTEIRO DE PRODUÇÃO DIO - LINHA " + cValToChar(nCelula)
 		Endif
 	ELSE
 		cTpProd  := "'TRUE', 'TRUN'"
-		cNotTps := "'PA','ME'"  //,'PI'"
+		cNotTps := "'PA','ME'"  
 		_cTitulo := "ROTEIRO DE PRODUÇÃO TRUNK - LINHA "+cValToChar(nCelula)
 	ENDIF
 
@@ -778,8 +779,13 @@ Static Function MontaTela()
 	cQuery+= " FROM "+RETSQLNAME("SD4")+" SD4 "
 	cQuery+= " INNER JOIN "+RETSQLNAME("SB1")+" SB1 ON B1_COD = D4_COD  "
 	cQuery+= " AND SB1.D_E_L_E_T_ = '' AND B1_TIPO NOT IN ("+cNotTps+")  AND B1_APROPRI <> 'I' "
+	If cTpProd == "'DIO'"
+		cQuery+= " AND B1_GRUPO NOT IN ("+cNotGrp+") "
+	endif
 	cQuery+= " WHERE D4_OP LIKE'"+cCodOP+"%' "
 	cQuery+= " AND D4_QTDEORI > 0 "
+	cQuery+= " AND D4_OPORIG = '' "
+	
 	cQuery+= " AND D4_LOCAL = '97'  "
 	cQuery+= " AND D4_FILIAL = '"+xFilial("SD4")+"'"
 	cQuery+= " AND SD4.D_E_L_E_T_ = '' "
