@@ -695,7 +695,7 @@ User Function RFAT04A()
 			// Atualiza DATA PCP  no SC6
 			SC6->(DbSeek(xFilial("SC6")+AllTrim(cPedido)+AllTrim(cItemPd)))
 
-			If U_VALIDACAO("OSMAR")
+			If U_VALIDACAO("OSMAR",.T.) // 21/02/22
 				If SC6->C6_ENTRE3 <> dGetData
 					dDtOld := SC6->C6_ENTRE3
 					dDtNew := dGetData
@@ -709,7 +709,7 @@ User Function RFAT04A()
 				lRet := .T.
 			EndIf
 
-			If U_VALIDACAO("OSMAR")
+			If U_VALIDACAO("OSMAR",.T.) // 21/02/22
 				If Len(aItEmail) > 0
 					fDatMail(aItEmail)
 					aItEmail := {}
@@ -1153,7 +1153,7 @@ Static Function AltDtPCP()
 						// Atualiza DATA PCP (C6_ENTRE3) no SC6
 						SC6->(DbSeek(xFilial("SC6")+oGet:aCols[nI][nPosPEDIDO]+oGet:aCols[nI][nPosITEMPD]))
 
-						If U_VALIDACAO("OSMAR")
+						If U_VALIDACAO("OSMAR",.T.) // 21/02/22
 							If SC6->C6_ENTRE3 <> dGetData
 								dDtOld := SC6->C6_ENTRE3
 								dDtNew := dGetData
@@ -1170,7 +1170,7 @@ Static Function AltDtPCP()
 			EndIf
 		Next nI
 
-		If U_VALIDACAO("OSMAR")
+		If U_VALIDACAO("OSMAR",.T.) // 21/02/22
 			If Len(aItEmail) > 0
 				fDatMail(aItEmail)
 				aItEmail := {}
