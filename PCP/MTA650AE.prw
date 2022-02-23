@@ -52,6 +52,8 @@ ExecBlock("MTA650AE",.F.,.F.,{cNum,cItem,cSeq})
 				SC6->C6_OP      := ''
 				SC6->C6_LOTECTL := ''
 				SC6->C6_LOCALIZ := '13EXPEDICAO'
+				SC6->C6_NUMOP   := ''
+				SC6->C6_ITEMOP  := ''
 				SC6->( msUnlock() )
 				//Else
 				//	MsgStop("Não foi possível limpar o lote da OP do Pedido de Vendas. Favor informar TI.")

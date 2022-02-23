@@ -157,7 +157,7 @@ User Function DOMCEI()
 	AADD(aHeader2,  {    "Etiq.2" 		    ,"ZZA_QETQ2"  		,"@E 9,999.9999"  		,03         	,4           ,""       ,"??????????????°","N"     ,""     ,"R"         ,""            ,""           ,""      ,"A"      , ""               , ""        , ""        })
 	AADD(aHeader2,  {    "Nivel Emb." 		,"ZZA_EMB"  		,"@R " 			  		,01          	,0           ,""       ,"??????????????°","C"     ,""     ,"R"         ,"1=Nivel 1;2=Nivel 2;3=Nivel 3;4=Nivel 4"      ,""           ,""      ,"A"      , ""               , ""        , ""        })
 	AADD(aHeader2,  {    "Pesa Emb." 		,"ZZA_PSEMB"  		,"@R " 			  		,01          	,0           ,""       ,"??????????????°","C"     ,""     ,"R"         ,"1=sim;2=Não" ,""           ,""      ,"A"      , ""               , ""        , ""        })
-	AADD(aHeader2,  {    "Qtd.Vias" 		,"ZZA_QTDVIA"  		,"@E 9.999"  		    ,04         	,0           ,""       ,"??????????????°","N"     ,""     ,"R"         ,""            ,""           ,""      ,"A"      , ""               , ""        , ""        })
+	AADD(aHeader2,  {    "Qtd.Vias" 		,"ZZA_QTDVIA"  		,"@E 9999"  		    ,04         	,0           ,""       ,"??????????????°","N"     ,""     ,"R"         ,""            ,""           ,""      ,"A"      , ""               , ""        , ""        })
 	AADD(aHeader2,  {    "INTERNO" 			,"RECNO"  		   	,"@E" 					,10          	,0           ,""       ,"??????????????°","N"     ,""     ,"R"         ,""            ,""           ,""      ,"V"      , ""               , ""        , ""        })
 
 	oGetDados  := (MsNewGetDados():New( 094, 009, 190, 725,NIL ,"AlwaysTrue" ,"AlwaysTrue", /*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,"AllwaysTrue",/*superdel*/,/*delok*/,oDlg,aHeader,aCols))

@@ -86,6 +86,15 @@ If lMarcado
 		EndIf
 	EndIf
 
+	
+	//validacao novo calculo imposto
+	If U_VALIDACAO('JONAS') 
+		U_FVALICMPI(SC9->C9_CLIENTE, SC9->C9_LOJA, SC9->C9_PEDIDO,.T.) //CLIENTE + LOJA + PROCESSAMENTO ANTES DA NF
+	EndIf
+
+	
+Return
+
 
 	// Jonas Validacao nova filial MG
 	If (SC9->C9_CLIENTE == '700000' .AND. SC9->C9_LOJA == '01' .AND.  SC9->C9_LOCAL == '95' .AND. fwfilial() == "01") .OR. (SC9->C9_CLIENTE == '001078' .AND. SC9->C9_LOJA == '01' .AND.  SC9->C9_LOCAL == '95' .AND. fwfilial() == "02") 

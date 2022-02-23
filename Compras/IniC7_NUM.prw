@@ -21,11 +21,11 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function IniC7_NUM()
+User Function INIC7_NUM()
 Local _Retorno := ''
 
 //cQuery := "SELECT ISNULL(MAX(C7_NUM),0) NOVONUM FROM " + RetSqlName("SC7") + " WHERE C7_NUM < '999999' AND C7_FILIAL = '"+xFilial("SC7")+"' AND D_E_L_E_T_ = ' '"
-cQuery := "SELECT ISNULL(MAX(C7_NUM),0) NOVONUM FROM " + RetSqlName("SC7") + " WHERE C7_NUM < '300000' AND C7_FILIAL = '"+xFilial("SC7")+"' AND D_E_L_E_T_ = ' '"
+cQuery := "SELECT ISNULL(MAX(C7_NUM),0) NOVONUM FROM " + RetSqlName("SC7") + " WHERE C7_NUM < '300000' AND C7_FILIAL = '"+xFilial("SC7")+"' AND D_E_L_E_T_ = ' ' AND LEN(LTRIM(RTRIM(C7_NUM))) = '6' "
 
 If Select("TEMP") <> 0
 	TEMP->( dbCloseArea() )

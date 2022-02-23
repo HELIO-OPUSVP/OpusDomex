@@ -92,7 +92,8 @@ cPerAtu  :=	AnoMes(dGet1)
 cPerAnt  :=	AnoMes(MonthSub(dGet1,1))
 ZZB->(dbsetorder(1))
 If !ZZB->(DBSeek(xFilial("ZZB")+cPerAtu))
-         cQuery := "SELECT * FROM ZZB010 (NOLOCK) WHERE D_E_L_E_T_='' AND ZZB_PERIOD='"+cPerAnt+"' AND ZZB_FILIAL='"+xFilial("ZZB")+"' ORDER BY ZZB_PERIOD, SEQPROC "           
+            cQuery := "SELECT * FROM ZZB010 (NOLOCK) WHERE D_E_L_E_T_='' AND ZZB_PERIOD='"+cPerAnt+"' AND ZZB_FILIAL='"+xFilial("ZZB")+"' ORDER BY ZZB_PERIOD, SEQPROC "           
+			
 			If Select("TMPZZB") <> 0
 				TMPZZB->( dbCloseArea() )
 			EndIf
@@ -105,7 +106,7 @@ If !ZZB->(DBSeek(xFilial("ZZB")+cPerAtu))
 				ZZB->ZZB_ROTINA    := TMPZZB->ZZB_ROTINA  
 				ZZB->ZZB_DESCRI    := TMPZZB->ZZB_DESCRI       
 				ZZB->SEQPROC       := TMPZZB->SEQPROC 
-				ZZB->ZZB_STATUS    := IF(TMPZZB->SEQPROC == 1, 'F','')
+				ZZB->ZZB_STATUS    := '' //IF(TMPZZB->SEQPROC == 1, 'F','')
 				ZZB->(MSUNLOCK()) 
 				TMPZZB->(DBSkip())
 			Enddo	
@@ -1607,9 +1608,9 @@ If ZZB->(dbSeek(xFilial("ZZB")+cPerAtu+cRotina))
 	If lLog .and. cRotina <> "VALCUS"  	              
 		Reclock("ZZB",.F.)
 		ZZB->ZZB_LOG       := cLogCus   
-		ZZB->ZZB_DATA   	 := DATE()
+		ZZB->ZZB_DATA      := DATE()
 		ZZB->ZZB_STATUS    := "E"       
-		ZZB->ZZB_HORA   	 := Time()   
+		ZZB->ZZB_HORA      := Time()   
 		ZZB->ZZB_USUARI    := Subs(cUsuario,7,12)
 		ZZB->(MSUNLOCK())       
 	Else      		               
@@ -2124,7 +2125,8 @@ Procsb9()
 Return
 
 Static Function Procsb9()
-Private lCorrige := .T.
+
+cLogCus := "Log de Analise de produtos com diferenca na virada de saldos SB9"+ENTER
 
 SBJ->( dbSetOrder(1) )
 
@@ -2164,25 +2166,30 @@ While !QUERYSB9->( EOF() )
 			TCSQLEXEC("UPDATE SB9010 SET D_E_L_E_T_ = '', R_E_C_D_E_L_ = 0 WHERE R_E_C_N_O_ = "+Str(QUERYSB9->R_E_C_N_O_) )
 			SB9->( dbGoTo(QUERYSB9->R_E_C_N_O_) )
 			If SB9->( Recno() ) == QUERYSB9->R_E_C_N_O_
-				If aSaldoEst[1] <> nQini .or. aSaldoEst[2] <> nVini
-					lCorrige := .T.
-					//If mv_par05 == 1
-					//	If !MsgYesNo('Produto: '+SB9->B9_COD+' Local: '+SB9->B9_LOCAL+' Data: '+DtoC(SB9->B9_DATA)+Chr(13)+'Qtd SB9: ' + Alltrim(Str(SB9->B9_QINI)) + ' Qtd Calc: ' + Alltrim(Str(aSaldoEst[1])) + ' Vlr SB9 ' + Alltrim(Str(SB9->B9_VINI1)) + ' Vlr Calc: ' + Alltrim(Str(aSaldoEst[2]))+Chr(13)+'Deseja corrigir o SB9 Recno(): '+Alltrim(Str(SB9->(Recno())))+'?')
-					//		lCorrige := .F.
-					//	EndIf
-					//EndIf
-					If lCorrige
-						Reclock("SB9",.F.)
-						SB9->B9_QINI  := aSaldoEst[1]
-						SB9->B9_VINI1 := aSaldoEst[2]
-						SB9->( msUnlock() )
-					Else
-						If MsgYesNo('Deseja sair do programa?')
-							Return
-						EndIf
+				If ROUND(aSaldoEst[1],2) <> ROUND(nQini,2) .or. ROUND(aSaldoEst[2],2) <> ROUND(nVini,2)					
+
+					If !lLog
+						cLogCus += "Foram encontrados itens com divegencia: "	+ ENTER     
+						cLogCus += "+---------------+--------+--+----------------+" + ENTER  
+						lLog := .T.
+					EndIf 
+
+					If aSaldoEst[1] <> nQini 
+						cLogCus += '|' +SB9->B9_COD+ '|' + SB9->B9_LOCAL+ '| QTD DE |'  +  TRANSFORM(Round(aSaldoEst[1],2), "@E 9,999,999,999.99")  + '|' + ENTER
+						cLogCus += '|' +SB9->B9_COD+ '|' + SB9->B9_LOCAL+ '| PARA   |' +  TRANSFORM(Round(nQini,2), "@E 9,999,999,999.99")  + '|' + ENTER + ENTER
 					EndIf
+
+					If aSaldoEst[2] <> nVini		
+						cLogCus += '|' +SB9->B9_COD+ '|' + SB9->B9_LOCAL+ '| VLR DE |' +  TRANSFORM(Round(aSaldoEst[2],2), "@E 9,999,999,999.99")  + '|' + ENTER
+						cLogCus += '|' +SB9->B9_COD+ '|' + SB9->B9_LOCAL+ '| PARA   |' +  TRANSFORM(Round(nVini,2), "@E 9,999,999,999.99")  + '|' + ENTER + ENTER
+					EndIf
+
+					Reclock("SB9",.F.)
+					SB9->B9_QINI  := aSaldoEst[1]
+					SB9->B9_VINI1 := aSaldoEst[2]
+					SB9->( msUnlock() )					
 				EndIf
-				If Rastro(SB9->B9_COD) .and. lCorrige
+				If Rastro(SB9->B9_COD) 
 					nQtdB8 := 0
 
 					cQuery := "SELECT * FROM "+RetSqlName("SB8")+" WHERE B8_FILIAL = '"+xFilial("SB8")+"' AND B8_PRODUTO = '"+SB9->B9_COD+"' AND B8_LOCAL = '"+SB9->B9_LOCAL+"' AND D_E_L_E_T_ = '' "
@@ -2210,12 +2217,7 @@ While !QUERYSB9->( EOF() )
 						If !Empty(nRecSBJ)
 							If Reclock("SBJ",.F.)
 								SBJ->( dbDelete() )
-								SBJ->( msUnlock() )
-							Else
-								MsgStop('Não foi possível travar o SBJ, recno: ' + Str(SBJ->( Recno() )))
-								If MsgYesNo('Deseja sair do programa?')
-									Return
-								EndIf
+								SBJ->( msUnlock() )							
 							EndIf
 						EndIf
 						
@@ -2233,30 +2235,13 @@ While !QUERYSB9->( EOF() )
 					If nQtdB8 <> aSaldoEst[1]
 					  // Alert('Erro saldo por lote')
 					EndIf
-				EndIf
-			Else
-				MsgStop('Recno não encontrado no SB9: ' + Str(QUERYSB9->R_E_C_N_O_))
-				If MsgYesNo('Deseja sair do programa?')
-					Return
-				EndIf
-			EndIf
-		Else
-			MsgStop('Não foi possível travar o SB9')
-			If MsgYesNo('Deseja sair do programa?')
-				Return
-			EndIf
-		EndIf
-	Else
-		MsgStop('Recno não encontrado no SB9: ' + Str(QUERYSB9->R_E_C_N_O_))
-		If MsgYesNo('Deseja sair do programa?')
-			Return
+				EndIf			
+			EndIf		
 		EndIf
 	EndIf
 	QUERYSB9->( dbSkip() )
 	IncProc()
 End
-
-MsgStop('Fim da execução da validação.')
 
 Return
 
