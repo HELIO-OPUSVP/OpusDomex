@@ -958,30 +958,31 @@ Static Function ProcRun()
 			// EndIf
 
 			// TCQUERY cQuery NEW ALIAS "QUERYSB8"
+			If Len(aOps) > 0
+				SD4->( dbSetOrder(2) )
+				SB8->( dbSetOrder(3) )   //B8_FILIAL+B8_PRODUTO+B8_LOCAL+B8_LOTECTL+B8_NUMLOTE+DTOS(B8_DTVALID)
 
-			SD4->( dbSetOrder(2) )
-			SB8->( dbSetOrder(3) )   //B8_FILIAL+B8_PRODUTO+B8_LOCAL+B8_LOTECTL+B8_NUMLOTE+DTOS(B8_DTVALID)
-
-			If SD4->( dbSeek( xFilial() + Subs(aOps[1,1],1,8) ) )
-				cLote := U_RETLOTC6(SD4->D4_OP)
-				While !SD4->( EOF() ) .and. Subs(SD4->D4_OP,1,8) == Subs(aOps[1,1],1,8)
-					If SB8->( dbSeek( xFilial() + SD4->D4_COD + SD4->D4_LOCAL + cLote ) )
-						If SB8->B8_EMPENHO <> 0
-							//SB8->( dbGoTo(QUERYSB8->R_E_C_N_O_) )
-							//If SB8->( Recno() ) == QUERYSB8->R_E_C_N_O_
-							Reclock("SB8",.F.)
-							SB8->B8_EMPENHO := 0
-							SB8->( msUnlock() )
-							//EndIf
-							//QUERYSB8->( dbSkip() )
-						EndIf
+				If SD4->( dbSeek( xFilial() + Subs(aOps[1,1],1,8) ) )
+					cLote := U_RETLOTC6(SD4->D4_OP)
+					While !SD4->( EOF() ) .and. Subs(SD4->D4_OP,1,8) == Subs(aOps[1,1],1,8)
+						If SB8->( dbSeek( xFilial() + SD4->D4_COD + SD4->D4_LOCAL + cLote ) )
+							If SB8->B8_EMPENHO <> 0
+								//SB8->( dbGoTo(QUERYSB8->R_E_C_N_O_) )
+								//If SB8->( Recno() ) == QUERYSB8->R_E_C_N_O_
+								Reclock("SB8",.F.)
+								SB8->B8_EMPENHO := 0
+								SB8->( msUnlock() )
+								//EndIf
+								//QUERYSB8->( dbSkip() )
+							EndIf
+						End
+						SD4->( dbSkip() )
 					End
-					SD4->( dbSkip() )
-				End
-				msUnlockAll()
-				//   TCSQLEXEC("UPDATE SB8010 SET B8_EMPENHO = 0 WHERE B8_FILIAL = '01' AND B8_EMPENHO <> 0 AND D_E_L_E_T_ = '' ")
-			EndIf
-
+					msUnlockAll()
+					//   TCSQLEXEC("UPDATE SB8010 SET B8_EMPENHO = 0 WHERE B8_FILIAL = '01' AND B8_EMPENHO <> 0 AND D_E_L_E_T_ = '' ")
+				EndIf
+				
+			Endif
 		EndIf
 	EndIf
 
