@@ -202,7 +202,15 @@ While !QSB1->( EOF() )
 	cQuery += " FROM SD5010 SD5                                                                           "
 	cQuery += "	WHERE D5_FILIAL = '"+xFilial("SD5")+"'                                                    "
 	cQuery += " AND   D5_OP      = D4_OP                                                                  "
-	cQuery += " AND   D5_LOTECTL = SUBSTRING(D4_OP,1,8)                                                   "
+	If U_VALIDACAO("HELIO")
+	    If SD4->( FieldPos("D4_XOP") ) = 0
+	       cQuery += " AND   D5_LOTECTL = SUBSTRING(D4_OP,1,8)                                            "
+		Else
+		   cQuery += " AND   D5_LOTECTL = D4_XOP                                                          "
+		EndIf
+	Else
+		cQuery += " AND   D5_LOTECTL = SUBSTRING(D4_OP,1,8)                                               "
+	EndIf
 	cQuery += "	AND   D5_PRODUTO = D4_COD                                                                 "
 	cQuery += " AND   D5_LOCAL   = '"+cLocProcDom+"'                                                      "
 	cQuery += "	AND   D5_ORIGLAN  IN ('499','999')                                                        "
