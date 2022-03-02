@@ -130,10 +130,10 @@ Static Function RunReport(Cabec1,Cabec2,Titulo,nLin,lEnd)
 	mv_so_erro := mv_par08
 	mv_mata300 := mv_par09
 	mv_sosaldo := mv_par10
-//mv_ate_emp := mv_par11
+    //mv_ate_emp := mv_par11
 
-	cQuery := "SELECT B1_COD, B1_TIPO FROM SB1010 WHERE B1_COD >= '"+mv_do_prod+"' AND B1_COD <= '"+mv_ate_pro+"' AND D_E_L_E_T_ = '' "
-	cQuery += "AND B1_COD IN (SELECT B2_COD FROM SB2010 WHERE B2_LOCAL = '"+cLocProcDom+"' AND D_E_L_E_T_ = '' ) "
+	cQuery := "SELECT B1_COD, B1_TIPO FROM "+RetSqlName("SB1")+" (NOLOCK) WHERE B1_COD >= '"+mv_do_prod+"' AND B1_COD <= '"+mv_ate_pro+"' AND D_E_L_E_T_ = '' "
+	cQuery += "AND B1_COD IN (SELECT B2_COD FROM "+RetSqlName("SB2")+" (NOLOCK) WHERE B2_LOCAL = '"+cLocProcDom+"' AND D_E_L_E_T_ = '' ) "
 	cQuery += "ORDER BY B1_COD "
 
 	If Select("QSB1") <> 0
@@ -170,12 +170,12 @@ Static Function RunReport(Cabec1,Cabec2,Titulo,nLin,lEnd)
 		//EndIf
 
 		cQuery := "SELECT D4_COD, D4_OP, D4_QTDEORI, D4_QUANT, "
-		cQuery += "ISNULL((SELECT SUM(ZE_QTDORI) FROM SZE010 WHERE ZE_FILIAL = '"+xFilial("SZE")+"' AND ZE_PRODUTO = D4_COD AND ZE_OP = D4_OP AND D_E_L_E_T_ = '' ),0) AS ZE_QTDORI, "
-		cQuery += "ISNULL((SELECT SUM(ZE_SALDO)  FROM SZE010 WHERE ZE_FILIAL = '"+xFilial("SZE")+"' AND ZE_PRODUTO = D4_COD AND ZE_OP = D4_OP AND D_E_L_E_T_ = '' ),0) AS ZE_SALDO,  "
+		cQuery += "ISNULL((SELECT SUM(ZE_QTDORI) FROM "+RetSqlName("SZE")+" (NOLOCK) WHERE ZE_FILIAL = '"+xFilial("SZE")+"' AND ZE_PRODUTO = D4_COD AND ZE_OP = D4_OP AND D_E_L_E_T_ = '' ),0) AS ZE_QTDORI, "
+		cQuery += "ISNULL((SELECT SUM(ZE_SALDO)  FROM "+RetSqlName("SZE")+" (NOLOCK) WHERE ZE_FILIAL = '"+xFilial("SZE")+"' AND ZE_PRODUTO = D4_COD AND ZE_OP = D4_OP AND D_E_L_E_T_ = '' ),0) AS ZE_SALDO,  "
 
 		// Quantidade Paga para a OP
 		cQuery += " ISNULL((SELECT SUM(CASE WHEN D3_TM > '500' THEN -D3_QUANT ELSE +D3_QUANT END) AS D3PAGOP "
-		cQuery += " FROM SD3010 SD3                                                                          "
+		cQuery += " FROM "+RetSqlName("SD3")+" SD3 (NOLOCK)                                                  "
 		cQuery += "	WHERE D3_FILIAL = '"+xFilial("SD3")+"'                                                   "
 		cQuery += " AND   D3_XXOP    = D4_OP                                                                 "
 		cQuery += "	AND   D3_COD     = D4_COD                                                                "
@@ -187,7 +187,7 @@ Static Function RunReport(Cabec1,Cabec2,Titulo,nLin,lEnd)
 
 		// Material consumido pela OP
 		cQuery += " ISNULL((SELECT SUM(CASE WHEN D3_TM='999' THEN +D3_QUANT ELSE -D3_QUANT END) AS D3CONSUMOOP "
-		cQuery += " FROM SD3010 SD3                                                                            "
+		cQuery += " FROM "+RetSqlName("SD3")+" SD3 (NOLOCK)                                                    "
 		cQuery += "	WHERE D3_FILIAL = '"+xFilial("SD3")+"'                                                     "
 		cQuery += " AND   D3_OP      = D4_OP                                                                   "
 		cQuery += "	AND   D3_COD     = D4_COD                                                                  "
@@ -199,20 +199,12 @@ Static Function RunReport(Cabec1,Cabec2,Titulo,nLin,lEnd)
 
 		// SD5OK
 		cQuery += " ISNULL((SELECT SUM(CASE WHEN D5_ORIGLAN='999' THEN +D5_QUANT ELSE -D5_QUANT END) AS SD5OK "
-		cQuery += " FROM SD5010 SD5                                                                           "
+		cQuery += " FROM "+RetSqlName("SD5")+" SD5 (NOLOCK)                                                   "
 		cQuery += "	WHERE D5_FILIAL = '"+xFilial("SD5")+"'                                                    "
 		cQuery += " AND   D5_OP      = D4_OP                                                                  "
-
-		If U_VALIDACAO("HELIO")
-			If SD4->( FieldPos("D4_XOP") ) = 0
-				cQuery += " AND   D5_LOTECTL = SUBSTRING(D4_OP,1,8)                                            "
-			Else
-				U_ATUD4XOP()
-				cQuery += " AND   D5_LOTECTL = D4_XOP                                                          "
-			EndIf
-		Else
-			cQuery += " AND   D5_LOTECTL = SUBSTRING(D4_OP,1,8)                                               "
-		EndIf
+	
+		U_ATUD4XOP()
+		cQuery += " AND   D5_LOTECTL = D4_XOP                                                          "
 
 		cQuery += "	AND   D5_PRODUTO = D4_COD                                                                 "
 		cQuery += " AND   D5_LOCAL   = '"+cLocProcDom+"'                                                      "
@@ -222,10 +214,10 @@ Static Function RunReport(Cabec1,Cabec2,Titulo,nLin,lEnd)
 
 		// consumo do SD5 ERRADO
 		cQuery += " ISNULL((SELECT SUM(CASE WHEN D5_ORIGLAN='999' THEN +D5_QUANT ELSE -D5_QUANT END) AS SD5ERRO "
-		cQuery += " FROM SD5010 SD5                                                                             "
-		cQuery += "	WHERE D5_FILIAL = '"+xFilial("SD5")+"'                                                                      "
+		cQuery += " FROM "+RetSqlName("SD5")+" SD5 (NOLOCK)                                                     "
+		cQuery += "	WHERE D5_FILIAL = '"+xFilial("SD5")+"'                                                      "
 		cQuery += " AND   D5_OP      = D4_OP                                                                    "
-		cQuery += " AND   D5_LOTECTL <> SUBSTRING(D4_OP,1,8)                                                    "
+		cQuery += " AND   D5_LOTECTL <> D4_XOP                                                                  "
 		cQuery += "	AND   D5_PRODUTO = D4_COD                                                                   "
 		cQuery += " AND   D5_LOCAL   = '"+cLocProcDom+"'                                                        "
 		cQuery += "	AND   D5_ORIGLAN     IN ('499','999')                                                       "
@@ -233,11 +225,11 @@ Static Function RunReport(Cabec1,Cabec2,Titulo,nLin,lEnd)
 		// Fim do SD5 ERRADO
 
 
-		cQuery += "FROM SD4010  "
+		cQuery += "FROM "+RetSqlName("SD4")+" (NOLOCK)  "
 
 		cQuery += " WHERE D4_FILIAL = '"+xFilial("SD4")+"' AND D4_LOCAL = '"+cLocProcDom+"' AND "
 
-		cQuery += " (D4_QUANT <> 0 OR SUBSTRING(D4_OP,1,8) IN ( SELECT B8_LOTECTL FROM SB8010 WHERE B8_FILIAL = '"+xFilial("SB8")+"' AND B8_PRODUTO = D4_COD AND B8_SALDO <> 0 AND D_E_L_E_T_ = '' ) ) AND "
+		cQuery += " (D4_QUANT <> 0 OR D4_XOP IN ( SELECT B8_LOTECTL FROM "+RetSqlName("SB8")+" (NOLOCK) WHERE B8_FILIAL = '"+xFilial("SB8")+"' AND B8_PRODUTO = D4_COD AND B8_SALDO <> 0 AND D_E_L_E_T_ = '' ) ) AND "
 
 		cQuery += "D4_COD = '"+QSB1->B1_COD+"' AND D4_OP >= '"+mv_da_op+"' AND D4_OP <= '"+mv_ate_op+"' AND "
 		//cQuery += "D4_DATA >= '"+DtoS(mv_ee_Empe)+"' AND D4_DATA <= '"+DtoS(mv_ate_emp)+"' AND "
