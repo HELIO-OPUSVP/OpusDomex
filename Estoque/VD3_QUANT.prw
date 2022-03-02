@@ -191,7 +191,7 @@ Static Function ProcRun()
 			 SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND SUBSTRING(D4_OP,1,8) = %Exp:cOpOrigem% AND SD4.%NotDel%
 			EndSQL
 			//endif
- 
+
 			nTotRegProc := (cAliasSD4)->NSOMA
 			(cAliasSD4)->(dbCloseArea())
 
@@ -1172,3 +1172,22 @@ Static Function fVerSilk(cCodSilk)
 	(cAliasSG1)->(dbCloseArea())
 
 Return ( lVerSilk )
+
+User Function ATUD4XOP()
+	Local cAliasSD4 := RetSqlName("SD4")
+	Local cQuery    := "SELECT TOP 1 R_E_C_N_O_ FROM " + cAliasSD4 + " WHERE D4_FILIAL = '"+xFilial("SD4")+"' AND D4_XOP = '' "
+	Local cUpdate   := "UPDATE " + cAliasSD4 + " SET D4_XOP = D4_OP WHERE D4_XOP = '' "
+
+	If Select("TEMPSD4")<>0
+		TEMPSD4->( dbCloseArea() )
+	EndIf
+
+	TCQUERY cQuery NEW ALIAS "TEMPSD4"
+
+	If !TEMPSD4->( EOF() )
+		TCSQLEXEC(cUpdate)
+	ENDIF
+
+	TEMPSD4->( dbCloseArea() )
+
+Return
