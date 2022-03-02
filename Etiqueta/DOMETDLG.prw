@@ -226,16 +226,20 @@ User Function DOMETDLG()
 				U_DOMETQ43(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07)
 			ElseIf mv_par06 == "44" // Layout 44 - (NOVO LAYOUT SUBSTITUTO DA 83) Ricardo Roda
 				U_DOMETQ44(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07)
-
 			ElseIf mv_par06 == "45" // Layout 44 - (NOVO LAYOUT SUBSTITUTO DA 83) Ricardo Roda
 				U_DOMETQ45(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07) //Antigo Layout 88 - COM DATAMATRIX e Impressora ZEBRA
 			ElseIf mv_par06 == "46" // Layout 44 - (NOVO LAYOUT SUBSTITUTO DA 83) Ricardo Roda
 				U_DOMETQ46(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07) //Antigo Layout 88 - COM DATAMATRIX e Impressora ZEBRA
 			ElseIf mv_par06 == "47" // Layout 47 - Ricardo Roda
 				U_DOMETQ47(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07)
-
-
-			ElseIf mv_par06 == "115"  // Layout 115 - (ID CORTE FURUKAWA - AVULSA))
+			ElseIf mv_par06 == "48" // Layout 48 - Ricardo Roda
+				U_DOMETQ48(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie,"") 
+			ElseIf mv_par06 == "49" // Layout 49 - Ricardo Roda
+				U_DOMETQ49(mv_par02,mv_par03,""      ,mv_par04, mv_par05, .F.     , "",0)
+			ElseIf mv_par06 == "50" // Layout 50 - Ricardo Roda
+				U_DOMETQ50(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie,"")
+		
+			ElseIf mv_par06 == "115"  // Layout 49 - etiqueta V-Tal
 				U_DOMET115(mv_par02,mv_par05,mv_par07)
 			ElseIf mv_par06 == "117"  // Layout 117 - (TELECOM ARGENTINA )
 				U_DOMET117(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie)
