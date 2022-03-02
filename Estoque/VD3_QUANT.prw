@@ -176,17 +176,6 @@ Static Function ProcRun()
 			//읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 			cAliasSD4 :=  "SD4G"//GetNextAlias()
 
-			//BeginSQL Alias cAliasSD4
-			// SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND SUBSTRING(D4_OP,1,8) = %Exp:cOpOrigem% AND SD4.%NotDel%
-			//EndSQL
-
-			//cOpOrig2 :=cOpOrigem+'%'
-
-			//If U_VALIDACAO()
-			//	BeginSQL Alias cAliasSD4
-			// SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND D4_OP LIKE %Exp:cOpOrig2% AND SD4.%NotDel%
-			//	EndSQL
-			//else
 			If U_VALIDACAO("HELIO")
 				If SD4->( FieldPos("D4_XOP") ) = 0
 					BeginSQL Alias cAliasSD4
@@ -198,7 +187,7 @@ Static Function ProcRun()
          			 SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND D4_XOP = %Exp:cOpOrigem% AND SD4.%NotDel%
 					EndSQL
 				EndIf
-			else
+			Else
 				BeginSQL Alias cAliasSD4
          			 SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND SUBSTRING(D4_OP,1,8) = %Exp:cOpOrigem% AND SD4.%NotDel%
 				EndSQL
@@ -960,17 +949,6 @@ Static Function ProcRun()
 		// Fim das Valida寤es
 		If _Retorno
 
-			// cQuery := "SELECT SB8.R_E_C_N_O_ FROM " + RetSqlTab("SB8") + " (NOLOCK), " + RetSqlTab("SD4") + " (NOLOCK) "
-			// cQuery += "WHERE B8_EMPENHO <> 0 AND SUBSTRING(D4_OP,1,8) = '"+Subs(aOps[1,1],1,8)+"' AND D4_COD = B8_PRODUTO AND D4_LOCAL = B8_LOCAL "
-			// cQuery += "AND SB8.D_E_L_E_T_ = '' AND SD4.D_E_L_E_T_ = '' "
-			// cQuery += "GROUP BY SB8.R_E_C_N_O_ "
-
-
-			// If Select("QUERYSB8") <> 0
-			// 	QUERYSB8->( dbCloseArea() )
-			// EndIf
-
-			// TCQUERY cQuery NEW ALIAS "QUERYSB8"
 			If Len(aOps) > 0
 				SD4->( dbSetOrder(2) )
 				SB8->( dbSetOrder(3) )   //B8_FILIAL+B8_PRODUTO+B8_LOCAL+B8_LOTECTL+B8_NUMLOTE+DTOS(B8_DTVALID)
@@ -1190,7 +1168,7 @@ Return ( lVerSilk )
 User Function ATUD4XOP()
 	Local cAliasSD4 := RetSqlName("SD4")
 	Local cQuery    := "SELECT TOP 1 R_E_C_N_O_ FROM " + cAliasSD4 + " WHERE D4_FILIAL = '"+xFilial("SD4")+"' AND D4_XOP = '' "
-	Local cUpdate   := "UPDATE " + cAliasSD4 + " SET D4_XOP = D4_OP WHERE D4_XOP = '' "
+	Local cUpdate   := "UPDATE " + cAliasSD4 + " SET D4_XOP = SUBSTRING(D4_OP,1,8) WHERE D4_XOP = '' "
 
 	If Select("TEMPSD4")<>0
 		TEMPSD4->( dbCloseArea() )
