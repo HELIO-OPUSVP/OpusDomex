@@ -186,7 +186,7 @@ Static Function ProcRun()
          			 SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND SUBSTRING(D4_OP,1,8) = %Exp:cOpOrigem% AND SD4.%NotDel%
 				EndSQL
 			EndIf
-			//endif
+			
 
 			nTotRegProc := (cAliasSD4)->NSOMA
 			(cAliasSD4)->(dbCloseArea())
