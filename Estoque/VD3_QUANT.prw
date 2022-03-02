@@ -187,9 +187,22 @@ Static Function ProcRun()
 			// SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND D4_OP LIKE %Exp:cOpOrig2% AND SD4.%NotDel%
 			//	EndSQL
 			//else
-			BeginSQL Alias cAliasSD4
-			 SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND SUBSTRING(D4_OP,1,8) = %Exp:cOpOrigem% AND SD4.%NotDel%
-			EndSQL
+			If U_VALIDACAO("HELIO")
+				If SD4->( FieldPos("D4_XOP") ) = 0
+					BeginSQL Alias cAliasSD4
+         			 SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND SUBSTRING(D4_OP,1,8) = %Exp:cOpOrigem% AND SD4.%NotDel%
+					EndSQL
+				Else
+				    U_ATUD4XOP()
+					BeginSQL Alias cAliasSD4
+         			 SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND D4_XOP = %Exp:cOpOrigem% AND SD4.%NotDel%
+					EndSQL
+				EndIf
+			else
+				BeginSQL Alias cAliasSD4
+         			 SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND SUBSTRING(D4_OP,1,8) = %Exp:cOpOrigem% AND SD4.%NotDel%
+				EndSQL
+			EndIf
 			//endif
 
 			nTotRegProc := (cAliasSD4)->NSOMA
@@ -981,7 +994,7 @@ Static Function ProcRun()
 					msUnlockAll()
 					//   TCSQLEXEC("UPDATE SB8010 SET B8_EMPENHO = 0 WHERE B8_FILIAL = '01' AND B8_EMPENHO <> 0 AND D_E_L_E_T_ = '' ")
 				EndIf
-				
+
 			Endif
 		EndIf
 	EndIf
