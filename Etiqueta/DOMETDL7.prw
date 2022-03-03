@@ -539,11 +539,11 @@ Static Function ValidaEtiq(lTeste)
 				//³Verifica se o Cliente é TELEFONICA							³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 				lTelefonic := .F.
-				If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .OR. (U_VALIDACAO("RODA",.T.,'','17/02/22') .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))  
-				  // FINAL DA ALTERAÇÃO -> Realizada em 13/01/22 por Ricardo roda referente ao 
-				  // CHAMADO: 030187 INTERAÇÃO:001 | 05/01/22 | 12:19:46 | Monique Garcia  
-				  
-				  	lTelefonic := .T.
+				If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .OR. (U_VALIDACAO("RODA",.T.,'','17/02/22') .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
+					// FINAL DA ALTERAÇÃO -> Realizada em 13/01/22 por Ricardo roda referente ao
+					// CHAMADO: 030187 INTERAÇÃO:001 | 05/01/22 | 12:19:46 | Monique Garcia
+
+					lTelefonic := .T.
 					SC5->(dbSeek(xFilial("SC5")+SC2->C2_PEDIDO))
 					cPedTel := SC5->C5_ESP1
 				Else
@@ -639,10 +639,10 @@ Static Function ValidaEtiq(lTeste)
 							//³Verifica se o Cliente é TELEFONICA							³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 							lTelefonic := .F.
-							If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .OR. (U_VALIDACAO("RODA",.T.,'','17/02/22') .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))    
-								// FINAL DA ALTERAÇÃO -> Realizada em 13/01/22 por Ricardo roda referente ao 
-								// CHAMADO: 030187 INTERAÇÃO:001 | 05/01/22 | 12:19:46 | Monique Garcia  
-				
+							If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .OR. (U_VALIDACAO("RODA",.T.,'','17/02/22') .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
+								// FINAL DA ALTERAÇÃO -> Realizada em 13/01/22 por Ricardo roda referente ao
+								// CHAMADO: 030187 INTERAÇÃO:001 | 05/01/22 | 12:19:46 | Monique Garcia
+
 								lTelefonic := .T.
 								SC5->(dbSeek(xFilial("SC5")+SC2->C2_PEDIDO))
 								cPedTel := SC5->C5_ESP1
@@ -1099,20 +1099,20 @@ Static Function ValidaEtiq(lTeste)
 					aPklAreaAtu := GetArea()
 					aPklAreaSc2 := SC2->(GetArea())
 					cQryPkl := "SELECT XD1_FILIAL FILIAL,XD1_OP OP,COUNT(*) QTDETQ,ISNULL(TMP1.QTD7,0) QTD7,ISNULL(TMP2.QTD8,0) QTD8,ISNULL(TMP3.QTD6,0) QTD6 "
-					cQryPkl += ENTER + " FROM " + RetSqlName("XD1") + " XD1 "
+					cQryPkl += ENTER + " FROM " + RetSqlName("XD1") + " XD1 (NOLOCK) "
 					cQryPkl += ENTER + " LEFT JOIN ( "
-					cQryPkl += ENTER + " SELECT XD1_FILIAL FIL,XD1_OP OP,COUNT(*) QTD7 FROM " + RetSQlName("XD1") +"  XD11 "
-					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD11.XD1_COD AND B1_TIPO <> 'ME' AND B1_GRUPO <> 'DIV' "
+					cQryPkl += ENTER + " SELECT XD1_FILIAL FIL,XD1_OP OP,COUNT(*) QTD7 FROM " + RetSQlName("XD1") +"  XD11 (NOLOCK) "
+					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 (NOLOCK) ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD11.XD1_COD AND B1_TIPO <> 'ME' AND B1_GRUPO <> 'DIV' "
 					cQryPkl += ENTER + " WHERE XD11.D_E_L_E_T_ ='' AND XD11.XD1_FILIAL <> '' AND XD11.XD1_OCORRE = '7' GROUP BY XD11.XD1_FILIAL,XD11.XD1_OP "
 					cQryPkl += ENTER + " ) TMP1 ON TMP1.FIL= XD1.XD1_FILIAL AND TMP1.OP = XD1.XD1_OP  "
 					cQryPkl += ENTER + " LEFT JOIN ( "
-					cQryPkl += ENTER + " SELECT XD1_FILIAL FIL,XD1_OP OP,COUNT(*) QTD8 FROM " + RetSqlName("XD1") + " XD11 "
-					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD11.XD1_COD AND B1_TIPO <> 'ME' AND B1_GRUPO <> 'DIV' "
+					cQryPkl += ENTER + " SELECT XD1_FILIAL FIL,XD1_OP OP,COUNT(*) QTD8 FROM " + RetSqlName("XD1") + " XD11 (NOLOCK) "
+					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 (NOLOCK) ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD11.XD1_COD AND B1_TIPO <> 'ME' AND B1_GRUPO <> 'DIV' "
 					cQryPkl += ENTER + " WHERE XD11.D_E_L_E_T_ ='' AND XD11.XD1_FILIAL <> '' AND XD11.XD1_OCORRE = '8' GROUP BY XD11.XD1_FILIAL,XD11.XD1_OP "
 					cQryPkl += ENTER + " ) TMP2 ON TMP2.FIL= XD1.XD1_FILIAL AND TMP2.OP = XD1.XD1_OP  "
 					cQryPkl += ENTER + " LEFT JOIN ( "
-					cQryPkl += ENTER + " SELECT XD1_FILIAL FIL,XD1_OP OP,COUNT(*) QTD6 FROM " + RetSqlName("XD1") + " XD11 "
-					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD11.XD1_COD AND B1_TIPO <> 'ME' AND B1_GRUPO <> 'DIV' "
+					cQryPkl += ENTER + " SELECT XD1_FILIAL FIL,XD1_OP OP,COUNT(*) QTD6 FROM " + RetSqlName("XD1") + " XD11 (NOLOCK) "
+					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " (NOLOCK) SB1 ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD11.XD1_COD AND B1_TIPO <> 'ME' AND B1_GRUPO <> 'DIV' "
 					cQryPkl += ENTER + " WHERE XD11.D_E_L_E_T_ ='' AND XD11.XD1_FILIAL <> '' AND XD11.XD1_OCORRE = '6' GROUP BY XD11.XD1_FILIAL,XD11.XD1_OP "
 					cQryPkl += ENTER + " ) TMP3 ON TMP3.FIL= XD1.XD1_FILIAL AND TMP3.OP = XD1.XD1_OP  "
 					cQryPkl += ENTER + " WHERE XD1.D_E_L_E_T_ ='' "
@@ -1152,16 +1152,11 @@ Static Function ValidaEtiq(lTeste)
 					*********************************************************************************/
 
 					nQTotFibra := 0
-					//cQryPkl := 	" SELECT COUNT(*) QTDETIQ,  ISNULL(SUM(XD1_QTDORI),0)  QTDFIBRA  FROM  " + RetSqlName("XD1") + "  XD1 "
-					//cQryPkl += ENTER + " JOIN  " + RetSqlName("SB1") + " SB1 ON SB1.B1_FILIAL  ='" +  xFilial("SB1") +  "' AND  SB1.D_E_L_E_T_ = '' AND SB1.B1_COD =XD1.XD1_COD AND SB1.B1_TIPO= 'MP' AND SB1.B1_GRUPO IN ('FO','FOFS') "
-					//cQryPkl += ENTER + " WHERE XD1.XD1_FILIAL = '" + xFilial("XD1") + "' "
-					//cQryPkl += ENTER + " AND XD1.XD1_OP = '" + SC2->C2_NUM + SC2->C2_ITEM  + SC2->C2_SEQUEN + "' "
-					//cQryPkl += ENTER + " AND XD1.XD1_OCORRE = '7' "
-
+					
 					cQryPkl := 	" SELECT  COUNT(*) QTDETIQ, COUNT(*)  QTDFIBRA  "
-					cQryPkl += ENTER + " FROM " + RetSqlName("XD4") + " XD4 "
-					cQryPkl += ENTER + " WHERE XD4.D_E_L_E_T_ ='' "
-					cQryPkl += ENTER + " AND XD4_OP= '" + SC2->C2_NUM + SC2->C2_ITEM  + SC2->C2_SEQUEN + "' AND XD4_STATUS ='2'"
+					cQryPkl += ENTER + " FROM " + RetSqlName("XD4") + " XD4 (NOLOCK) "
+					cQryPkl += ENTER + " WHERE  XD4.XD4_FILIAL = '"+xFilial("XD4")+"' "
+					cQryPkl += ENTER + " AND XD4_OP= '" + SC2->C2_NUM + SC2->C2_ITEM  + SC2->C2_SEQUEN + "' AND XD4_STATUS ='2' AND XD4.D_E_L_E_T_ ='' "
 
 					TCQUERY cQryPkl NEW ALIAS "TPKL"
 					If TPKL->(!EOF())
@@ -1173,9 +1168,9 @@ Static Function ValidaEtiq(lTeste)
 					
 					nQtTotN1 := 0
 					cQryCont := " SELECT SUM(XD1_QTDATU) QTDPECA "
-					cQryCont += " FROM " + RetSqlName("XD1") + " WHERE D_E_L_E_T_ ='' AND XD1_FILIAL = '" + xFilial("XD1") + "' "
+					cQryCont += " FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_FILIAL = '" + xFilial("XD1") + "' "
 					cQryCont += " AND XD1_OP ='" +cNumOpBip + "' AND XD1_OCORRE <> '5' "
-					cQryCont += " AND XD1_NIVEMB = '1' "
+					cQryCont += " AND XD1_NIVEMB = '1' AND D_E_L_E_T_ ='' "
 					If Select("TMPN1") > 0 
 						TMPN1->(DbCloseArea())
 					Endif
@@ -1281,7 +1276,7 @@ Static Function ValidaEtiq(lTeste)
 							//³Contando etiquetas nivel 1 para não permitir impressão acima da qtd.embalagem		³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 							cQuery := "SELECT XD1_XXPECA FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE "
-							cQuery += "XD1_OP = '"+cNumOpBip+"' AND XD1_NIVEMB = '1' AND XD1_OCORRE <> '5' AND XD1_USERID='"+RetCodUsr()+"' AND D_E_L_E_T_ = ''"
+							cQuery += "XD1_FILIAL = '"+xFilial("XD1")+"' AND XD1_OP = '"+cNumOpBip+"' AND XD1_NIVEMB = '1' AND XD1_OCORRE <> '5' AND XD1_USERID='"+RetCodUsr()+"' AND D_E_L_E_T_ = ''"
 
 							If Select("CNIVEL1") <> 0
 								CNIVEL1->( dbCloseArea() )
@@ -1309,9 +1304,9 @@ Static Function ValidaEtiq(lTeste)
 							If lOkFlex								
 								nQtTotN1 := 0
 								cQryCont := " SELECT SUM(XD1_QTDATU) QTDPECA "
-								cQryCont += " FROM " + RetSqlName("XD1") + " WHERE D_E_L_E_T_ ='' AND XD1_FILIAL = '" + xFilial("XD1") + "' "
+								cQryCont += " FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_FILIAL = '" + xFilial("XD1") + "' "
 								cQryCont += " AND XD1_OP ='" +cNumOpBip + "' AND XD1_OCORRE <> '5' AND XD1_COD = '" + SC2->C2_PRODUTO + "' "
-								cQryCont += " AND XD1_NIVEMB = '1' "
+								cQryCont += " AND XD1_NIVEMB = '1' AND D_E_L_E_T_ ='' "
 								If Select("TMPN1") > 0 
 									TMPN1->(DbCloseArea())
 								Endif
@@ -1361,7 +1356,7 @@ Static Function ValidaEtiq(lTeste)
 							//³Contando etiquetas nivel 1 para não permitir impressão acima da qtd.embalagem		³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 							cQuery := "SELECT XD1_XXPECA FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE "
-							cQuery += "XD1_OP = '"+cNumOpBip+"' AND XD1_NIVEMB = '1' AND XD1_OCORRE <> '5' AND XD1_USERID='"+RetCodUsr()+"' AND D_E_L_E_T_ = ''"
+							cQuery += "XD1_FILIAL = '"+xFilial("XD1")+"' AND XD1_OP = '"+cNumOpBip+"' AND XD1_NIVEMB = '1' AND XD1_OCORRE <> '5' AND XD1_USERID='"+RetCodUsr()+"' AND D_E_L_E_T_ = ''"
 
 							If Select("CNIVEL1") <> 0
 								CNIVEL1->( dbCloseArea() )
@@ -1386,9 +1381,9 @@ Static Function ValidaEtiq(lTeste)
 
 							nQtTotN1 := 0
 							cQryCont := " SELECT SUM(XD1_QTDATU) QTDPECA "
-							cQryCont += " FROM " + RetSqlName("XD1") + " WHERE D_E_L_E_T_ ='' AND XD1_FILIAL = '" + xFilial("XD1") + "' "
+							cQryCont += " FROM " + RetSqlName("XD1") + " WHERE XD1_FILIAL = '" + xFilial("XD1") + "' "
 							cQryCont += " AND XD1_OP ='" +cNumOpBip + "' AND XD1_OCORRE <> '5' AND XD1_COD = '" + SC2->C2_PRODUTO + "' "
-							cQryCont += " AND XD1_NIVEMB = '1' "
+							cQryCont += " AND XD1_NIVEMB = '1' AND D_E_L_E_T_ ='' "
 							If Select("TMPN1") > 0 
 								TMPN1->(DbCloseArea())
 							Endif
@@ -1599,20 +1594,20 @@ Static Function ValidaEtiq(lTeste)
 					aPklAreaAtu := GetArea()
 					aPklAreaSc2 := SC2->(GetArea())
 					cQryPkl := "SELECT XD1_FILIAL FILIAL,XD1_OP OP,COUNT(*) QTDETQ,ISNULL(TMP1.QTD7,0) QTD7,ISNULL(TMP2.QTD8,0) QTD8,ISNULL(TMP3.QTD6,0) QTD6 "
-					cQryPkl += ENTER + " FROM " + RetSqlName("XD1") + " XD1 "
+					cQryPkl += ENTER + " FROM " + RetSqlName("XD1") + " XD1 (NOLOCK) "
 					cQryPkl += ENTER + " LEFT JOIN ( "
-					cQryPkl += ENTER + " SELECT XD1_FILIAL FIL,XD1_OP OP,COUNT(*) QTD7 FROM " + RetSQlName("XD1") +"  XD11 "
-					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD11.XD1_COD AND B1_TIPO <> 'ME' AND B1_GRUPO <> 'DIV' "
+					cQryPkl += ENTER + " SELECT XD1_FILIAL FIL,XD1_OP OP,COUNT(*) QTD7 FROM " + RetSQlName("XD1") +"  XD11 (NOLOCK) "
+					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 (NOLOCK) ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD11.XD1_COD AND B1_TIPO <> 'ME' AND B1_GRUPO <> 'DIV' "
 					cQryPkl += ENTER + " WHERE XD11.D_E_L_E_T_ ='' AND XD11.XD1_FILIAL <> '' AND XD11.XD1_OCORRE = '7' GROUP BY XD11.XD1_FILIAL,XD11.XD1_OP "
 					cQryPkl += ENTER + " ) TMP1 ON TMP1.FIL= XD1.XD1_FILIAL AND TMP1.OP = XD1.XD1_OP  "
 					cQryPkl += ENTER + " LEFT JOIN ( "
-					cQryPkl += ENTER + " SELECT XD1_FILIAL FIL,XD1_OP OP,COUNT(*) QTD8 FROM " + RetSqlName("XD1") + " XD11 "
-					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD11.XD1_COD AND B1_TIPO <> 'ME' AND B1_GRUPO <> 'DIV' "
+					cQryPkl += ENTER + " SELECT XD1_FILIAL FIL,XD1_OP OP,COUNT(*) QTD8 FROM " + RetSqlName("XD1") + " XD11 (NOLOCK) "
+					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 (NOLOCK) ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD11.XD1_COD AND B1_TIPO <> 'ME' AND B1_GRUPO <> 'DIV' "
 					cQryPkl += ENTER + " WHERE XD11.D_E_L_E_T_ ='' AND XD11.XD1_FILIAL <> '' AND XD11.XD1_OCORRE = '8' GROUP BY XD11.XD1_FILIAL,XD11.XD1_OP "
 					cQryPkl += ENTER + " ) TMP2 ON TMP2.FIL= XD1.XD1_FILIAL AND TMP2.OP = XD1.XD1_OP  "
 					cQryPkl += ENTER + " LEFT JOIN ( "
-					cQryPkl += ENTER + " SELECT XD1_FILIAL FIL,XD1_OP OP,COUNT(*) QTD6 FROM " + RetSqlName("XD1") + " XD11 "
-					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD11.XD1_COD AND B1_TIPO <> 'ME' AND B1_GRUPO <> 'DIV' "
+					cQryPkl += ENTER + " SELECT XD1_FILIAL FIL,XD1_OP OP,COUNT(*) QTD6 FROM " + RetSqlName("XD1") + " XD11 (NOLOCK) "
+					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 (NOLOCK) ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD11.XD1_COD AND B1_TIPO <> 'ME' AND B1_GRUPO <> 'DIV' "
 					cQryPkl += ENTER + " WHERE XD11.D_E_L_E_T_ ='' AND XD11.XD1_FILIAL <> '' AND XD11.XD1_OCORRE = '6' GROUP BY XD11.XD1_FILIAL,XD11.XD1_OP "
 					cQryPkl += ENTER + " ) TMP3 ON TMP3.FIL= XD1.XD1_FILIAL AND TMP3.OP = XD1.XD1_OP  "
 					cQryPkl += ENTER + " WHERE XD1.D_E_L_E_T_ ='' "
@@ -1652,16 +1647,11 @@ Static Function ValidaEtiq(lTeste)
 					*********************************************************************************/
 
 					nQTotFibra := 0
-					//cQryPkl := 	" SELECT COUNT(*) QTDETIQ,  ISNULL(SUM(XD1_QTDORI),0)  QTDFIBRA  FROM  " + RetSqlName("XD1") + "  XD1 "
-					//cQryPkl += ENTER + " JOIN  " + RetSqlName("SB1") + " SB1 ON SB1.B1_FILIAL  ='" +  xFilial("SB1") +  "' AND  SB1.D_E_L_E_T_ = '' AND SB1.B1_COD =XD1.XD1_COD AND SB1.B1_TIPO= 'MP' AND SB1.B1_GRUPO IN ('FO','FOFS') "
-					//cQryPkl += ENTER + " WHERE XD1.XD1_FILIAL = '" + xFilial("XD1") + "' "
-					//cQryPkl += ENTER + " AND XD1.XD1_OP = '" + SC2->C2_NUM + SC2->C2_ITEM  + SC2->C2_SEQUEN + "' "
-					//cQryPkl += ENTER + " AND XD1.XD1_OCORRE = '7' "
-
+					
 					cQryPkl := 	" SELECT  COUNT(*) QTDETIQ, COUNT(*)  QTDFIBRA  "
 					cQryPkl += ENTER + " FROM " + RetSqlName("XD4") + " XD4 "
-					cQryPkl += ENTER + " WHERE XD4.D_E_L_E_T_ ='' "
-					cQryPkl += ENTER + " AND XD4_OP= '" + SC2->C2_NUM + SC2->C2_ITEM  + SC2->C2_SEQUEN + "' AND XD4_STATUS ='2'"
+					cQryPkl += ENTER + " WHERE XD4_FILIAL = '"+xFilial("XD4")+"' "
+					cQryPkl += ENTER + " AND XD4_OP= '" + SC2->C2_NUM + SC2->C2_ITEM  + SC2->C2_SEQUEN + "' AND XD4_STATUS ='2' AND XD4.D_E_L_E_T_ ='' "
 
 					TCQUERY cQryPkl NEW ALIAS "TPKL"
 					If TPKL->(!EOF())
@@ -1673,9 +1663,9 @@ Static Function ValidaEtiq(lTeste)
 					
 					nQtTotN1 := 0
 					cQryCont := " SELECT SUM(XD1_QTDATU) QTDPECA "
-					cQryCont += " FROM " + RetSqlName("XD1") + " WHERE D_E_L_E_T_ ='' AND XD1_FILIAL = '" + xFilial("XD1") + "' "
-					cQryCont += " AND XD1_OP ='" +cNumOpBip + "' AND XD1_OCORRE <> '5' "
-					cQryCont += " AND XD1_NIVEMB = '1' "
+					cQryCont += " FROM " + RetSqlName("XD1") + " WHERE XD1_FILIAL = '" + xFilial("XD1") + "' "
+					cQryCont += " AND XD1_OP ='" +cNumOpBip + "' AND XD1_OCORRE <> '5'  "
+					cQryCont += " AND XD1_NIVEMB = '1' AND D_E_L_E_T_ ='' "
 					If Select("TMPN1") > 0 
 						TMPN1->(DbCloseArea())
 					Endif
@@ -2264,7 +2254,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		__mv_par03 := Nil
 		__mv_par04 := 1
 		__mv_par05 := 1
-		
+
 		If U_VALIDACAO("",.T.,'','17/02/22')
 			__mv_par06 := SZG->ZG_LAYVALI
 		Else
@@ -2735,9 +2725,9 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		//³Verifica se o Cliente é TELEFONICA							³
 		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 		lTelefonic := .F.
-		If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .OR. (U_VALIDACAO("RODA",.T.,'','17/02/22') .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))  
-				  // FINAL DA ALTERAÇÃO -> Realizada em 13/01/22 por Ricardo roda referente ao 
-				  // CHAMADO: 030187 INTERAÇÃO:001 | 05/01/22 | 12:19:46 | Monique Garcia  
+		If (("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ))) .OR. (U_VALIDACAO("RODA",.T.,'','17/02/22') .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
+			// FINAL DA ALTERAÇÃO -> Realizada em 13/01/22 por Ricardo roda referente ao
+			// CHAMADO: 030187 INTERAÇÃO:001 | 05/01/22 | 12:19:46 | Monique Garcia
 
 			SC5->(dbSeek(xFilial("SC5")+SC2->C2_PEDIDO))
 			cPedTel := SC5->C5_ESP1
@@ -2977,201 +2967,6 @@ Return
 
 Return
 
-/*
-ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
-±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
-±±ºPrograma  ³ fEnvExped ºAutor ³ Helio Ferreira     º Data ³    27/05/15 º±±
-±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
-±±ºDesc.     ³ Rotina para envio de material para expedicao               º±±
-±±º          ³                                                            º±±
-±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
-±±ºUso       ³ P11                                                        º±±
-±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
-±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
-*/
-/*
-Static Function fEnvExped()
-
-	Private _cNumOpBip := Space(12)
-	Private _nQtdOpBip := 0
-
-	DEFINE MSDIALOG oDlg02 TITLE OemToAnsi("Envio de material para expedição") FROM 0,0 TO 150,390 PIXEL of oMainWnd PIXEL
-
-	@ 12, 10	SAY _oTexto10 Var 'Número da OP:'    SIZE 100,10 PIXEL
-	_oTexto10:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
-
-	@ 10, 75 MSGET _oNumOPBip VAR _cNumOpBip  SIZE 80,12 Valid fValEnvEx() WHEN .T. PIXEL
-	_oNumOPBip:oFont := TFont():New('Courier New',,25,,.T.,,,,.T.,.F.)
-
-	@ 32, 10	SAY _oTexto12 Var 'Quantidade:'    SIZE 100,10 PIXEL
-	_oTexto12:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
-
-	@ 30, 75 MSGET _oQOpBip VAR _nQtdOpBip  Picture "999,999" SIZE 50,12 Valid fValQtd() WHEN .T. PIXEL
-	_oQOpBip:oFont := TFont():New('Courier New',,25,,.T.,,,,.T.,.F.)
-
-
-//@ 50, 050 BUTTON _oImprime  PROMPT "Enviar"   ACTION Processa( {|| fProcEnv() } ) SIZE 60,15 PIXEL OF oDlg02
-	@ 50, 125 BUTTON _oCancelar PROMPT "Cancelar" ACTION Processa( {|| oDlg02:End() } ) SIZE 60,15 PIXEL OF oDlg02
-
-	ACTIVATE MSDIALOG oDlg02 CENTER
-
-	oEtiqueta:SetFocus()
-
-Return
-*/
-/*
-ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
-±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
-±±ºPrograma  ³ fValEnvEx ºAutor ³ Helio Ferreira     º Data ³    27/05/15 º±±
-±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
-±±ºDesc.     ³ Rotina para envio de material para expedicao               º±±
-±±º          ³                                                            º±±
-±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
-±±ºUso       ³ P11                                                        º±±
-±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
-±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
-*/
-/*
-Static Function fValEnvEx()
-
-	Local _Retorno := .T.
-
-	If !Empty(_cNumOpBip)
-		SC2->( dbSetOrder(1) )
-		If SC2->( dbSeek( xFilial() + Subs(_cNumOpBip,1,11) ) )
-			cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '2' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
-			dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TEMP",.F.,.T.)
-			_nQtdOpBip := TEMP->CONTAGEM
-			If Empty(_nQtdOpBip)
-				MsgStop("Não existe material disponível para ser enviado desta OP.")
-				_Retorno := .F.
-			EndIf
-			TEMP->(dbCloseArea())
-		Else
-			MsgStop("OP inválida.")
-			_Retorno := .F.
-		EndIf
-	EndIf
-
-Return _Retorno
-*/
-/*
-Static Function fValQtd()
-	Local _Retorno := .T.
-
-	If !Empty(_nQtdOpBip)
-		cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '2' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
-		dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TEMP",.F.,.T.)
-		If _nQtdOpBip > TEMP->CONTAGEM
-			MsgStop("Quantidade superior a disponível para ser enviada para expedição.")
-			_Retorno := .F.
-			TEMP->(dbCloseArea())
-		Else
-			TEMP->(dbCloseArea())
-			If MsgNoYes("Confirma a quantidade de " + Alltrim(Str(_nQtdOpBip)) + " para enviar a expedição?")
-				fProcEnv()
-			Else
-				_Retorno := .F.
-			EndIf
-		EndIf
-	EndIf
-
-Return _Retorno
-*/
-/*
-Static Function fProcEnv()
-
-	If !Empty(_nQtdOpBip)
-
-		cQuery := "SELECT COUNT(*) CONTAGEM FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '2' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
-		dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TEMP",.F.,.T.)
-
-		If _nQtdOpBip <= TEMP->CONTAGEM
-
-			TEMP->(dbCloseArea())
-			cQuery := "SELECT TOP " + Alltrim(Str(_nQtdOpBip)) + " R_E_C_N_O_ FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_OP = '"+Subs(_cNumOpBip,1,11)+"' AND XD1_NIVEMB = '2' AND XD1_OCORRE = '6' AND D_E_L_E_T_ = '' "
-			dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TEMP",.F.,.T.)
-			While !TEMP->( EOF() )
-				XD1->( dbGoto(TEMP->R_E_C_N_O_) )
-				If XD1->( Recno() ) == TEMP->R_E_C_N_O_
-					Reclock("XD1",.F.)
-					XD1->XD1_OCORRE := "4"
-					XD1->( msUnlock() )
-				EndIf
-				TEMP->( dbSkip() )
-			End
-			TEMP->(dbCloseArea())
-
-			//If MsgYesNo("Deseja processar o apontamento da OP " + _cNumOpBip + "?")
-			//U_SCHEDOP(_cNumOpBip)
-			//EndIf
-
-			MsgInfo("Envio Ok")
-			oDlg02:End()
-
-		Else
-
-			MsgStop("Quantidade superior a disponível para ser enviada para expedição.")
-			TEMP->(dbCloseArea())
-
-		EndIf
-
-	EndIf
-
-Return
-*/
-/*
-ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
-±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
-±±ºPrograma  ³ fFinalEmb ºAutor ³ Michel Sander      º Data ³  06.09.2017 º±±
-±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
-±±ºDesc.     ³ Finaliza embalagem de seriais nivel 1			              º±±
-±±º          ³                                                            º±±
-±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
-±±ºUso       ³ P11                                                        º±±
-±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
-±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
-*/
-/*
-Static Function fFinalEmb()
-
-	If !lSerial
-		Aviso("Atenção","Esta opção só pode ser utilizada pela embalagem serial nivel 1 para grupos FLEX e JUMPER.",{"Ok"})
-		Return
-	EndIf
-
-	If nQtdBip == 0
-		Aviso("Atenção","Quantidade bipada igual a zero.",{"Ok"})
-		Return
-	EndIf
-
-	If MsgYesNo("Deseja encerrar a embalagem com a quantidade " + AllTrim(Str(nQtdBip)) + "?")
-		nQEmbAtu := Round(nQtdBip,0)
-		oQtdBip:Refresh()
-		oQEmbAtu:Refresh()
-		lUsaColet := .F.
-		U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,Round(nQtdBip,0),1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-		Sleep(3000)		// Delay de 5 segundos para buffer
-		U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,Round(nQtdBip,0),1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
-		aSerial := {}
-		aQtdBip  := {}
-		aQtdEtiq := {}
-		nQtdBip := 0
-		nQtdKit := 0
-		oQtdBip:Refresh()
-		oQEmbAtu:Refresh()
-		oQtdBip:Refresh()
-		oUltima:Enable()
-	EndIf
-
-Return
-*/
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
@@ -3605,7 +3400,7 @@ Static Function fLocImp(cCel)
 		QCB5->(DBCLOSEAREA())
 	ENDIF
 
-	cQuery:= " SELECT TOP 1 CB5_CODIGO FROM CB5010 "
+	cQuery:= " SELECT TOP 1 CB5_CODIGO FROM "+RetSqlName("CB5")+" "
 	cQuery+= " WHERE CB5_DESCRI = '"+cCel+"'  "
 	cQuery+= " AND D_E_L_E_T_ = '' "
 	dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"QCB5",.T.,.T.)
