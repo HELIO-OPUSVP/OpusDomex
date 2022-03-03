@@ -18,10 +18,10 @@ User Function CADSZJVD()
    
 	LOCAL cManut := "5" //Vendas
 	//Muar as Informações do Cambo no SX3 antes de abrir a tela principal
-	If U_Validacao("JACKSON")	
+	//If U_Validacao("JACKSON")	
 		U_CADSZJ( cManut )
-	else
-		MsgStop("Rotina está em validação")
-	EndIf
+	//else
+	//	MsgStop("Rotina está em validação")
+	//EndIf
 
 Return

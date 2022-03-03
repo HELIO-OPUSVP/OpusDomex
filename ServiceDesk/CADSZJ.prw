@@ -1691,8 +1691,8 @@ Static Function fMudaLinha(nChamada)
 	EndIf
 
 //Trata Situação = Aguardando Tecnico
-	If Len(oGdInter:aCols) > 1 .And. __cUserID == M->ZJ_COD_SOL
-		M->ZJ_SITUAC := "T"
+	If Len(oGdInter:aCols) > 1 .And. __cUserID == M->ZJ_COD_SOL .And. Alltrim(M->ZJ_TIPO) <> "5"
+		M->ZJ_SITUAC := "T" 
 		//Solicitado por Denis em 22/10/19
 		//Se estiver com o nível 3 mudar para o nível 2 para controle na tela de chamdos pendentes do nível 2
 		//Se for o caso de redirecionar para o nível 3, então será feito pelo nível 2.
@@ -2078,7 +2078,7 @@ Static Function fSalvaTudo(cTpOper,cTpAlias)
 		EndIf
 
 		//Trata Situação = Aguardando Tecnico
-		If Len(oGdInter:aCols) > 1 .And. __cUserID == SZJ->ZJ_COD_SOL
+		If Len(oGdInter:aCols) > 1 .And. __cUserID == SZJ->ZJ_COD_SOL .And. Alltrim(M->ZJ_TIPO) <> "5"
 			SZJ->ZJ_SITUAC := "T"
 			//Solicitado por Denis em 22/10/19
 			//Se estiver com o nível 3 mudar para o nível 2 para controle na tela de chamdos pendentes do nível 2
