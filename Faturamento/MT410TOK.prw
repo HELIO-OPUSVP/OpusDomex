@@ -100,12 +100,22 @@ User Function MT410TOK()
 
 			// Limpa Campo de DESPESAS ACESSORIAS - UTILIZADO PARA RELACIONAR ADIANTAMENTO.
 			// Alterado a posiï¿½ï¿½o da chamda (colocado fora do EndIf em 13/09/2019 para limpar o campo Independente do Risco do Cliente
-			M->C5_DESPESA := 0
+			//M->C5_DESPESA := 0
 
 		Endif
 	EndIf
 
-	M->C5_DESPESA := 0	// Adiciona em 14/11/2019
+	// MAURESI - 18/02/2022 - Limpa  C5_DESPESA somente se for usuário do FINANCEIRO
+	_lLimpaC5 := .F.
+
+	if __cUserID $  "000469/000139" // 000469-Juliane Jordao/000139-Patricia Vieira
+		_lLimpaC5 := .T.
+	ENDIF
+
+	IF _lLimpaC5
+		M->C5_DESPESA := 0	
+	endif
+	
 
 //Tratamento para bloqueio da OF
 	If M->C5_FECHADO =="1"//.AND.(SC5->C5_NUM<>M->C5_NUM)
