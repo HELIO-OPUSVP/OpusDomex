@@ -583,9 +583,9 @@ Static Function ValidaEtiq(lTeste)
 				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 				//³Verifica se o Cliente é V-Tal						³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-				
-					lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
-					
+
+				lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
+
 				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 				//³Verifica se o Cliente é FURUKAWA						³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
@@ -686,6 +686,14 @@ Static Function ValidaEtiq(lTeste)
 									lUltOi := .F.
 								EndIf
 							EndIf
+
+
+							//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+							//³Verifica se o Cliente é V-Tal						³
+							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+							lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
+
 
 
 							cProdBip  := SB1->B1_COD
@@ -1433,6 +1441,14 @@ Static Function ValidaEtiq(lTeste)
 					EndIf
 				EndIf
 
+				
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³Verifica se o Cliente é V-Tal						³
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				
+				lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
+					
+
 				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 				//³Verifica se o Cliente é ERICSSON								³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
@@ -1511,6 +1527,14 @@ Static Function ValidaEtiq(lTeste)
 									lUltOi := .F.
 								EndIf
 							EndIf
+
+							
+						//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+						//³Verifica se o Cliente é V-Tal						³
+						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				
+						lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
+					
 
 							//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 							//³Verifica se o Cliente é ERICSSON								³
@@ -2761,6 +2785,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		If lOi
 			U_DOMET106(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, 1, dDataBase, .F., "", 0, __mv_par04,cFila)
 			lUltOi := .T.
+		
 		Else
 			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 			//³Verifica cliente novamente caso venha de cancelamento da ult.etiqueta ³
@@ -2778,8 +2803,16 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 				lUltOi := .F.
 			EndIf
 		EndIf
-
 	EndIf
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Imprime a etiqueta da VTAL										 			³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	 
+		SA1->(dbSeek(xFilial("SA1")+SC2->C2_CLIENT))
+		if fVTal(SA1->A1_COD, SA1->A1_LOJA)
+			U_DOMETQ49(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, 1, dDataBase, .F., "", 0, __mv_par04,cFila)
+		Endif
 
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 	//³Reinicia variáveis da tela										³
@@ -2967,6 +3000,7 @@ Return
 				U_DOMET106(cOiDl32_CancOP, cOiDl33_CancPro, cOiDl34_CancPed, cOiDl35_CancUni, cOiDl38_CancDat, .F. , "" , 0, cOiDl39_CancQtd,cFila)
 			EndIf
 		EndIf
+		
 
 	EndIf
 
@@ -3126,6 +3160,17 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 				U_DOMET106(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, 1, dDataBase, .F., "", 0, 1,cfila)
 			EndIf
 		EndIf
+	
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Imprime a etiqueta da VTAL										 			³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	
+		SA1->(dbSeek(xFilial("SA1")+SC2->C2_CLIENT))
+		if fVTal(SA1->A1_COD, SA1->A1_LOJA)
+			U_DOMETQ49(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, 1, dDataBase, .F., "", 0, __mv_par04,cFila)
+		Endif
+
+
 
 	Else
 		Aviso("Atenção","OP invalida.",{"Ok"})
@@ -3439,39 +3484,39 @@ Return cFila
 	@see (links_or_references)
 /*/
 Static Function fVTal(cCodCli, cLoja)
-Local aVet := {}
-Local lRet:= .F.
+	Local aVet := {}
+	Local lRet:= .F.
 
-aadd(aVet,"00014601")   
-aadd(aVet,"00021601")          
-aadd(aVet,"00023401")          
-aadd(aVet,"00042001")          
-aadd(aVet,"00075501")          
-aadd(aVet,"00100101")          
-aadd(aVet,"00140701")          
-aadd(aVet,"00230101")          
-aadd(aVet,"00279801")          
-aadd(aVet,"00283001")          
-aadd(aVet,"00714101")   
-aadd(aVet,"00714201")          
-aadd(aVet,"00714301")          
-aadd(aVet,"00714401")          
-aadd(aVet,"00714501")          
-aadd(aVet,"00714601")          
-aadd(aVet,"00714701")          
-aadd(aVet,"00853801")          
-aadd(aVet,"00853901")          
-aadd(aVet,"00857301")          
-aadd(aVet,"00857701")          
-aadd(aVet,"00858601")          
-aadd(aVet,"00858801")          
-aadd(aVet,"00858901")          
-aadd(aVet,"00859001")          
+	aadd(aVet,"00014601")
+	aadd(aVet,"00021601")
+	aadd(aVet,"00023401")
+	aadd(aVet,"00042001")
+	aadd(aVet,"00075501")
+	aadd(aVet,"00100101")
+	aadd(aVet,"00140701")
+	aadd(aVet,"00230101")
+	aadd(aVet,"00279801")
+	aadd(aVet,"00283001")
+	aadd(aVet,"00714101")
+	aadd(aVet,"00714201")
+	aadd(aVet,"00714301")
+	aadd(aVet,"00714401")
+	aadd(aVet,"00714501")
+	aadd(aVet,"00714601")
+	aadd(aVet,"00714701")
+	aadd(aVet,"00853801")
+	aadd(aVet,"00853901")
+	aadd(aVet,"00857301")
+	aadd(aVet,"00857701")
+	aadd(aVet,"00858601")
+	aadd(aVet,"00858801")
+	aadd(aVet,"00858901")
+	aadd(aVet,"00859001")
 
 
-If ascan( aVet, cCodCLi+cLoja) <> 0 
-	lRet:= .T.
-Endif
+	If ascan( aVet, cCodCLi+cLoja) <> 0
+		lRet:= .T.
+	Endif
 
 
 
