@@ -342,10 +342,12 @@ Static Function VldEtiq()
 								SELECT ZY_PEDIDO, ZY_ITEM, ZY_SEQ, ZY_PRVFAT, (ZY_QUANT-ZY_QUJE) ZY_QUANT, (ZY_QUANT-ZY_QUJE) ZY_VOLUMES
 								From %table:SZY% SZY (NOLOCK)
 								JOIN %table:SB1% SB1 (NOLOCK)
-								ON B1_FILIAL = '' AND B1_COD = ZY_PRODUTO
+								ON B1_FILIAL = %Exp:xFilial("SB1")%  
+								AND B1_COD = ZY_PRODUTO
 								WHERE SZY.%NotDel%
 								And SB1.%NotDel%
 								And %Exp:cWhere%
+								And ZY_FILIAL = %Exp:xFilial("SZY")% 
 								And %Exp:cWhereSZY%
 								ORDER BY ZY_PRODUTO
 							EndSQL
@@ -355,9 +357,11 @@ Static Function VldEtiq()
 							cQuery += "			JOIN SB1010 SB1 (NOLOCK) "                                                      + Chr(13)
 							cQuery += "			ON B1_COD = ZY_PRODUTO   "                                                      + Chr(13)
 							cQuery += "			WHERE	SZY.D_E_L_E_T_ = '' "                                                 	  + Chr(13)
-							cQuery += "					And SB1.D_E_L_E_T_ = '' "                                                 + Chr(13)
+							cQuery += "					And SB1.D_E_L_E_T_ = '' "
+							cQuery += "					And B1_FILIAL = '"+xFilial("SB1")+"' "
 							cQuery += "					And " + StrTran(cWhere    ,'%','')                                        + Chr(13)
-							cQuery += "					And " + StrTran(cWhereSZY ,'%','')                                        + Chr(13)
+							cQuery += "					And " + StrTran(cWhereSZY ,'%','') 
+							cQuery += "					And ZY_FILIAL = "+xFilial("SZY")+" "                                        + Chr(13)
 							cQuery += "					ORDER BY ZY_PRODUTO "                                                     + Chr(13)
 							TCQUERY cQuery new alias &(cAliasSZY)
 						EndIf
@@ -383,8 +387,12 @@ Static Function VldEtiq()
 						//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 						//³Validação entre Previsão de Faturamento e Pedido de vendas  ³
 						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-						cQuery := "SELECT ZY_PEDIDO, ZY_ITEM, SUM(ZY_QUANT) AS ZY_QUANT FROM "+RetSQLName("SZY")+" (NOLOCK) WHERE "
-						cQuery += "ZY_PEDIDO ='"+cOpPedido+"' AND D_E_L_E_T_ = '' GROUP BY ZY_PEDIDO, ZY_ITEM ORDER BY ZY_ITEM "
+						cQuery := "SELECT ZY_PEDIDO, ZY_ITEM, SUM(ZY_QUANT) AS ZY_QUANT "
+						cQuery += "	FROM "+RetSQLName("SZY")+" (NOLOCK) WHERE "
+						cQuery += " ZY_PEDIDO ='"+cOpPedido+"' " 
+						cQuery += "	And ZY_FILIAL = "+xFilial("SZY")+" "                                        + Chr(13)
+						cQuery += "	AND D_E_L_E_T_ = '' "
+						cQuery += "	GROUP BY ZY_PEDIDO, ZY_ITEM ORDER BY ZY_ITEM "
 						If Select("QUERYSZY") <> 0
 							QUERYSZY->( dbCloseArea() )
 						EndIf
@@ -747,11 +755,16 @@ Static Function Separa2SNF(cPedido, cItem, cNivelSep, cOcorrencia)
 
 	If lBeginSQL
 		BeginSQL Alias cAliasTmp
-		SELECT COUNT(*) NQTDECAIXA FROM %table:XD1% (NOLOCK) %exp:cIndice% WHERE %exp:cWhere%
+		SELECT COUNT(*) NQTDECAIXA FROM %table:XD1% (NOLOCK) %exp:cIndice% 
+		WHERE %exp:cWhere%
+		And XD1_FILIAL = %Exp:xFilial("XD1")% 
+		
 		EndSQL
 	Else
 		cSQL := "SELECT COUNT(*) NQTDECAIXA FROM "+RetSQLName("XD1")+" WITH(INDEX("+cIndexQry+")) WHERE "
 		cSQL += Subs(Subs(cWhere,2),1,Len(alltrim(cWhere))-2)
+		cSQL += " And XD1_FILIAL = '"+xFilial("XD1")+"' " 
+				
 		TCQUERY cSql NEW ALIAS &(cAliasTmp)
 	EndIf
 
@@ -786,15 +799,17 @@ Static Function Disp2SNF(cOP,cNivelSep,cPVSENF)
 	LOCAL nSepara   := 0
 	Local cAliasTmp := GetNextAlias()
 	Local cIndice   := "%WITH(INDEX(" + cIndexQry + "))%"
-	Local cWhere    := "%XD1_FILIAL = '01' AND XD1_PVSEP  = '' AND XD1_OCORRE ='4' AND XD1_NIVEMB ='"+cNivelSep+"' AND XD1_OP = '"+cOP+"001' AND D_E_L_E_T_= '' %"
+	Local cWhere    := "%XD1_FILIAL = '"+xFilial("XD1")+"' AND XD1_PVSEP  = '' AND XD1_OCORRE ='4' AND XD1_NIVEMB ='"+cNivelSep+"' AND XD1_OP = '"+cOP+"001' AND D_E_L_E_T_= '' %"
 
 	If !Empty(cPVSENF)
-		cWhere := "%XD1_FILIAL = '01' AND XD1_PVSEP  = '' AND XD1_OCORRE ='4' AND XD1_NIVEMB ='"+cNivelSep+"' AND XD1_PVSENF='"+cPVSENF+"' AND D_E_L_E_T_= ''%"
+		cWhere := "%XD1_FILIAL = '"+xFilial("XD1")+"' AND XD1_PVSEP  = '' AND XD1_OCORRE ='4' AND XD1_NIVEMB ='"+cNivelSep+"' AND XD1_PVSENF='"+cPVSENF+"' AND D_E_L_E_T_= ''%"
 	EndIf
 
 	If lBeginSQL
 		BeginSQL Alias cAliasTmp
-		SELECT COUNT(*) NQTDECAIXA FROM %table:XD1% (NOLOCK) %exp:cIndice% WHERE %exp:cWhere%
+		SELECT COUNT(*) NQTDECAIXA FROM %table:XD1% (NOLOCK) %exp:cIndice% 
+		WHERE %exp:cWhere%
+		And XD1_FILIAL = %Exp:xFilial("XD1")% 
 		EndSQL
 	Else
 		cSQL := "SELECT COUNT(*) NQTDECAIXA FROM "+RetSQLName("XD1")+" WITH(INDEX("+cIndexQry+")) WHERE "
