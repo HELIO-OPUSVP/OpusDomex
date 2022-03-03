@@ -240,9 +240,10 @@ Static Function ColetorMenu(cDep)
 		AADD(aAcessos, 15)
 		AADD(aAcessos, 16)
 		AADD(aAcessos, 17)
-		If Date() >= StoD('20220208')
-		   AADD(aAcessos, 18)
-		EndIf
+		AADD(aAcessos, 18)
+		AADD(aAcessos, 19)
+		
+		
 	EndIf
 
 //U_MostraFunc(ProcName(),'MNU01COLETOR')
@@ -839,6 +840,17 @@ Static Function ColetorMenu(cDep)
 			oBtn23:SetCSS( cCSSBtN1 )
 			nLin += nSkipLin
 		EndIf
+
+		If aScan(aAcessos,19) <> 0
+		Private oBtn19 := Nil
+		@ nLin, nCol BUTTON oBtn19 PROMPT "Embalagem SENF MG" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW24(), U_DOMACD24())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:wmsimg32.png);"+cPush+;
+			"QPushButton:pressed {background-image: url(rpo:wmsimg32.png);"+cPressed+;
+			"QPushButton:hover {background-image: url(rpo:wmsimg32.png);"+cHover
+		oBtn19:SetCSS( cCSSBtN1 )
+		nLin += nSkipLin
+	EndIf
+
 
 	EndIf
 

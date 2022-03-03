@@ -21,7 +21,7 @@ User Function DOMROT01()  // CORD
 Return
 
 User Function DOMROT02()  // DIO
-	If U_VALIDACAO("RODA") 
+	If U_VALIDACAO("RODA") .or. .T.
 		U_DOMROTTRK("DIO",1)
 	else
 		U_DOMROT("DIO",1)
@@ -43,7 +43,7 @@ Return
 
 User Function DOMROT06()  // TRUNK
 	If U_VALIDACAO() .OR. .T.//Roda 30/07/2021
-		U_DOMROTTRK("TRUNK",1)
+		U_DOMROTTRK("TRUNK",1) 
 	else
 		U_DOMROT("TRUNK",1)
 	Endif

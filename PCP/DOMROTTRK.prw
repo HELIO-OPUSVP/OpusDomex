@@ -93,7 +93,7 @@ User Function DOMROTTRK(cTipo,nMaxLinhas)
 	cPerc99			    := cStartPath + 'PERC99.png'
 	cLogoHu				:= cStartPath + 'huawei_lg.png'
 
-	IF U_VALIDACAO("RODA")
+	IF U_VALIDACAO("RODA") .OR. .T.
 		IF cTipo == "TRUNK"
 			cTpProd  := "'TRUE', 'TRUN'"
 			cNotTps := "'PA','ME'"  
@@ -282,9 +282,9 @@ Static Function fVldEti(cEtiqOfc)
 
 			IF lContinua
 
-				If U_VALIDACAO("RODA")
+				If U_VALIDACAO("RODA") .OR. .T.
 					XD4->(dbSetorder(3))
-					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA") .OR. .T.)
 						cCodProd:= XD4->XD4_PRODUT
 					ENDIF
 
@@ -341,9 +341,9 @@ Static Function fVldEti(cEtiqOfc)
 
 				IF lContinua
 
-					If U_VALIDACAO("RODA")
+					If U_VALIDACAO("RODA") .OR. .T.
 						XD4->(dbSetorder(3))
-						IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+						IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA").OR. .T.)
 							cCodProd:= XD4->XD4_PRODUT
 						ENDIF
 
@@ -387,9 +387,9 @@ Static Function fVldEti(cEtiqOfc)
 
 			IF lContinua
 
-				If U_VALIDACAO("RODA")
+				If U_VALIDACAO("RODA").OR. .T.
 					XD4->(dbSetorder(3))
-					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA") .OR. .T.)
 						cCodProd:= XD4->XD4_PRODUT
 					ENDIF
 
@@ -445,9 +445,9 @@ Static Function fVldEti(cEtiqOfc)
 
 			IF lContinua
 
-				If U_VALIDACAO("RODA")
+				If U_VALIDACAO("RODA") .OR. .T.
 					XD4->(dbSetorder(3))
-					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA") .OR. .T.)
 						cCodProd:= XD4->XD4_PRODUT
 					ENDIF
 
@@ -505,9 +505,9 @@ Static Function fVldEti(cEtiqOfc)
 
 					IF lContinua
 
-						If U_VALIDACAO("RODA")
+						If U_VALIDACAO("RODA") .OR. .T.
 							XD4->(dbSetorder(3))
-							IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+							IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA") .OR. .T.)
 								cCodProd:= XD4->XD4_PRODUT
 							ENDIF
 
@@ -550,9 +550,9 @@ Static Function fVldEti(cEtiqOfc)
 
 				IF lContinua
 
-					If U_VALIDACAO("RODA")
+					If U_VALIDACAO("RODA") .OR. .T.
 						XD4->(dbSetorder(3))
-						IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+						IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND.( U_VALIDACAO("RODA").OR. .T.)
 							cCodProd:= XD4->XD4_PRODUT
 						ENDIF
 
@@ -1074,9 +1074,9 @@ Static function fVldXd4St(cCodOp,_nSerie)
 
 		if QRY->(!Eof())
 
-			If U_VALIDACAO("RODA")
+			If U_VALIDACAO("RODA") .OR. .T.
 				XD4->(dbSetorder(3))
-				IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+				IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA") .OR. .T.)
 					cCodProd:= XD4->XD4_PRODUT
 				ENDIF
 
@@ -1124,9 +1124,9 @@ Static function fVldXd4St(cCodOp,_nSerie)
 	Endif
 
 
-	If U_VALIDACAO("RODA")
+	If U_VALIDACAO("RODA") .OR. .T.
 		XD4->(dbSetorder(3))
-		IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+		IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA") .OR. .T.)
 			cCodProd:= XD4->XD4_PRODUT
 		ENDIF
 
