@@ -46,6 +46,15 @@ LOCAL cDanfe      := ""
 LOCAL cSerie      := ""
 Local cInfDanfe	  := ""
 local x
+If Type("cOiDl32_CancOP") <> "U"
+	
+	cOiDl32_CancOP     := cEtqOp
+	cOiDl33_CancPro    := cEtqProd
+	cOiDl34_CancPed    := cEtqPed
+	cOiDl35_CancUni    := nEtqQtd
+	cOiDl38_CancDat    := dDataFab
+   cOiDl39_CancQtd    := nQtdProd 	
+EndIf
 
 //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄxÔ[¿
 //³Busca a semana do ano corrente						 ³
@@ -68,6 +77,7 @@ SC5->(dbSetOrder(1))
 SC5->(dbSeek(xFilial() + Subs(cEtqPed,1,6) ))
 SC6->(dbSetOrder(1))
 SC6->(dbSeek(xFilial()+Subs(cEtqPed,1,6) + cItemPed))
+
 SF2->(dbSetOrder(1))
 
 If SF2->( dbSeek( SC6->C6_FILIAL + SC6->C6_NOTA + SC6->C6_SERIE + SC6->C6_CLI + SC6->C6_LOJA ))
@@ -210,3 +220,61 @@ RestArea(aAreaSB1)
 RestArea(aAreaSG1)
 
 Return({.T.,aRet})
+
+
+
+Static Function fButtCel()
+
+Local oButton1
+Local oButton2
+Local oButton3
+Local oButton4
+Local oButton5
+Local oButton6
+Local oButton7
+Local oButton8
+Local oButton9
+Local cCel:= ""
+Local cCSSBtN1 :="QPushButton{background-color: #f6f7fa; color: #707070; font: bold 22px Arial; }"+;
+		"QPushButton:pressed {background-color: #50b4b4; color: white; font: bold 22px  Arial; }"+;
+		"QPushButton:hover {background-color: #878787 ; color: white; font: bold 22px  Arial; }"
+
+Static oDlg
+
+
+  DEFINE MSDIALOG oDlg TITLE "Escolha a sua célula de trabalho" FROM 000, 000  TO 300, 300 COLORS 0, 16777215 PIXEL
+
+    @ 010, 018 BUTTON oButton1 PROMPT "DIO 1" SIZE 119, 043 OF oDlg ACTION (cCel := "DIO 1", oDlg:end() ) PIXEL
+	oButton1:setCSS(cCSSBtN1)
+ 	@ 069, 018 BUTTON oButton2 PROMPT "DIO 2" SIZE 119, 043 OF oDlg ACTION (cCel := "DIO 2", oDlg:end() ) PIXEL
+	oButton2:setCSS(cCSSBtN1)    
+	
+  ACTIVATE MSDIALOG oDlg CENTERED    
+
+Return cCel
+
+
+Static Function fLocImp(cCel)
+Local cQuery:= ""
+Local cFila	:= ""
+
+IF SELECT ("QCB5") > 0 
+	QCB5->(DBCLOSEAREA())
+ENDIF
+
+cQuery:= " SELECT TOP 1 CB5_CODIGO FROM CB5010 "
+cQuery+= " WHERE CB5_DESCRI = '"+cCel+"'  "
+cQuery+= " AND D_E_L_E_T_ = '' "
+dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"QCB5",.T.,.T.)
+	
+IF QCB5->(!EOF())
+	cFila := QCB5->CB5_CODIGO
+else
+	Msginfo("Local de impressão "+cCel+" não identificado", "aviso")
+ENDIF
+
+IF SELECT ("QCB5") > 0 
+	QCB5->(DBCLOSEAREA())
+ENDIF
+
+Return cFila
