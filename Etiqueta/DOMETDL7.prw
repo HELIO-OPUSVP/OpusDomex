@@ -579,6 +579,13 @@ Static Function ValidaEtiq(lTeste)
 						lUltOi := .F.
 					EndIf
 				EndIf
+
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³Verifica se o Cliente é V-Tal						³
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				
+					lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
+					
 				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 				//³Verifica se o Cliente é FURUKAWA						³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
@@ -3622,3 +3629,55 @@ Static Function fLocImp(cCel)
 
 Return cFila
 //teste/
+
+
+/*/{Protheus.doc} nomeStaticFunction
+	(long_description)
+	@type  Static Function
+	@author user
+	@since 03/03/2022
+	@version version
+	@param param_name, param_type, param_descr
+	@return return_var, return_type, return_description
+	@example
+	(examples)
+	@see (links_or_references)
+/*/
+Static Function fVTal(cCodCli, cLoja)
+Local aVet := {}
+Local lRet:= .F.
+
+aadd(aVet,"00014601")   
+aadd(aVet,"00021601")          
+aadd(aVet,"00023401")          
+aadd(aVet,"00042001")          
+aadd(aVet,"00075501")          
+aadd(aVet,"00100101")          
+aadd(aVet,"00140701")          
+aadd(aVet,"00230101")          
+aadd(aVet,"00279801")          
+aadd(aVet,"00283001")          
+aadd(aVet,"00714101")   
+aadd(aVet,"00714201")          
+aadd(aVet,"00714301")          
+aadd(aVet,"00714401")          
+aadd(aVet,"00714501")          
+aadd(aVet,"00714601")          
+aadd(aVet,"00714701")          
+aadd(aVet,"00853801")          
+aadd(aVet,"00853901")          
+aadd(aVet,"00857301")          
+aadd(aVet,"00857701")          
+aadd(aVet,"00858601")          
+aadd(aVet,"00858801")          
+aadd(aVet,"00858901")          
+aadd(aVet,"00859001")          
+
+
+If ascan( aVet, cCodCLi+cLoja) <> 0 
+	lRet:= .T.
+Endif
+
+
+
+Return lRet
