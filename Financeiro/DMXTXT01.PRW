@@ -46,7 +46,7 @@ Static Function TXT01A()
 Local variavel
 Local nInvoice := 0 
 Local nValTot	:= 0
-Local	cDel		:= ";"
+Local cDel		:= ";"
 Local cSeqArq   := "01"
 Local lFim      := .F.
 Local cArq		:= ""
@@ -67,6 +67,9 @@ if !empty(MV_PAR03)
 	cQuery += " AND E2_FORNECE = '"+MV_PAR03+"' "
 endif
 cQuery += " AND SE2.D_E_L_E_T_ = '' "
+cQuery += " AND SE2.E2_FILIAL = '"+cFilAnt+"' "
+
+
 cQuery += " ORDER BY E2_FORNECE,E2_EMISSAO,E2_NUM "
 
 cQuery := ChangeQuery(cQuery)
@@ -83,6 +86,19 @@ ProcRegua(nRec)
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 	//³INSTRUMENTS HEADER³
 	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+    cOrgID	 := ""
+	cOrgName := ""
+
+    if cFilAnt == "01"
+		cOrgID   := "BR011ROSENB"
+	    cOrgName := "Matriz-SP"	
+	ElseIf cFilAnt == '02'
+		cOrgID   := "BR0llROSEMG"   // "BR011ROSEMG"
+	    cOrgName := "Filial-MG"	
+	Endif
+
+
 	_Instr01	:= "INSTR"	+cDel 		//1	INSTR	Identifier for the record	M	A	5	Fixed value expected: INSTR
 	_Instr02	:= "PAY"		+cDel		//2	Instrument Type	Type of instrument	M	P	3	Fixed value expected: PAY
 	_Instr03	:= ""    	+cDel // 3	Buyer reference no	Buyer's reference number for payable	O	A	32		
@@ -93,7 +109,8 @@ ProcRegua(nRec)
 	_Instr08	:= ""			+cDel		//8	Fill4er	Reserved for future use	O	A	8	Leave as blank
 	_Instr09	:= ""			+cDel		//9	Filler	Reserved for future use	O	A	8	Leave as blank
 	_Instr10	:= Alltrim(TRB->A2_CGC)			+cDel		//  ???????    10	Counterparty ERP ID	ID of the seller, in the buyer's ERP system	M	A	32	
- 	_Instr11	:= "BR011ROSENB"+cDel	//11	Buyer Org ID	FSC Org ID of Buyer	M	A	15	This id will be provided by DB to the buyer
+// 	_Instr11	:= "BR011ROSENB"+cDel	//11	Buyer Org ID	FSC Org ID of Buyer	M	A	15	This id will be provided by DB to the buyer
+ 	_Instr11	:= cOrgID + cDel	//11	Buyer Org ID	FSC Org ID of Buyer	M	A	15	This id will be provided by DB to the buyer
 	_Instr12	:= "OA"		+cDel		//12	Terms of Payment	Terms agreed between the Buyer and Seller for settling the transaction	O	A	2	Fixed value expected: OA
 	_Instr13	:= ""						//13	Program ID	ID of the financing program	O	A	30	Mandatory in case the buyer org is registered for multiple programs. This value will be provided by DB if required.
 
@@ -169,6 +186,8 @@ ProcRegua(nRec)
 	cAssunto  := "Domex - Arquivo Banco: " + cArq
 	cTexto    := "Gerado Novo Arquivo para Transmissão Bancária: " + Path + Chr(13)+Chr(10)
 	cTexto    += Chr(13)+Chr(10)
+	cTexto    := "Unidade: " + cOrgName + Chr(13)+Chr(10)
+	cTexto    += Chr(13)+Chr(10)	
 	cTexto    += "Titulos   :   " + StrZero(nInvoice,04)  + Chr(13)+Chr(10)
 	cTexto    += "Total R$  :   " + TransForm(nValTot,"@E 999,999,999.99")
 	cPara     := ";patricia.vieira@rdt.com.br;denis.vieira@rdt.com.br;"   + UsrRetMail(__cUserId)
