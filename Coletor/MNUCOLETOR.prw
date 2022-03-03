@@ -307,16 +307,14 @@ Static Function ColetorMenu(cDep)
 		EndIf
 	EndIf
 
-	If 'JACKSON.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
-		If aScan(aAcessos,22) <> 0
-			Private oBtn04 := Nil
-			@ nLin, nCol BUTTON oBtn04 PROMPT "Paletização Produção"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW46(), U_DOMACD46())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
-			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
-				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
-				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
-			oBtn04:SetCSS( cCSSBtN1 )
-			nLin += nSkipLin
-		EndIf
+	If aScan(aAcessos,22) <> 0
+		Private oBtn04 := Nil
+		@ nLin, nCol BUTTON oBtn04 PROMPT "Paletização Produção"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW46(), U_DOMACD46())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
+			"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
+			"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
+		oBtn04:SetCSS( cCSSBtN1 )
+		nLin += nSkipLin
 	EndIf
 
 	If aScan(aAcessos,23) <> 0

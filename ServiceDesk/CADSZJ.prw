@@ -27,7 +27,8 @@ User Function CADSZJ(__cTipo)
 
 	Private cStrCad    := "SZJ"
 	Private cTitCad    := "SERVICE DESK"
-	Private cCadastro  := cTitCad+" ["+cStrCad+"]"
+	Private cTitAten   := IIF(__cTipo=="2","PRODUCAO",IIF(__cTipo=="3","ENGENHARIA",IIF(__cTipo=="4","QUALIDADE",IIF(__cTipo=="5","COMERCIAL","TI"))))
+	Private cCadastro  := cTitCad+" " +cTitAten + " ["+cStrCad+"]"
 	Private cCodTec    := ""
 	Private aRotina    := {}
 	Private aFixe      := Nil
@@ -48,6 +49,8 @@ User Function CADSZJ(__cTipo)
 		cCodTec := AllTrim(GetMv("MV_XUSRENG")) // USUARIOS ENGENHARIA
 	ElseiF cTipoHlp == "4"
 		cCodTec := AllTrim(GetMv("MV_XUSRQLD")) // USUARIOS QUALIDADE
+	Elseif cTipoHlp == "5"
+		cCodTec := Alltrim(GetMV("MV_XUSRVEN")) // Usuarios de vendas
 	EndIf
 
 	aRotina    := fMenu()
@@ -250,6 +253,10 @@ Static Function fFiltroSZJ()
 	EndIf
 	
 	If cTipoHlp == '4'
+		Private cParRom  := "FILTRO2SZJ"+SM0->M0_CODIGO+SM0->M0_CODFIL
+	EndIf
+	
+	If cTipoHlp == '5'
 		Private cParRom  := "FILTRO2SZJ"+SM0->M0_CODIGO+SM0->M0_CODFIL
 	EndIf
 
@@ -665,6 +672,14 @@ User Function MtVldSZJ(cCpoVld)
 			Alert("Favor informar no cabeçalho o Codigo do Técnico que está atendendo o chamado!")
 			lRet := .F.
 		EndIf
+
+		//Validar o campo do técnico caso seja do tipo 5 //Vendas
+		If lRet .And. Empty(M->ZJ_COD_TEC) .And. cTipoHlp=="5"
+			Alert("Favor informar no cabeçalho o Codigo do Técnico que está atendendo o chamado!")
+			lRet := .F.
+		EndIf
+		
+		
 		//If lRet .And. Empty(M->ZJ_COD_TEC) .And. Len(oGdInter:aCols) > 1
 		//	Alert("Favor informar no cabeçalho o Codigo do Técnico que está atendendo o chamado!")
 		//	lRet := .F.
@@ -2298,7 +2313,7 @@ User Function fEnviaWf(cChamado,nOpc,cTipoHlp)
 			cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(SZJ->ZJ_COD_TEC))
 		EndIf
 	EndIf
-
+	
 	If nOpc == 3
 
 		If !("DEBORA" $ Upper(cContato)) .And. cTipoHlp == "2"
@@ -2339,23 +2354,21 @@ User Function fEnviaWf(cChamado,nOpc,cTipoHlp)
 			Next n			
 		EndIf
 
+			//Wf Chamados de Vendas
+		If Alltrim(cTipoHlp) == "5" 
+			//Adicionar apeans o código do solicitante, é do técnico.
+			cContato := ""	
+			cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(SZJ->ZJ_COD_SOL))
+			cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(SZJ->ZJ_COD_TEC))
+		EndIf
 
 	EndIf
-
-/*
-	If !("MAXIMILIANO.REIS" $ Upper(cContato))
-cContato += IIf(Empty(cContato),"",";")+"maximiliano.reis@rosenbergerdomex.com.br"
-	EndIf
-	If !("EDMILSON.GOLCALVES" $ Upper(cContato))
-cContato += IIf(Empty(cContato),"",";")+"edmilson.goncalves@rosenbergerdomex.com.br"
-	EndIf
-*/
 
 	If !("SUPORTE" $ Upper(cContato))
 		cContato += IIf(Empty(cContato),"",";")+"suporte@rosenbergerdomex.com.br"
 	EndIf
 
-//Se for alteração realizada pelo Denis, não enviar e-mail pra ele mesmo(Denis)
+	//Se for alteração realizada pelo Denis, não enviar e-mail pra ele mesmo(Denis)
 	If nOpc == 4 .And. __cUserID $ "000206" .And. cTipoHlp == "1"
 		//If nOpc == 4 .And. __cUserID $ "000373"  //  MAURESI
 		cContato := StrTran(cContato,"denis.vieira@rosenbergerdomex.com.br","")
@@ -2365,15 +2378,15 @@ cContato += IIf(Empty(cContato),"",";")+"edmilson.goncalves@rosenbergerdomex.com
 		cContato := StrTran(cContato,"suporte@rosenbergerdomex.com.br","")
 	EndIf
 
-//Trata emails pra ficarem minusculo
+	//Trata emails pra ficarem minusculo
 	cContato := Lower(cContato)
 
-//Se não tiver pra quem enviar e-mail, sair da rotina
+	//Se não tiver pra quem enviar e-mail, sair da rotina
 	If Empty(cContato)
 		Return
 	EndIf
 
-//Enviado e-mails individualmente pra tratar anexos
+	//Enviado e-mails individualmente pra tratar anexos
 	aEmails := StrToKArr(cContato,";")
 	For x:= 1 To Len(aEmails)
 		fTrataAnexo(cChamado,aEmails[x])
@@ -2942,5 +2955,12 @@ If SX3->(dbSeek( cCampo )  )
 EndIf
 
 Return 
-
-
+//When Codigo Técnico
+User Function ZJWhCTec()
+Local lRet := .F.
+	If (Alltrim(FunName()) == "CADSZJVD") 
+		lRet := .T.
+	Else
+		lRet := TECNICO  
+	Endif
+Return lRet
