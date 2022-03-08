@@ -330,19 +330,21 @@ Static Function fVldEti(cEtiqOfc)
 			fVldXd1St(cCodOp)
 			fStatus()
 
-			IF lContinua
+			IF lContinua				
 				nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
-				oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
+				If nPos > 0 
+					oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
-				For _x := 1 to len(oGetDados:aCols)
-					if	oGetDados:aCols[_x,nPQtdent] == oGetDados:aCols[_x,nPQtdOp]
-						oGetDados:aCols[_x,nPosFlag] := oOk
-					Elseif oGetDados:aCols[_x,nPQtdent] == 0
-						oGetDados:aCols[_x,nPosFlag] := oNo
-					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
-						oGetDados:aCols[_x,nPosFlag] := oIn
-					Endif
-				Next _x
+					For _x := 1 to len(oGetDados:aCols)
+						if	oGetDados:aCols[_x,nPQtdent] == oGetDados:aCols[_x,nPQtdOp]
+							oGetDados:aCols[_x,nPosFlag] := oOk
+						Elseif oGetDados:aCols[_x,nPQtdent] == 0
+							oGetDados:aCols[_x,nPosFlag] := oNo
+						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
+							oGetDados:aCols[_x,nPosFlag] := oIn
+						Endif
+					Next _x
+				EndIf
 			Endif
 
 		ElseIf !empty(cCodOp) .and. alltrim(Subs(cEtiqOfc,2,11)) <> cCodOp
