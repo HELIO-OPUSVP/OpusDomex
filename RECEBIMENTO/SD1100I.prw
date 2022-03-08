@@ -233,7 +233,8 @@ TCQUERY cQuery NEW ALIAS "TEMP"
 
 //Ajusta os empenhos que estão pendentes de classificação no PickList	
 _cQR1 :=" UPDATE SD4010 SET D4_XPKLIST = 'S' "
-_cQR1 +=" FROM SD4010 WHERE D_E_L_E_T_ ='' AND D4_FILIAL = '" + xFilial("SD4") + "' AND D4_XPKLIST= 'N' AND D4_COD = '" + SD1->D1_COD + "' "
+_cQR1 +=" FROM SD4010  WITH(NOLOCK) WHERE D_E_L_E_T_ ='' "
+_cQR1 +=" AND  D4_FILIAL = '" + xFilial("SD4") + "' AND D4_XPKLIST= 'N' AND D4_COD = '" + SD1->D1_COD + "' "
 TCSQLEXEC(_cQR1)
 
 /*
