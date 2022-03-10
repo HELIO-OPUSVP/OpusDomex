@@ -19,7 +19,7 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function DOMACW36()
+User Function DOMACW36(cOpcao)
 
 	Private oTxtOP,__oGetOP,__oTxtEtiq,oGetEtiq,oTxtProd,oGetProd,oTxtQtd,oGetQtd,oMark,oMainEti,oEtiqueta
 	Private oTxtProdCod,oTxtProdEmp,oNumOp
@@ -49,13 +49,15 @@ User Function DOMACW36()
 	Private oTxtQtdEmp
 	Private aOi     := {}
 	Private lOi     := .F.
-	Private nWebPx:= 1.5 
+	Private nWebPx:= 1.5
 	Private cPush:= "background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,stop: 0 gray, stop: 0.4 white,stop: 1 gray);color: #171717; font: bold "+cvaltochar(10*nWebPx)+"px Arial;"+;
-	"background-repeat:no-repeat ;border-radius: 6px;}"
+		"background-repeat:no-repeat ;border-radius: 6px;}"
 	Private cPressed:= "background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,stop: 0 gray, stop: 0.4 white,stop: 1 blue);color: #171717; font: bold "+cvaltochar(10*nWebPx)+"px Arial;"+;
-	"background-repeat:no-repeat ;border-radius: 6px;}"
+		"background-repeat:no-repeat ;border-radius: 6px;}"
 	Private cHover:="background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,stop: 0 gray, stop: 0.4 white,stop: 1 Black);color: #171717; font: bold "+cvaltochar(10*nWebPx)+"px Arial;"+;
-	"background-repeat:no-repeat ;border-radius: 6px;}"
+		"background-repeat:no-repeat ;border-radius: 6px;}"
+	Private nOpc:= cOpcao
+
 
 	dDataBase := Date()
 
@@ -79,24 +81,24 @@ User Function DOMACW36()
 	@ nLin,035 Say oTxtProdCod  Var _cCliEmp           Pixel Of __oTelaOP
 	oTxtProdEmp:oFont  := TFont():New('Arial',,12*nWebPx,,.T.,,,,.T.,.F.)
 	oTxtProdCod:oFont  := TFont():New('Arial',,14*nWebPx,,.T.,,,,.T.,.F.)
-	
+
 	nLin += 10*nWebPx
 	@ nLin,005 Say oTxtDes      Var "Descrição: "      Pixel Of __oTelaOP
 	@ nLin,042 say oTxtDescPro  Var _cDescric      Size 075*nWebPx,15*nWebPx Pixel Of __oTelaOP
 	oTxtDes:oFont := TFont():New('Arial',,12*nWebPx,,.T.,,,,.T.,.F.)
 	oTxtDescPro:oFont := TFont():New('Arial',,14*nWebPx,,.T.,,,,.T.,.F.)
-	
+
 	nLin+= 30*nWebPx
 	@ nLin,005 Say oTxtPed Var "Pedido: " Pixel Of __oTelaOP
 	@ nLin,035 Say oNumPed Var _cNumPed+'-'+_cNomCli Size 120*nWebPx,10*nWebPx Pixel Of __oTelaOP
 	oTxtPed:oFont:= TFont():New('Arial',,12*nWebPx,,.T.,,,,.T.,.F.)
 	oNumPed:oFont:= TFont():New('Arial',,15*nWebPx,,.T.,,,,.T.,.F.)
-	
+
 	nLin+= 75*nWebPx
 	@ nLin,077 Button oEtiqueta PROMPT "Sair" Size 35*nWebPx,10*nWebPx  ACTION (__oTelaOP:End())  Pixel Of __oTelaOP
 	cCSSBtN1 := "QPushButton{"+cPush+;
-	"QPushButton:pressed {"+cPressed+;
-	"QPushButton:hover {"+cHover
+		"QPushButton:pressed {"+cPressed+;
+		"QPushButton:hover {"+cHover
 	oEtiqueta:setCSS(cCSSBtN1)
 
 	Activate MsDialog __oTelaOP
@@ -128,7 +130,7 @@ Static Function VldEtiq()
 	If Empty(_cNumEtqPA)
 		Return .F.
 	Elseif len (alltrim(_cNumEtqPA)) > 0
-		_cNumEtqPA:= alltrim(_cNumEtqPA) 
+		_cNumEtqPA:= alltrim(_cNumEtqPA)
 	EndIf
 
 //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
@@ -153,7 +155,7 @@ Static Function VldEtiq()
 		If XD1->XD1_ULTNIV <> "S"
 			If U_uMsgYesNo("Embalagem não é ultimo nível. Continuar?")
 				cItemPV := Alltrim(Subs(XD1->XD1_PVSEP,7,2))
-				
+
 				XD2->( dbSetOrder(2) )
 				If XD2->( dbSeek( xFilial() + _cNumEtqPA ) )
 					cEtqPai := XD2->XD2_XXPECA
@@ -278,7 +280,16 @@ Static Function VldEtiq()
 						// 07 - Número da Nota Fiscal
 						// 08 - Peso do Item
 						//DOMET105(cEtqOp ,  cEtqProd       , cEtqPed , nEtqQtd        , dDataFab , lControl, cNfDanfe                                       , nPesoDanfe     )
-						U_DOMET105(_cOPImp, aDesmonta[nQ,1], _cNumPed, aDesmonta[nQ,3] , dDataBase, .T.     , IIF(!Empty(XD1->XD1_ZYNOTA),XD1->XD1_ZYNOTA,""), XD1->XD1_PESOB )
+						if U_VALIDACAO("RODA") .or. .T.
+							if nOpc == 1
+								U_DOMET105(_cOPImp, aDesmonta[nQ,1], _cNumPed, aDesmonta[nQ,3] , dDataBase, .T.     , IIF(!Empty(XD1->XD1_ZYNOTA),XD1->XD1_ZYNOTA,""), XD1->XD1_PESOB )
+							ElseIf nOpc == 2
+								U_DOMETQ50(_cOPImp, aDesmonta[nQ,1], _cNumPed, aDesmonta[nQ,3] , dDataBase, .T.     , IIF(!Empty(XD1->XD1_ZYNOTA),XD1->XD1_ZYNOTA,""), XD1->XD1_PESOB )
+							Endif
+						else
+							U_DOMET105(_cOPImp, aDesmonta[nQ,1], _cNumPed, aDesmonta[nQ,3] , dDataBase, .T.     , IIF(!Empty(XD1->XD1_ZYNOTA),XD1->XD1_ZYNOTA,""), XD1->XD1_PESOB )
+						Endif
+
 					Next nQ
 				EndIf
 

@@ -248,31 +248,30 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	EndIf
 
 	If lImpressao
-
-		//Controla o numero da etiqueta de embalagens
-		If Empty(cNumPeca)
-			_cProxPeca := U_IXD1PECA()
-		Else
-			_cProxPeca := cNumPeca
-		EndIf
-
-		For _nX := 1 to Len(aFilhas)
-			Reclock("XD2",.T.)
-			XD2->XD2_FILIAL := xFilial("XD2")
-			XD2->XD2_XXPECA := _cProxPeca
-			If ValType(aFilhas[_nX])  == "A"
-				XD2->XD2_PCFILH := aFilhas[_nX][1]
-			Else
-				XD2->XD2_PCFILH := aFilhas[_nX]
-			EndIf
-			XD2->( msUnlock() )
-		Next _nX
-
 		For x := 1 To MVPAR03
+			//Controla o numero da etiqueta de embalagens
+			If Empty(cNumPeca)
+				_cProxPeca := U_IXD1PECA()
+			Else
+				_cProxPeca := cNumPeca
+			EndIf
+
+			For _nX := 1 to Len(aFilhas)
+				Reclock("XD2",.T.)
+				XD2->XD2_FILIAL := xFilial("XD2")
+				XD2->XD2_XXPECA := _cProxPeca
+				If ValType(aFilhas[_nX])  == "A"
+					XD2->XD2_PCFILH := aFilhas[_nX][1]
+				Else
+					XD2->XD2_PCFILH := aFilhas[_nX]
+				EndIf
+				XD2->( msUnlock() )
+			Next _nX
+
 
 			Reclock("XD1",.T.)
 			XD1->XD1_FILIAL  := xFilial("XD1")
-			XD1->XD1_XXPECA  := _cProxPeca
+			XD1->XD1_XXPECA  := U_IXD1PECA() //_cProxPeca
 			XD1->XD1_FORNEC  := Space(06)
 			XD1->XD1_LOJA    := Space(02)
 			XD1->XD1_DOC     := Space(06)
@@ -361,7 +360,7 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			cPrn         := "DOMETQ48.prn"
 			aVar         := aVar
 			cVetor      := "!aVar"
-			lTemperatura := .F.
+			lTemperatura := .T.
 			U_IMPPRN(cLocImp,cPrn,aVar,cVetor,lTemperatura)
 
 		Next x

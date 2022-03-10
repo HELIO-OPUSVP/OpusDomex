@@ -89,7 +89,7 @@ User Function DOMACW46()
 
 	@ nLin, nCol1	SAY oTexto1 Var 'Etiq:'    SIZE 100*nWebPx,10*nWebPx PIXEL
 	oTexto1:oFont := TFont():New('Arial',,16*nWebPx,,.T.,,,,.T.,.F.)
-	@ nLin-(2*nWebPx), nCol1+(30) MSGET oEtiqueta VAR cEtiqueta  SIZE 75*nWebPx,08*nWebPx WHEN .T. Valid ValidaEtiq() PIXEL
+	@ nLin-(2*nWebPx), nCol1+(30) MSGET oEtiqueta VAR cEtiqueta   SIZE 75*nWebPx,08*nWebPx WHEN .T. Valid ValidaEtiq() PIXEL
 	oEtiqueta:oFont := TFont():New('Courier New',,22*nWebPx,,.T.,,,,.T.,.F.)
 	nLin += 12*nWebPx
 
@@ -101,7 +101,7 @@ User Function DOMACW46()
 
 	@ nLin, nCol1	SAY oTexto11 Var 'Volumes:'    SIZE 100*nWebPx,10*nWebPx PIXEL
 	oTexto11:oFont := TFont():New('Arial',,16*nWebPx,,.T.,,,,.T.,.F.)
-	@ nLin-(2*nWebPx), nCol1+(45) MSGET oPlTotVol VAR nPlTotVol  SIZE 60*nWebPx,08*nWebPx WHEN .F. PIXEL
+	@ nLin-(2*nWebPx), nCol1+(45) MSGET oPlTotVol VAR nPlTotVol Picture "@E 999,999" SIZE 60*nWebPx,08*nWebPx WHEN .F. PIXEL
 	oPlTotVol:oFont := TFont():New('Courier New',,22*nWebPx,,.T.,,,,.T.,.F.)
 	nLin +=13*nWebPx
 

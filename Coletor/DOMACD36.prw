@@ -19,7 +19,7 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function DOMACD36()
+User Function DOMACD36(nOpcao)
 
 	Private oTxtOP,__oGetOP,__oTxtEtiq,oGetEtiq,oTxtProd,oGetProd,oTxtQtd,oGetQtd,oMark,oTxtQtdEmp,oMainEti,oEtiqueta
 	Private oTxtProdCod,oTxtProdEmp,oNumOp
@@ -50,6 +50,7 @@ User Function DOMACD36()
 	Private oTxtQtdEmp
 	Private aOi     := {}
 	Private lOi     := .F.
+	Private nOpc:= nOpcao
 
 	dDataBase := Date()
 
@@ -263,7 +264,15 @@ Static Function VldEtiq()
 						// 07 - Número da Nota Fiscal
 						// 08 - Peso do Item
 						//DOMET105(cEtqOp , cEtqProd       , cEtqPed , nEtqQtd        , dDataFab , lControl, cNfDanfe                                       , nPesoDanfe     )
-						U_DOMET105(_cOPImp, aDesmonta[nQ,1], _cNumPed, aDesmonta[nQ,3], dDataBase, .T.     , IIF(!Empty(XD1->XD1_ZYNOTA),XD1->XD1_ZYNOTA,""), XD1->XD1_PESOB )
+						if U_VALIDACAO("RODA") .or. .T.
+							if nOpc == 1
+								U_DOMET105(_cOPImp, aDesmonta[nQ,1], _cNumPed, aDesmonta[nQ,3] , dDataBase, .T.     , IIF(!Empty(XD1->XD1_ZYNOTA),XD1->XD1_ZYNOTA,""), XD1->XD1_PESOB )
+							ElseIf nOpc == 2
+								U_DOMETQ50(_cOPImp, aDesmonta[nQ,1], _cNumPed, aDesmonta[nQ,3] , dDataBase, .T.     , IIF(!Empty(XD1->XD1_ZYNOTA),XD1->XD1_ZYNOTA,""), XD1->XD1_PESOB )
+							Endif
+						else
+							U_DOMET105(_cOPImp, aDesmonta[nQ,1], _cNumPed, aDesmonta[nQ,3] , dDataBase, .T.     , IIF(!Empty(XD1->XD1_ZYNOTA),XD1->XD1_ZYNOTA,""), XD1->XD1_PESOB )
+						Endif
 					Next nQ
 				EndIf
 

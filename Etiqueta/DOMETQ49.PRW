@@ -14,7 +14,7 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function DOMETQ49(cEtqOp, cEtqProd, cEtqPed, nEtqQtd, dDataFab, lControl, cNfDanfe, nPesoDanfe)
+User Function DOMETQ49(cEtqOp, cEtqProd, cEtqPed, nEtqQtd, dDataFab, lControl, cNfDanfe, nPesoDanfe,nQtdEmb,cLocImp)
 
 PRIVATE cChvDanfe  := SPACE(44)
 PRIVATE nOpcDanfe  := 0
@@ -23,13 +23,15 @@ PRIVATE oTelaDanfe
 PRIVATE cPedDanfe  := ""
 PRIVATE cSemana    := ""
 PRIVATE cTransp    := ""
+default cLocImp   := ""
+			
 
-ImpEtqOi(@cEtqOp, @cEtqProd, @cEtqPed, @nEtqQtd, @dDataFab, @lControl, @cNfDanfe, @nPesoDanfe)
+ImpEtqOi(@cEtqOp, @cEtqProd, @cEtqPed, @nEtqQtd, @dDataFab, @lControl, @cNfDanfe, @nPesoDanfe,nQtdEmb,cLocImp)
 
 Return
 
 
-Static Function ImpEtqOi(cEtqOp, cEtqProd, cEtqPed, nEtqQtd, dDataFab, lControl, cNfDanfe, nPesoDanfe)
+Static Function ImpEtqOi(cEtqOp, cEtqProd, cEtqPed, nEtqQtd, dDataFab, lControl, cNfDanfe, nPesoDanfe,nQtdEmb,cLocImp)
 
 LOCAL cAliasSB1   := SB1->(GetArea())
 LOCAL cAliasSC2   := SC2->(GetArea())
@@ -53,7 +55,7 @@ If Type("cOiDl32_CancOP") <> "U"
 	cOiDl34_CancPed    := cEtqPed
 	cOiDl35_CancUni    := nEtqQtd
 	cOiDl38_CancDat    := dDataFab
-   cOiDl39_CancQtd    := nQtdProd 	
+    cOiDl39_CancQtd    := nQtdEmb 	
 EndIf
 
 //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄxÔ[¿
@@ -172,7 +174,6 @@ cVar6:= cCdAnat1+" "+cCdAnat2+" "+cCdAnat3
 			//³Executa IMPRESSÃO NA ZEBRA			         	 ³
 			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄxÔ[¿
 
-			cLocImp      := ""
 			cPrn         := "DOMETQ49.prn"
 			aVar         := aVar
 			cVetor      := "!aVar"

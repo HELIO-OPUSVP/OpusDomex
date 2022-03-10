@@ -274,7 +274,7 @@ Static Function VldEtiq(_cNumEtqPA)
 
 						SA1->(dbSeek(xFilial("SA1")+SC2->C2_CLIENT))
 						If ("CLARO" $ Upper(SA1->A1_NOME)) .Or. ("CLARO" $ Upper(SA1->A1_NREDUZ));
-						 .or. ((U_VALIDACAO("RODA")) .AND. ("NEXTEL" $ Upper(SA1->A1_NOME)) .Or. ("NEXTEL" $ Upper(SA1->A1_NREDUZ)) )
+						 .or. ((U_VALIDACAO("RODA").or. .T.) .AND. ("NEXTEL" $ Upper(SA1->A1_NOME)) .Or. ("NEXTEL" $ Upper(SA1->A1_NREDUZ)) )
 							lEhClaro := .T.
 						EndIf
 
@@ -289,7 +289,7 @@ Static Function VldEtiq(_cNumEtqPA)
 								lSelPorItem := .T.
 							EndIf
 							If GetMv("MV_XVERTEL")
-								If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ SA1->A1_NREDUZ)  .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
+								If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ SA1->A1_NREDUZ)  .OR. ((U_VALIDACAO("RODA").or. .T.) .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
 									lSelPorItem := .T.
 								EndIf
 								If ("ERICSSON" $ SA1->A1_NOME)
@@ -305,7 +305,7 @@ Static Function VldEtiq(_cNumEtqPA)
 							//Verifica se é clietne CLARO
 							If GetMv("MV_XVERCLA")
 								If ("CLARO" $ Upper(SA1->A1_NOME)) .Or. ("CLARO" $ Upper(SA1->A1_NREDUZ));
-						 .or. ((U_VALIDACAO("RODA")) .AND. ("NEXTEL" $ Upper(SA1->A1_NOME)) .Or. ("NEXTEL" $ Upper(SA1->A1_NREDUZ)) )
+						 .or. ((U_VALIDACAO("RODA").or. .T.) .AND. ("NEXTEL" $ Upper(SA1->A1_NOME)) .Or. ("NEXTEL" $ Upper(SA1->A1_NREDUZ)) )
 									lSelPorItem := .T.
 								EndIf
 							EndIf
@@ -322,7 +322,7 @@ Static Function VldEtiq(_cNumEtqPA)
 						//³Verifica se o Cliente é TELEFONICA							³
 						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 						lTelefonic := .F.
-						If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ)) .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
+						If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ)) .OR. ((U_VALIDACAO("RODA").or. .T.) .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
 							lTelefonic := .T.
 						EndIf
 
