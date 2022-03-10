@@ -94,7 +94,7 @@ ProcRegua(nRec)
 		cOrgID   := "BR011ROSENB"
 	    cOrgName := "Matriz-SP"	
 	ElseIf cFilAnt == '02'
-		cOrgID   := "BR0llROSEMG"   // "BR011ROSEMG"
+		cOrgID   := "BR011ROSEMG"   // "BR011ROSEMG"
 	    cOrgName := "Filial-MG"	
 	Endif
 
