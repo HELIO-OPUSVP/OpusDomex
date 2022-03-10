@@ -581,12 +581,6 @@ Static Function ValidaEtiq(lTeste)
 				EndIf
 
 				//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-				//ЁVerifica se o Cliente И V-Tal						Ё
-				//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-
-				lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
-
-				//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
 				//ЁVerifica se o Cliente И FURUKAWA						Ё
 				//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
 				lEhFuruka := .F.
@@ -686,14 +680,6 @@ Static Function ValidaEtiq(lTeste)
 									lUltOi := .F.
 								EndIf
 							EndIf
-
-
-							//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-							//ЁVerifica se o Cliente И V-Tal						Ё
-							//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-
-							lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
-
 
 
 							cProdBip  := SB1->B1_COD
@@ -1442,12 +1428,6 @@ Static Function ValidaEtiq(lTeste)
 				EndIf
 
 				
-				//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-				//ЁVerifica se o Cliente И V-Tal						Ё
-				//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-				
-				lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
-					
 
 				//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
 				//ЁVerifica se o Cliente И ERICSSON								Ё
@@ -1529,13 +1509,6 @@ Static Function ValidaEtiq(lTeste)
 							EndIf
 
 							
-						//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
-						//ЁVerifica se o Cliente И V-Tal						Ё
-						//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
-				
-						lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
-					
-
 							//здддддддддддддддддддддддддддддддддддддддддддддддддддддд©
 							//ЁVerifica se o Cliente И ERICSSON								Ё
 							//юдддддддддддддддддддддддддддддддддддддддддддддддддддддды
@@ -3513,11 +3486,8 @@ Static Function fVTal(cCodCli, cLoja)
 	aadd(aVet,"00858901")
 	aadd(aVet,"00859001")
 
-
 	If ascan( aVet, cCodCLi+cLoja) <> 0
 		lRet:= .T.
 	Endif
-
-
 
 Return lRet
