@@ -7,13 +7,13 @@
 ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
 ฑฑบPrograma  ณ DOMETQ48 บAutor  ณ Ricardo Roda       บ Data ณ  11/02/2022 บฑฑ
 ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
-ฑฑบDesc.     ณ Etiqueta Layout 097 para Embalagem Ericsson via Zebra      บฑฑ
-ฑฑบ          ณ                                                            บฑฑ
+ฑฑบDesc.     ณ 	    Etiqueta para Embalagem Ericsson via Zebra            บฑฑ
+ฑฑบ          ณ                (Substituta Layout 097)                     บฑฑ
 ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
 ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
 ฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
 */
-User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
+User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca,cFila)
 
 	Local aPar       := {}
 	Local aRet       := {}
@@ -46,6 +46,9 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	Default aFilhas  := {}
 	Default cNumSerie := ""
 	Default cNumPeca  := ""
+	Default cFila := "" 
+
+	cLocImp  := cFila
 
 	MVPAR02:= nQtdEmb   //Qtd Embalagem
 	MVPAR03:= nQtdEtq   //Qtd Etiquetas /*revisar*/
@@ -356,7 +359,7 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			//ณExecuta IMPRESSรO NA ZEBRA			         	 ณ
 			//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤxิ[ฟ
 
-			cLocImp      := ""
+			// cLocImp      := ""
 			cPrn         := "DOMETQ48.prn"
 			aVar         := aVar
 			cVetor      := "!aVar"

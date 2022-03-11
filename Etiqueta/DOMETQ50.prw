@@ -61,7 +61,7 @@ LOCAL cCdAnat3    := ""
 LOCAL cDanfe      := ""
 LOCAL cSerie      := ""
 Local cInfDanfe	  := ""
-Local x
+Local x,nP,nY
 
 If lControl
 	cFila := SuperGetMv("MV_XFILEXP",.F.,"000005")

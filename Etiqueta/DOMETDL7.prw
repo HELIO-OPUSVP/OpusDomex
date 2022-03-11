@@ -2577,7 +2577,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 					//solicitação Denis em 16/11/21 devido a problemas do grupo  FTTA
 					If lEricsson
 						if U_VALIDACAO("RODA")
-							MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Zebra Ericsson- Por Roda
+							MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca,cFila) }) // Layout 002 Zebra Ericsson- Por Roda
 						else
 							MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
 						Endif
@@ -2589,7 +2589,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 			Else
 				If lEricsson
 					if U_VALIDACAO("RODA")
-						MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Zebra Ericsson- Por Roda
+						MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca,cFila) }) // Layout 002 Zebra Ericsson- Por Roda
 					else
 						MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
 					Endif
@@ -2675,7 +2675,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	If __mv_par06 == "94"
 		cLayoutEnt := "94"
 		if U_VALIDACAO("RODA")
-			lRotValid := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) //Layout 002 Zebra Ericsson- Por Roda
+			lRotValid := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL,cFila) //Layout 002 Zebra Ericsson- Por Roda
 		ELSE
 			lRotValid := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) //Layout 002 Crystal Ericsson - Por Michel A. Sander
 		ENDIF
@@ -2693,7 +2693,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 					Return
 				Else
 					IF U_VALIDACAO("RODA")
-						MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Zebra Ericsson- Por Roda
+						MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca,cFila) }) // Layout 002 Zebra Ericsson- Por Roda
 					ELSE
 						MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
 					ENDIF
@@ -2704,7 +2704,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 				EndIF
 			Else
 				if U_VALIDACAO("RODA")
-					MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Zebra Ericsson- Por Roda
+					MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca,cFila) }) // Layout 002 Zebra Ericsson- Por Roda
 				Else
 					MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
 				Endif
@@ -3028,7 +3028,7 @@ Return
 				Sleep(3000)
 				// Layout 002 Crystal
 				iF U_VALIDACAO("RODA")
-					U_DOMETQ48(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie)		//Layout 48 Zebra Ericsson- Por Roda
+					U_DOMETQ48(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie,nil,cFila)		//Layout 48 Zebra Ericsson- Por Roda
 				ELSE
 					U_DOMETQ97(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie)		//Layout 97 - Por Michel A. Sander
 				ENDIF
@@ -3140,7 +3140,7 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 		If cLayout == "01"
 			U_DOMETQ04(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 01 - HUAWEI UNIFICADA
 		ElseIf cLayout == "02"
-			U_DOMETQ03(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 02
+			// U_DOMETQ03(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 02
 		ElseIf cLayout == "03"
 			U_DOMETQ05(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 03
 		ElseIf cLayout == "04"
