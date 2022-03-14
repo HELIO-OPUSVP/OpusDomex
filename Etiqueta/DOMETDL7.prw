@@ -1113,7 +1113,11 @@ Static Function ValidaEtiq(lTeste)
 						lValidaRot := .T.
 					EndIf
 				EndIf
-
+				//Adicionado Por Jackson Santos  - Não Obrigar Roteiro se for KitPig
+				lKitPigRot := (Alltrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_XKITPIG"))=="S")
+				If lKitPigRot 
+					lValidaRot := .F.
+				Endif
 				If lValidaRot
 
 					nQtdEmbNv1 :=  Int(U_RetEmbala(SC2->C2_PRODUTO,"1")[2])
@@ -1632,6 +1636,12 @@ Static Function ValidaEtiq(lTeste)
 						lValidaRot := .T.
 					EndIf
 				EndIf
+				
+				//Adicionado Por Jackson Santos  - Não Obrigar Roteiro se for KitPig
+				lKitPigRot := (Alltrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_XKITPIG"))=="S")
+				If lKitPigRot 
+					lValidaRot := .F.
+				Endif
 
 				If lValidaRot
 			
