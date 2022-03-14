@@ -7,13 +7,13 @@
 ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
 ฑฑบPrograma  ณ DOMETQ48 บAutor  ณ Ricardo Roda       บ Data ณ  11/02/2022 บฑฑ
 ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
-ฑฑบDesc.     ณ Etiqueta Layout 097 para Embalagem Ericsson via Zebra      บฑฑ
-ฑฑบ          ณ                                                            บฑฑ
+ฑฑบDesc.     ณ 	    Etiqueta para Embalagem Ericsson via Zebra            บฑฑ
+ฑฑบ          ณ                (Substituta Layout 097)                     บฑฑ
 ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
 ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
 ฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
 */
-User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
+User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca,cFila)
 
 	Local aPar       := {}
 	Local aRet       := {}
@@ -46,6 +46,9 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	Default aFilhas  := {}
 	Default cNumSerie := ""
 	Default cNumPeca  := ""
+	Default cFila := "" 
+
+	cLocImp  := cFila
 
 	MVPAR02:= nQtdEmb   //Qtd Embalagem
 	MVPAR03:= nQtdEtq   //Qtd Etiquetas /*revisar*/
@@ -248,31 +251,30 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	EndIf
 
 	If lImpressao
-
-		//Controla o numero da etiqueta de embalagens
-		If Empty(cNumPeca)
-			_cProxPeca := U_IXD1PECA()
-		Else
-			_cProxPeca := cNumPeca
-		EndIf
-
-		For _nX := 1 to Len(aFilhas)
-			Reclock("XD2",.T.)
-			XD2->XD2_FILIAL := xFilial("XD2")
-			XD2->XD2_XXPECA := _cProxPeca
-			If ValType(aFilhas[_nX])  == "A"
-				XD2->XD2_PCFILH := aFilhas[_nX][1]
-			Else
-				XD2->XD2_PCFILH := aFilhas[_nX]
-			EndIf
-			XD2->( msUnlock() )
-		Next _nX
-
 		For x := 1 To MVPAR03
+			//Controla o numero da etiqueta de embalagens
+			If Empty(cNumPeca)
+				_cProxPeca := U_IXD1PECA()
+			Else
+				_cProxPeca := cNumPeca
+			EndIf
+
+			For _nX := 1 to Len(aFilhas)
+				Reclock("XD2",.T.)
+				XD2->XD2_FILIAL := xFilial("XD2")
+				XD2->XD2_XXPECA := _cProxPeca
+				If ValType(aFilhas[_nX])  == "A"
+					XD2->XD2_PCFILH := aFilhas[_nX][1]
+				Else
+					XD2->XD2_PCFILH := aFilhas[_nX]
+				EndIf
+				XD2->( msUnlock() )
+			Next _nX
+
 
 			Reclock("XD1",.T.)
 			XD1->XD1_FILIAL  := xFilial("XD1")
-			XD1->XD1_XXPECA  := _cProxPeca
+			XD1->XD1_XXPECA  := U_IXD1PECA() //_cProxPeca
 			XD1->XD1_FORNEC  := Space(06)
 			XD1->XD1_LOJA    := Space(02)
 			XD1->XD1_DOC     := Space(06)
@@ -357,11 +359,11 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			//ณExecuta IMPRESSรO NA ZEBRA			         	 ณ
 			//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤxิ[ฟ
 
-			cLocImp      := ""
+			// cLocImp      := ""
 			cPrn         := "DOMETQ48.prn"
 			aVar         := aVar
 			cVetor      := "!aVar"
-			lTemperatura := .F.
+			lTemperatura := .T.
 			U_IMPPRN(cLocImp,cPrn,aVar,cVetor,lTemperatura)
 
 		Next x

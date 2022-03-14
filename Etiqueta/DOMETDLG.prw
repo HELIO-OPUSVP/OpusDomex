@@ -237,7 +237,7 @@ User Function DOMETDLG()
 			ElseIf mv_par06 == "49" // Layout 49 - Ricardo Roda
 				U_DOMETQ49(mv_par02,mv_par03,""      ,mv_par04, mv_par05, .F.     , "",0)
 			ElseIf mv_par06 == "50" // Layout 50 - Ricardo Roda
-				U_DOMETQ50(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,cNumSerie,"")
+				U_DOMETQ50(mv_par02,mv_par03,""      ,mv_par04, mv_par05, .F.     , "",0)
 		
 			ElseIf mv_par06 == "115"  // Layout 49 - etiqueta V-Tal
 				U_DOMET115(mv_par02,mv_par05,mv_par07)

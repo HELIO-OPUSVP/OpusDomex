@@ -216,7 +216,7 @@ User Function EICFLWUP()
 	nUsado	:= len(aHeader)
 	aAdd(aCols,Array(nUsado+1))
 
-	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V2.7")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
+	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V2.8")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
 
 	@ 032, 003 GROUP oGroup1 TO 092, 649 PROMPT "Filtros" OF oDlg COLOR 0, 16777215 PIXEL
 
@@ -317,7 +317,7 @@ Static Function Atu_aCols2()
 	aCols1     := {}
 	oGet:aCols := {}
 	nLINHA :=0
-	cQuerySC7 := " UPDATE SC7010 SET C7_XDATPRF=C7_DATPRF WHERE C7_XDATPRF=''  AND C7_DATPRF<>''  AND D_E_L_E_T_='' "
+	cQuerySC7 := " UPDATE SC7010 SET C7_XDATPRF=C7_DATPRF WHERE C7_XDATPRF='' AND C7_DATPRF<>''  AND C7_FILIAL='"+xFILIAL('SC7')+"'  AND D_E_L_E_T_='' "
 	TCSqlExec(cQuerySC7)
 
 	// COM NF E DA
@@ -355,7 +355,8 @@ Static Function Atu_aCols2()
 	cQuery += "       W2_TIPO_EM,W2_DEST "
 	cQuery += " FROM SW2010 SW2 WITH(NOLOCK),SW3010 SW3 WITH(NOLOCK),SA2010 SA2 WITH(NOLOCK),CCH010 CCH WITH(NOLOCK) ,SB1010 SB1 WITH(NOLOCK) ,"
 	cQuery += "      SWN010 SWN WITH(NOLOCK)"
-	cQuery += " WHERE SUBSTRING(W3_PO_NUM,1,2)='DA' AND SUBSTRING(WN_PO_EIC,1,2)='DA' "
+	//cQuery += " WHERE SUBSTRING(W3_PO_NUM,1,2)='DA' AND SUBSTRING(WN_PO_EIC,1,2)='DA' "
+	cQuery += " WHERE W3_PO_NUM LIKE('DA%') AND WN_PO_EIC  LIKE('DA%') "
 	cQuery += " AND W2_PO_NUM=W3_PO_NUM AND A2_COD+A2_LOJA=W2_FORN+W2_FORLOJ AND   CCH_CODIGO=A2_CODPAIS AND B1_COD=W3_COD_I"
 	cQuery += " AND W2_PO_NUM=WN_PO_EIC AND W3_COD_I=WN_PRODUTO AND WN_ITEM_DA=W3_POSI_DA"
 	cQuery += " AND W2_PO_DT  >='"+DTOS(dGetPodt1)+"' AND W2_PO_DT  <='"+DTOS(dGetPodt2)+"' "
@@ -412,7 +413,8 @@ Static Function Atu_aCols2()
 	cQuery += "       W2_TIPO_EM,W2_DEST "
 	cQuery += " FROM SW2010 SW2 WITH(NOLOCK),SW3010 SW3 WITH(NOLOCK),SA2010 SA2 WITH(NOLOCK),CCH010 CCH WITH(NOLOCK) ,SB1010 SB1 WITH(NOLOCK) ,"
 	cQuery += "      SWN010 SWN WITH(NOLOCK)"
-	cQuery += "	WHERE  SUBSTRING(W3_PO_NUM,1,2)<>'DA' AND SUBSTRING(WN_PO_EIC,1,2)<>'DA' "
+	//cQuery += "	WHERE  SUBSTRING(W3_PO_NUM,1,2)<>'DA' AND SUBSTRING(WN_PO_EIC,1,2)<>'DA' "
+	cQuery += "	WHERE  W3_PO_NUM NOT LIKE('DA%') AND WN_PO_EIC NOT LIKE('DA%') "
 	cQuery += "	AND W2_PO_NUM=W3_PO_NUM AND A2_COD+A2_LOJA=W2_FORN+W2_FORLOJ AND   CCH_CODIGO=A2_CODPAIS AND B1_COD=W3_COD_I"
 	cQuery += "	AND W2_PO_NUM=WN_PO_EIC AND W3_COD_I=WN_PRODUTO AND W3_POSICAO=WN_ITEM_DA"
 	cQuery += " AND W2_PO_DT  >='"+DTOS(dGetPodt1)+"' AND W2_PO_DT  <='"+DTOS(dGetPodt2)+"' "
@@ -720,7 +722,6 @@ Static Function Atu_aCols2()
 		cW6_DI_NUM :=''
 		cHAWB      :=''
 		SW7->(DbSetOrder(RetOrder("SW7","W7_FILIAL+W7_PO_NUM+W7_COD_I+W7_POSICAO")))
-		//If SW7->( dbSeek( xFilial() + SUBSTR(TRB->W2_PO_NUM,1,15) + TRB->W3_COD_I + TRB->W3_POSICAO ) )
 		If SW7->( dbSeek( xFilial() + SUBSTR(TRB->W2_PO_NUM,1,20) + TRB->W3_COD_I + TRB->W3_POSICAO ) )
 			SW6->( dbSetOrder(1) )
 			IF SW6->( dbSeek( xFilial() + SW7->W7_HAWB ) )
@@ -731,6 +732,18 @@ Static Function Atu_aCols2()
 			ELSE
 				cHAWB := TRB->WN_HAWB
 			EndIf
+		ENDIF
+
+		lGRAVA:=.T.
+
+		IF !EMPTY(cimp) .and. lGRAVA==.T.
+			IF ALLTRIM(CIMP)$ALLTRIM(cHAWB)
+				lGRAVA:=.T.
+			ELSE
+				lGRAVA:=.F.
+				TRB->(DbSkip())
+				Loop
+			ENDIF
 		ENDIF
 
 /*
@@ -836,14 +849,15 @@ Static Function Atu_aCols2()
 		ELSE
 			cMODAL := TRB->W3_XMODAL
 		ENDIF
-		lGRAVA:=.T.
+		//lGRAVA:=.T.
 
 		IF !EMPTY(cXmodal)
 			IF substring(cXmodal,1,1)==substring(cModal,1,1)
 				lGRAVA:=.T.
 			ELSE
 				lGRAVA:=.F.
-
+				TRB->(DbSkip())
+				Loop
 			ENDIF
 		ENDIF
 
@@ -873,20 +887,26 @@ Static Function Atu_aCols2()
 		//ENDIF
 		//------------------
 
-		IF !EMPTY(cimp) .and. lGRAVA==.T.
-			IF ALLTRIM(CIMP)$ALLTRIM(cHAWB)
-				lGRAVA:=.T.
-			ELSE
-				lGRAVA:=.F.
-			ENDIF
-		ENDIF
+		//	IF !EMPTY(cimp) .and. lGRAVA==.T.
+		//		IF ALLTRIM(CIMP)$ALLTRIM(cHAWB)
+		//			lGRAVA:=.T.
+		//		ELSE
+		//			lGRAVA:=.F.
+		//			TRB->(DbSkip())
+		//			Loop
+		//		ENDIF
+		//	ENDIF
 		*-------------------------------------------------------------------------------------*
 		IF substr(cComboBox6,1,1)=='N' .and. empty(cimp)// .or.substr(cimp,1,3)=='ABE' .or.substr(cimp,1,3)=='abe' )
 			IF ALLTRIM(TRB->W3_XMODAL)=='B-COURIER'
 				lGRAVA:=.F.
+				TRB->(DbSkip())
+				Loop
 			ELSE
 				if  !EMPTY(cHAWB)
 					lGRAVA:=.F.
+					TRB->(DbSkip())
+					Loop
 				ELSE
 					lGRAVA:=.T.
 				endif
@@ -899,6 +919,8 @@ Static Function Atu_aCols2()
 			ELSE
 				if  EMPTY(cHAWB)
 					lGRAVA:=.F.
+					TRB->(DbSkip())
+					Loop
 				ELSE
 					lGRAVA:=.T.
 				endif
@@ -1058,7 +1080,7 @@ Static Function Atu_aCols2()
 //SELECT W5_QTDE,* FROM SW5010  WHERE W5_HAWB='IMP 4612/21' AND W5_PO_NUM='I0011310' AND W5_COD_I='121F0304L' AND W5_POSICAO='0001'
 //W5_PO_NUM=W2_PO_NUM AND W5_COD_I=W3_COD_I  AND W5_HAWB<>'' AND W5_POSICAO=W3_POSICAO
 //----------------------------------------------------------------------------------
-        IF lGRAVA == .T.
+		IF lGRAVA == .T.
 			/*    01 @BMP                   */	AADD(aCols1, {oBmpAux   ,  ;
 				/*02 Linha       ZZT_NLINHA */	Transform(nLINHA,"@E 99999") ,;
 				/*03 Origin      ZZT_ORIGIN */	TRB->W2_ORIGEM+'-'+TRB->CCH_PAIS  ,;
@@ -1318,11 +1340,11 @@ USER FUNCTION fGRVZZT(NLIN,lFST)
 		ENDIF
 
 		IF !EMPTY(aCols[N][nPos22]) //ZZT_DTCOLE
-		//*retirado auto*//
-		//	dPRV := DaySum(aCols[N][nPos22], aCols[N][41]) //DaySum(Data, nDias)
-		//	dPRV := DataValida(dPRV,.T.)
-		//	M->ZZT_DTPCOL    := dPRV
-		//	aCols[N][nPos23] := dPRV
+			//*retirado auto*//
+			//	dPRV := DaySum(aCols[N][nPos22], aCols[N][41]) //DaySum(Data, nDias)
+			//	dPRV := DataValida(dPRV,.T.)
+			//	M->ZZT_DTPCOL    := dPRV
+			//	aCols[N][nPos23] := dPRV
 		ENDIF
 
 		IF !EMPTY(aCols[N][nPos26]) //ZZT_ETA
@@ -1582,11 +1604,11 @@ STATIC FUNCTION fGRAVAZZT()
 //	aAbreTab := {}
 //	RPCSetType(3)
 //	RpcSetEnv(_cEmpresa, _cFilial,,,,,aAbreTab)
-    For nX := 1 to len (aCols1)
+	For nX := 1 to len (aCols1)
 		cQRDEL1:=" DELETE FROM ZZT010 WHERE ZZT_PO_NUM ='"+acols1[nX][04]+"' "
 		TCSqlExec(cQRDEL1)
 	next nx
-   // HOMOLOGACAO "I0011575               /0001"
+	// HOMOLOGACAO "I0011575               /0001"
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	cQRDEL2 := " DELETE FROM ZZT010 WHERE SUBSTRING(ZZT_PO_SIG,1,6)+SUBSTRING(ZZT_PO_NUM,25,4) NOT IN  "
 	cQRDEL2 += " (SELECT C7_NUM+C7_ITEM FROM SC7010  WHERE C7_NUM=SUBSTRING(ZZT_PO_SIG,1,6) AND C7_ITEM=SUBSTRING(ZZT_PO_NUM,25,4) AND D_E_L_E_T_='') "

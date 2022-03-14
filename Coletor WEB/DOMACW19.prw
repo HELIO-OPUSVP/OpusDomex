@@ -13,8 +13,6 @@
 ±±ºDesc.     ³ Tela de montagem da embalagem para faturamento (expedição) º±±
 ±±º          ³ 											                  º±±
 ±±º          ³                                                            º±±
-±±º          ³  U_VALIDACAO("RODA")  Fonte todo alterado e compilado em   º±±
-±±º          ³  validação. Pendente passar para produção                  º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
 ±±ºUso       ³ AP                                                         º±±
 ±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
@@ -285,7 +283,7 @@ Static Function VldEtiq()
 								lSelPorItem := .T.
 							EndIf
 							If GetMv("MV_XVERTEL")
-								If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ)) .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
+								If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ)) .OR. (SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" )
 									lSelPorItem := .T.
 								EndIf
 								If ("ERICSSON" $ SA1->A1_NOME)
@@ -314,7 +312,7 @@ Static Function VldEtiq()
 						//³Verifica se o Cliente é TELEFONICA							³
 						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 						lTelefonic := .F.
-						If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ)) .OR. (U_VALIDACAO("RODA") .AND.(SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" ))
+						If ("TELEFONICA" $ Upper(SA1->A1_NOME)) .Or. ("TELEFONICA" $ Upper(SA1->A1_NREDUZ)) .OR. (SA1->A1_COD == "007398" .AND. SA1->A1_LOJA == "01" )
 							lTelefonic := .T.
 						EndIf
 

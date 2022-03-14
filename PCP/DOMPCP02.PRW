@@ -182,7 +182,7 @@ While !oReport:Cancel() .And. (_cAlias)->(!Eof())
 		
 		
 		// Total de Empenhos
-		cQuery := "SELECT SUM(D4_QUANT) AS D4_QUANT FROM " + RetSqlName("SD4") + " WHERE D4_COD = '"+cProduto+"' AND D4_QUANT <> 0 AND D_E_L_E_T_ = '' "
+		cQuery := "SELECT SUM(D4_QUANT) AS D4_QUANT FROM " + RetSqlName("SD4") + " (NOLOCK) WHERE D4_FILIAL = '"+xFilial("SD4")+"' AND D4_COD = '"+cProduto+"' AND D4_QUANT <> 0 AND D_E_L_E_T_ = '' "
 		
 		If Select("QUERYSD4") <> 0
 			QUERYSD4->( dbCloseArea() )
@@ -202,7 +202,7 @@ While !oReport:Cancel() .And. (_cAlias)->(!Eof())
 		End
 		
 		// Data PC, Numero PC e Quantidade PC
-		cQuery := "SELECT C7_QUANT, C7_QUJE, C7_DATPRF, C7_NUM FROM " + RetSqlName("SC7") + " (NOLOCK) WHERE C7_FILIAL = '01' AND C7_PRODUTO = '"+cProduto+"' AND D_E_L_E_T_ = '' AND C7_QUANT > C7_QUJE AND C7_RESIDUO = '' ORDER BY C7_DATPRF"
+		cQuery := "SELECT C7_QUANT, C7_QUJE, C7_DATPRF, C7_NUM FROM " + RetSqlName("SC7") + " (NOLOCK) WHERE C7_FILIAL = '"+xFilial("SC7")+"' AND C7_PRODUTO = '"+cProduto+"' AND D_E_L_E_T_ = '' AND C7_QUANT > C7_QUJE AND C7_RESIDUO = '' ORDER BY C7_DATPRF"
 		
 		If Select("QUERYSC7") <> 0
 			QUERYSC7->( dbCloseArea() )

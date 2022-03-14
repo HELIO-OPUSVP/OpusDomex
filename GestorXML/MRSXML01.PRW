@@ -241,6 +241,7 @@ Return(nRet)
 "Gestor XML  -  V4.26 / 16.08.21" - Ajuste de Rotinas no recebimento ( workflow, desabilitador gravação de ZZ3/ZZ6)   
 "Gestor XML  -  V5.00 / 23.08.21" - Habilitadas rotinas de Pre Nota no Recebimento em Producao   
 "Gestor XML  -  V5.01 / 22.09.21" - Entrada de DOMEX Filial sem Pedido de Compra   
+"Gestor XML  -  V5.02 / 16.02.22" - Tratamento para Filtras XML somente da Filial Logada   
 
 */
 
@@ -260,8 +261,9 @@ Static Function GerXmlNF()
 	//000971 - Lucas Ramalho      SGCECOM
 
 	Private _lTESOK   	:= .T.
+	Private _lDmxFilial := .F.   // MAURESI - 16/02/2022
 
-	Private cTitCad  		:= "Gestor XML  -  V5.01 / 22.09.21"
+	Private cTitCad  		:= "Gestor XML  -  V5.02 / 16.02.22"
 	Private cStrCad  		:= ""
 	Private cCadastro		:= ""
 	Private aRotina  		:= fMenu()
@@ -867,7 +869,7 @@ USer Function GXNPar()
 /*Rodapé    */ fParamRod(aPosObj[2],oDialg)
 
 	Activate MsDialog oDialg Centered
-
+y:=0
 //Se confirmado
 	If lParamOK
 		SX6->(DbSetOrder(1))
@@ -1864,22 +1866,22 @@ Static Function fGerVldNFe(nRecTab1,oXmlTab1)
 		//Reseta as variaveis
 		aCabec := {}
 		aadd(aCabec,{"F1_TIPO"    ,(cTab1)->&(cAls1+"_TIPDOC")							,Nil,Nil})
-		aadd(aCabec,{"F1_FORMUL"  ,"N"  															,Nil,Nil})
-		aadd(aCabec,{"F1_DOC"     ,(cTab1)->&(cAls1+"_DOC"   )  							,Nil,Nil})
+		aadd(aCabec,{"F1_FORMUL"  ,"N"  												,Nil,Nil})
+		aadd(aCabec,{"F1_DOC"     ,(cTab1)->&(cAls1+"_DOC"   )  						,Nil,Nil})
 		aadd(aCabec,{"F1_SERIE"   ,(cTab1)->&(cAls1+"_SERIE" )      					,Nil,Nil})
 
 		cCndCliFor := IIf(Empty(cCndCliFor),"001",cCndCliFor)
 		if !empty(_cNumPC)
 			cCndCliFor :=	Posicione('SC7',1,xFilial('SC7')+_cNumPC,"C7_COND")
 		endif
-		aadd(aCabec,{"F1_COND"    ,cCndCliFor													,Nil,Nil})
+		aadd(aCabec,{"F1_COND"    ,cCndCliFor											,Nil,Nil})
 		aadd(aCabec,{"F1_EMISSAO" ,(cTab1)->&(cAls1+"_DTEMIS")       					,Nil,Nil})
 		aadd(aCabec,{"F1_FORNECE" ,cCodCliFor                           				,Nil,Nil})
-		aadd(aCabec,{"F1_LOJA"    ,cLojCliFor    												,Nil,Nil})
+		aadd(aCabec,{"F1_LOJA"    ,cLojCliFor    										,Nil,Nil})
 		aadd(aCabec,{"F1_ESPECIE" ,"SPED"                     							,Nil,Nil})
 		aadd(aCabec,{"F1_CHVNFE"  ,(cTab1)->&(cAls1+"_CHVNFE")     						,Nil,Nil})
 		If SF1->(FieldPos("F1_XGESTOR"))>0
-			aadd(aCabec,{"F1_XGESTOR" ,"S"                    								,Nil,Nil})
+			aadd(aCabec,{"F1_XGESTOR" ,"S"                    							,Nil,Nil})
 		EndIf
 
 		if AllTrim(GetMV("MX_MRCLASS"))	== "C"
@@ -2234,7 +2236,8 @@ Static Function fGerVldNFe(nRecTab1,oXmlTab1)
 			cAssunto := cMsgAssu + " " + cMsgNota
 			cTexto   := cMsgErro+"<br>"+cMsgNota+"<br>"+cMsgFoCl+"<br>"+cMsErro2
 			cPara    := "marco.aurelio@opusvp.com.br;"
-			cCC      := ""
+			cCC      := ""	
+			cArquivo := ""			
 			U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
 
 
@@ -3295,8 +3298,21 @@ Static Function fLinkPesqu()
 	cQry += cQbra + "   FROM "+RetSqlName("SC7")+" SC7 "
 	cQry += cQbra + "  WHERE D_E_L_E_T_ = '' "
 
+	//cQry += cQbra + "  AND  C7_FILIAL = XFILIAL() = '' " 	// MAURESI  - 16/02/2022
+	
+	// FILTRA SOMENTE PEDIDOS DA FILIAL CORRENTE  // MAURESI - 16/02/2022
+	If cFilAnt == "01"   // MATRIZ - SP
+		cQry += cQbra + "  AND  C7_FILIAL = '01' "
+	ElseIf cFilAnt == '02'  //FILIAL - MG
+		cQry += cQbra + "  AND  C7_FILIAL = '02' "	
+	Endif
+
+	//	cQry += cQbra + "  AND  C7_FILIAL = '"+cFilant+ "' "
+
+
+
+	cQry += cQbra + "    AND (C7_QUANT-C7_QUJE) > 0 " //MAURESI - 23/12/2020 - DESCONSIDERA QTDA CLASSFICAR     //  
 //cQry += cQbra + "    AND (C7_QUANT-C7_QUJE-C7_QTDACLA) > 0 "
-	cQry += cQbra + "    AND (C7_QUANT-C7_QUJE) > 0 " //MAURESI - 23/12/2020 - DESCONSIDERA QTDA CLASSFICAR
 
 	cQry += cQbra + "    AND C7_CONAPRO      != 'B' " //Trata item bloqueado
 	cQry += cQbra + "    AND C7_RESIDUO       = ''  " //Trata item eliminado por residuo
@@ -5272,6 +5288,15 @@ Static Function fGerPrcPsq(cOper)
 	If !Empty(cGetChvNFe)
 		cQry += cQbra+"   AND UPPER("+cTab1+"."+cAls1+"_CHVNFE) LIKE '%"+AllTrim(cGetChvNFe)+"%' "
 	EndIf
+//----------------------------------------------------------
+
+	// FILTRA SOMENTE XML DA FILIAL CORRENTE  // MAURESI - 16/02/2022
+	If cFilAnt == "01"   // MATRIZ - SP
+		cQry += cQbra+"   AND UPPER("+cTab1+"."+cAls1+"_TOCNPJ) = '54821137000136' "
+	ElseIf cFilAnt == '02'  //FILIAL - MG
+		cQry += cQbra+"   AND UPPER("+cTab1+"."+cAls1+"_TOCNPJ) = '54821137000217' "
+	Endif
+
 //----------------------------------------------------------
 	cQry += cQbra+" ORDER BY "+cAls1+"_DTEMIS, "+cAls1+"_DECNPJ, "+cAls1+"_DOC"
 //----------------------------------------------------------

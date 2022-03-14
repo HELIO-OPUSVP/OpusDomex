@@ -128,6 +128,7 @@ Static Function ReportPrint(oReport)
 	oFontN := TFont():New("Courier New",,08,,.T.,,,,.T.,.F.)// Negrito
 	oFont  := TFont():New("Courier New",,08,,.F.,,,,.F.,.F.)
 
+	/*
 	BeginSql Alias _cAlias
 	
 	SELECT *
@@ -143,6 +144,25 @@ Static Function ReportPrint(oReport)
 	ORDER BY %Exp:_cOrder%
 	
 	EndSql
+	*/
+
+    BeginSql Alias _cAlias
+
+	SELECT *
+	FROM %table:SD4% SD4
+	INNER JOIN %table:SC2% SC2 ON SC2.C2_FILIAL = %xFilial:SC2% AND C2_NUM+C2_ITEM+C2_SEQUEN = D4_OP AND SC2.%notDel% 
+	WHERE D4_QUANT <> 0
+	AND SD4.D4_FILIAL = %xFilial:SD4% 
+	AND SD4.%notDel% 
+	AND C2_EMISSAO BETWEEN %Exp:mv_par01% AND %Exp:mv_par02%
+	AND D4_COD BETWEEN %Exp:mv_par03% AND %Exp:mv_par04%  
+	AND D4_OPORIG = '' 
+	AND D4_LOCAL <> '08'
+	ORDER BY %Exp:_cOrder%
+
+	EndSql
+
+
 
 //TcSetField(_cAlias,"XX_DATA"   ,"D",  8, 0)
 
