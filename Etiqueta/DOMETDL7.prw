@@ -571,21 +571,27 @@ Static Function ValidaEtiq(lTeste)
 				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 				//³Verifica se o Cliente é OI S/A								³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-				If GetMv("MV_XVEROI")
-					lOi := .F.
-					If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
-						lOi := .T.
-					Else
-						lUltOi := .F.
+				If  U_VALIDACAO("RODA")
+					If !fVtal(SA1->A1_COD,SA1->A1_LOJA)
+						If GetMv("MV_XVEROI")
+							lOi := .F.
+							If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
+								lOi := .T.
+							Else
+								lUltOi := .F.
+							EndIf
+						EndIf
+					EndIf
+				Else
+					If GetMv("MV_XVEROI")
+						lOi := .F.
+						If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
+							lOi := .T.
+						Else
+							lUltOi := .F.
+						EndIf
 					EndIf
 				EndIf
-
-				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-				//³Verifica se o Cliente é V-Tal						³
-				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-
-				lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
-
 				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 				//³Verifica se o Cliente é FURUKAWA						³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
@@ -678,23 +684,27 @@ Static Function ValidaEtiq(lTeste)
 							//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 							//³Verifica se o Cliente é OI S/A								³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-							If GetMv("MV_XVEROI")
-								lOi := .F.
-								If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
-									lOi := .T.
-								Else
-									lUltOi := .F.
+							If U_VALIDACAO("RODA")
+								If !fVtal(SA1->A1_COD,SA1->A1_LOJA)
+									If GetMv("MV_XVEROI")
+										lOi := .F.
+										If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
+											lOi := .T.
+										Else
+											lUltOi := .F.
+										EndIf
+									EndIf
+								EndIf
+							Else
+								If GetMv("MV_XVEROI")
+									lOi := .F.
+									If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
+										lOi := .T.
+									Else
+										lUltOi := .F.
+									EndIf
 								EndIf
 							EndIf
-
-
-							//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-							//³Verifica se o Cliente é V-Tal						³
-							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-
-							lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
-
-
 
 							cProdBip  := SB1->B1_COD
 							cDescBip  := SB1->B1_DESC
@@ -1432,22 +1442,27 @@ Static Function ValidaEtiq(lTeste)
 				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 				//³Verifica se o Cliente é OI S/A								³
 				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-				If GetMv("MV_XVEROI")
-					lOi := .F.
-					If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
-						lOi := .T.
-					Else
-						lUltOi := .F.
+				If U_VALIDACAO("RODA")
+					If !fVtal(SA1->A1_COD,SA1->A1_LOJA)
+						If GetMv("MV_XVEROI")
+							lOi := .F.
+							If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
+								lOi := .T.
+							Else
+								lUltOi := .F.
+							EndIf
+						EndIf
+					EndIf
+				Else
+					If GetMv("MV_XVEROI")
+						lOi := .F.
+						If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
+							lOi := .T.
+						Else
+							lUltOi := .F.
+						EndIf
 					EndIf
 				EndIf
-
-				
-				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-				//³Verifica se o Cliente é V-Tal						³
-				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-				
-				lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
-					
 
 				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 				//³Verifica se o Cliente é ERICSSON								³
@@ -1519,23 +1534,28 @@ Static Function ValidaEtiq(lTeste)
 							//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 							//³Verifica se o Cliente é OI S/A								³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-							If GetMv("MV_XVEROI")
-								lOi := .F.
-								If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
-									lOi := .T.
-								Else
-									lUltOi := .F.
+							If U_VALIDACAO('RODA')
+								If !fVtal(SA1->A1_COD,SA1->A1_LOJA)
+									If GetMv("MV_XVEROI")
+										lOi := .F.
+										If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
+											lOi := .T.
+										Else
+											lUltOi := .F.
+										EndIf
+									EndIf
+								EndIf
+							Else
+								If GetMv("MV_XVEROI")
+									lOi := .F.
+									If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
+										lOi := .T.
+									Else
+										lUltOi := .F.
+									EndIf
 								EndIf
 							EndIf
-
-							
-						//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-						//³Verifica se o Cliente é V-Tal						³
-						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 				
-						lVTal := fVTal(SA1->A1_COD, SA1->A1_LOJA)
-					
-
 							//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 							//³Verifica se o Cliente é ERICSSON								³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
@@ -2556,7 +2576,11 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 				Else
 					//solicitação Denis em 16/11/21 devido a problemas do grupo  FTTA
 					If lEricsson
-						MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
+						if U_VALIDACAO("RODA")
+							MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca,cFila) }) // Layout 002 Zebra Ericsson- Por Roda
+						else
+							MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
+						Endif
 						MsgRun("Imprimindo etiqueta Layout 41   2/2","Aguarde...",{||            U_DOMETQ41(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,Nil,"000000"     ) }) // Layout 094 Crystal Ericsson
 					Endif
 					Sleep(5000)		// Delay de 5 segundos para buffer
@@ -2564,7 +2588,12 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 				EndIF
 			Else
 				If lEricsson
-					MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
+					if U_VALIDACAO("RODA")
+						MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca,cFila) }) // Layout 002 Zebra Ericsson- Por Roda
+					else
+						MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
+					Endif
+
 					MsgRun("Imprimindo etiqueta Layout 41   2/2","Aguarde...",{||            U_DOMETQ41(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,Nil,"000000"     ) }) // Layout 094 Crystal Ericsson
 				Endif
 				cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
@@ -2645,7 +2674,12 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	EndIf
 	If __mv_par06 == "94"
 		cLayoutEnt := "94"
-		lRotValid := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) //Layout 002 Crystal Ericsson - Por Michel A. Sander
+		if U_VALIDACAO("RODA")
+			lRotValid := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL,cFila) //Layout 002 Zebra Ericsson- Por Roda
+		ELSE
+			lRotValid := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) //Layout 002 Crystal Ericsson - Por Michel A. Sander
+		ENDIF
+
 		If !lRotValid
 			MsgStop("A OP não será apontada. Verifique os problemas com o layout da etiqueta e repita a operação.")
 			Return
@@ -2658,13 +2692,23 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 					oImprime:Disable()
 					Return
 				Else
-					MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
+					IF U_VALIDACAO("RODA")
+						MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca,cFila) }) // Layout 002 Zebra Ericsson- Por Roda
+					ELSE
+						MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
+					ENDIF
+
 					MsgRun("Imprimindo etiqueta Layout 94   2/2","Aguarde...",{||            U_DOMETQ94(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,Nil     ) }) // Layout 094 Crystal Ericsson
 					Sleep(5000)		// Delay de 5 segundos para buffer
 					cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
 				EndIF
 			Else
-				MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
+				if U_VALIDACAO("RODA")
+					MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca,cFila) }) // Layout 002 Zebra Ericsson- Por Roda
+				Else
+					MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
+				Endif
+
 				MsgRun("Imprimindo etiqueta Layout 94   2/2","Aguarde...",{||            U_DOMETQ94(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,Nil     ) }) // Layout 094 Crystal Ericsson
 				Sleep(5000)		// Delay de 5 segundos para buffer
 				cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
@@ -2785,7 +2829,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 		If lOi
 			U_DOMET106(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, 1, dDataBase, .F., "", 0, __mv_par04,cFila)
 			lUltOi := .T.
-		
+
 		Else
 			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 			//³Verifica cliente novamente caso venha de cancelamento da ult.etiqueta ³
@@ -2795,12 +2839,24 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 			//³Verifica se o Cliente é OI
 			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 			lOi := .F.
-			If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
-				U_DOMET106(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, 1, dDataBase, .F., "", 0, __mv_par04,cFila)
-				lUltOi := .T.
-				lOi    := .T.
+			If U_VALIDACAO('RODA')
+				If !fVtal(SA1->A1_COD,SA1->A1_LOJA)
+					If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
+						U_DOMET106(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, 1, dDataBase, .F., "", 0, __mv_par04,cFila)
+						lUltOi := .T.
+						lOi    := .T.
+					Else
+						lUltOi := .F.
+					EndIf
+				EndIf
 			Else
-				lUltOi := .F.
+				If ("OI S" $ Upper(SA1->A1_NOME)) .Or. ("OI MO" $ Upper(SA1->A1_NOME)) .Or. ("OI MOVEL" $ Upper(SA1->A1_NOME)) .Or. ("TELEMAR" $ Upper(SA1->A1_NOME)) .Or. ("BRASIL TELECOM COMUNICACAO MUL" $ Upper(SA1->A1_NOME))
+					U_DOMET106(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, 1, dDataBase, .F., "", 0, __mv_par04,cFila)
+					lUltOi := .T.
+					lOi    := .T.
+				Else
+					lUltOi := .F.
+				EndIf
 			EndIf
 		EndIf
 	EndIf
@@ -2808,11 +2864,17 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 	//³Imprime a etiqueta da VTAL										 			³
 	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-	 
+
+	if U_VALIDACAO("RODA")
 		SA1->(dbSeek(xFilial("SA1")+SC2->C2_CLIENT))
 		if fVTal(SA1->A1_COD, SA1->A1_LOJA)
 			U_DOMETQ49(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, 1, dDataBase, .F., "", 0, __mv_par04,cFila)
+			lUltVtal:= .T.
+		else
+			lUltVtal:= .F.
 		Endif
+	Endif
+
 
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 	//³Reinicia variáveis da tela										³
@@ -2965,7 +3027,11 @@ Return
 				U_DOMETQ94(cErictDl32_CancOP,cErictDl33_CancEmb,cErictDl34_CancKit,cErictDl35_CancUni,cErictDl38_CancNiv,aErictDl3A_CancFil,.T.,cErictDl39_CancPes,lColetor,cNumSerie)		//Layout 94 - Por Michel A. Sander
 				Sleep(3000)
 				// Layout 002 Crystal
-				U_DOMETQ97(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie)		//Layout 97 - Por Michel A. Sander
+				iF U_VALIDACAO("RODA")
+					U_DOMETQ48(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie,nil,cFila)		//Layout 48 Zebra Ericsson- Por Roda
+				ELSE
+					U_DOMETQ97(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie)		//Layout 97 - Por Michel A. Sander
+				ENDIF
 			Else
 				// Etiqueta Ericsson Crystal
 				// Cancela as Etiquetas do primeiro nivel do serial
@@ -3000,9 +3066,22 @@ Return
 				U_DOMET106(cOiDl32_CancOP, cOiDl33_CancPro, cOiDl34_CancPed, cOiDl35_CancUni, cOiDl38_CancDat, .F. , "" , 0, cOiDl39_CancQtd,cFila)
 			EndIf
 		EndIf
-		
 
-	EndIf
+		if U_VALIDACAO("RODA")
+			IF lUltVtal
+				SA1->(dbSeek(xFilial("SA1")+SC2->C2_CLIENT))
+				if fVTal(SA1->A1_COD, SA1->A1_LOJA)
+					U_DOMETQ49(cOiDl32_CancOP, cOiDl33_CancPro, cOiDl34_CancPed, cOiDl35_CancUni, cOiDl38_CancDat, .F. , "" , 0, cOiDl39_CancQtd,cFila)
+				Endif
+			Endif
+		Endif
+
+	Endif
+
+
+
+
+
 
 	oEtiqueta:SetFocus()
 
@@ -3061,7 +3140,7 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 		If cLayout == "01"
 			U_DOMETQ04(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 01 - HUAWEI UNIFICADA
 		ElseIf cLayout == "02"
-			U_DOMETQ03(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 02
+			// U_DOMETQ03(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 02
 		ElseIf cLayout == "03"
 			U_DOMETQ05(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 03
 		ElseIf cLayout == "04"
@@ -3160,16 +3239,19 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 				U_DOMET106(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, 1, dDataBase, .F., "", 0, 1,cfila)
 			EndIf
 		EndIf
-	
+
 		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 		//³Imprime a etiqueta da VTAL										 			³
 		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-	
-		SA1->(dbSeek(xFilial("SA1")+SC2->C2_CLIENT))
-		if fVTal(SA1->A1_COD, SA1->A1_LOJA)
-			U_DOMETQ49(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, 1, dDataBase, .F., "", 0, __mv_par04,cFila)
+		if U_VALIDACAO("RODA")
+			SA1->(dbSeek(xFilial("SA1")+SC2->C2_CLIENT))
+			if fVTal(SA1->A1_COD, SA1->A1_LOJA)
+				U_DOMETQ49(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN, SC2->C2_PRODUTO, SC2->C2_PEDIDO, 1, dDataBase, .F., "", 0, __mv_par04,cFila)
+				lUltVtal:= .T.
+			else
+				lUltVtal:= .F.
+			Endif
 		Endif
-
 
 
 	Else
@@ -3513,11 +3595,8 @@ Static Function fVTal(cCodCli, cLoja)
 	aadd(aVet,"00858901")
 	aadd(aVet,"00859001")
 
-
 	If ascan( aVet, cCodCLi+cLoja) <> 0
 		lRet:= .T.
 	Endif
-
-
 
 Return lRet

@@ -8,8 +8,8 @@
 ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
 ฑฑบPrograma  ณ DOMACW22 บAutor  ณ Michel Sander      บ Data ณ  21.07.2016 บฑฑ
 ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
-ฑฑบDesc.     ณ Paletiza็ใo via coletor de dados							   	  บฑฑ
-ฑฑบ          ณ 							                                      บฑฑ
+ฑฑบDesc.     ณ Paletiza็ใo via coletor de dados							  บฑฑ
+ฑฑบ          ณ 							                                  บฑฑ
 ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
 ฑฑบUso       ณ P11                                                        บฑฑ
 ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
@@ -298,6 +298,7 @@ Static Function ValidaEtiq(lTeste)
 						Endif
 					
 					EndDo
+					
 					If !lAchou
 						U_MsgColetor("Produto nใo corresponde ao pedido.")
 						cEtiqueta := Space(_nTamEtiq)
@@ -582,7 +583,8 @@ Static Function AlertC(cTexto)
 	Local aTemp := U_QuebraString(cTexto,20)
 	Local cTemp := '' 
 	Local lRet  := .T.
-
+	Local x 	:= 0
+	
 	For x := 1 to Len(aTemp)
 		cTemp += aTemp[x] + Chr(13)
 	Next x

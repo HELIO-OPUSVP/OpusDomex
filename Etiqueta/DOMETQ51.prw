@@ -5,18 +5,18 @@
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
 ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
-ฑฑบPrograma  ณ DOMETQ85 บAutor  ณ Michel A. Sander   บ Data ณ  08.11.2017 บฑฑ
+ฑฑบPrograma  ณ DOMETQ51 บAutor  ณ Michel A. Sander   บ Data ณ  08.11.2017 บฑฑ
 ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
-ฑฑบDesc.     ณ Etiqueta Cordใo Ericsson (Modelo 85)				          บฑฑ
-ฑฑบ          ณ                                                            บฑฑ
+ฑฑบDesc.     ณ     Etiqueta Cordใo Ericsson (Substituta DOMETQ85)         บฑฑ
+ฑฑบ          ณ               Impressora ZEBRA                             บฑฑ
 ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
-ฑฑบUso       ณ P11                                                        บฑฑ
+ฑฑบUso       ณ P12                                                        บฑฑ
 ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
 ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
 ฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
 */
 
-User Function DOMETQ85(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
+User Function DOMETQ51(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
 
 	Local mv_par02    := 1         //Qtd Embalagem
 	Local mv_par03    := 1         //Qtd Etiquetas
@@ -109,82 +109,42 @@ User Function DOMETQ85(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	cWW     := STRZERO(Val(SUBSTR(cSemana,5,2)),2)
 	WEEK->(dbCloseArea())
 
-
-	//ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤxิ[ฟ
-	//ณParโmetros de impressใo do Crystal Reports		 ณ
-	//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤxิ[ฟ
-//	cOptions := "2;0;1;CordaoEricsson"			// Parametro 1 (2= Impressora 1=Visualiza)
-
-//ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤxิ[ฟ
-//ณParโmetros de impressใo do Crystal Reports		 ณ
-//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤxิ[ฟ
-	cOptions   := "2;0;1;Ericsson"			// Parametro 1 (2= Impressora 1=Visualiza)
-	//cOptions   := "1;0;1;Ericsson"			// Parametro 1 (2= Impressora 1=Visualiza)
-	cNumSerie1 := SPACE(12)
-	cNumSerie2 := SPACE(12)
-
 	x := 0
 
-
 	For x := 1 to mv_par03
-		//  Alert(mv_par03)
-		//Alert(nQtdEtq)
-		/* Quanto ้ utilizado apenas para 1
-		cMVPAR01 := SC6->C6_SEUCOD
-		cMVPAR02 := SB1->B1_DESC
-		cMVPAR03 := cYYYY+cWW
-		cMVPAR04 := "MADE IN BRAZIL"
-		cMVPAR05 := SC6->C6_XXRSTAT
-		cMVPAR06 := SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
-		cMVPAR07 := "T.A."
-		cParam   := cMVPAR01+";"+cMVPAR02+";"+cMVPAR03+";"+cMVPAR04+";"+cMVPAR05+";"+cMVPAR06+";"+cMVPAR07+";"
+
+		cVar1:= SC6->C6_SEUCOD
+		cVar2:= SubStr(SB1->B1_DESC,1,20)
+		cVar3:= cYYYY+cWW
+		cVar4:= SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
+		cVar5:= SC6->C6_XXRSTAT
+		
+
+		aVar:={}
+		AADD(aVar,cVar1)
+		AADD(aVar,cVar2)
+		AADD(aVar,cVar3)
+		AADD(aVar,cVar4)
+		AADD(aVar,cVar5)
+		
+
+		//ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤxิ[ฟ
+		//ณExecuta IMPRESSรO NA ZEBRA			         	 ณ
+		//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤxิ[ฟ
+
+		cPrn         := "DOMETQ51.prn"
+		aVar         := aVar
+		cVetor      := "!aVar"
+		lTemperatura := .F.
+		U_IMPPRN(cLocImp,cPrn,aVar,cVetor,lTemperatura)
+
 
 		//ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤxิ[ฟ
 		//ณExecuta Crystal Reports para impressใo			 	 ณ
 		//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤxิ[ฟ
-		CALLCRYS('CordaoEricsson', cParam ,cOptions)
-		*/
-
-		//x++
-
-		//If x==2
-
-		// Primeira Etiqueta
-		cMVPAR01 := SC6->C6_SEUCOD
-		//cMVPAR02 := "COAXIAL CABLE"
-		cMVPAR02 := SB1->B1_DESC
-		cMVPAR03 := cYYYY+cWW
-		cMVPAR04 := "MADE IN BRAZIL"
-		cMVPAR05 := SC6->C6_XXRSTAT
-		cMVPAR06 := "T.A."
-		cMVPAR07 := SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
-		cMVPAR08 := "" //cNumSerie1
-
-		// Segunda Etiqueta
-		cMVPAR09 := SC6->C6_SEUCOD
-		cMVPAR10 := SB1->B1_DESC
-		cMVPAR11 := cYYYY+cWW
-		cMVPAR12 := "MADE IN BRAZIL"
-		cMVPAR13 := SC6->C6_XXRSTAT
-		cMVPAR14 := "T.A."
-		cMVPAR15 := SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
-		cMVPAR16 := ""//cNumSerie2
-
-		cParam := cMVPAR01+";"+cMVPAR02+";"+cMVPAR03+";"+cMVPAR04+";"+cMVPAR05+";"+cMVPAR06+";"+cMVPAR07+";"+cMVPAR08+";"
-		cParam += cMVPAR09+";"+cMVPAR10+";"+cMVPAR11+";"+cMVPAR12+";"+cMVPAR13+";"+cMVPAR14+";"+cMVPAR15+";"+cMVPAR16+";"
-
-		//ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤxิ[ฟ
-		//ณExecuta Crystal Reports para impressใo			 	 ณ
-		//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤxิ[ฟ
-		CALLCRYS('SerialEricssonX', cParam ,cOptions)
 
 		Sleep(200)
 
-		cNumSerie1 := SPACE(12)
-		cNumSerie2 := SPACE(12)
-		//x 			  := 0
-
-		//EndIf
 
 	Next
 

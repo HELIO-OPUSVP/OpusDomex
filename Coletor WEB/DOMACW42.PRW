@@ -189,7 +189,7 @@ Static Function BuscaEmpOp()
 
 		//Imprimir Todas as Etiquetas para o dia
 		//U_RetQry39 - parametro 1 = 1-Produtos,2=Ops,3=Reimpressão
-		cQryOps := U_fRetQry39("3"/*cTipoCon*/,cGrupoProd,dData,"","",__cFilial)
+		cQryOps := U_RetQry39("3"/*cTipoCon*/,cGrupoProd,dData,"","",__cFilial)
 		If Select("TMPOPS") > 0
 			TMPOPS->(DbCloseArea())
 		Endif

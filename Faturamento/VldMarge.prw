@@ -247,6 +247,14 @@ User Function xGrvPrNet()
 		//3 - Sem PIS/COFINS e ICMS
 		AADD(aValorNet,nPrcven - (nVlrPis / nQtdven) - (nVlrCof / nQtdven) - ;
 			(nValICM  / nQtdven))
+
+
+		Alert(nVlrPis)
+		Alert(nVlrCof)
+		Alert(nValICM)
+
+
+
 		//4 - Sem PIS/COFINS, ICMS e IPI
 		AADD(aValorNet,nPrcven - (nVlrPis / nQtdven) - (nVlrCof / nQtdven) - ;
 			(nValICM  / nQtdven) - (nValIPI / nQtdven))
