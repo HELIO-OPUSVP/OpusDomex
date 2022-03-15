@@ -1984,7 +1984,7 @@ Static Function ValidaEtiq(lTeste)
 					If U_ETQMTA250("010",SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,SC2->C2_PRODUTO,SC2->C2_LOCAL,nQEmbAtu,"P",cNumPeca)
 
 						lUsaColet := .F.
-						If Empty(SC2->C2_PEDIDO) .Or. "ROSENBERGER DOMEX" $ Alltrim(Upper(SA1->A1_NOME))
+						If Empty(SC2->C2_PEDIDO)
 							If SC2->C2_SEQUEN == '001'
 								U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL     ,nQProxEmb,1       ,"1"    ,{Alltrim(cEtiqOrig)},.T.      ,0         , lUsaColet, ""       ,cNumPeca, "Estoque OP:"+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN ,"") //Layout 98 - Etiqueta Somente com CODBAR
 								//DOMETQ98(cNumOp                                 ,cNumSenf,nQtdEmb  , nQtdEtq, cNivel, aFilhas            , lImprime, _PesoAuto, lColetor , cNumSerie, cNumPeca, cSetor   ,cEtqHuawei)
