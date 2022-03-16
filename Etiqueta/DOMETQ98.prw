@@ -47,7 +47,7 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 		If SB1->( dbSeek( xFilial() + SC2->C2_PRODUTO ) )
 			For nQ := 1 to nQtdEtq
 				//U_MsgColetor("Iprimindo etiquetinha na porta " + _cPorta + " modelo " + cModelo)
-				If !U_Validacao()
+				If !ISINCALLSTACK('U_DOMACW46') 
 					MSCBPrinter(cModelo,_cPorta,,,.F.)
 					MSCBChkStatus(.F.)
 					MSCBBegin(1,6)
