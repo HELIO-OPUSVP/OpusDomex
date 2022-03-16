@@ -4,8 +4,8 @@
 /*/Protheus.doc DOMET111
 description Etiqueta claro
 function
-author Ricardo Roda
-since 29/03/2021
+	author Ricardo Roda
+	since 29/03/2021
 /*/ 
 User Function DOMET111(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,cVolumeAtu,lColetor,cNumSerie,cNumPeca)
 
@@ -144,7 +144,7 @@ User Function DOMET111(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			If XD1->(dbSeek(xFilial()+XD2->XD2_PCFILH))
 				AADD( aItemXD2, { aFilhas[_NX,1], aFilhas[_NX,4], XD1->XD1_COD, XD1->XD1_QTDATU } )
 			Else
-				U_MsgColetor("Registro do XD2 não encontrado no XD1") 
+				U_MsgColetor("Registro do XD2 não encontrado no XD1")
 			EndIf
 
 		Next _nX
@@ -196,7 +196,14 @@ User Function DOMET111(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 
 	Endif */
 		
-		cFila := SuperGetMv("MV_XFILEXP",.F.,"000005")
+			
+		IF ISINCALLSTACK('U_DOMACW46') .and. cfilant == "02
+			cFila:= "000032"
+		ELSE
+			cFila := SuperGetMv("MV_XFILEXP",.F.,"000005")
+		ENDIF	
+	
+
 		IF !CB5SetImp(cFila,.F.)
 				U_MsgColetor("Local de impressao invalido!")
 				Return .F.
