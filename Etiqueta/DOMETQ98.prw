@@ -14,7 +14,7 @@
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
-//			   U_DOMETQ98(cNumOpBip,NIL     ,1       ,1       ,"1"    ,aUsoSerie,.T.      ,0         ,.F.      , ""       ,         ,       , cCodPnBar) //Layout 98 - Etiqueta Somente com CODBAR
+//U_DOMETQ98(cNumOpBip,NIL     ,1       ,1       ,"1"    ,aUsoSerie,.T.      ,0         ,.F.      , ""       ,         ,       , cCodPnBar) //Layout 98 - Etiqueta Somente com CODBAR
 User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , lImprime, _PesoAuto, lCtor, cNumSerie, cNumPeca, cSetor,cEtqHuawei,cVolumeAtu,cNumpedido)
 
 	Local _cPorta   := "LPT2"
@@ -25,13 +25,19 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 	Local _nX		:= 0
 	Local nQ 		:= 0
 	//Local cLocImp	:= Iif(cfilant == "02","000024","LPT2")
-	Local cLocImp	:= Iif(cfilant == "02","000032","LPT2")
+	Local cLocImp	:= "LPT2"
+	
 	Default cNumPeca	:= ""
 	Default cSetor   	:= ""
 	Default cEtqHuawei 	:=""
 	Default cVolumeAtu 	:= ""
 	Default cNumpedido 	:= ""
 	Default _PesoAuto   := 0
+
+
+	IF ISINCALLSTACK('U_DOMACW46') .and. cfilant == "02
+		cLocImp:= "000032"
+	ENDIF	
 
 
 	SC2->( dbSetOrder(1) )
