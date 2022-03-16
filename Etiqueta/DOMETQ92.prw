@@ -130,7 +130,12 @@ If lImpressao
 	//MSCBChkStatus(.F.)
 	
 	
-	cFila := SuperGetMv("MV_XFILEXP",.F.,"000005")
+	IF ISINCALLSTACK('U_DOMACW46') .and. cfilant == "02
+		cFila:= "000032"
+	ELSE
+		cFila := SuperGetMv("MV_XFILEXP",.F.,"000005")
+	ENDIF	
+	
 	IF !CB5SetImp(cFila,.F.)
 			U_MsgColetor("Local de impressao invalido!")
 			Return .F.
