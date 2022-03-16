@@ -1040,7 +1040,7 @@ Static Function ValidaEtiq(lTeste)
 				TXD2->(DbCloseArea())
 				RestArea(aAreaSave)
 				EndIf
-         //Fim Validação
+         		//Fim Validação
 				If lAchouEtq
 				*/
 				MsgStop("Etiqueta serial lida já pertence a outra embalagem: "+XD2->XD2_XXPECA+".")
@@ -1115,7 +1115,7 @@ Static Function ValidaEtiq(lTeste)
 				EndIf
 				//Adicionado Por Jackson Santos  - Não Obrigar Roteiro se for KitPig
 				lKitPigRot := (Alltrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_XKITPIG"))=="S")
-				If lKitPigRot 
+				If lKitPigRot
 					lValidaRot := .F.
 				Endif
 				If lValidaRot
@@ -1969,40 +1969,103 @@ Static Function ValidaEtiq(lTeste)
 			oEtiqueta:Refresh()
 			oEtiqueta:SetFocus()
 
-		If Len(aSerial) == Round(nQtdEmb,0) //.Or. (Len(aSerial) == nSaldoBip .And. cSerNiv == "1")
+			If Len(aSerial) == Round(nQtdEmb,0) //.Or. (Len(aSerial) == nSaldoBip .And. cSerNiv == "1")
 
-			nQtdBip  := Len(aSerial)
-			nQEmbAtu := Round(nQtdEmb,0)
-			oQtdBip:Refresh()
-			oQEmbAtu:Refresh()
-			lUsaColet := .F.
+				nQtdBip  := Len(aSerial)
+				nQEmbAtu := Round(nQtdEmb,0)
+				oQtdBip:Refresh()
+				oQEmbAtu:Refresh()
+				lUsaColet := .F.
 
-			If GetMv("MV_XVERKIT") 
-				//MsgAlert("apontando produção e imprimindo etiqueta")
-				If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_XKITPIG")) == "S"
-					cNumPeca := U_IXD1PECA()
-					If U_ETQMTA250("010",SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,SC2->C2_PRODUTO,SC2->C2_LOCAL,nQEmbAtu,"P",cNumPeca)
+				If GetMv("MV_XVERKIT") 
+					//MsgAlert("apontando produção e imprimindo etiqueta")
+					If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_XKITPIG")) == "S"
+						cNumPeca := U_IXD1PECA()
+						If U_ETQMTA250("010",SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,SC2->C2_PRODUTO,SC2->C2_LOCAL,nQEmbAtu,"P",cNumPeca)
 
-						lUsaColet := .F.
-						If Empty(SC2->C2_PEDIDO)
-							If SC2->C2_SEQUEN == '001'
-								U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL     ,nQProxEmb,1       ,"1"    ,{Alltrim(cEtiqOrig)},.T.      ,0         , lUsaColet, ""       ,cNumPeca, "Estoque OP:"+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN ,"") //Layout 98 - Etiqueta Somente com CODBAR
-								//DOMETQ98(cNumOp                                 ,cNumSenf,nQtdEmb  , nQtdEtq, cNivel, aFilhas            , lImprime, _PesoAuto, lColetor , cNumSerie, cNumPeca, cSetor   ,cEtqHuawei)
+							lUsaColet := .F.
+							If Empty(SC2->C2_PEDIDO) 
+								If SC2->C2_SEQUEN == '001'
+									U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL     ,nQProxEmb,1       ,"1"    ,{Alltrim(cEtiqOrig)},.T.      ,0         , lUsaColet, ""       ,cNumPeca, "Estoque OP:"+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN ,"") //Layout 98 - Etiqueta Somente com CODBAR
+									//DOMETQ98(cNumOp                                 ,cNumSenf,nQtdEmb  , nQtdEtq, cNivel, aFilhas            , lImprime, _PesoAuto, lColetor , cNumSerie, cNumPeca, cSetor   ,cEtqHuawei)
+								Else
+									U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL     ,nQProxEmb,1,"1"   ,{Alltrim(cEtiqOrig)},.T.,0,lUsaColet, "",cNumPeca, 'Produção OP:'+SC2->C2_NUM+SC2->C2_ITEM,"") //Layout 98 - Etiqueta Somente com CODBAR
+								EndIf
+								oImprime:Disable()
+								cNumOpBip := SPACE(11)
+								oNumOpBip:Refresh()
+								cEtiqueta := Space(_nTamEtiq)
+								oEtiqueta:Refresh()
+								oEtiqueta:SetFocus()
 							Else
-								U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL     ,nQProxEmb,1,"1"   ,{Alltrim(cEtiqOrig)},.T.,0,lUsaColet, "",cNumPeca, 'Produção OP:'+SC2->C2_NUM+SC2->C2_ITEM,"") //Layout 98 - Etiqueta Somente com CODBAR
+								fImpSeri(cNumOpBip,cEtiqOrig,{Alltrim(cEtiqOrig)})
 							EndIf
-							oImprime:Disable()
-							cNumOpBip := SPACE(11)
-							oNumOpBip:Refresh()
-							cEtiqueta := Space(_nTamEtiq)
-							oEtiqueta:Refresh()
-							oEtiqueta:SetFocus()
-						Else
-							fImpSeri(cNumOpBip,cEtiqOrig,{Alltrim(cEtiqOrig)})
+
+							nSaldoBip := (SC2->C2_QUANT - SC2->C2_QUJE)   // Trocado de C2_XXQUJE para C2_QUJE      por Hélio em 25/09/18
+							oSbip:Refresh()
 						EndIf
 
-						nSaldoBip := (SC2->C2_QUANT - SC2->C2_QUJE)   // Trocado de C2_XXQUJE para C2_QUJE      por Hélio em 25/09/18
-						oSbip:Refresh()
+					Else
+
+						If AllTrim(_cGrupoUso) $ "DROP/PCON" .Or. lEhFuruka
+
+							//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+							//³ImpEtqBip() - Aponta OP e imprime etiqueta de embalagem ³
+							//³														  				  ³
+							//³cPARAM 01 - Numero da Peça										  ³
+							//³cPARAM 01 - Numero da OP										  ³
+							//³nPARAM 01 - Quantidade lida									  ³
+							//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
+							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+							//If lEhFuruka
+							//	U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
+							//Else
+							ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T. )
+							//EndIf
+							
+						Else
+
+							If AllTrim(_cGrupoUso) == "JUMP" .Or. SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX"
+								//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+								//³ImpEtqBip() - Aponta OP e imprime etiqueta de embalagem ³
+								//³																		  ³
+								//³cPARAM 01 - Numero da Peça										  ³
+								//³cPARAM 01 - Numero da OP										  ³
+								//³nPARAM 01 - Quantidade lida									  ³
+								//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
+								//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+								If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX" ) .And. lEricsson
+									
+									if U_VALIDACAO("RODA",.T.,'','04/11/21')
+										iF lEricsson		
+											U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+										Endif
+									Else
+										U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+										Sleep(3000)		// Delay de 5 segundos para buffer
+									Endif
+
+									U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
+								Else
+									ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .F. )
+								EndIf
+							Else
+								if lEricsson
+									if U_VALIDACAO("RODA",.T.,'','')
+										IF lEricsson
+										U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+										Endif
+									Else	
+										U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+										Sleep(3000)		// Delay de 5 segundos para buffer
+									Endif
+								Endif
+
+								U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
+							EndIf
+						
+						EndIf
+
 					EndIf
 
 				Else
@@ -2017,12 +2080,10 @@ Static Function ValidaEtiq(lTeste)
 						//³nPARAM 01 - Quantidade lida									  ³
 						//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
 						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-						//If lEhFuruka
-						//	U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
-						//Else
+
+
 						ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T. )
-						//EndIf
-						
+			
 					Else
 
 						If AllTrim(_cGrupoUso) == "JUMP" .Or. SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX"
@@ -2034,12 +2095,12 @@ Static Function ValidaEtiq(lTeste)
 							//³nPARAM 01 - Quantidade lida									  ³
 							//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-							If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX" ) .And. lEricsson
+							If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .OR. SubStr(AllTrim(_cGrupoUso),1,4)=="FLEX")  .And. lEricsson
 								
-								if U_VALIDACAO("RODA",.T.,'','04/11/21')
-									iF lEricsson		
-										U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-									Endif
+								if U_VALIDACAO("RODA",.T.,'','04/11/21')// ricardo roda 04/11/2021
+								IF lEricsson
+									U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+								Endif
 								Else
 									U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 									Sleep(3000)		// Delay de 5 segundos para buffer
@@ -2050,120 +2111,14 @@ Static Function ValidaEtiq(lTeste)
 								ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .F. )
 							EndIf
 						Else
-							if lEricsson
-								if U_VALIDACAO("RODA",.T.,'','')
-									IF lEricsson
-									U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-									Endif
-								Else	
-									U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-									Sleep(3000)		// Delay de 5 segundos para buffer
-								Endif
-							Endif
-
+							U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+							Sleep(3000)		// Delay de 5 segundos para buffer
 							U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
 						EndIf
-					
 					EndIf
 
 				EndIf
 
-			Else
-
-				If AllTrim(_cGrupoUso) $ "DROP/PCON" .Or. lEhFuruka
-
-					//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-					//³ImpEtqBip() - Aponta OP e imprime etiqueta de embalagem ³
-					//³														  				  ³
-					//³cPARAM 01 - Numero da Peça										  ³
-					//³cPARAM 01 - Numero da OP										  ³
-					//³nPARAM 01 - Quantidade lida									  ³
-					//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
-					//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-
-
-					ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T. )
-		
-				Else
-
-					If AllTrim(_cGrupoUso) == "JUMP" .Or. SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX"
-						//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-						//³ImpEtqBip() - Aponta OP e imprime etiqueta de embalagem ³
-						//³																		  ³
-						//³cPARAM 01 - Numero da Peça										  ³
-						//³cPARAM 01 - Numero da OP										  ³
-						//³nPARAM 01 - Quantidade lida									  ³
-						//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
-						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-						If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .OR. SubStr(AllTrim(_cGrupoUso),1,4)=="FLEX")  .And. lEricsson
-							
-							if U_VALIDACAO("RODA",.T.,'','04/11/21')// ricardo roda 04/11/2021
-							IF lEricsson
-								U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-							Endif
-							Else
-								U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-								Sleep(3000)		// Delay de 5 segundos para buffer
-							Endif
-
-							U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
-						Else
-							ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .F. )
-						EndIf
-					Else
-						U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-						Sleep(3000)		// Delay de 5 segundos para buffer
-						U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
-					EndIf
-				EndIf
-
-			EndIf
-
-			aSerial := {}
-			aQtdBip  := {}
-			aQtdEtiq := {}
-			nQtdBip := 0
-			nQtdKit := 0
-			nQtdEmb := 0
-			oQtdBip:Refresh()
-			oQEmbAtu:Refresh()
-			oQtdBip:Refresh()
-			oUltima:Enable()
-
-		Else
-
-			If nQtdBip == (SC2->C2_QUANT - SC2->C2_QUJE) .Or.  (nQtTotN1 == SC2->C2_QUANT) .Or. ((nQtTotN1 + nQtdBip) == SC2->C2_QUANT)  // Trocado de C2_XXQUJE para C2_QUJE      por Hélio em 25/09/18
-				nQEmbAtu := Round(nQtdEmb,0)
-				oQtdBip:Refresh()
-				oQEmbAtu:Refresh()
-				lUsaColet := .F.
-
-				If AllTrim(_cGrupoUso) $ "DROP/PCON" .Or. lEhFuruka
-
-					//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-					//³ImpEtqBip() - Aponta OP e imprime etiqueta de embalagem ³
-					//³														  				  ³
-					//³cPARAM 01 - Numero da Peça										  ³
-					//³cPARAM 01 - Numero da OP										  ³
-					//³nPARAM 01 - Quantidade lida									  ³
-					//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
-					//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-
-					ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T.,.T. )
-					
-				Else
-					If U_VALIDACAO("RODA",.T.,'04/11/21','17/02/22') // ricardo roda 04/11/2021
-					   IF lEricsson
-						   U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-					   Endif
-					Else
-						U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQtdBip,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-						Sleep(3000)		// Delay de 5 segundos para buffer
-					Endif
-				
-					
-					U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQtdBip,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
-				EndIf
 				aSerial := {}
 				aQtdBip  := {}
 				aQtdEtiq := {}
@@ -2174,17 +2129,62 @@ Static Function ValidaEtiq(lTeste)
 				oQEmbAtu:Refresh()
 				oQtdBip:Refresh()
 				oUltima:Enable()
-				Return ( .T. )
+
+			Else
+
+				If nQtdBip == (SC2->C2_QUANT - SC2->C2_QUJE) .Or.  (nQtTotN1 == SC2->C2_QUANT) .Or. ((nQtTotN1 + nQtdBip) == SC2->C2_QUANT)  // Trocado de C2_XXQUJE para C2_QUJE      por Hélio em 25/09/18
+					nQEmbAtu := Round(nQtdEmb,0)
+					oQtdBip:Refresh()
+					oQEmbAtu:Refresh()
+					lUsaColet := .F.
+
+					If AllTrim(_cGrupoUso) $ "DROP/PCON" .Or. lEhFuruka
+
+						//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+						//³ImpEtqBip() - Aponta OP e imprime etiqueta de embalagem ³
+						//³														  				  ³
+						//³cPARAM 01 - Numero da Peça										  ³
+						//³cPARAM 01 - Numero da OP										  ³
+						//³nPARAM 01 - Quantidade lida									  ³
+						//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
+						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+						ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .T.,.T. )
+						
+					Else
+						If U_VALIDACAO("RODA",.T.,'04/11/21','17/02/22') // ricardo roda 04/11/2021
+						IF lEricsson
+							U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+						Endif
+						Else
+							U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQtdBip,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+							Sleep(3000)		// Delay de 5 segundos para buffer
+						Endif
+					
+						
+						U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQtdBip,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
+					EndIf
+					aSerial := {}
+					aQtdBip  := {}
+					aQtdEtiq := {}
+					nQtdBip := 0
+					nQtdKit := 0
+					nQtdEmb := 0
+					oQtdBip:Refresh()
+					oQEmbAtu:Refresh()
+					oQtdBip:Refresh()
+					oUltima:Enable()
+					Return ( .T. )
+				EndIf
+
+				nQtdBip  := Len(aSerial)
+				nQEmbAtu := Round(nQtdEmb,0)
+				oQtdBip:Refresh()
+				oQEmbAtu:Refresh()
+
 			EndIf
 
-			nQtdBip  := Len(aSerial)
-			nQEmbAtu := Round(nQtdEmb,0)
-			oQtdBip:Refresh()
-			oQEmbAtu:Refresh()
-
 		EndIf
-
-	EndIf
 
 	EndIf
 
@@ -3150,7 +3150,7 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 		If cLayout == "01"
 			U_DOMETQ04(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 01 - HUAWEI UNIFICADA
 		ElseIf cLayout == "02"
-			// U_DOMETQ03(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 02
+			U_DOMETQ03(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 02
 		ElseIf cLayout == "03"
 			U_DOMETQ05(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 03
 		ElseIf cLayout == "04"
