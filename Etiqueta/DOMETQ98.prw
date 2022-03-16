@@ -41,18 +41,18 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 		If SB1->( dbSeek( xFilial() + SC2->C2_PRODUTO ) )
 			For nQ := 1 to nQtdEtq
 				//U_MsgColetor("Iprimindo etiquetinha na porta " + _cPorta + " modelo " + cModelo)
-				//If !U_Validacao()
+				If !U_Validacao()
 					MSCBPrinter(cModelo,_cPorta,,,.F.)
 					MSCBChkStatus(.F.)
 					MSCBBegin(1,6)
-				/*else
+				else
 					If !CB5SetImp(cLocImp,.F.)
 						MsgAlert("Local de impressao invalido!","Aviso")
 						Return .F.
 					else
 						MSCBBegin(1,6)	
 					EndIf
-				EndIf*/
+				EndIf
 				//Controla o numero da etiqueta de embalagens
 				If Empty(cNumPeca)
 					_cProxPeca := U_IXD1PECA()
