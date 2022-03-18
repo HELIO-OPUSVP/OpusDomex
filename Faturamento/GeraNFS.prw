@@ -256,7 +256,7 @@ User Function GeraNFS(cNumPV, cSerie, dData, lHuawei)
 							cPara    := 'denis.vieira@rdt.com.br;fulgencio.muniz@rosenbergerdomex.com.br'
 							cCC      := 'helio@opusvp.com.br'
 							cArquivo := Nil
-							U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
+							//U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
 						EndIf
 					EndIf
 					SD2->( dbSkip() )
