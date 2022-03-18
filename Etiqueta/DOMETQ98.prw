@@ -47,18 +47,18 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 		If SB1->( dbSeek( xFilial() + SC2->C2_PRODUTO ) )
 			For nQ := 1 to nQtdEtq
 				//U_MsgColetor("Iprimindo etiquetinha na porta " + _cPorta + " modelo " + cModelo)
-				If !U_Validacao()
+				/*/If !U_Validacao()
 					MSCBPrinter(cModelo,_cPorta,,,.F.)
 					MSCBChkStatus(.F.)
 					MSCBBegin(1,6)
-				else
+				else*/
 					If !CB5SetImp(cLocImp,.F.)
 						MsgAlert("Local de impressao invalido!","Aviso")
 						Return .F.
-					else
-						MSCBBegin(1,6)	
+					// else
+					// 	MSCBBegin(1,6)	
 					EndIf
-				EndIf
+				// EndIf
 				//Controla o numero da etiqueta de embalagens
 				If Empty(cNumPeca)
 					_cProxPeca := U_IXD1PECA()
@@ -132,11 +132,12 @@ User Function DOMETQ98(cNumOp   ,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 
 				//Alert('cSetor '+ cSetor)
 				//If !U_Validacao()
-					If !Empty(cSetor)
-						MSCBSAY(30,03,cSetor,"N","1","1,2")
-					Else
-						MSCBSAY(30,03,cSetor,"N","1","1,2")
-					EndIf
+					// If !Empty(cSetor)
+						// MSCBSAY(30,03,cSetor,"N","1","1,2")
+					// Else
+					MSCBBegin(1,6)
+					MSCBSAY(30,03,cSetor,"N","1","1,2")
+					// EndIf
 
 					MSCBSayBar(30,10,AllTrim(XD1->XD1_XXPECA),"N","MB04",10,.F.,.T.,.F.,,3,Nil,Nil,Nil,Nil,Nil)
 					MSCBEnd()
