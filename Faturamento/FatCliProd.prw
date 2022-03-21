@@ -69,7 +69,7 @@ Local cFiltro   := ""
    MakeSqlExpr("Z_FAT2")
    oSection:BeginQuery()
 
-If U_VALIDACAO("OSMAR")
+If U_VALIDACAO("OSMAR",.T.) //15/03/2022
    BeginSql alias "QRYSA1"
    SELECT 
    SD2.D2_PEDIDO, 
