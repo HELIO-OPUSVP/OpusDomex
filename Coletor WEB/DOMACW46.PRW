@@ -82,14 +82,14 @@ User Function DOMACW46()
 //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 //³Tela de coleta														³
 //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-	DEFINE MSDIALOG oDlg01 TITLE OemToAnsi("Paletização") FROM 0,0 TO 450,302 PIXEL of oMainWnd PIXEL //300,400 PIXEL of oMainWnd PIXEL
+	DEFINE MSDIALOG oDlg01 TITLE OemToAnsi("Paletização PRODUÇÃO") FROM 0,0 TO 450,302 PIXEL of oMainWnd PIXEL //300,400 PIXEL of oMainWnd PIXEL
 
 	@ 003,001 To 065*nWebPx,115*(1.3) LABEL "Informações do Pedido" Pixel Of oMainWnd PIXEL
 	nLin := 013
 
 	@ nLin, nCol1	SAY oTexto1 Var 'Etiq:'    SIZE 100*nWebPx,10*nWebPx PIXEL
 	oTexto1:oFont := TFont():New('Arial',,16*nWebPx,,.T.,,,,.T.,.F.)
-	@ nLin-(2*nWebPx), nCol1+(30) MSGET oEtiqueta VAR cEtiqueta  SIZE 75*nWebPx,08*nWebPx WHEN .T. Valid ValidaEtiq() PIXEL
+	@ nLin-(2*nWebPx), nCol1+(30) MSGET oEtiqueta VAR cEtiqueta   SIZE 75*nWebPx,08*nWebPx WHEN .T. Valid ValidaEtiq() PIXEL
 	oEtiqueta:oFont := TFont():New('Courier New',,22*nWebPx,,.T.,,,,.T.,.F.)
 	nLin += 12*nWebPx
 
@@ -101,7 +101,7 @@ User Function DOMACW46()
 
 	@ nLin, nCol1	SAY oTexto11 Var 'Volumes:'    SIZE 100*nWebPx,10*nWebPx PIXEL
 	oTexto11:oFont := TFont():New('Arial',,16*nWebPx,,.T.,,,,.T.,.F.)
-	@ nLin-(2*nWebPx), nCol1+(45) MSGET oPlTotVol VAR nPlTotVol  SIZE 60*nWebPx,08*nWebPx WHEN .F. PIXEL
+	@ nLin-(2*nWebPx), nCol1+(45) MSGET oPlTotVol VAR nPlTotVol Picture "@E 999,999" SIZE 60*nWebPx,08*nWebPx WHEN .F. PIXEL
 	oPlTotVol:oFont := TFont():New('Courier New',,22*nWebPx,,.T.,,,,.T.,.F.)
 	nLin +=13*nWebPx
 
@@ -431,7 +431,6 @@ Static Function ImpNivelP()
 		__mv_par06 := "98"
 		cVolumeAtu := STRZERO(nPalTot,2)
 		cNumPedido := SC2->C2_PEDIDO
-		//lRetEtq := U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aQtdBip,.T.,0,lUsaColet, "",cNumPeca)
 		cRotina   := "U_DOMETQ98(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aPalBip,.T.,nPesoBruto,lColetor,cEtiqueta,'','PALETIZACAO','',cVolumeAtu,cNumPedido)"		// Impressão de Etiqueta Layout 98 - Palete
 
 	Else

@@ -144,7 +144,7 @@ If SB1->(dbSeek(xFilial("SB1")+AllTrim(cProduto)))
 			
 			// tratar embalagem para classe DIO ADAPTADOR OTICO por Michel Sander em 21.12.2016
 			If SUBSTR(SB1->B1_SUBCLAS,1,3) == "AOP" .Or. SUBSTR(SB1->B1_SUBCLAS,1,4) == 'CXDI' .Or. SUBSTR(SB1->B1_SUBCLAS,1,3)=="DIV" .Or. SUBSTR(SB1->B1_SUBCLAS,1,3) == 'MTP' ;
-				.Or. SUBSTR(SB1->B1_SUBCLAS,1,3) == 'ASS'
+				.Or. SUBSTR(SB1->B1_SUBCLAS,1,3) == 'ASS' .Or. SUBSTR(SB1->B1_SUBCLAS,1,3) == 'ACX'
 				
 				lEntraG1 := .F.
 				SG1->( dbSetOrder(1) )

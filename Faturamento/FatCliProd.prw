@@ -69,6 +69,46 @@ Local cFiltro   := ""
    MakeSqlExpr("Z_FAT2")
    oSection:BeginQuery()
 
+If U_VALIDACAO("OSMAR",.T.) //15/03/2022
+   BeginSql alias "QRYSA1"
+   SELECT 
+   SD2.D2_PEDIDO, 
+   SD2.D2_DOC, 
+   SD2.D2_EMISSAO, 
+   SD2.D2_CLIENTE, 
+   SD2.D2_COD,
+   SD2.D2_QUANT, 
+   (SD2.D2_PRCVEN *((SD2.D2_IPI/100)+1)) AS D2_PRCVEN, 
+   (SD2.D2_TOTAL*((SD2.D2_IPI/100)+1)) AS D2_TOTAL,
+   SC5.C5_EMISSAO, 
+   SC5.C5_ESP1,
+   SC6.C6_SEUCOD, 
+   SC6.C6_SEUDES, 
+   SC6.C6_PRCVEN, 
+   SC6.C6_DTFATUR,
+   SC6.C6_ENTREG,
+   SC6.C6_ENTRE3,
+   SA1.A1_NOME
+   FROM 
+   %table:SD2% AS SD2, 
+   %table:SC5% AS SC5,  
+   %table:SC6% AS SC6,
+   %table:SA1% AS SA1    
+   WHERE SD2.D2_PEDIDO = SC5.C5_NUM 
+   AND SC5.%notDel%  
+   AND SD2.D2_PEDIDO = SC6.C6_NUM 
+   AND SD2.D2_COD = SC6.C6_PRODUTO
+   AND SD2.D2_ITEMPV =SC6.C6_ITEM
+   AND SC6.%notDel%
+   AND SD2.D2_CLIENTE = SA1.A1_COD   
+   AND SD2.D2_LOJA    = SA1.A1_LOJA
+   AND SD2.D2_EMISSAO >= %Exp:mv_par01%   
+   AND SD2.D2_EMISSAO <= %Exp:mv_par02%
+   AND SA1.A1_NOME >= %Exp:mv_par03%
+   AND SA1.A1_NOME <= %Exp:mv_par04%
+   AND SD2.%notDel%
+   EndSql
+Else
    BeginSql alias "QRYSA1"
    SELECT 
    SD2.D2_PEDIDO, 
@@ -106,9 +146,8 @@ Local cFiltro   := ""
    AND SA1.A1_NOME >= %Exp:mv_par03%
    AND SA1.A1_NOME <= %Exp:mv_par04%
    AND SD2.%notDel%
-   
    EndSql
-   
+EndIf
    oSection:EndQuery()
 
    //oSection2:SetParentQuery()

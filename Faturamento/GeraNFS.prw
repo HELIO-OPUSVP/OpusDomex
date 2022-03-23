@@ -153,7 +153,7 @@ User Function GeraNFS(cNumPV, cSerie, dData, lHuawei)
 	/*/
 
 
-		cQueryTMPNFS := "SELECT MAX(F2_DOC) AS MAX_DOC FROM " + RetSqlName("SF2") + " (NOLOCK) WHERE F2_FILIAL = '01' AND F2_SERIE = '"+Alltrim(cSerie)+"' AND F2_FILIAL = '" + xFilial("SF2") + "' AND DATALENGTH(LTRIM(RTRIM(F2_DOC))) = 9 AND D_E_L_E_T_ = ' '"
+		cQueryTMPNFS := "SELECT MAX(F2_DOC) AS MAX_DOC FROM " + RetSqlName("SF2") + " (NOLOCK) WHERE F2_FILIAL = '"+xFilial("SF2")+"' AND F2_SERIE = '"+Alltrim(cSerie)+"' AND F2_FILIAL = '" + xFilial("SF2") + "' AND DATALENGTH(LTRIM(RTRIM(F2_DOC))) = 9 AND D_E_L_E_T_ = ' '"
 
 		If Select("TEMP") <> 0
 			TEMP->( dbCloseArea() )
@@ -203,8 +203,8 @@ User Function GeraNFS(cNumPV, cSerie, dData, lHuawei)
 		//Y	cNota := MaPvlNfs(aPvlNfs,cSerie, .F.      , .F.     , .F.      , .T.     , .F.     , 0      , 0          , .T.   , .F.)
 		//	cNota := MaPvlNfs(aPvlNfs,cSerie, .F., .F., .F., .T., .F., 0, 0, .T., .F.)
 		//validacao novo calculo imposto
-		If U_VALIDACAO('JONAS') 
-			U_FVALICMPI(SC5->C5_CLIENTE, SC5->C5_LOJACLI, SC5->C5_NUM, .T.) //CLIENTE + LOJA + PEDIDO + PROCESSAMENTO ANTES DA NF
+		If U_VALIDACAO('JONAS')  
+			fVALICMPI(SC5->C5_CLIENTE, SC5->C5_LOJACLI, SC5->C5_NUM, .T.) //CLIENTE + LOJA + PEDIDO + PROCESSAMENTO ANTES DA NF
 		EndIf
 
 		SetFunName("MATA461") // mauresi 09/08/2019
@@ -212,7 +212,7 @@ User Function GeraNFS(cNumPV, cSerie, dData, lHuawei)
 
 				//validacao novo calculo imposto
 		If U_VALIDACAO('JONAS') 
-			U_FVALICMPI(SC5->C5_CLIENTE, SC5->C5_LOJACLI, SC5->C5_NUM, .F.) //CLIENTE + LOJA + PEDIDO + PROCESSAMENTO ANTES DA NF
+			fVALICMPI(SC5->C5_CLIENTE, SC5->C5_LOJACLI, SC5->C5_NUM, .F.) //CLIENTE + LOJA + PEDIDO + PROCESSAMENTO ANTES DA NF
 		EndIf
 
 		If U_VALIDACAO("HELIO")   // Não subir para produção
@@ -297,7 +297,7 @@ Return _Retorno
 Static Function RetC9SEQUE(cC9PEDIDO,cC9ITEM,nInc)
 	Local _Retorno
 
-	Local cQueryTMPNFS := "SELECT MAX(C9_SEQUEN) AS MAX_C9_SEQUEN FROM " + RetSqlName("SC9") + " (NOLOCK) WHERE C9_FILIAL = '01' AND  C9_PEDIDO = '"+cC9PEDIDO+"' AND C9_ITEM = '"+cC9ITEM+"' AND D_E_L_E_T_ = '' "
+	Local cQueryTMPNFS := "SELECT MAX(C9_SEQUEN) AS MAX_C9_SEQUEN FROM " + RetSqlName("SC9") + " (NOLOCK) WHERE C9_FILIAL = '"+XFilial("SC9")+"' AND  C9_PEDIDO = '"+cC9PEDIDO+"' AND C9_ITEM = '"+cC9ITEM+"' AND D_E_L_E_T_ = '' "
 
 	If Select("QUERYSC9") <> 0
 		QUERYSC9->( dbCloseArea() )
@@ -317,7 +317,7 @@ Static Function fVldClasFis(__cNota, __cSerie, __cCliente, __cLoja)
 //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	cQueryTMPNFS := "SELECT D2_FILIAL, D2_DOC, D2_SERIE, D2_CLIENTE, D2_LOJA, D2_CLASFIS, C6_CLASFIS, SD2010.R_E_C_N_O_ AS RECNOSD2 "
 	cQueryTMPNFS += "FROM SD2010 (NOLOCK), SC6010 (NOLOCK)                                           "
-	cQueryTMPNFS += "WHERE D2_FILIAL = '01' AND C6_FILIAL = '01' AND D2_DOC = '"+__cNota+"' AND D2_SERIE = '"+__cSerie+"'                      "
+	cQueryTMPNFS += "WHERE D2_FILIAL = '"+xFilial("SD2")+"' AND C6_FILIAL = '"+xFilial("SC6")+"' AND D2_DOC = '"+__cNota+"' AND D2_SERIE = '"+__cSerie+"'                      "
 	cQueryTMPNFS += "AND D2_CLIENTE = '"+__cCliente+"' AND D2_LOJA = '"+__cLoja+"'                   "
 	cQueryTMPNFS += "AND D2_PEDIDO = C6_NUM AND D2_ITEMPV = C6_ITEM                                  "
 	cQueryTMPNFS += "AND SUBSTRING(D2_CLASFIS,1,1) <> SUBSTRING(C6_CLASFIS,1,1)                      "
@@ -483,4 +483,32 @@ Static Function fLoteEnd(cNF, cSerie, cCliente, cLoja)
 		End
 	EndIf
 
+Return
+
+
+Static Function fValicmpi(cCliente, cLOJA, cPedido,lAntes)
+aAreaSC5 := GetArea()
+
+
+SA1->(dbsetorder(1))
+SC5->(dbsetorder(1))
+If SC5->( dbSeek( xFilial("SC5") + cPedido))
+	If SA1->( FieldPos("A1_XICMPIS") )  > 0
+		If SA1->( dbSeek( xFilial("SA1") + cCliente + cLOJA))
+			If !EMPTY(SA1->A1_XICMPIS)
+				If SC5->C5_EMISSAO >= SA1->A1_XICMPIS
+					If lAntes
+						PutMv("MV_DEDBPIS",	'I')
+						PutMv("MV_DEDBCOF", 'I')
+					Else
+						PutMv("MV_DEDBPIS",	'N')
+						PutMv("MV_DEDBCOF", 'N')
+					EndIf
+				Endif
+			EndIf
+		EndIf
+	EndIf
+EndIf
+
+RestArea(aAreaSC5)
 Return
