@@ -82,7 +82,7 @@ User Function DOMACW46()
 //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 //³Tela de coleta														³
 //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-	DEFINE MSDIALOG oDlg01 TITLE OemToAnsi("Paletização") FROM 0,0 TO 450,302 PIXEL of oMainWnd PIXEL //300,400 PIXEL of oMainWnd PIXEL
+	DEFINE MSDIALOG oDlg01 TITLE OemToAnsi("Paletização PRODUÇÃO") FROM 0,0 TO 450,302 PIXEL of oMainWnd PIXEL //300,400 PIXEL of oMainWnd PIXEL
 
 	@ 003,001 To 065*nWebPx,115*(1.3) LABEL "Informações do Pedido" Pixel Of oMainWnd PIXEL
 	nLin := 013
@@ -431,7 +431,6 @@ Static Function ImpNivelP()
 		__mv_par06 := "98"
 		cVolumeAtu := STRZERO(nPalTot,2)
 		cNumPedido := SC2->C2_PEDIDO
-		//lRetEtq := U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aQtdBip,.T.,0,lUsaColet, "",cNumPeca)
 		cRotina   := "U_DOMETQ98(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aPalBip,.T.,nPesoBruto,lColetor,cEtiqueta,'','PALETIZACAO','',cVolumeAtu,cNumPedido)"		// Impressão de Etiqueta Layout 98 - Palete
 
 	Else

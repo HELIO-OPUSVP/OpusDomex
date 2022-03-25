@@ -3879,6 +3879,7 @@ Static Function fYYClick()
 		If nXXPrcUni <> nYYPrcUni
 			if _lMSG02
 				MsgInfo("Preços unitários divergentes:" + Chr(13) + "NF: " + Transform(nXXPrcUni,fX3Ret("D1_VUNIT","X3_PICTURE")) + Chr(13) + "PC: " + Transform(nYYPrcUni,fX3Ret("C7_PRECO","X3_PICTURE")  ) )
+				_Retorno:= .F.  // MAURESI - 16/03/2022
 			Endif
 		EndIf
 	EndIf
