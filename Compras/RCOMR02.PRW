@@ -135,6 +135,10 @@ Static Function ReportPrin(oReport)
 		AND D1_DTDIGIT >= %Exp:mv_par01%
 		AND D1_DTDIGIT <= %Exp:mv_par02%
 		AND D1_TIPO NOT IN ('D','B')
+		AND D1_FILIAL  = %xFilial:SD1%
+		AND B1_FILIAL  = %xFilial:SB1%
+		AND A2_FILIAL  = %xFilial:SA2%
+		AND F4_FILIAL  = %xFilial:SF4%
 		ORDER BY %Exp:_cOrder%
 	EndSql
 

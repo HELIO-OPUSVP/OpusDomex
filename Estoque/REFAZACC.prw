@@ -31,7 +31,7 @@ ProcRegua(SB2->( RecCount() ))
 SB2->( dbGotop() )
 While !SB2->( EOF() )
 	// Corrigindo o B2_QACLASS
-	cQuery := "SELECT SUM(DA_SALDO) AS DA_SALDO FROM "+RetSqlName("SDA")+" WHERE DA_FILIAL = '"+SB2->B2_FILIAL+"' AND DA_PRODUTO = '"+SB2->B2_COD+"' AND DA_LOCAL = '"+SB2->B2_LOCAL+"' AND D_E_L_E_T_ = '' "
+	cQuery := "SELECT SUM(DA_SALDO) AS DA_SALDO FROM "+RetSqlName("SDA")+" (NOLOCK) WHERE DA_FILIAL = '"+SB2->B2_FILIAL+"' AND DA_PRODUTO = '"+SB2->B2_COD+"' AND DA_LOCAL = '"+SB2->B2_LOCAL+"' AND D_E_L_E_T_ = '' "
 	
 	If Select("QUERYSDA") <> 0
 		QUERYSDA->( dbCloseArea() )
@@ -46,7 +46,7 @@ While !SB2->( EOF() )
 	EndIf
 	
 	// Corrigindo o B2_QEMP
-	cQuery := "SELECT SUM(D4_QUANT) AS D4_QUANT FROM "+RetSqlName("SD4")+" WHERE D4_FILIAL = '"+SB2->B2_FILIAL+"' AND D4_COD = '"+SB2->B2_COD+"' AND D4_LOCAL = '"+SB2->B2_LOCAL+"' AND D_E_L_E_T_ = '' "
+	cQuery := "SELECT SUM(D4_QUANT) AS D4_QUANT FROM "+RetSqlName("SD4")+" (NOLOCK) WHERE D4_FILIAL = '"+SB2->B2_FILIAL+"' AND D4_COD = '"+SB2->B2_COD+"' AND D4_LOCAL = '"+SB2->B2_LOCAL+"' AND D_E_L_E_T_ = '' "
 	
 	If Select("QUERYSD4") <> 0
 		QUERYSD4->( dbCloseArea() )

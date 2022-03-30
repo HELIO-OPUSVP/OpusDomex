@@ -67,12 +67,12 @@ User Function ProdDomex(aVetOP)
 		//Aadd(aVetOP,{"D3_QUANT  " , 1                      , NIL })
 		//Aadd(aVetOP,{"D3_XXPECA"  , ""                     , NIL })
 
-		Aadd(aVetOP,{"D3_OP     " , "99907 03001"          , NIL })
-		Aadd(aVetOP,{"D3_TM     " , "010"	               , NIL })
-		Aadd(aVetOP,{"D3_LOCAL  " , "13"           		   , NIL })
-		Aadd(aVetOP,{"D3_COD    " , "PJ1E600Z5101K56"      , NIL })
-		Aadd(aVetOP,{"D3_QUANT  " , 1                      , NIL })
-		Aadd(aVetOP,{"D3_XXPECA"  , "000009104635 "        , NIL })
+		//Aadd(aVetOP,{"D3_OP     " , "99907 03001"          , NIL })
+		//Aadd(aVetOP,{"D3_TM     " , "010"	               , NIL })
+		//Aadd(aVetOP,{"D3_LOCAL  " , "13"           		   , NIL })
+		//Aadd(aVetOP,{"D3_COD    " , "PJ1E600Z5101K56"      , NIL })
+		//Aadd(aVetOP,{"D3_QUANT  " , 1                      , NIL })
+		//Aadd(aVetOP,{"D3_XXPECA"  , "000009104635 "        , NIL })
 
 	EndIf
 
@@ -86,7 +86,7 @@ User Function ProdDomex(aVetOP)
 
 	//U_RPCSETENV()
 
-	If U_VALIDACAO("HELIO")
+	If U_VALIDACAO("HELIO",.T.,'','23/02/22')
 		StartJob("U_FC2_QUJE",getenvserver(), .F. , cOP)
 	EndIf
 
@@ -131,6 +131,8 @@ User Function ProdDomex(aVetOP)
 									If SB1->B1_XKITPIG <> 'S' .or. !GetMv("MV_XVERKIT")
 										If lTotal
 											AADD(aOPs,{Subs(SD4->D4_OPORIG,1,11),SD4->D4_QUANT,SD4->D4_LOCAL})
+											X := 0
+											Exit
 										Else
 											If SC2->C2_QUANT == nQtdOPPai
 												nQtdPI := nQuant
@@ -144,17 +146,19 @@ User Function ProdDomex(aVetOP)
 
 											If nQtdPI > 0
 												AADD(aOPs,{Subs(SD4->D4_OPORIG,1,11),nQtdPI ,SD4->D4_LOCAL })
+												X := 0
+												Exit
 											EndIf
 										EndIf
 										//---------------------------------------------------
-										IF Subs(SD4->D4_OP,1,08)=='10696605' //' 10288401001'//'10118720001'//'10151501001' //   '10224404001'
+										//IF Subs(SD4->D4_OP,1,08)=='10696605' //' 10288401001'//'10118720001'//'10151501001' //   '10224404001'
 											//
-										ELSE
-											x := 0 //mls , LINHA RETIRADA EM 02122020 PARA APONATAR OP E DEPOIS VOLTAR
-										ENDIF //MLS
+										//ELSE
+										//	x := 0 //mls , LINHA RETIRADA EM 02122020 PARA APONATAR OP E DEPOIS VOLTAR
+										//ENDIF //MLS
 										//---------------------------------------------------
 										//x := 0 //mls , LINHA RETIRADA EM 02122020 PARA APONATAR OP E DEPOIS VOLTAR
-										Exit
+										//Exit
 									EndIf
 								EndIf
 							EndIf

@@ -88,6 +88,7 @@ Static Function Aprovar(cNumPV)
 		While !SC6->( EOF() ) .and. SC6->C6_NUM == cNumPV
 			RecLock("SC6",.f.)
 			SC6->C6_XANEXO := 'A'
+			SC6->C6_BLQ    := "N"
 			SC6->( MsUnLock() )
 			//Gravar para controle de desbloqueio de PV
 			If ZZF->( dbSeek(xFilial()+"BLQ"+SC6->C6_NUM+SC6->C6_ITEM))

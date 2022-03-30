@@ -176,22 +176,18 @@ Static Function ProcRun()
 			//읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 			cAliasSD4 :=  "SD4G"//GetNextAlias()
 
-			//BeginSQL Alias cAliasSD4
-			// SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND SUBSTRING(D4_OP,1,8) = %Exp:cOpOrigem% AND SD4.%NotDel%
-			//EndSQL
+			If U_VALIDACAO("HELIO",.T.,'03/02/22','03/02/22')
+				U_ATUD4XOP()
+				BeginSQL Alias cAliasSD4
+         			 SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND D4_XOP = %Exp:cOpOrigem% AND SD4.%NotDel%
+				EndSQL
+			Else
+				BeginSQL Alias cAliasSD4
+         			 SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND SUBSTRING(D4_OP,1,8) = %Exp:cOpOrigem% AND SD4.%NotDel%
+				EndSQL
+			EndIf
+			
 
-			//cOpOrig2 :=cOpOrigem+'%'
-
-			//If U_VALIDACAO()
-			//	BeginSQL Alias cAliasSD4
-			// SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND D4_OP LIKE %Exp:cOpOrig2% AND SD4.%NotDel%
-			//	EndSQL
-			//else
-			BeginSQL Alias cAliasSD4
-			 SELECT COUNT(*) NSOMA FROM %table:SD4% SD4 (NOLOCK) WHERE SD4.D4_FILIAL = %xFilial:SD4% AND SUBSTRING(D4_OP,1,8) = %Exp:cOpOrigem% AND SD4.%NotDel%
-			EndSQL
-			//endif
- 
 			nTotRegProc := (cAliasSD4)->NSOMA
 			(cAliasSD4)->(dbCloseArea())
 
@@ -947,41 +943,31 @@ Static Function ProcRun()
 		// Fim das Valida寤es
 		If _Retorno
 
-			// cQuery := "SELECT SB8.R_E_C_N_O_ FROM " + RetSqlTab("SB8") + " (NOLOCK), " + RetSqlTab("SD4") + " (NOLOCK) "
-			// cQuery += "WHERE B8_EMPENHO <> 0 AND SUBSTRING(D4_OP,1,8) = '"+Subs(aOps[1,1],1,8)+"' AND D4_COD = B8_PRODUTO AND D4_LOCAL = B8_LOCAL "
-			// cQuery += "AND SB8.D_E_L_E_T_ = '' AND SD4.D_E_L_E_T_ = '' "
-			// cQuery += "GROUP BY SB8.R_E_C_N_O_ "
+			If Len(aOps) > 0
+				SD4->( dbSetOrder(2) )
+				SB8->( dbSetOrder(3) )   //B8_FILIAL+B8_PRODUTO+B8_LOCAL+B8_LOTECTL+B8_NUMLOTE+DTOS(B8_DTVALID)
 
-
-			// If Select("QUERYSB8") <> 0
-			// 	QUERYSB8->( dbCloseArea() )
-			// EndIf
-
-			// TCQUERY cQuery NEW ALIAS "QUERYSB8"
-
-			SD4->( dbSetOrder(2) )
-			SB8->( dbSetOrder(3) )   //B8_FILIAL+B8_PRODUTO+B8_LOCAL+B8_LOTECTL+B8_NUMLOTE+DTOS(B8_DTVALID)
-
-			If SD4->( dbSeek( xFilial() + Subs(aOps[1,1],1,8) ) )
-				cLote := U_RETLOTC6(SD4->D4_OP)
-				While !SD4->( EOF() ) .and. Subs(SD4->D4_OP,1,8) == Subs(aOps[1,1],1,8)
-					If SB8->( dbSeek( xFilial() + SD4->D4_COD + SD4->D4_LOCAL + cLote ) )
-						If SB8->B8_EMPENHO <> 0
-							//SB8->( dbGoTo(QUERYSB8->R_E_C_N_O_) )
-							//If SB8->( Recno() ) == QUERYSB8->R_E_C_N_O_
-							Reclock("SB8",.F.)
-							SB8->B8_EMPENHO := 0
-							SB8->( msUnlock() )
-							//EndIf
-							//QUERYSB8->( dbSkip() )
-						EndIf
+				If SD4->( dbSeek( xFilial() + Subs(aOps[1,1],1,8) ) )
+					cLote := U_RETLOTC6(SD4->D4_OP)
+					While !SD4->( EOF() ) .and. Subs(SD4->D4_OP,1,8) == Subs(aOps[1,1],1,8)
+						If SB8->( dbSeek( xFilial() + SD4->D4_COD + SD4->D4_LOCAL + cLote ) )
+							If SB8->B8_EMPENHO <> 0
+								//SB8->( dbGoTo(QUERYSB8->R_E_C_N_O_) )
+								//If SB8->( Recno() ) == QUERYSB8->R_E_C_N_O_
+								Reclock("SB8",.F.)
+								SB8->B8_EMPENHO := 0
+								SB8->( msUnlock() )
+								//EndIf
+								//QUERYSB8->( dbSkip() )
+							EndIf
+						End
+						SD4->( dbSkip() )
 					End
-					SD4->( dbSkip() )
-				End
-				msUnlockAll()
-				//   TCSQLEXEC("UPDATE SB8010 SET B8_EMPENHO = 0 WHERE B8_FILIAL = '01' AND B8_EMPENHO <> 0 AND D_E_L_E_T_ = '' ")
-			EndIf
+					msUnlockAll()
+					//   TCSQLEXEC("UPDATE SB8010 SET B8_EMPENHO = 0 WHERE B8_FILIAL = '01' AND B8_EMPENHO <> 0 AND D_E_L_E_T_ = '' ")
+				EndIf
 
+			Endif
 		EndIf
 	EndIf
 
@@ -1172,3 +1158,22 @@ Static Function fVerSilk(cCodSilk)
 	(cAliasSG1)->(dbCloseArea())
 
 Return ( lVerSilk )
+
+User Function ATUD4XOP()
+	Local cAliasSD4 := RetSqlName("SD4")
+	Local cQuery    := "SELECT TOP 1 R_E_C_N_O_ FROM " + cAliasSD4 + " WHERE D4_FILIAL = '"+xFilial("SD4")+"' AND D4_XOP = '' "
+	Local cUpdate   := "UPDATE " + cAliasSD4 + " SET D4_XOP = SUBSTRING(D4_OP,1,8) WHERE D4_XOP = '' "
+
+	If Select("TEMPSD4")<>0
+		TEMPSD4->( dbCloseArea() )
+	EndIf
+
+	TCQUERY cQuery NEW ALIAS "TEMPSD4"
+
+	If !TEMPSD4->( EOF() )
+		TCSQLEXEC(cUpdate)
+	ENDIF
+
+	TEMPSD4->( dbCloseArea() )
+
+Return

@@ -64,13 +64,13 @@ User Function MRSXML01(lGrvMsg,cStatus,cMensag,cChvNfe)
 	Private nAccPed     	:=	0
 	Private cNfRelat
 
-//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 //³TABELA DE CORES PROTHEUS                               ³
 //³                                                       ³
 //³http://erikasarti.net/html/tabela-cores/               ³
 //³Private c2Leg1      := "A"              //Amarelo claro³
 //³Private n2Leg1      := RGB(240,230,140) //Amarelo Claro³
-//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 
 	Private c2Leg1     := "1"               //PaleGreen	#98FB98	(152,251,152)
 	Private n2Leg1     := RGB(152,251,152)  //PaleGreen	#98FB98	(152,251,152)
@@ -241,6 +241,7 @@ Return(nRet)
 "Gestor XML  -  V4.26 / 16.08.21" - Ajuste de Rotinas no recebimento ( workflow, desabilitador gravação de ZZ3/ZZ6)   
 "Gestor XML  -  V5.00 / 23.08.21" - Habilitadas rotinas de Pre Nota no Recebimento em Producao   
 "Gestor XML  -  V5.01 / 22.09.21" - Entrada de DOMEX Filial sem Pedido de Compra   
+"Gestor XML  -  V5.02 / 16.02.22" - Tratamento para Filtras XML somente da Filial Logada   
 
 */
 
@@ -260,8 +261,9 @@ Static Function GerXmlNF()
 	//000971 - Lucas Ramalho      SGCECOM
 
 	Private _lTESOK   	:= .T.
+	Private _lDmxFilial := .F.   // MAURESI - 16/02/2022
 
-	Private cTitCad  		:= "Gestor XML  -  V5.01 / 22.09.21"
+	Private cTitCad  		:= "Gestor XML  -  V5.02 / 16.02.22"
 	Private cStrCad  		:= ""
 	Private cCadastro		:= ""
 	Private aRotina  		:= fMenu()
@@ -276,7 +278,7 @@ Static Function GerXmlNF()
 	Private cMRAlias04 	:= "" 	//TES INTELIGENTE
 	Private cMRSX5Oper 	:= "ZD"  // Tabela no SX5 com consulta padrao de Operacao de Entrada
 
-// Variavel Publica para Testes nos PE de entrada de Pre-Nota/Doc.Entrada se a rotina de origem é a de Importacao de XML
+	// Variavel Publica para Testes nos PE de entrada de Pre-Nota/Doc.Entrada se a rotina de origem é a de Importacao de XML
 	Public lImpXmlNF  	:= .T.
 
 	fVerifInic()			// Verificacoes Iniciais
@@ -286,9 +288,9 @@ Static Function GerXmlNF()
 	AjustaSX7()				// Desabilita Gatilho do Campo TIPO DE OPERACAO (Padrao) do Documento de Entrada //  Incluido em 09/09/2019
 
 
-//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-//³Exibe Filtro Inicial na Rotina³
-//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Exibe Filtro Inicial na Rotina³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	if _lMRFiltr
 		aRetPerg := fFiltroCad()
 	else
@@ -298,7 +300,7 @@ Static Function GerXmlNF()
 	Endif
 
 
-//Se pergunta confirmada, executa filtro, caso contrario, sai da rotina
+	//Se pergunta confirmada, executa filtro, caso contrario, sai da rotina
 	If aRetPerg[1]
 
 		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
@@ -364,13 +366,13 @@ Static Function fFiltroCad()
 	Local cPerg3Tam 	:= 120
 	Local cPerg3Obg 	:= .T.
 
-//Opções da Pergunta 01
+	//Opções da Pergunta 01
 	aAdd(aPerg1Arr,"T=Todos Tipos"     )
 	aAdd(aPerg1Arr,"1=NF-e"            )
 	aAdd(aPerg1Arr,"2=CT-e"            )
 	aAdd(aPerg1Arr,"3=XML Pedente"     )
 
-//Opções da Pergunta 02
+	//Opções da Pergunta 02
 	aAdd(aPerg2Arr,"T=Todos Documentos")
 	aAdd(aPerg2Arr,"N=Normal"          )
 	aAdd(aPerg2Arr,"D=Devolução"       )
@@ -382,7 +384,7 @@ Static Function fFiltroCad()
 	aAdd(aPerg2Arr,"S=Substituição"    )
 	aAdd(aPerg2Arr,"X=Indefinido"      )
 
-//Opções da Pergunta 03
+	//Opções da Pergunta 03
 	aAdd(aPerg3Arr,"T=Todos Status"                           )
 	aAdd(aPerg3Arr,"0=XML pendente de recebimento"            )
 	aAdd(aPerg3Arr,"1=XML recebido com sucesso"               )
@@ -554,11 +556,11 @@ Return({lRet,cRet})
 
 User Function GXNFil()
 
-//Faz a pergunta e monta filtro
+	//Faz a pergunta e monta filtro
 	Local aRetPerg := fFiltroCad()
 	Local oObjMBrw := GetObjBrow()
 
-//Se pergunta confirmada, executa filtro, caso contrario, sai da rotina
+	//Se pergunta confirmada, executa filtro, caso contrario, sai da rotina
 	If aRetPerg[1]
 		//Limpar filtro
 		SetMBTopFilter(cStrCad, "")
@@ -670,11 +672,11 @@ Static Function fMenu()
 	Local aSub2		:= {}
 	Local aSub3		:= {}
 
-// SubMenu Visualiza
+	// SubMenu Visualiza
 	aAdd(aSub1, { OemToAnsi("Danfe"				)	,"U_GXNVis"     	,  0 , 2})
 	aAdd(aSub1, { OemToAnsi("Doc.Entrada"		)	,"U_GXNVisNF"   	,  0 , 2})
 
-// SubMenu Ferramentas
+	// SubMenu Ferramentas
 	aAdd(aSub2, { OemToAnsi("Valida XML"		)	,"U_GXNFVL"       ,  0 , 2}) //4
 //aAdd(aSub2, { OemToAnsi("Valida Pendentes"	)	,"U_GXNVLD2"      ,  0 , 2}) //4
 //aAdd(aSub2, { OemToAnsi("Valida TODOS"		)	,"U_GXNVLD"       ,  0 , 2}) //4
@@ -686,37 +688,37 @@ Static Function fMenu()
 
 //Menu Principal
 
-if _lUsrRec
+	if _lUsrRec
 
-	aAdd(aRotina, { OemToAnsi("Filtra Browse"	),"U_GXNFil"         ,  0 , 2}) //3
-	aAdd(aRotina, { OemToAnsi("Gerar Documento"	),"U_GXNImp"         ,  0 , 2}) //4
+		aAdd(aRotina, { OemToAnsi("Filtra Browse"	),"U_GXNFil"         ,  0 , 2}) //3
+		aAdd(aRotina, { OemToAnsi("Gerar Documento"	),"U_GXNImp"         ,  0 , 2}) //4
 //	aAdd(aRotina, { OemToAnsi("Histórico"		),"U_GXNHis"         ,  0 , 2}) //4
 //	aAdd(aRotina, { OemToAnsi("Visualiza"		),aSub1 		 	 ,  0 , 2})
-	aAdd(aRotina, { OemToAnsi("Ferramentas"		),aSub2     	     ,  0 , 2}) //4
+		aAdd(aRotina, { OemToAnsi("Ferramentas"		),aSub2     	     ,  0 , 2}) //4
 //	aAdd(aRotina, { OemToAnsi("Baixar XML"		),"U_GXNBxa"         ,  0 , 2}) //3
 
 //	if _lTESInt
 //		aAdd(aRotina, { OemToAnsi("Tes Inteligente"	),"U_MRSXML06"  ,  0 , 2}) //4
 //	endif
 
-	aAdd(aRotina, { OemToAnsi("Legenda"			),"U_GXNLeg"         ,  0 , 2}) //3
+		aAdd(aRotina, { OemToAnsi("Legenda"			),"U_GXNLeg"         ,  0 , 2}) //3
 //	aAdd(aRotina, { OemToAnsi("Parâmetros"		),"U_GXNPar"         ,  0 , 3}) //3
 
-Else
-	aAdd(aRotina, { OemToAnsi("Filtra Browse"	),"U_GXNFil"         ,  0 , 2}) //3
-	aAdd(aRotina, { OemToAnsi("Gerar Documento"	),"U_GXNImp"         ,  0 , 2}) //4
-	aAdd(aRotina, { OemToAnsi("Histórico"		),"U_GXNHis"         ,  0 , 2}) //4
-	aAdd(aRotina, { OemToAnsi("Visualiza"		),aSub1 		 	 ,  0 , 2})
-	aAdd(aRotina, { OemToAnsi("Ferramentas"		),aSub2     	     ,  0 , 2}) //4
-	aAdd(aRotina, { OemToAnsi("Baixar XML"		),"U_GXNBxa"         ,  0 , 2}) //3
+	Else
+		aAdd(aRotina, { OemToAnsi("Filtra Browse"	),"U_GXNFil"         ,  0 , 2}) //3
+		aAdd(aRotina, { OemToAnsi("Gerar Documento"	),"U_GXNImp"         ,  0 , 2}) //4
+		aAdd(aRotina, { OemToAnsi("Histórico"		),"U_GXNHis"         ,  0 , 2}) //4
+		aAdd(aRotina, { OemToAnsi("Visualiza"		),aSub1 		 	 ,  0 , 2})
+		aAdd(aRotina, { OemToAnsi("Ferramentas"		),aSub2     	     ,  0 , 2}) //4
+		aAdd(aRotina, { OemToAnsi("Baixar XML"		),"U_GXNBxa"         ,  0 , 2}) //3
 
-	if _lTESInt
-		aAdd(aRotina, { OemToAnsi("Tes Inteligente"	),"U_MRSXML06"  ,  0 , 2}) //4
-	endif
+		if _lTESInt
+			aAdd(aRotina, { OemToAnsi("Tes Inteligente"	),"U_MRSXML06"  ,  0 , 2}) //4
+		endif
 
-	aAdd(aRotina, { OemToAnsi("Legenda"			),"U_GXNLeg"         ,  0 , 2}) //3
-	aAdd(aRotina, { OemToAnsi("Parâmetros"		),"U_GXNPar"         ,  0 , 3}) //3
-Endif
+		aAdd(aRotina, { OemToAnsi("Legenda"			),"U_GXNLeg"         ,  0 , 2}) //3
+		aAdd(aRotina, { OemToAnsi("Parâmetros"		),"U_GXNPar"         ,  0 , 3}) //3
+	Endif
 
 Return(aRotina)
 
@@ -867,7 +869,7 @@ USer Function GXNPar()
 /*Rodapé    */ fParamRod(aPosObj[2],oDialg)
 
 	Activate MsDialog oDialg Centered
-
+y:=0
 //Se confirmado
 	If lParamOK
 		SX6->(DbSetOrder(1))
@@ -1864,22 +1866,22 @@ Static Function fGerVldNFe(nRecTab1,oXmlTab1)
 		//Reseta as variaveis
 		aCabec := {}
 		aadd(aCabec,{"F1_TIPO"    ,(cTab1)->&(cAls1+"_TIPDOC")							,Nil,Nil})
-		aadd(aCabec,{"F1_FORMUL"  ,"N"  															,Nil,Nil})
-		aadd(aCabec,{"F1_DOC"     ,(cTab1)->&(cAls1+"_DOC"   )  							,Nil,Nil})
+		aadd(aCabec,{"F1_FORMUL"  ,"N"  												,Nil,Nil})
+		aadd(aCabec,{"F1_DOC"     ,(cTab1)->&(cAls1+"_DOC"   )  						,Nil,Nil})
 		aadd(aCabec,{"F1_SERIE"   ,(cTab1)->&(cAls1+"_SERIE" )      					,Nil,Nil})
 
 		cCndCliFor := IIf(Empty(cCndCliFor),"001",cCndCliFor)
 		if !empty(_cNumPC)
 			cCndCliFor :=	Posicione('SC7',1,xFilial('SC7')+_cNumPC,"C7_COND")
 		endif
-		aadd(aCabec,{"F1_COND"    ,cCndCliFor													,Nil,Nil})
+		aadd(aCabec,{"F1_COND"    ,cCndCliFor											,Nil,Nil})
 		aadd(aCabec,{"F1_EMISSAO" ,(cTab1)->&(cAls1+"_DTEMIS")       					,Nil,Nil})
 		aadd(aCabec,{"F1_FORNECE" ,cCodCliFor                           				,Nil,Nil})
-		aadd(aCabec,{"F1_LOJA"    ,cLojCliFor    												,Nil,Nil})
+		aadd(aCabec,{"F1_LOJA"    ,cLojCliFor    										,Nil,Nil})
 		aadd(aCabec,{"F1_ESPECIE" ,"SPED"                     							,Nil,Nil})
 		aadd(aCabec,{"F1_CHVNFE"  ,(cTab1)->&(cAls1+"_CHVNFE")     						,Nil,Nil})
 		If SF1->(FieldPos("F1_XGESTOR"))>0
-			aadd(aCabec,{"F1_XGESTOR" ,"S"                    								,Nil,Nil})
+			aadd(aCabec,{"F1_XGESTOR" ,"S"                    							,Nil,Nil})
 		EndIf
 
 		if AllTrim(GetMV("MX_MRCLASS"))	== "C"
@@ -1963,8 +1965,8 @@ Static Function fGerVldNFe(nRecTab1,oXmlTab1)
 
 			if U_VALIDACAO()  // MAURESI - 23/09/2021  -  REPLICA PRODUTO XML PARA PRODUTO QDO FOR FILIAL DOMEX
 				if _lDmxFilial
-						SB1->(dbSetOrder(1))
-						SB1->(dbSeek(xFilial("SB1")+cXmlProduto))
+					SB1->(dbSetOrder(1))
+					SB1->(dbSeek(xFilial("SB1")+cXmlProduto))
 				endif
 			endif
 
@@ -2069,26 +2071,26 @@ Static Function fGerVldNFe(nRecTab1,oXmlTab1)
 
 
 					_cTesEnt	:= Alltrim( U_ReTesENT(_cProd,cCodCliFor,cLojCliFor,_cOper) )
-				
+
 					// MAURESI 11/08/2021 - Retorna Falso se não encontrar TES.
 					//if empty(Alltrim(_cTesEnt))
 					//	_lTESOK := .F.
 					//endif
 
 					If !Empty(Alltrim(_cTesEnt))
-					   aadd(aLinha,{"D1_TES"	,Alltrim(_cTesEnt)  ,Nil,Nil})
+						aadd(aLinha,{"D1_TES"	,Alltrim(_cTesEnt)  ,Nil,Nil})
 					ELSE
 						_lTESOK := .F. 											// MAURESI - 17/08/2021  -APAGAR
 						aadd(aLinha,{"D1_TES"	,Alltrim(_cTesEnt)  ,Nil,Nil})	// MAURESI - 17/08/2021  -APAGAR
-				
+
 					EndIf
-					
+
 					If !Empty(Alltrim(_cOper))
-					   aadd(aLinha,{"D1_XOPER"	,Alltrim(_cOper)	,Nil,Nil})
+						aadd(aLinha,{"D1_XOPER"	,Alltrim(_cOper)	,Nil,Nil})
 					else
 						_lTESOK := .F. 											// MAURESI - 17/08/2021  -APAGAR
 						aadd(aLinha,{"D1_XOPER"	,Alltrim(_cOper)	,Nil,Nil})	// MAURESI - 17/08/2021  -APAGAR
-				
+
 					EndIf
 				ELSE
 					aadd(aLinha,{"D1_TES"	  ,""      ,Nil,Nil})
@@ -2149,7 +2151,7 @@ Static Function fGerVldNFe(nRecTab1,oXmlTab1)
 	IF U_VALIDACAO()  // MAURESI 21/09/2021 - NAO PEDE PC PARA FILIAL ROSENBERGER
 
 		if cCodCliFor $ "004500"		// Rosenberger MG (Filial)
-			_lDmxFilial := .T.		
+			_lDmxFilial := .T.
 		endif
 
 	Endif
@@ -2169,7 +2171,7 @@ Static Function fGerVldNFe(nRecTab1,oXmlTab1)
 		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 		//³Se for SHA, solicita Modalidade de Pagamento³
 		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-		
+
 		lMsErroAuto := .F.
 		lMsHelpAuto := .T.
 
@@ -2194,7 +2196,7 @@ Static Function fGerVldNFe(nRecTab1,oXmlTab1)
 
 		// Execauto de NF. CTE é lá pra baixo
 		if AllTrim(GetMV("MX_MRCLASS"))	== "C"   .and. _lTESOK //.and. !empty(Alltrim(nD1TES))
-	
+
 			MSExecAuto({|x,y| mata103(x,y)},aCabec,aItens,3)      //DOCUMENTO DE ENTRADA
 			_cDocGerado :="DOC"
 		else
@@ -2235,12 +2237,13 @@ Static Function fGerVldNFe(nRecTab1,oXmlTab1)
 			cTexto   := cMsgErro+"<br>"+cMsgNota+"<br>"+cMsgFoCl+"<br>"+cMsErro2
 			cPara    := "marco.aurelio@opusvp.com.br;"
 			cCC      := ""	
+			cArquivo := ""			
 			U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
 
 
 
 		Else
-			
+
 			lProc := .T.
 			ConfirmSX8()
 
@@ -2277,12 +2280,12 @@ Static Function fGerVldNFe(nRecTab1,oXmlTab1)
 				//cArquivo := ""
 
 				U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
-		
-			Endif				
+
+			Endif
 
 			// AtualiZA FLAG de Liberação de Etiqueta  // MAURESI
 			Reclock("SF1",.F.)
-			  SF1->F1_XBLQXML := "S"
+			SF1->F1_XBLQXML := "S"
 			SF1->(msunlock())
 
 
@@ -2602,23 +2605,23 @@ Static Function fGerVldCte(nRecTab1,oXmlTab1)
 		//³DOMEX - Grava Chave do CTE no SD1 para  NF de Entrada³
 		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 
-			// Grava XML do CTE no SD1 para Tratar TES Inteligente na Devolucao (Especifico DOMEX)
-			if Type('oNFe:_CTEPROC:_CTE:_INFCTE:_INFCTENORM:_INFDOC:_INFNF:_NDOC') <> "U"
-				cSerCTE1   := &('oNFe:_CTEPROC:_CTE:_INFCTE:_INFCTENORM:_INFDOC:_INFNF:_SERIE:TEXT' )
-				cDocCTE1   := &('oNFe:_CTEPROC:_CTE:_INFCTE:_INFCTENORM:_INFDOC:_INFNF:_NDOC:TEXT'  )
-			endif
+		// Grava XML do CTE no SD1 para Tratar TES Inteligente na Devolucao (Especifico DOMEX)
+		if Type('oNFe:_CTEPROC:_CTE:_INFCTE:_INFCTENORM:_INFDOC:_INFNF:_NDOC') <> "U"
+			cSerCTE1   := &('oNFe:_CTEPROC:_CTE:_INFCTE:_INFCTENORM:_INFDOC:_INFNF:_SERIE:TEXT' )
+			cDocCTE1   := &('oNFe:_CTEPROC:_CTE:_INFCTE:_INFCTENORM:_INFDOC:_INFNF:_NDOC:TEXT'  )
+		endif
 
-			if Type('oNFe:_CTEPROC:_CTE:_INFCTE:_INFCTENORM:_INFDOC:_INFNFE:_CHAVE') <> "U"
-				cChvCTE   := &('oNFe:_CTEPROC:_CTE:_INFCTE:_INFCTENORM:_INFDOC:_INFNFE:_CHAVE:TEXT' )
-			endif
+		if Type('oNFe:_CTEPROC:_CTE:_INFCTE:_INFCTENORM:_INFDOC:_INFNFE:_CHAVE') <> "U"
+			cChvCTE   := &('oNFe:_CTEPROC:_CTE:_INFCTE:_INFCTENORM:_INFDOC:_INFNFE:_CHAVE:TEXT' )
+		endif
 
-			If SD1->(FieldPos("D1_XDOCCTE"))>0 .and. !empty(cDocCTE1)
-				aadd(aLinha,{"D1_XSERCT3",cSerCTE1,Nil,Nil})
-				aadd(aLinha,{"D1_XDOCCTE",cDocCTE1,Nil,Nil})
-			EndIf
-			If SD1->(FieldPos("D1_XCHVCTE"))>0
-				aadd(aLinha,{"D1_XCHVCTE",cChvCTE,Nil,Nil})
-			EndIf
+		If SD1->(FieldPos("D1_XDOCCTE"))>0 .and. !empty(cDocCTE1)
+			aadd(aLinha,{"D1_XSERCT3",cSerCTE1,Nil,Nil})
+			aadd(aLinha,{"D1_XDOCCTE",cDocCTE1,Nil,Nil})
+		EndIf
+		If SD1->(FieldPos("D1_XCHVCTE"))>0
+			aadd(aLinha,{"D1_XCHVCTE",cChvCTE,Nil,Nil})
+		EndIf
 
 
 
@@ -2748,9 +2751,9 @@ Static Function fGerVldCte(nRecTab1,oXmlTab1)
 			fGravaMsg(nRecTab1,98,"3",cMsgErro+" - "+cMsgNota)
 
 			MsgInfo(cMsgErro + Chr(13)+Chr(10) + cMsgNota + Chr(13)+Chr(10) + cMsgFoCl)
-	EndIf
+		EndIf
 
-Endif
+	Endif
 
 Return(lProc)
 
@@ -2915,18 +2918,18 @@ Static Function fLinkNFxPC(aCabec,aItens,aUnidMed,aPrdDesc,aPrdXML)
 				//EndIf
 
 
-					If oXXGetDad:aCols[x][nXXQTDPC] < oXXGetDad:aCols[x][nXXQTD1]  // Somente se o PC < NF
-						SB1->( dbSetOrder(1) )
-						SB1->( dbSeek( xFilial() + oXXGetDad:aCols[x][nXXPRODUTO] ) )
-						If SB1->B1_GRUPO == "FO  " .OR. SB1->B1_GRUPO == "FOFS"
-							nDif := ((oXXGetDad:aCols[x][nXXQTD1] - oXXGetDad:aCols[x][nXXQTDPC]) / oXXGetDad:aCols[x][nXXQTDPC]) * 100
-							If nDif > nTolerancia
-								_lQtdOk := .F.
-							EndIf
-						Else
+				If oXXGetDad:aCols[x][nXXQTDPC] < oXXGetDad:aCols[x][nXXQTD1]  // Somente se o PC < NF
+					SB1->( dbSetOrder(1) )
+					SB1->( dbSeek( xFilial() + oXXGetDad:aCols[x][nXXPRODUTO] ) )
+					If SB1->B1_GRUPO == "FO  " .OR. SB1->B1_GRUPO == "FOFS"
+						nDif := ((oXXGetDad:aCols[x][nXXQTD1] - oXXGetDad:aCols[x][nXXQTDPC]) / oXXGetDad:aCols[x][nXXQTDPC]) * 100
+						If nDif > nTolerancia
 							_lQtdOk := .F.
 						EndIf
+					Else
+						_lQtdOk := .F.
 					EndIf
+				EndIf
 
 			Else
 				//Alterando o nome do campo no  para não dar erro no execauto
@@ -2962,7 +2965,7 @@ Static Function fLinkNFxPC(aCabec,aItens,aUnidMed,aPrdDesc,aPrdXML)
 			aItens[x][nD1TOTAL][2]    := Round(oXXGetDad:aCols[x][nXXQTD1] * nVunNovo,2)
 //			aItens[x][nD1VALDESC][2]  := Round(oXXGetDad:aCols[x][nXXVALDESC],2)
 
-            // MAURESI - 19/08/2021
+			// MAURESI - 19/08/2021
 			// Adiciona Frete
 			aItens[x][nD1VALFRE][2]   := oXXGetDad:aCols[x][nXXVALFRE]
 
@@ -2987,8 +2990,8 @@ Static Function fLinkNFxPC(aCabec,aItens,aUnidMed,aPrdDesc,aPrdXML)
 				// Se TES estiver vazio, somente pode gerar PRE-NOTA
 				if Empty(alltrim(oXXGetDad:aCols[x][nXXTES]))
 					_lTESOk := .F.
-				//	aItens[x][nD1TES][2]   := Space(03) //oXXGetDad:aCols[x][nXXTES]		// MAURESI // 13/08/2021
-				//	aItens[x][nD1OPER][2]  := Space(02) //oXXGetDad:aCols[x][nXXOPER]
+					//	aItens[x][nD1TES][2]   := Space(03) //oXXGetDad:aCols[x][nXXTES]		// MAURESI // 13/08/2021
+					//	aItens[x][nD1OPER][2]  := Space(02) //oXXGetDad:aCols[x][nXXOPER]
 				else
 					// Alimenta TES - OPERACAO informados no Browse
 					aItens[x][nD1TES][2]   := oXXGetDad:aCols[x][nXXTES]		// MAURESI
@@ -2996,8 +2999,8 @@ Static Function fLinkNFxPC(aCabec,aItens,aUnidMed,aPrdDesc,aPrdXML)
 
 				if Empty(alltrim(oXXGetDad:aCols[x][nXXOPER]))
 					_lTESOk := .F.
-				//	aItens[x][nD1TES][2]   := Space(03) //oXXGetDad:aCols[x][nXXTES]		// MAURESI // 13/08/2021
-				//	aItens[x][nD1OPER][2]  := Space(02) //oXXGetDad:aCols[x][nXXOPER]
+					//	aItens[x][nD1TES][2]   := Space(03) //oXXGetDad:aCols[x][nXXTES]		// MAURESI // 13/08/2021
+					//	aItens[x][nD1OPER][2]  := Space(02) //oXXGetDad:aCols[x][nXXOPER]
 				else
 					// Alimenta TES - OPERACAO informados no Browse
 					aItens[x][nD1OPER][2]  := oXXGetDad:aCols[x][nXXOPER]
@@ -3020,7 +3023,7 @@ Static Function fLinkNFxPC(aCabec,aItens,aUnidMed,aPrdDesc,aPrdXML)
 			endif
 		Endif
 
-		
+
 		// Trata Quantidade da NF superior a quantidade do Pedido de compras. Existe tolerância para Fibras
 		If !_lQtdOk
 			MsgAlert("Existe Item da NF com quantidade superior ao Pedido de Compras")
@@ -3180,7 +3183,7 @@ Static Function fLinkCabc1(aSizeDlg,oDialg,aCabec)
 	@ aSizeDlg[1]+021,aSizeDlg[2]+030 MsGet cCbcForn          Size 160 ,008 Pixel When .F. Of oDialg
 
 	MRSACESS() // Analisa acessos    //U_MRSACESS()
-	
+
 Return
 
 /*
@@ -3295,8 +3298,21 @@ Static Function fLinkPesqu()
 	cQry += cQbra + "   FROM "+RetSqlName("SC7")+" SC7 "
 	cQry += cQbra + "  WHERE D_E_L_E_T_ = '' "
 
+	//cQry += cQbra + "  AND  C7_FILIAL = XFILIAL() = '' " 	// MAURESI  - 16/02/2022
+	
+	// FILTRA SOMENTE PEDIDOS DA FILIAL CORRENTE  // MAURESI - 16/02/2022
+	If cFilAnt == "01"   // MATRIZ - SP
+		cQry += cQbra + "  AND  C7_FILIAL = '01' "
+	ElseIf cFilAnt == '02'  //FILIAL - MG
+		cQry += cQbra + "  AND  C7_FILIAL = '02' "	
+	Endif
+
+	//	cQry += cQbra + "  AND  C7_FILIAL = '"+cFilant+ "' "
+
+
+
+	cQry += cQbra + "    AND (C7_QUANT-C7_QUJE) > 0 " //MAURESI - 23/12/2020 - DESCONSIDERA QTDA CLASSFICAR     //  
 //cQry += cQbra + "    AND (C7_QUANT-C7_QUJE-C7_QTDACLA) > 0 "
-	cQry += cQbra + "    AND (C7_QUANT-C7_QUJE) > 0 " //MAURESI - 23/12/2020 - DESCONSIDERA QTDA CLASSFICAR
 
 	cQry += cQbra + "    AND C7_CONAPRO      != 'B' " //Trata item bloqueado
 	cQry += cQbra + "    AND C7_RESIDUO       = ''  " //Trata item eliminado por residuo
@@ -3863,6 +3879,7 @@ Static Function fYYClick()
 		If nXXPrcUni <> nYYPrcUni
 			if _lMSG02
 				MsgInfo("Preços unitários divergentes:" + Chr(13) + "NF: " + Transform(nXXPrcUni,fX3Ret("D1_VUNIT","X3_PICTURE")) + Chr(13) + "PC: " + Transform(nYYPrcUni,fX3Ret("C7_PRECO","X3_PICTURE")  ) )
+				_Retorno:= .F.  // MAURESI - 16/03/2022
 			Endif
 		EndIf
 	EndIf
@@ -3875,7 +3892,7 @@ Static Function fYYClick()
 //³Aviso de DESCONTO DIVERGENTE do Pedido com NF                 ³
 //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	If _Retorno .and. lMarca
-		_nXVALDESC := oXXGetDad:aCols[N1][nXXVALDESC] 
+		_nXVALDESC := oXXGetDad:aCols[N1][nXXVALDESC]
 		_nYVALDESC := oYYGetDad:aCols[nLinhaYY][nYYVALDESC]
 
 		If _nXVALDESC <> _nYVALDESC
@@ -3891,7 +3908,7 @@ Static Function fYYClick()
 //³Aviso de FRETE DIVERGENTE do Pedido com NF                 ³
 //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	If _Retorno .and. lMarca
-		_nXVALFRE := oXXGetDad:aCols[N1][nXXVALFRE] 
+		_nXVALFRE := oXXGetDad:aCols[N1][nXXVALFRE]
 		_nYVALFRE := oYYGetDad:aCols[nLinhaYY][nYYVALFRE]
 
 		If _nXVALFRE <> _nYVALFRE
@@ -4096,13 +4113,13 @@ Static Function fLinkRodap(aSizeDlg,oDialg,nOpcao)
 	oTotPC:oFont := TFont():New('Arial',,23,,.T.,,,,.T.,.F.)
 	else
 */
-		@ (aBtn01[1])   +4,260 Say "Total qtd. 1ª UM: "   Size 50,12                  PIXEL //OF oTelaDV2       //@ 250+4,245
-		@ (aBtn01[1])   +2,285 Say oTotNF Var Transform(nTotNF,"@E 999,999,999.99") Size 130,50 COLOR CLR_HBLUE     PIXEL //OF oTelaDV2      //@ 250  ,270
-		oTotNF:oFont := TFont():New('Arial',,23,,.T.,,,,.T.,.F.)
+	@ (aBtn01[1])   +4,260 Say "Total qtd. 1ª UM: "   Size 50,12                  PIXEL //OF oTelaDV2       //@ 250+4,245
+	@ (aBtn01[1])   +2,285 Say oTotNF Var Transform(nTotNF,"@E 999,999,999.99") Size 130,50 COLOR CLR_HBLUE     PIXEL //OF oTelaDV2      //@ 250  ,270
+	oTotNF:oFont := TFont():New('Arial',,23,,.T.,,,,.T.,.F.)
 
-		@ (aBtn01[1] +4),355 Say "Total pedidos: "   Size 50,12                  PIXEL //OF oTelaDV2                       //@ 250+4,340
-		@ (aBtn01[1] +2),375 Say oTotPC Var Transform(nTotPC,"@E 999,999,999.99") Size 130,50 COLOR CLR_HBLUE     PIXEL //OF oTelaDV2 //@ 250  ,360
-		oTotPC:oFont := TFont():New('Arial',,25,,.T.,,,,.T.,.F.)
+	@ (aBtn01[1] +4),355 Say "Total pedidos: "   Size 50,12                  PIXEL //OF oTelaDV2                       //@ 250+4,340
+	@ (aBtn01[1] +2),375 Say oTotPC Var Transform(nTotPC,"@E 999,999,999.99") Size 130,50 COLOR CLR_HBLUE     PIXEL //OF oTelaDV2 //@ 250  ,360
+	oTotPC:oFont := TFont():New('Arial',,25,,.T.,,,,.T.,.F.)
 
 /*
 	@ (aBtn01[1]-12)+3,010 Say "Total qtd. 1ª UM: "   Size 50,12                  PIXEL //OF oTelaDV2       //@ 250+4,245
@@ -4298,10 +4315,10 @@ Static Function fLinkAssoc()
 						_cOper		:= oYYGetDad:aCols[nPrimPC+x-1][nYYOPER  ]
 
 						if U_VALIDACAO()  // MAURESI 23/09/2021
-						   if _lDmxFilial
-						   	aNewArray[ Len(aNewArray),nXXOPER   ] := "01"
-						   	_cOper	:= "01"
-						   endif
+							if _lDmxFilial
+								aNewArray[ Len(aNewArray),nXXOPER   ] := "01"
+								_cOper	:= "01"
+							endif
 						endif
 
 						_cTesEnt	:= U_ReTesENT(_cProd,cCodCliFor,cLojCliFor,_cOper)
@@ -4331,10 +4348,10 @@ Static Function fLinkAssoc()
 						_cOper	:= oYYGetDad:aCols[nPrimPC+x-1][nYYOPER  ]
 
 						if U_VALIDACAO()  // MAURESI 23/09/2021
-						   if _lDmxFilial
-						   	aNewArray[ Len(aNewArray),nXXOPER   ] := "01"
-						   	_cOper	:= "01"
-						   endif
+							if _lDmxFilial
+								aNewArray[ Len(aNewArray),nXXOPER   ] := "01"
+								_cOper	:= "01"
+							endif
 						endif
 
 						_cTesEnt	:= U_ReTesENT(_cProd,cCodCliFor,cLojCliFor,_cOper)
@@ -4390,10 +4407,10 @@ Static Function fLinkAssoc()
 				_cOper	:= oYYGetDad:aCols[N2][nYYOPER  ]
 
 				if U_VALIDACAO()  // MAURESI 23/09/2021
-				   if _lDmxFilial
-					   	oXXGetDad:aCols[N1,nXXOPER   ] := "01"
-					   	_cOper	:= "01"
-				   endif
+					if _lDmxFilial
+						oXXGetDad:aCols[N1,nXXOPER   ] := "01"
+						_cOper	:= "01"
+					endif
 				endif
 
 				_cTesEnt	:= U_ReTesENT(_cProd,cCodCliFor,cLojCliFor,_cOper)
@@ -5176,9 +5193,9 @@ Static Function fGerCabec(aSizeDlg,oDialg,cOper)
 	@ aBtn02[1],aBtn02[2] Button "Limpar"    Size aBtn02[3],aBtn02[4] Pixel Of oDialg Action fGerLimpar()
 
 	// MAURESI
-    if _lUsrRec
-		oGetChvNFe:SetFocus()	
-	else	
+	if _lUsrRec
+		oGetChvNFe:SetFocus()
+	else
 		oGetNumNFe:SetFocus()
 	Endif
 
@@ -5272,6 +5289,15 @@ Static Function fGerPrcPsq(cOper)
 	If !Empty(cGetChvNFe)
 		cQry += cQbra+"   AND UPPER("+cTab1+"."+cAls1+"_CHVNFE) LIKE '%"+AllTrim(cGetChvNFe)+"%' "
 	EndIf
+//----------------------------------------------------------
+
+	// FILTRA SOMENTE XML DA FILIAL CORRENTE  // MAURESI - 16/02/2022
+	If cFilAnt == "01"   // MATRIZ - SP
+		cQry += cQbra+"   AND UPPER("+cTab1+"."+cAls1+"_TOCNPJ) = '54821137000136' "
+	ElseIf cFilAnt == '02'  //FILIAL - MG
+		cQry += cQbra+"   AND UPPER("+cTab1+"."+cAls1+"_TOCNPJ) = '54821137000217' "
+	Endif
+
 //----------------------------------------------------------
 	cQry += cQbra+" ORDER BY "+cAls1+"_DTEMIS, "+cAls1+"_DECNPJ, "+cAls1+"_DOC"
 //----------------------------------------------------------
@@ -8645,19 +8671,19 @@ Static Function fRelNF()
 		Li++
 	Next _nY
 
-endprint
+	endprint
 
-ofntN08:end()
-ofntN09:end()
-ofntN10:end()
-ofntN11:end()
-ofntN12:end()
+	ofntN08:end()
+	ofntN09:end()
+	ofntN10:end()
+	ofntN11:end()
+	ofntN12:end()
 
-ofntB08:end()
-ofntB09:end()
-ofntB10:end()
-ofntB11:end()
-ofntB12:end()
+	ofntB08:end()
+	ofntB09:end()
+	ofntB10:end()
+	ofntB11:end()
+	ofntB12:end()
 
 Return NIL
 
@@ -8762,7 +8788,7 @@ Static Function fSalvaZZ3()
 
 	// MAURESI - DESABILITADO TEMPORARIAMENTE - DOMEX - 14/07/2021
 	if .t.
-	  return
+		return
 	endif
 
 
@@ -8820,9 +8846,9 @@ Static Function fRestSalva()
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 							_cOper	:= oYYGetDad:aCols[Y][nYYOPER  ]
 							if U_VALIDACAO()  // MAURESI 23/09/2021
-						   		if _lDmxFilial
-						   			_cOper	:= "01"
-						   		endif
+								if _lDmxFilial
+									_cOper	:= "01"
+								endif
 							endif
 							_cTesEnt	:= U_ReTesENT(_cProd,cCodCliFor,cLojCliFor,_cOper)
 							oXXGetDad:aCols[X,nXXTES    ] := _cTesEnt
@@ -8933,10 +8959,10 @@ Return
 Static Function fGerRlcTES(cCodCliFor,cLojCliFor,cNomCliFor,cCadOPER,cCadTES)
 
 
-    //Variaveis do tamanho a tela
+	//Variaveis do tamanho a tela
 	Local aDlgTela     := {000,000,343,505} //{000,000,410,505} //{000,000,343,505}
 
-    //Divisões dentro da tela
+	//Divisões dentro da tela
 	Local aDlgCabc     := {005,005,040,250}
 	Local aDlgCorp1    := {045,005,092,250}
 	Local aDlgCorp2    := {097,005,130,250} //{097,005,144,250}
@@ -8967,8 +8993,8 @@ Static Function fGerRlcTES(cCodCliFor,cLojCliFor,cNomCliFor,cCadOPER,cCadTES)
 
 	Default cCodProdut := Space(fX3Ret("B1_COD","X3_TAMANHO"))
 	Private cCadPrdCod := cCodProdut
-    //Private cCadTES	 := ""
-    //Private cCadOPER	 := ""
+	//Private cCadTES	 := ""
+	//Private cCadOPER	 := ""
 	Private cCadPrdDes := ""
 
 

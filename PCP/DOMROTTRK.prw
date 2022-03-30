@@ -93,19 +93,20 @@ User Function DOMROTTRK(cTipo,nMaxLinhas)
 	cPerc99			    := cStartPath + 'PERC99.png'
 	cLogoHu				:= cStartPath + 'huawei_lg.png'
 
-	IF U_VALIDACAO("RODA")
+	IF U_VALIDACAO("RODA") .OR. .T.
 		IF cTipo == "TRUNK"
 			cTpProd  := "'TRUE', 'TRUN'"
-			cNotTps := "'PA','ME'"  //,'PI'"
+			cNotTps := "'PA','ME'"  
 			_cTitulo := "ROTEIRO DE PRODUÇÃO TRUNK - LINHA "+cValToChar(nCelula)
 		ElseIF cTipo == "DIO"
-			cTpProd  := "'DIO'"
-			cNotTps := "'PA','ME'"
+			cTpProd := "'DIO'"
+			cNotTps := "'PA','ME'" 
+			cNotGrp := "'FO','CON'" // grupo
 			_cTitulo := "ROTEIRO DE PRODUÇÃO DIO - LINHA " + cValToChar(nCelula)
 		Endif
 	ELSE
 		cTpProd  := "'TRUE', 'TRUN'"
-		cNotTps := "'PA','ME'"  //,'PI'"
+		cNotTps := "'PA','ME'"  
 		_cTitulo := "ROTEIRO DE PRODUÇÃO TRUNK - LINHA "+cValToChar(nCelula)
 	ENDIF
 
@@ -281,9 +282,9 @@ Static Function fVldEti(cEtiqOfc)
 
 			IF lContinua
 
-				If U_VALIDACAO("RODA")
+				If U_VALIDACAO("RODA") .OR. .T.
 					XD4->(dbSetorder(3))
-					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA") .OR. .T.)
 						cCodProd:= XD4->XD4_PRODUT
 					ENDIF
 
@@ -340,9 +341,9 @@ Static Function fVldEti(cEtiqOfc)
 
 				IF lContinua
 
-					If U_VALIDACAO("RODA")
+					If U_VALIDACAO("RODA") .OR. .T.
 						XD4->(dbSetorder(3))
-						IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+						IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA").OR. .T.)
 							cCodProd:= XD4->XD4_PRODUT
 						ENDIF
 
@@ -386,9 +387,9 @@ Static Function fVldEti(cEtiqOfc)
 
 			IF lContinua
 
-				If U_VALIDACAO("RODA")
+				If U_VALIDACAO("RODA").OR. .T.
 					XD4->(dbSetorder(3))
-					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA") .OR. .T.)
 						cCodProd:= XD4->XD4_PRODUT
 					ENDIF
 
@@ -444,9 +445,9 @@ Static Function fVldEti(cEtiqOfc)
 
 			IF lContinua
 
-				If U_VALIDACAO("RODA")
+				If U_VALIDACAO("RODA") .OR. .T.
 					XD4->(dbSetorder(3))
-					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+					IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA") .OR. .T.)
 						cCodProd:= XD4->XD4_PRODUT
 					ENDIF
 
@@ -504,9 +505,9 @@ Static Function fVldEti(cEtiqOfc)
 
 					IF lContinua
 
-						If U_VALIDACAO("RODA")
+						If U_VALIDACAO("RODA") .OR. .T.
 							XD4->(dbSetorder(3))
-							IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+							IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA") .OR. .T.)
 								cCodProd:= XD4->XD4_PRODUT
 							ENDIF
 
@@ -549,9 +550,9 @@ Static Function fVldEti(cEtiqOfc)
 
 				IF lContinua
 
-					If U_VALIDACAO("RODA")
+					If U_VALIDACAO("RODA") .OR. .T.
 						XD4->(dbSetorder(3))
-						IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+						IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND.( U_VALIDACAO("RODA").OR. .T.)
 							cCodProd:= XD4->XD4_PRODUT
 						ENDIF
 
@@ -778,8 +779,13 @@ Static Function MontaTela()
 	cQuery+= " FROM "+RETSQLNAME("SD4")+" SD4 "
 	cQuery+= " INNER JOIN "+RETSQLNAME("SB1")+" SB1 ON B1_COD = D4_COD  "
 	cQuery+= " AND SB1.D_E_L_E_T_ = '' AND B1_TIPO NOT IN ("+cNotTps+")  AND B1_APROPRI <> 'I' "
+	If cTpProd == "'DIO'"
+		cQuery+= " AND B1_GRUPO NOT IN ("+cNotGrp+") "
+	endif
 	cQuery+= " WHERE D4_OP LIKE'"+cCodOP+"%' "
 	cQuery+= " AND D4_QTDEORI > 0 "
+	cQuery+= " AND D4_OPORIG = '' "
+	
 	cQuery+= " AND D4_LOCAL = '97'  "
 	cQuery+= " AND D4_FILIAL = '"+xFilial("SD4")+"'"
 	cQuery+= " AND SD4.D_E_L_E_T_ = '' "
@@ -1068,9 +1074,9 @@ Static function fVldXd4St(cCodOp,_nSerie)
 
 		if QRY->(!Eof())
 
-			If U_VALIDACAO("RODA")
+			If U_VALIDACAO("RODA") .OR. .T.
 				XD4->(dbSetorder(3))
-				IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+				IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA") .OR. .T.)
 					cCodProd:= XD4->XD4_PRODUT
 				ENDIF
 
@@ -1118,9 +1124,9 @@ Static function fVldXd4St(cCodOp,_nSerie)
 	Endif
 
 
-	If U_VALIDACAO("RODA")
+	If U_VALIDACAO("RODA") .OR. .T.
 		XD4->(dbSetorder(3))
-		IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. U_VALIDACAO("RODA")
+		IF XD4->(dbSeek(xFilial("XD4")+cEtiqOfc)) .AND. (U_VALIDACAO("RODA") .OR. .T.)
 			cCodProd:= XD4->XD4_PRODUT
 		ENDIF
 
