@@ -1115,6 +1115,7 @@ User Function WEBCOL(cAmbiente)
 	AADD(aAmbiente,"WEBCOL")
 	AADD(aAmbiente,"WEBCOLMG_VALIDACAO")
 	AADD(aAmbiente,"WEBCOL_VALIDACAO")
+	AADD(aAmbiente,"RICARDO.OPUS")
 
 	If aScan(aAmbiente,cAmbiente) <> 0
 		_Retorno := .T.
