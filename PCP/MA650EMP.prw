@@ -34,9 +34,9 @@ User Function MA650EMP()
 	Local cQry      := ""
 	Local nValor    := 0
 
-//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-//³Posiciona os empenhos para corrigir o número do lote conforme OP³
-//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Posiciona os empenhos para corrigir o número do lote conforme OP³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	SDC->(dbSetOrder(2)) //DC_FILIAL, DC_PRODUTO, DC_LOCAL, DC_OP, DC_TRT, DC_LOTECTL, DC_NUMLOTE, DC_LOCALIZ, DC_NUMSERI, R_E_C_N_O_, D_E_L_E_T_
 	SD4->(dbSetOrder(2))
 
@@ -91,7 +91,7 @@ User Function MA650EMP()
 
 		EndIf
 	EndIf
-// OK Vanessa Faio PE depois da gravação dos empenhos no Ok da janela de manutenção de empenhos abertura OP vedas/manual
+	// OK Vanessa Faio PE depois da gravação dos empenhos no Ok da janela de manutenção de empenhos abertura OP vedas/manual
 
 	If GetMV("MV_XSEMAOP") == 'S'
 		U_FNUMSEQ(__XXNumSeq)
@@ -99,7 +99,7 @@ User Function MA650EMP()
 	EndIf
 
 
-//Osmar 05/05/2020 -- Para gravar Custo, Margem e Preço Net no C2
+	//Osmar 05/05/2020 -- Para gravar Custo, Margem e Preço Net no C2
 	aCusto    := U_CustEmp(cEmpOp)
 	nCusMedio := aCusto[1]
 	cStatus   := aCusto[2]
@@ -109,9 +109,11 @@ User Function MA650EMP()
 
 		If SC2->C2_XCUSUNI <> nCusMedio .OR.  SC2->C2_XSTACUS <> cStatus
 			RecLock("SC2",.F.)
-			SC2->C2_XCUSUNI := nCusMedio
-			SC2->C2_XSTACUS := cStatus
-			SC2->( MsUnlock() )
+			IF nCusMedio <=999999//MLS TESTE ESTOURO CAMPO
+				SC2->C2_XCUSUNI := nCusMedio
+				SC2->C2_XSTACUS := cStatus
+			ENDIF
+			SC2->( MsUnlock() ) 
 		EndIf
 
 		SC6->( dbSetOrder(1) )
@@ -160,9 +162,9 @@ User Function MA650EMP()
 					ZZF->( MsUnLock() )
 				EndIf
 				//Chamado 025708 26/07/21 Vanessa Faio
-				//If SC2->C2_XMARGEM > 0 .And. SC2->C2_XMARGEM < nMargem			
-					//MsgInfo("A Margem de Contribuição deste item esta em "+Alltrim(Str(SC2->C2_XMARGEM))+"%"+Chr(13)+"e esta abaixo de "+AllTrim(Str(nMargem))+"% ","A T E N Ç Ã O")
-					////_Retorno := .T.
+				//If SC2->C2_XMARGEM > 0 .And. SC2->C2_XMARGEM < nMargem
+				//MsgInfo("A Margem de Contribuição deste item esta em "+Alltrim(Str(SC2->C2_XMARGEM))+"%"+Chr(13)+"e esta abaixo de "+AllTrim(Str(nMargem))+"% ","A T E N Ç Ã O")
+				////_Retorno := .T.
 				//EndIf
 			EndIf
 		EndIf

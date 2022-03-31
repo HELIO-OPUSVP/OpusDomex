@@ -101,9 +101,11 @@ User Function MA650GRPV()
 	nCusMedio := aCustos[1]
 	cStatus   := aCustos[2]
 
-	RecLock("SC2",.F.)
-	SC2->C2_XCUSUNI := nCusMedio
-	SC2->C2_XSTACUS := cStatus
-	SC2->(MsUnlock())
+    IF nCusMedio <=999999 //MLS TEMPORARIO ESTOURO CUSTO
+	   RecLock("SC2",.F.)
+	   SC2->C2_XCUSUNI := nCusMedio
+	   SC2->C2_XSTACUS := cStatus
+       SC2->(MsUnlock())
+	ENDIF   
 
 Return Nil
