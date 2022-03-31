@@ -109,11 +109,16 @@ User Function MA650EMP()
 
 		If SC2->C2_XCUSUNI <> nCusMedio .OR.  SC2->C2_XSTACUS <> cStatus
 			RecLock("SC2",.F.)
-			IF nCusMedio <=999999//MLS TESTE ESTOURO CAMPO
+			If U_VALIDACAO("MAURICIO")
+				IF nCusMedio <=999999 .and. nCusMedio > 0 //MLS TESTE ESTOURO CAMPO
+					SC2->C2_XCUSUNI := nCusMedio
+					SC2->C2_XSTACUS := cStatus
+				ENDIF
+			Else
 				SC2->C2_XCUSUNI := nCusMedio
 				SC2->C2_XSTACUS := cStatus
-			ENDIF
-			SC2->( MsUnlock() ) 
+			EndIf
+			SC2->( MsUnlock() )
 		EndIf
 
 		SC6->( dbSetOrder(1) )
