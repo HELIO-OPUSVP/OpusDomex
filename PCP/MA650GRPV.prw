@@ -30,9 +30,9 @@ User Function MA650GRPV()
 	AADD(aPedOP,{cNumOp})
 	AADD(aPedOP1,{cNumOp,cItemOP,cSeqC2})
 	// Chama ponto de entrada para gravacao no SC6
-		If lPEGrava
+	If lPEGrava
 	ExecBlock('MA650GRPV',.F.,.F.,)
-		EndIf
+	EndIf
 	*/                                                                           
 
 	SC5->( dbSetOrder(1) )
@@ -101,11 +101,17 @@ User Function MA650GRPV()
 	nCusMedio := aCustos[1]
 	cStatus   := aCustos[2]
 
-    IF nCusMedio <=999999 //MLS TEMPORARIO ESTOURO CUSTO
-	   RecLock("SC2",.F.)
-	   SC2->C2_XCUSUNI := nCusMedio
-	   SC2->C2_XSTACUS := cStatus
-       SC2->(MsUnlock())
-	ENDIF   
+	If U_VALIDACAO("MAURICIO")
+		IF nCusMedio <=999999 //MLS TEMPORARIO ESTOURO CUSTO
+			RecLock("SC2",.F.)
+			SC2->C2_XCUSUNI := nCusMedio
+			SC2->C2_XSTACUS := cStatus
+			SC2->(MsUnlock())
+		ENDIF
+		RecLock("SC2",.F.)
+		SC2->C2_XCUSUNI := nCusMedio
+		SC2->C2_XSTACUS := cStatus
+		SC2->(MsUnlock())
+	ENDIF
 
 Return Nil
