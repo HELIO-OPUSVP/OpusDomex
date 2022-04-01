@@ -46,6 +46,8 @@ User Function EMP650()
 	Local aAreaSB2  := SB2->( GetArea() )
 	Local cTexto    := ""
 	Local x, y
+	
+	PRIVATE nSalDisp2 := 0 //MLS ERRO CHAMADO 032345
 
 //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 //³Liberção do Semáforo Domex da Inclusão de OP por vendas³
