@@ -213,7 +213,7 @@ User Function EICFLWUP()
 	nUsado	:= len(aHeader)
 	aAdd(aCols,Array(nUsado+1))
 
-	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V3.1")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
+	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V3.2")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
 
 	@ 032, 003 GROUP oGroup1 TO 092, 649 PROMPT "Filtros" OF oDlg COLOR 0, 16777215 PIXEL
 
@@ -874,12 +874,23 @@ Static Function Atu_aCols2()
 		EndIf
 
 		dPRVRDT:=STOD(TRB->W3_XPRDSB)
-		IF !EMPTY(TRB->W3_XETA)
-			dPRVRDT := DaySum(STOD(TRB->W3_XETA), 3)
+		IF !EMPTY(TRB->W3_XETA)//MLS ETA AEREO +3  MARITMO+15
+			//ZZT_MODAL:
+			//1-MARITMO
+			//4-AEREO 
+			IF SUBSTRING(CMODAL,1,1)=='1'
+				dPRVRDT := DaySum(STOD(TRB->W3_XETA), 15)
+			ELSE
+				dPRVRDT := DaySum(STOD(TRB->W3_XETA), 3)
+			ENDIF
 			dPRVRDT := DataValida(dPRVRDT,.T.)
 		ENDIF
 		IF !EMPTY(TRB->W3_XPRALER)
-			dPRVRDT := DaySum(STOD(TRB->W3_XPRALER) , 3)
+			IF SUBSTRING(CMODAL,1,1)=='1'
+				dPRVRDT := DaySum(STOD(TRB->W3_XPRALER), 15)
+			ELSE
+				dPRVRDT := DaySum(STOD(TRB->W3_XPRALER) , 3)
+			ENDIF
 			dPRVRDT := DataValida(dPRVRDT,.T.)
 		ENDIF
 
@@ -1151,14 +1162,22 @@ USER FUNCTION fGRVZZT(NLIN,lFST)
 		ENDIF
 
 		IF !EMPTY(aCols[N][nPos26]) //ZZT_ETA
-			dPRV := DaySum(aCols[N][nPos26], 3) //DaySum(Data, nDias)
+			IF SUBSTRING(aCols[N][nPos20],1,1)=='1' // ZZT_MODAL 1-MARITMO 4-AEREO
+				dPRV := DaySum(aCols[N][nPos26], 15) //DaySum(Data, nDias)
+			ELSE
+				dPRV := DaySum(aCols[N][nPos26], 3) //DaySum(Data, nDias)
+			ENDIF
 			dPRV := DataValida(dPRV,.T.)
 			M->ZZT_PRVRDT   := dPRV
 			aCols[N][nPos28] := dPRV
 		ENDIF
 
 		IF !EMPTY(aCols[N][nPos27]) //ZZT_DTALER
-			dPRV := DaySum(aCols[N][nPos27], 3) //DaySum(Data, nDias)
+			IF SUBSTRING(aCols[N][nPos20],1,1)=='1' // ZZT_MODAL 1-MARITMO 4-AEREO
+				dPRV := DaySum(aCols[N][nPos27], 15) //DaySum(Data, nDias)
+			ELSE
+				dPRV := DaySum(aCols[N][nPos27], 3) //DaySum(Data, nDias)
+			ENDIF
 			dPRV := DataValida(dPRV,.T.)
 			M->ZZT_PRVRDT   := dPRV
 			aCols[N][nPos28] := dPRV
