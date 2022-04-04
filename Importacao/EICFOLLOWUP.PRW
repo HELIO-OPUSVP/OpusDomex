@@ -877,7 +877,7 @@ Static Function Atu_aCols2()
 		IF !EMPTY(TRB->W3_XETA)//MLS ETA AEREO +3  MARITMO+15
 			//ZZT_MODAL:
 			//1-MARITMO
-			//4-AEREO
+			//4-AEREO 
 			IF SUBSTRING(CMODAL,1,1)=='1'
 				dPRVRDT := DaySum(STOD(TRB->W3_XETA), 15)
 			ELSE
