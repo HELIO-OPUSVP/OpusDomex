@@ -1,4 +1,5 @@
 #Include "Protheus.ch"
+#include "topconn.ch"
 
 User Function MT094END()
  	Local cPedAprov	:= AllTrim(SCR->CR_NUM)//SC7->C7_NUM
@@ -6,10 +7,17 @@ User Function MT094END()
 	Local cArquivo  := "\pedido_compra\" + cPedAprov + ".pdf"
 	Local cEmail	:= ""
 	Local cUserComp	:= ""
+	Local cQR1      := ""
+    /* limpeza pedidos deletado*/
+    cQR1:=" UPDATE "+RetSqlName('SCR')+" SET D_E_L_E_T_='*'  "
+    cQR1+=" WHERE D_E_L_E_T_='' AND CR_TIPO='PC' "
+    cQR1+=" AND CR_FILIAL+CR_NUM NOT IN "
+	cQR1+=" (SELECT C7_FILIAL+C7_NUM FROM "+RetSqlName('SC7')+" WHERE D_E_L_E_T_='') "
+	TCSQLEXEC(cQR1)
+	
 
 	U_DMXCPR01(AllTrim(SCR->CR_NUM))
- 
-  
+   
    //Chama a função de controle de envios d e-mails ao forncedor.
 	
 Return
