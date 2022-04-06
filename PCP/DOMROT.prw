@@ -103,7 +103,8 @@ User Function DOMROT(cTipo,nMaxLinhas)
 	Private oOk      	:= LoadBitmap( GetResources(), "VERDE" )
 	Private oNo      	:= LoadBitmap( GetResources(), "VERMELHO" )
 	Private oIn      	:= LoadBitmap( GetResources(), "AMARELO" )
-
+	Private oErro      	:= LoadBitmap( GetResources(), "NGBIOALERTA_01" )
+	
 	Private c2Leg1      := "1"
 	Private n2Leg1      := RGB(176,224,230)
 	Private c2Leg2      := "2"
@@ -342,6 +343,8 @@ Static Function fVldEti(cEtiqOfc)
 							oGetDados:aCols[_x,nPosFlag] := oNo
 						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
 							oGetDados:aCols[_x,nPosFlag] := oIn
+						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+							oGetDados:aCols[_x,nPosFlag] := oErro
 						Endif
 					Next _x
 				EndIf
@@ -388,6 +391,9 @@ Static Function fVldEti(cEtiqOfc)
 							oGetDados:aCols[_x,nPosFlag] := oNo
 						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
 							oGetDados:aCols[_x,nPosFlag] := oIn
+						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+							oGetDados:aCols[_x,nPosFlag] := oErro
+						
 						Endif
 					Next _x
 				Endif
@@ -420,6 +426,8 @@ Static Function fVldEti(cEtiqOfc)
 						oGetDados:aCols[_x,nPosFlag] := oNo
 					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
 						oGetDados:aCols[_x,nPosFlag] := oIn
+					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+							oGetDados:aCols[_x,nPosFlag] := oErro
 					Endif
 				Next _x
 			Endif
@@ -463,6 +471,8 @@ Static Function fVldEti(cEtiqOfc)
 						oGetDados:aCols[_x,nPosFlag] := oNo
 					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
 						oGetDados:aCols[_x,nPosFlag] := oIn
+					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+							oGetDados:aCols[_x,nPosFlag] := oErro
 					Endif
 				Next _x
 			Endif
@@ -509,6 +519,8 @@ Static Function fVldEti(cEtiqOfc)
 								oGetDados:aCols[_x,nPosFlag] := oNo
 							Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
 								oGetDados:aCols[_x,nPosFlag] := oIn
+							Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+								oGetDados:aCols[_x,nPosFlag] := oErro
 							Endif
 						Next _x
 					Endif
@@ -540,6 +552,8 @@ Static Function fVldEti(cEtiqOfc)
 							oGetDados:aCols[_x,nPosFlag] := oNo
 						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
 							oGetDados:aCols[_x,nPosFlag] := oIn
+						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+							oGetDados:aCols[_x,nPosFlag] := oErro
 						Endif
 					Next _x
 				Endif
@@ -651,6 +665,9 @@ Static Function fVldEti(cEtiqOfc)
 						oGetDados:aCols[nPos,nPosFlag] := oNo
 					Elseif oGetDados:aCols[nPos,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
 						oGetDados:aCols[nPos,nPosFlag] := oIn
+					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+							oGetDados:aCols[_x,nPosFlag] := oErro
+						
 					Endif
 
 				Endif
@@ -1133,6 +1150,8 @@ Static Function fStatus()
 			oGetDados:aCols[_x,nPosFlag] := oNo
 		Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
 			oGetDados:aCols[_x,nPosFlag] := oIn
+		Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] > oGetDados:aCols[_x,nPQtdOp]
+			oGetDados:aCols[_x,nPosFlag] := oErro
 		Endif
 
 	Next _x
@@ -1249,6 +1268,8 @@ Static function fVldXd1St(cCodOp)
 					oGetDados:aCols[nPos,nPosFlag] := oNo
 				Elseif oGetDados:aCols[nPos,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
 					oGetDados:aCols[nPos,nPosFlag] := oIn
+				Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+					oGetDados:aCols[_x,nPosFlag] := oErro
 				Endif
 			Endif
 
