@@ -927,7 +927,8 @@ Static Function fEtiqueta()
 //MSCBSay(30,03,_cDescri,"N","2","1,1")
 //MSCBSay(26,06,"Forn:"+XD1->XD1_FORNEC+"/"+XD1->XD1_LOJA+"-"+_cNome,"N","2","1,1")
 */
-	cFila := "000023"
+	//cFila := "000023"
+	cFila := SuperGetMv("MV_XFILEST",.F.,"000023")
 	IF !CB5SetImp(cFila,.F.)
 		U_MsgColetor("Local de impressao invalido!")
 		Return .F.
