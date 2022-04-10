@@ -29,6 +29,7 @@ User Function VldMarge(lMsg,lWflow)
 	Local cMudouMargem := ""
 	Local aAreaSA1   := SA1->( GetArea() )
 	Local aAreaZZF   := ZZF->( GetArea() )
+	Local aAreaSB1   := SB1->( GetArea() )
 
 	U_xGrvPrnet()
 
@@ -46,9 +47,18 @@ User Function VldMarge(lMsg,lWflow)
 	nPC6_XMARGEM := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_XMARGEM" } )
 
 	For y := 1 To Len(aCols)
-		If aCols[y,nPC6_XMARGEM] < nPerMargem
-			cTexto += aCols[y,nPC6_ITEM] +" / "+ aCols[y,nPC6_PRODUTO]+" Margem -> " + Str(aCols[y,nPC6_XMARGEM])+ Chr(13)
+
+		If U_Validacao("OSMAR")
+			SB1->( dbSeek(xFilial() + aCols[y,nPC6_PRODUTO]  ) )
+			If aCols[y,nPC6_XMARGEM] < nPerMargem .And. SB1->B1_TIPO <> "SI"
+				cTexto += aCols[y,nPC6_ITEM] +" / "+ aCols[y,nPC6_PRODUTO]+" Margem -> " + Str(aCols[y,nPC6_XMARGEM])+ Chr(13)
+			EndIf
+		Else
+			If aCols[y,nPC6_XMARGEM] < nPerMargem
+				cTexto += aCols[y,nPC6_ITEM] +" / "+ aCols[y,nPC6_PRODUTO]+" Margem -> " + Str(aCols[y,nPC6_XMARGEM])+ Chr(13)
+			EndIf
 		EndIf
+
 	Next y
 
 	If lMsg .And. cTexto <> ""
@@ -92,6 +102,8 @@ User Function VldMarge(lMsg,lWflow)
 	If cTexto == ""
 	   Alert("Margem de lucro dentro dos parametros!...")
 	EndIf
+
+	RestArea(aAreaSB1)
 	RestArea(aAreaZZF)
 	RestArea(aAreaSA1)
 Return(lRet)
@@ -113,6 +125,7 @@ User Function xGrvPrNet()
 	Local nMargem    := 0
 	Local cProdVenda := ""
 	Local aAreaSC6   := SC6->( GetArea() )
+	Local aAreaSB1   := SB1->( GetArea() )
 
 //Posiciona no cabeçalho do pedido de venda
 
@@ -214,7 +227,6 @@ User Function xGrvPrNet()
 		nPC6_XPRCNET := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_XPRCNET" } )
 		nPC6_XMARGEM := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_XMARGEM" } )
 
-
 		cProdVenda := aCols[x,nPC6_PRODUTO]
 
 		nQtdven  := aCols[x,nPC6_QTDVEN]
@@ -249,11 +261,9 @@ User Function xGrvPrNet()
 			(nValICM  / nQtdven))
 
 
-		Alert(nVlrPis)
-		Alert(nVlrCof)
-		Alert(nValICM)
-
-
+		//Alert(nVlrPis)
+		//Alert(nVlrCof)
+		//Alert(nValICM)
 
 		//4 - Sem PIS/COFINS, ICMS e IPI
 		AADD(aValorNet,nPrcven - (nVlrPis / nQtdven) - (nVlrCof / nQtdven) - ;
@@ -273,13 +283,20 @@ User Function xGrvPrNet()
 		aCols[x,nPC6_XCUSUNI] := nCusMedio
 		aCols[x,nPC6_XSTACUS] := cStatus
 		aCols[x,nPC6_XPRCNET] := nPrcNet
-		aCols[x,nPC6_XMARGEM] := nMargem
-
-		//nMargem   Falta fazer o cálculo
+		
+		If U_Validacao("OSMAR")
+			SB1->(dbSeek(xFilial()+cProdVenda))
+			If SB1->B1_TIPO == "SI"
+			   aCols[x,nPC6_XMARGEM] :=  0
+			Else   
+		       aCols[x,nPC6_XMARGEM] := nMargem
+			EndIf   
+		Else
+			aCols[x,nPC6_XMARGEM] := nMargem
+		EndIf
+		//nMargem
 		//SC6->C6_XMARGEM := ((SC6->C6_XPRCNET - SC6->C6_XCUSUNI) / SC6->C6_XPRCNET) * 100
 		//SC6->(DbSkip())
-
-
 
 	Next x
 	//EndDo
@@ -288,7 +305,7 @@ User Function xGrvPrNet()
 
 	MaFisEnd()
 	MaFisRestore()
-
+ RestArea(aAreaSB1)
  RestArea(aAreaSC6)
 Return
 

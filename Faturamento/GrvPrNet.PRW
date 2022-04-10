@@ -135,7 +135,16 @@ User Function GrvPrNet(cNumPV)
             SC6->C6_XSTACUS := cStatus
 		EndIf
 		SC6->C6_XPRCNET := aValorNet[nOpcao]
-		SC6->C6_XMARGEM := ((SC6->C6_XPRCNET - SC6->C6_XCUSUNI) / SC6->C6_XPRCNET) * 100
+		If U_Validacao("OSMAR")
+			SB1->(dbSeek(xFilial()+SC6->C6_PRODUTO))
+			If SB1->B1_TIPO == "SI"
+				SC6->C6_XMARGEM := 0
+			Else
+		        SC6->C6_XMARGEM := ((SC6->C6_XPRCNET - SC6->C6_XCUSUNI) / SC6->C6_XPRCNET) * 100
+		    EndIf
+		Else
+		   SC6->C6_XMARGEM := ((SC6->C6_XPRCNET - SC6->C6_XCUSUNI) / SC6->C6_XPRCNET) * 100
+		EndIf   
 		SC6->(MsUnLock())
 
 		SC6->(DbSkip())
