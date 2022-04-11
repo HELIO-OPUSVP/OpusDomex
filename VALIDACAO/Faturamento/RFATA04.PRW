@@ -127,7 +127,7 @@ User Function RFATA04()
 	cGrupo3 += "000651 - WILLIANS PEREIRA"
 //	cGrupo3 += "000931 - LIVIA RUFINO"	         // Adicionado em 16/06/2021  - Chamado 025037
 	cGrupo3 += "001001 - IVANA VILAS BOAS"       // Adiciona em 09/08/2021  - Chamado 026406
-
+	cGrupo3 += "001090 - ADRIANA OLIVEIRA"       // Adiciona em 11/04/2022  - Chamado 032892
 
 
 
