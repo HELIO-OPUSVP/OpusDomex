@@ -283,7 +283,7 @@ User Function xGrvPrNet()
 		aCols[x,nPC6_XCUSUNI] := nCusMedio
 		aCols[x,nPC6_XSTACUS] := cStatus
 		aCols[x,nPC6_XPRCNET] := nPrcNet
-		
+				
 		If U_Validacao("OSMAR")
 			SB1->(dbSeek(xFilial()+cProdVenda))
 			If (SB1->B1_TIPO == "SI" .Or. SB1->B1_TIPO == "SV")

@@ -130,11 +130,13 @@ User Function GrvPrNet(cNumPV)
 		    aCusto    := U_RetCust(SC6->C6_PRODUTO,'S')
     		nCusMedio := aCusto[1]
     		cStatus   := aCusto[2]
-
             SC6->C6_XCUSUNI := nCusMedio
             SC6->C6_XSTACUS := cStatus
 		EndIf
+
 		SC6->C6_XPRCNET := aValorNet[nOpcao]
+		SC6->C6_XICMRET := nValSol
+
 		If U_Validacao("OSMAR")
 			SB1->(dbSeek(xFilial()+SC6->C6_PRODUTO))
 			If (SB1->B1_TIPO == "SI" .Or. SB1->B1_TIPO == "SV")
