@@ -59,7 +59,7 @@ User Function CalCusto(cProduto)
 					RecLock("SC6",.F.)
 					SC6->C6_XCUSUNI := nCusMedio
 					SC6->C6_XSTACUS := cStatus
-					If SB1->B1_TIPO == "SI"
+					If (SB1->B1_TIPO == "SI" .Or. SB1->B1_TIPO == "SV")
                        SC6->C6_XMARGEM := 0
                     Else   
                        SC6->C6_XMARGEM := ((SC6->C6_XPRCNET - SC6->C6_XCUSUNI) / SC6->C6_XPRCNET) * 100

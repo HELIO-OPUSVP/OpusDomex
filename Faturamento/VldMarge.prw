@@ -50,7 +50,7 @@ User Function VldMarge(lMsg,lWflow)
 
 		If U_Validacao("OSMAR")
 			SB1->( dbSeek(xFilial() + aCols[y,nPC6_PRODUTO]  ) )
-			If aCols[y,nPC6_XMARGEM] < nPerMargem .And. SB1->B1_TIPO <> "SI"
+			If aCols[y,nPC6_XMARGEM] < nPerMargem .And. (SB1->B1_TIPO <> "SI" .And. SB1->B1_TIPO <> "SV") 
 				cTexto += aCols[y,nPC6_ITEM] +" / "+ aCols[y,nPC6_PRODUTO]+" Margem -> " + Str(aCols[y,nPC6_XMARGEM])+ Chr(13)
 			EndIf
 		Else
@@ -286,7 +286,7 @@ User Function xGrvPrNet()
 		
 		If U_Validacao("OSMAR")
 			SB1->(dbSeek(xFilial()+cProdVenda))
-			If SB1->B1_TIPO == "SI"
+			If (SB1->B1_TIPO == "SI" .Or. SB1->B1_TIPO == "SV")
 			   aCols[x,nPC6_XMARGEM] :=  0
 			Else   
 		       aCols[x,nPC6_XMARGEM] := nMargem
