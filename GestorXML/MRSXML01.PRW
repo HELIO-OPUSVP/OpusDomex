@@ -3293,7 +3293,8 @@ Static Function fLinkPesqu()
 //cQry += cQbra + "  (C7_QUANT-C7_QUJE-C7_QTDACLA) AS YY_SALDO "
 	cQry += cQbra + "  (C7_QUANT-C7_QUJE) AS YY_SALDO, "   //MAURESI - 23/12/2020 - DESCONSIDERA QTDA CLASSFICAR
 	cQry += cQbra + "   C7_VLDESC         AS YY_VALDESC, "   //MAURESI - 04/08/2020 - VALOR DE DESCONTO
-	cQry += cQbra + "   C7_FRETE          AS YY_VALFRE "   //MAURESI - 11/08/2020 - VALOR DE FRETE
+	cQry += cQbra + "   C7_VALFRE          AS YY_VALFRE "   //MAURESI - 11/08/2020 - VALOR DE FRETE
+//	cQry += cQbra + "   C7_FRETE          AS YY_VALFRE "   //MAURESI - 11/08/2020 - VALOR DE FRETE
 
 
 	cQry += cQbra + "   FROM "+RetSqlName("SC7")+" SC7 "
@@ -3938,7 +3939,7 @@ Static Function fYYClick()
 
 		If _nXVALFRE <> _nYVALFRE
 			if _lMSG02
-				MsgInfo("Valor de FRETE Divergente:" + Chr(13) + "NF: " + Transform(_nXVALFRE,fX3Ret("D1_VUNIT","X3_PICTURE")) + Chr(13) + "PC: " + Transform(_nYVALFRE,fX3Ret("C7_FRETE","X3_PICTURE")  ) )
+				MsgInfo("Valor de FRETE Divergente:" + Chr(13) + "NF: " + Transform(_nXVALFRE,fX3Ret("D1_VUNIT","X3_PICTURE")) + Chr(13) + "PC: " + Transform(_nYVALFRE,fX3Ret("C7_VALFRE","X3_PICTURE")  ) )
 				_Retorno:= .F.
 			Endif
 		EndIf
