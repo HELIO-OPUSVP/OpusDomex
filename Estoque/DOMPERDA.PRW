@@ -375,7 +375,7 @@ IF  cVarDigit $ "M->PZA_OP"
 					oGetDados:aCols := aClone(aColsSZA)
 					TBSZA->(DbCloseArea())
 				else
-					MsgSop("OP NÃO POSSUI EMPENHO NA SD4")
+					MsgStop("OP NÃO POSSUI EMPENHO NA SD4")
 					lRetVld := .F.
 				EndIf
 			else
