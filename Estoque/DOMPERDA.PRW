@@ -117,7 +117,7 @@ DEFINE MSDIALOG oDlg TITLE cCadastro FROM aSize[7],aSize[1] TO aSize[6],aSize[5]
 	@ 000, 000 SAY oBtn44 PROMPT Space(100) SIZE 049, 001 OF oWin1 PIXEL
 	oBtn44:Align  := CONTROL_ALIGN_TOP
 
-	oBtn5 := TButton():New(0,0,"Exclusão",oWin1,{|| lExclui := PZADELETA(),iif(lExclui,MsgAlert("Exclusão Executada com sucesso","Exclusão"),), oBrowse:Refresh(.T.)  },00,14,,,.F.,.T.,.F.,,.F.,,,.F.) 
+	oBtn5 := TButton():New(0,0,"Exclusão",oWin1,{|| lExclui := U_PZADELETA(),iif(lExclui,MsgAlert("Exclusão Executada com sucesso","Exclusão"),), oBrowse:Refresh(.T.)  },00,14,,,.F.,.T.,.F.,,.F.,,,.F.) 
 	oBtn5:Align  := CONTROL_ALIGN_TOP
 	
 	//@ 000, 000 SAY oBtn55 PROMPT Space(100) SIZE 049, 001 OF oWin1 PIXEL
@@ -306,6 +306,9 @@ User Function VLDTBPZA(cVarDigit)
 Local lRetVld := .T.
 Local aColsSZA := {}
 Local nP 	   :=0
+Local nPosSer := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_SERIAL" } )
+Local nPosOpera := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_OPERADO" } )
+
 Default cVarDigit := ""    //Variável Digitada
 
 IF  cVarDigit $ "M->PZA_OP"	
@@ -364,7 +367,11 @@ IF  cVarDigit $ "M->PZA_OP"
 							eLseIf Alltrim(aHeader[nP][2]) == "ZA_DATA"
 								aColsSZA[Len(aColsSza)][nP] := M->PZA_DATA
 							eLseIf Alltrim(aHeader[nP][2]) == "ZA_HORA"
-								aColsSZA[Len(aColsSza)][nP] := M->PZA_HORA				
+								aColsSZA[Len(aColsSza)][nP] := M->PZA_HORA
+							ElseIf 	Alltrim(aHeader[nP][2]) == "ZA_OPERADO"
+								aColsSZA[Len(aColsSza)][nP] := M->PZA_OPERAD
+							ElseIf 	Alltrim(aHeader[nP][2]) == "ZA_SERIAL"
+								aColsSZA[Len(aColsSza)][nP] := M->PZA_SERIAL		
 							EndIf
 								
 						Next nP
@@ -392,11 +399,28 @@ ElseIf cVarDigit $ "M->PZA_SERIAL"
 		XD4->(DbSetOrder(3))
 		If XD4->(DbSeek(xFilial("XD4")+M->PZA_SERIAL))
 			lRetVld := .T.
+			For nP := 1 To Len(oGetDados:Acols)
+				If !oGetDados:Acols[nP][Len(oGetDados:Acols[nP])]
+					If Empty(Alltrim(oGetDados:Acols[nP][nPosSer]))
+						oGetDados:Acols[nP][nPosSer] := M->PZA_SERIAL
+					Endif
+				Endif
+			Next nP
 		else
 			MsgStop("Código Serial Digitado não encontrado na XD4","Erro Codigo Serial")
 			lRetVld := .F.	
 		Endif
 	EndIf
+elseif cVarDigit $ "M->PZA_OPERAD"	
+	iF !Empty(Alltrim(M->PZA_OPERAD))
+		For nP := 1 To Len(oGetDados:Acols)
+			If !oGetDados:Acols[nP][Len(oGetDados:Acols[nP])]
+				If Empty(Alltrim(oGetDados:Acols[nP][nPosOpera]))
+					oGetDados:Acols[nP][nPosOpera] := M->PZA_OPERAD
+				Endif
+			Endif
+		Next nP
+	EndIf	
 EndIf                                
 //teste
 
@@ -454,8 +478,9 @@ Private cArm:= '96'
 IF INCLUI
 	Begin Transaction
 	If Reclock("PZA",.T.)
+		PZA->PZA_FILIAL := xFilial("PZA")
 		For nK:= 1 To Len(aFieldsPza)
-			PZA->(&(aFieldsPza[nK])) := M->(&(FieldsPza[nK]))
+			PZA->(&(aFieldsPza[nK])) := M->(&(aFieldsPza[nK]))
 		Next nK	
 		PZA->(MsUnlock())	
 		lOkPza := .T.	
@@ -468,6 +493,7 @@ IF INCLUI
 				//So gravar se a quantidade infromada de perda for maior que zero
 				If oGetDados:aCols[nK][nPosQtd] > 0 
 					If Reclock("SZA",.T.)
+						SZA->ZA_FILIAL := xFilial("SZA")
 						For nH:=1 To Len(aHeader)						
 							SZA->(&(aHeader[nH][2])) := oGetDados:aCols[nK][nH]
 						Next nH
@@ -514,10 +540,18 @@ IF INCLUI
 					IF SZA->(DbSeek(xfilial("SZA") + aGrvsOk[nk][1]))
 						if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
 							Etiqueta()
+							oGetDados:Refresh()
+							_odlg:Refresh()
+						else
+							oGetDados:Refresh()
+							_odlg:Refresh()
 						EndIf
 					Endif
 				Next nK
 			ENdif
+		else
+			oGetDados:Refresh()
+			_odlg:Refresh()
 		EndIf
 	EndIf		
 elseIf ALTERA
