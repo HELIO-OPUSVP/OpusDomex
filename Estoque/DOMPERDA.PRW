@@ -228,19 +228,21 @@ DbSelectarea("PZA")
 cCamposPza :=  "PZA_CODIGO/PZA_RECURSO/PZA_OP/PZA_PRODOP/PZA_DESCRI/PZA_DATA/PZA_HORA/PZA_OPERAD/PZA_TPPERD/PZA_USUARI/PZA_SERIAL/PZA_STATUS"
 cCamposSZA :=  "ZA_DOCUMEN/ZA_DATA/ZA_OP/ZA_RECURSO/ZA_PRODUTO/ZA_DESC/ZA_MOTIVO/ZA_DESCPER/ZA_QTDORI/ZA_SALDO/ZA_OPERADO/ZA_HORA/ZA_USUARIO/ZA_SERIAL/ZA_CODPZA"
 //Carrega Variaveis na Memoria
-RegToMemory("PZA", .T., .T.,.T.)
+RegToMemory("PZA", INCLUI, .T.,.T.)
 aEval(ApBuildHeader("PZA", Nil), {|x| iiF(Alltrim(x[2]) $ cCamposPZA , Aadd(aFieldsPza, x[2]),)})
 aAlterFields := aClone(aFieldsPza)         
 
-
-
-RegToMemory("SZA", .T., .T.,.T.)
+RegToMemory("SZA", INCLUI, .T.,.T.)
 aEval(ApBuildHeader("SZA", Nil), {|x| iiF(Alltrim(x[2]) $ cCamposSZA , Aadd(aHeader, x),)})
 
+
+
 //Carrega o Acols 
-If ALTERA .OR. VISUAL
+If ALTERA .OR. VISUAL	
+
 	CarregAcols()
-Endif
+	
+EndIf
 
 
 DEFINE MSDIALOG _oDlg TITLE cCadastro FROM aSize[7],aSize[1] TO aSize[6],aSize[5] OF oMainWnd PIXEL
@@ -555,7 +557,7 @@ IF INCLUI
 		EndIf
 	EndIf		
 elseIf ALTERA
-	If PZA->PZA_STATUS <> "1" //Encerrado
+	If PZA->PZA_STATUS == "1" //Encerrado
 		MsgStop("Não é possivel alterar registro de perdas finalizado.","Exclusão Perda")
 		Return .F.
 	Endif
@@ -758,11 +760,11 @@ User Function PZADELETA()
 Local cQryPZA := ""
 Local lOkParaExc := .T.
 Local cMensErro := ""
-If PZA->PZA_STATUS <> "1" //Encerrado
+If PZA->PZA_STATUS == "1" //Encerrado
 	MsgStop("Não é possivel excluir registro de perdas finalizado.","Exclusão Perda")
 	Return .F.
 Endif
-cQryPZA := " SELECT R_E_C_N_O_ RECNOSZA "
+cQryPZA := " SELECT ZA_DOCUMEN,ZA_QTDORI,ZA_SALDO, R_E_C_N_O_ RECNOSZA "
 cQryPZA += " FROM " + RetSqlName("SZA")  +" SZA "
 cQryPZA += " WHERE D_E_L_E_T_ ='' AND SZA.ZA_FILIAL  ='" + xFilial("SZA") + "' AND SZA.ZA_CODPZA = '" + PZA->PZA_CODIGO + "'"
 
