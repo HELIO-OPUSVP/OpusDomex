@@ -152,7 +152,7 @@ User Function A250ETRAN()
 							nXXQUJE += SD3->D3_QUANT
 
 							SB1->( dbSeek( xFilial() + SD3->D3_COD ) )
-
+			
 						EndIf
 					EndIf
 				EndIf
@@ -301,7 +301,50 @@ User Function A250ETRAN()
 				EndIf
 			EndIf
 		EndIf
+		If cLocalOP == "95" //Local de Transferencia Filial 02
 
+			SDA->( dbSetOrder(RetOrder("SDA","DA_FILIAL+DA_NUMSEQ")) )  // DA_FILIAL + DA_NUMSEQ
+
+			If SDA->( dbSeek( xFilial() + cNumSeq ) )
+				If SDA->DA_SALDO >= nQtdApto
+
+					_cItem := '0001'
+
+					SDB->( dbSetOrder(1) )  //DB_FILIAL+DB_PRODUTO+DB_LOCAL+DB_NUMSEQ+DB_DOC+DB_SERIE+DB_CLIFOR+DB_LOJA+DB_ITEM
+					If SDB->(dbSeek( xFilial() + SDA->DA_PRODUTO + SDA->DA_LOCAL + SDA->DA_NUMSEQ))
+						While xFilial("SDB") + SDA->DA_PRODUTO + SDA->DA_LOCAL + SDA->DA_NUMSEQ == SDB->DB_FILIAL + SDB->DB_PRODUTO + SDB->DB_LOCAL + SDB->DB_NUMSEQ
+							_cItem:=SDB->DB_ITEM
+							SDB->( dbSkip() )
+						End
+					EndIf
+
+					_cItem     := StrZero(Val(_cItem)+1,4)
+					_aItensSDB := {}
+
+					_aCabSDA := {;
+						{"DA_PRODUTO" ,SDA->DA_PRODUTO ,Nil},;
+						{"DA_NUMSEQ"  ,SDA->DA_NUMSEQ  ,Nil}}
+
+					_aItSDB  := {;
+						{"DB_ITEM"	  ,_cItem	    ,Nil},;
+						{"DB_ESTORNO" ,Space(01)    ,Nil},;
+						{"DB_LOCALIZ" ,'95TRANSFERENCIA' ,Nil},;
+						{"DB_DATA"	  ,dDataBase    ,Nil},;
+						{"DB_QUANT"   ,nQtdApto     ,Nil}}
+
+					aadd(_aItensSDB,_aitSDB)
+
+					//Begin TRANSACTION
+					MATA265( _aCabSDA, _aItensSDB, 3)
+					If lMsErroAuto
+						MostraErro("\UTIL\LOG\")
+						//DisarmTransaction()
+						MsgInfo("Erro no endereçamento automático de Produção (97).","A T E N Ç Ã O")
+					EndIf
+					//End TRANSACTION
+				EndIf
+			EndIf
+		EndIf
 	EndIf
 
 

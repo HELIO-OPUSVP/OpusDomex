@@ -15,7 +15,22 @@
 
 User Function VZA_OP()
 Local _Retorno := .T.
+if IsInCallStack("U_DOMPERDA")
+   nPosProd := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_PRODUTO" } )
+   nPosOP 	 := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_OP" } )
+   nPosSaldo := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_SALDO" } )
+   nPosDescr := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_DESCPER" } )
+	nPosMovit := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_MOTIVO" } )
 
+   M->ZA_PRODUTO := oGetdados:aCols[oGetdados:nAt][nPosProd]	
+   M->ZA_OP      := oGetdados:aCols[oGetdados:nAt][nPosOP]
+   if !Empty(oGetdados:aCols[oGetdados:nAt][nPosMovit])
+      M->ZA_MOTIVO  := oGetdados:aCols[oGetdados:nAt][nPosMovit]
+   EndIf
+   If !Empty( oGetdados:aCols[oGetdados:nAt][nPosDescr ])
+      M->ZA_DESCPER := oGetdados:aCols[oGetdados:nAt][nPosDescr ]
+   Endif
+EndIf
 SC2->( dbSetOrder(1) )
 If SC2->( dbSeek( xFilial() + M->ZA_OP ) )
    If SC2->C2_QUANT > SC2->C2_QUJE
