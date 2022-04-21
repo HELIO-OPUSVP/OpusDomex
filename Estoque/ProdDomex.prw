@@ -340,6 +340,10 @@ User Function ProdDomex(aVetOP)
 								Else
 									If aEmpenhos[x,5] == "96"
 										cLocaliz := "96PERDA"
+									Else 
+										If aEmpenhos[x,5] == "95"
+											cLocaliz := "95TRANSFERENCIA"
+										EndIf
 									EndIf
 								EndIf
 							EndIf
@@ -366,6 +370,8 @@ User Function ProdDomex(aVetOP)
 									If aEmpenhos[x,5] == '08'  // Local
 										cD3CF := "RE1"
 									Elseif aEmpenhos[x,5] == '96'  // Local
+										cD3CF := "RE1"
+									elseif aEmpenhos[x,5] == '95'  // Local
 										cD3CF := "RE1"
 									EndIf
 								EndIf

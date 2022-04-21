@@ -1,8 +1,11 @@
-#include "rwmake.ch"
-#include "protheus.ch"         
-#INCLUDE "TOPCONN.CH"   
-#include "tbiconn.ch"
+#INCLUDE "Protheus.ch"
+#INCLUDE "RwMake.ch"
+#INCLUDE "Topconn.ch"
+#INCLUDE "Tbiconn.ch"
+#INCLUDE "FwBrowse.ch"
+#INCLUDE "fwmvcdef.ch"
 
+#DEFINE ENTER CHAR(13) + CHAR(10)
 
 /*
 ‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
@@ -19,134 +22,549 @@
 
 User Function DOMPERDA()         
 
-Local aIndex := {} 
-Local lFiltro:= .F.
-Local cFiltro := "ZA_SALDO <> 0  .AND. ZA_TIPO =='S'"
-Local cQuery:= ""
+Local oDlg
+//LOCAL bCondic 	:= { || } 
+//Local cCondic 	:= ""
+//Local cNoFields	:= ""
+Local cTabPrinc	:= "PZA"
 
-Local aCores := {;
+Private aSize 		:= {}
+Private aObjects 	:= {}
+Private aInfo 		:= {}
+Private aPosObj 	:= {}
+Private aPosGet		:= {}
+//Private aHeader		:= {}
+//Private aCols		:= {}
+Private nUsado 		:= 0
+Private cFiltro	:= ""
+Private aRotina	:= StaticCall(MATA410,MenuDef) 
+Private cCadastro := "DOMPERDA-Cadastro de Perda Domex"
+Private lOkInc := .F.
+Private lOkAlt := .F.
+Private lOkExc := .F. 
+Private lOkReimpr := .F.
+Private cUsrLib := SuperGetMv("MV_USPERDA",.f.,"000000")
+Private VISUAL 	:= 0 //(nOpcx == 2)
+Private INCLUI	:= 0 //(nOpcx == 3)
+Private ALTERA	:= 0 //(nOpcx == 4)
+Private EXCLUI	:= 0 //(nOpcx == 5)
+
+Static oFWLayer
+Static oFWLayer2
+Static oWin1
+Static oWin2
+Static oWin3
+Static oWin4
+Static oWin5
+Static aHeader := {}
+Static aCols   := {}       
+
+aSize	:= MsAdvSize( .F. )
+aInfo 	:= { aSize[ 1 ], aSize[ 2 ], aSize[ 3 ], aSize[ 4 ], 3, 3 }
+
+AAdd( aObjects, { 100	, 050	, .T., .F. })
+AAdd( aObjects, { 100	, 100	, .T., .T. })
+
+aPosObj	:= MsObjSize(aInfo,aObjects)
+aPosGet	:= MsObjGetPos((aSize[3]-aSize[1]),315,{{004,024,240,270}} )
+
+//Tabela principal da Rotina
+DbSelectArea(cTabPrinc)
+(cTabPrinc)->(DbSetOrder(1))
+
+
+DEFINE MSDIALOG oDlg TITLE cCadastro FROM aSize[7],aSize[1] TO aSize[6],aSize[5] OF oMainWnd STYLE nOR( WS_VISIBLE,WS_POPUP ) PIXEL
+
+	oDlg:lEscClose := .F.
+	                                                               	
+	oFWLayer := FWLayer():New()		
+	oFWLayer:Init(oDlg,.F.)
+
+	oFWLayer:AddCollumn("Col01",10,.T.)
+	oFWLayer:AddCollumn("Col02",90,.T.)
+
+	oFWLayer:AddWindow("Col01","Win01"	,"AÁıes"	,100,.F.,.F.,/*bAction*/,/*cIDLine*/,/*bGotFocus*/)
+	oFWLayer:AddWindow("Col02","Win02"	,cCadastro	,100,.F.,.F.,/*bAction*/,/*cIDLine*/,/*bGotFocus*/)
+	
+	oWin1 := oFWLayer:GetWinPanel('Col01','Win01')
+	oWin2 := oFWLayer:GetWinPanel('Col02','Win02')
+
+	// Botıes da tela
+	oBtn0 := TButton():New(0,0,"Sair",oWin1,{|| oDlg:End() },00,14,,,.F.,.T.,.F.,,.F.,,,.F.) 
+	oBtn0:Align  := CONTROL_ALIGN_BOTTOM
+	
+	oBtn1 := TButton():New(0,0,"Inlcuir",oWin1,{|| APERDAINC("",0,3),oBrowse:Refresh() },00,14,,,.F.,.T.,.F.,,.F.,,,.F.)									 
+	oBtn1:Align  := CONTROL_ALIGN_TOP
+	
+	@ 000, 000 SAY oBtn11 PROMPT Space(100) SIZE 049, 001 OF oWin1 PIXEL
+	oBtn11:Align  := CONTROL_ALIGN_TOP
+	
+	oBtn2 := TButton():New(0,0,"Alterar",oWin1,{|| lOkAlt := APERDAINC("PZA",PZA->(Recno()),4),oBrowse:Refresh() },00,14,,,.F.,.T.,.F.,,.F.,,,.F.) 
+	oBtn2:Align  := CONTROL_ALIGN_TOP
+
+	@ 000, 000 SAY oBtn22 PROMPT Space(100) SIZE 049, 001 OF oWin1 PIXEL
+	oBtn22:Align  := CONTROL_ALIGN_TOP
+
+	oBtn3 := TButton():New(0,0,"Reimpress„o",oWin1,{|| lOkReimpr := U_PZAREIMP() ,oBrowse:Refresh() },00,14,,,.F.,.T.,.F.,,.F.,,,.F.) 
+	oBtn3:Align  := CONTROL_ALIGN_TOP
+		
+	@ 000, 000 SAY oBtn33 PROMPT Space(100) SIZE 049, 001 OF oWin1 PIXEL
+	oBtn33:Align  := CONTROL_ALIGN_TOP
+
+	oBtn4 := TButton():New(0,0,"Visualizar",oWin1,{||  APERDAINC('PZA',PZA->(Recno()),2)},00,14,,,.F.,.T.,.F.,,.F.,,,.F.) 
+	oBtn4:Align  := CONTROL_ALIGN_TOP
+	
+	@ 000, 000 SAY oBtn44 PROMPT Space(100) SIZE 049, 001 OF oWin1 PIXEL
+	oBtn44:Align  := CONTROL_ALIGN_TOP
+
+	oBtn5 := TButton():New(0,0,"Exclus„o",oWin1,{|| lExclui := PZADELETA(),iif(lExclui,MsgAlert("Exclus„o Executada com sucesso","Exclus„o"),), oBrowse:Refresh(.T.)  },00,14,,,.F.,.T.,.F.,,.F.,,,.F.) 
+	oBtn5:Align  := CONTROL_ALIGN_TOP
+	
+	//@ 000, 000 SAY oBtn55 PROMPT Space(100) SIZE 049, 001 OF oWin1 PIXEL
+	//oBtn55:Align  := CONTROL_ALIGN_TOP
+	
+	//Browse   
+	DEFINE FWBROWSE oBrowse DATA TABLE ALIAS "PZA" OF oWin2
+/*
+	Local aCores := {;
 {"ZA_SALDO==0 .AND. ZA_TIPO = 'N'" , "DISABLE"     },;
 {"ZA_SALDO<>0 .AND. ZA_TIPO = 'N'" , "BR_VERDE"    },;
 {"ZA_SALDO==0 .AND. ZA_TIPO = 'S'" , "BR_CINZA"    },;
 {"ZA_SALDO<>0 .AND. ZA_TIPO = 'S'" , "BR_AZUL"     }}
-
-Private bFiltraBrw := { || FilBrowse( "SZA" , @aIndex , @cFiltro ) } //Determina a Expressao do Filtro 
-Private cCelula:= 0
-Private cArm:= '96'
-
-//PREPARE ENVIRONMENT EMPRESA '01' FILIAL '01'
-
-DbSelectArea("SZA")
-aRotina := {}
-
-AADD(aRotina,{ "Pesquisar       ",'AxPesqui'     , 0, 1 } )
-AADD(aRotina,{ "Visualizar      ",'AxVisual'     , 0, 2 } )
-AADD(aRotina,{ "Incluir         ",'U_DPDINCLUI'  , 0, 3 } )
-AADD(aRotina,{ "M·quina Corte   ",'U_fButtCel'   , 0, 4 } )
-AADD(aRotina,{ "Excluir         ",'U_DPDDELETA'  , 0, 5 } )
-AADD(aRotina,{ "Alterar         ",'U_DPDALTERA'  , 0, 6 } )
-AADD(aRotina,{ "Reimprimir      ",'U_DPDREIMP'   , 0, 7 } )
-AADD(aRotina,{ "Legenda         ",'U_fLegDomP'  , 0, 8 } )
-AADD(aRotina,{ "Cad.Operador    ",'U_CADZZM'  	 , 0, 9 } )
-
-
-cCadastro := "DOMPERDA - Perdas da ProduÁ„o - Domex"
-//SetKey(VK_F10, { || U_fReImp() } )
-
-IF MsgYesNo ("Filtrar somente fibras ‡ pagar?")
-
-	cQuery:= " UPDATE SZA010 SET ZA_TIPO = 'N'  "
-	cQuery+= " FROM "+RetSqlTab("SZA")
-	cQuery+= " INNER JOIN "+RetSqlTab("SB1")+" ON B1_COD = ZA_PRODUTO  AND B1_GRUPO NOT IN ('FO','FOFS') AND SB1.D_E_L_E_T_ = '' "
-	cQuery+= " WHERE SZA.D_E_L_E_T_ = ''  "
-	TCSQLEXEC(cQuery)
-
-	cQuery:= " UPDATE SZA010 SET ZA_TIPO = 'S'  "
-	cQuery+= " FROM "+RetSqlTab("SZA") 
-	cQuery+= " INNER JOIN "+RetSqlTab("SB1")+" ON B1_COD = ZA_PRODUTO  AND B1_GRUPO IN ('FO','FOFS') AND SB1.D_E_L_E_T_ = '' "
-	cQuery+= " WHERE SZA.D_E_L_E_T_ = '' "
-	TCSQLEXEC(cQuery)
-
-	Eval( bFiltraBrw ) //Efetiva o Filtro antes da Chamada a mBrowse 
-	lFiltro:= .T.
-Endif
-
-mBrowse( 6, 1,22,75,"SZA",,,,,,aCores              ,,,,,,,,)  // "U_CADSZATOK()" )
-
-IF lFiltro
-	EndFilBrw( "SZA" , @aIndex ) //Finaliza o Filtro 
-Endif
-//mBrowse( 6, 1,22,75,"SE2",,,,,, Fa040Legenda("SE2"),,,,,,,,IIF(ExistBlock("F080FILB"),ExecBlock("F080FILB",.f.,.f.),NIL))
-
-//SetKey(VK_F10,Nil)
-
-//RESET ENVIRONMENT
-
-Return
-
-
-/*
-‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
-						Inclus„o de registro de perda
-ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
-*/
-User Function DPDINCLUI()
-Local nOK
-//     AxInclui( <cAlias>, <nReg>, <nOpc>, <aAcho>, <cFunc>, <aCpos>, <cTudoOk>, <lF3>, <cTransact>, <aButtons>, <aParam>, <aAuto>, <lVirtual>, <lMaximized>)
-nOK := AxInclui("SZA"    , 0     , 3     ,        ,        ,        , "U_CADSZATOK()" )
-
-If nOk == 1
-	Reclock("SZA",.F.)
-	SZA->ZA_DATA := DATE()
-	SZA->ZA_HORA := Time()
-	SZA->( msUnlock() )
-	
-	If SB1->B1_APROPRI == 'I' .or. Subs(SB1->B1_COD,1,8) == '50010100'
-		_nQtdTot    := SZA->ZA_SALDO
-
-	  	Reclock("SZA",.F.)
-		SZA->ZA_SALDO := 0
-	  	SZA->( msUnlock() )
-	
-    Else    
-    	//⁄ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒø
-		//≥ GERA EMPENHO NA CRIACAO DA PERDA≥
-	   //¿ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒŸ
-  		SD4PERDA(SZA->ZA_PRODUTO, cArm, SZA->ZA_OP, SZA->ZA_QTDORI,.F. ) 
-  		U_CRIAP07(SZA->ZA_PRODUTO, cArm)	
-		//FIM
-		
-		 if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
-			If MsgYesNo("Deseja imprimir a etiqueta?")
-				Etiqueta()
-			EndIf
-		ENdif	
-	 EndIf  
-EndIf
-
-Return
-//----------------------------------------------------------
-
-//User Function fReImp()
-
-//Return
-
-//------------------------------------------------------------
-
-
-User Function fLegDomP()
-
 BrwLegenda("","Legenda",{;
 {"BR_CINZA"   ,"Perda Fibras - Pagas" 		},;  
 {"BR_AZUL"    ,"Perda Fibras - ‡ Pagar"		},; 
 {"DISABLE"    ,"Perdas Outros - Pagas"		},; 
 {"BR_VERDE"   ,"Perdas Outros - ‡ Pagar"	}}) 
 
+*/
+	//Adiciona Legenda no Browse
+	ADD LEGEND DATA ' Empty(PZA->PZA_STATUS) '	COLOR "BR_VERDE"	TITLE "Perdas a pagar"	OF oBrowse
+	//ADD LEGEND DATA ' ZM_STATFIN == "1" .And. ZM_LA <> "S" '	COLOR "BR_AZUL"	    TITLE "Contrato Liberado"			 OF oBrowse
+	//ADD LEGEND DATA ' ZM_STATFIN == "2" '	COLOR "BR_LARANJA"	 TITLE "Parcialmente Pago"			 OF oBrowse
+	//ADD LEGEND DATA ' ZM_STATFIN == "3" '	COLOR "BR_VERMELHO"	 TITLE "Contrato Quitado/Baixado" OF oBrowse
+	//ADD LEGEND DATA ' ZM_STATFIN == "1" .And. ZM_LA == "S" '  COLOR "BR_VIOLETA"	 TITLE "Contrato Contabilizado"	 OF oBrowse    
+	
+	
+	//Colunas do Browse Principal
+	ADD COLUMN oColumn1 DATA { || PZA_CODIGO  } TITLE Posicione("SX3",2,"PZA_CODIGO" ,"X3_TITULO") SIZE TamSx3("PZA_CODIGO" )[1] OF oBrowse
+ 	ADD COLUMN oColumn2 DATA { || PZA_OP  	  } TITLE Posicione("SX3",2,"PZA_OP","X3_TITULO") SIZE TamSx3("PZA_OP")[1] OF oBrowse
+ 	ADD COLUMN oColumn3 DATA { || PZA_PRODOP  } TITLE Posicione("SX3",2,"PZA_PRODOP","X3_TITULO") SIZE TamSx3("PZA_PRODOP")[1] OF oBrowse
+ 	ADD COLUMN oColumn4 DATA { || PZA_RECURSO } TITLE Posicione("SX3",2,"PZA_RECURSO","X3_TITULO") SIZE TamSx3("PZA_RECURSO")[1] OF oBrowse
+ 	ADD COLUMN oColumn5 DATA { || PZA_DATA	 } TITLE Posicione("SX3",2,"PZA_DATA","X3_TITULO") SIZE TamSx3("PZA_DATA")[1] OF oBrowse   
+ 	ADD COLUMN oColumn6 DATA { || PZA_HORA 	 } TITLE Posicione("SX3",2,"PZA_HORA","X3_TITULO") SIZE TamSx3("PZA_HORA")[1] OF oBrowse
+ 	//ADD COLUMN oColumn7 DATA { || ZM_CODBCO  } TITLE Posicione("SX3",2,"ZM_CODBCO" ,"X3_TITULO") SIZE TamSx3("ZM_CODBCO" )[1] OF oBrowse
+ 	//ADD COLUMN oColumn8 DATA { || ZM_BCOAGEN } TITLE Posicione("SX3",2,"ZM_BCOAGEN","X3_TITULO") SIZE TamSx3("ZM_BCOAGEN")[1] OF oBrowse
+ 	//ADD COLUMN oColumn9 DATA { || ZM_BCOCONT } TITLE Posicione("SX3",2,"ZM_BCOCONT","X3_TITULO") SIZE TamSx3("ZM_BCOCONT")[1] OF oBrowse
+ 	
+ 	oBrowse:CleanFilter() 
+ 	oBrowse:SetUseFilter()
+	oBrowse:SetFilterDefault ( "PZA->PZA_FILIAL == '"  + xFilial("PZA") +  "' " )	
+	//oBrowse:AddFilter( "Contrato em Aberto", ' Empty(ZM_STATFIN) .Or. ZM_STATFIN == "0"  '	, /*[ lNoCheck]*/.F.,/*[ lSelected]*/.F., /*[ cAlias]*/, /*[ lFilterAsk]*/, /*[ aFilParser]*/, /*[ cID]*/ )
+	//oBrowse:AddFilter( "Contrato Liberado", ' SZM->ZM_STATFIN == "1" .And. SZM->ZM_LA <> "S" '									, /*[ lNoCheck]*/.F.,/*[ lSelected]*/.F., /*[ cAlias]*/, /*[ lFilterAsk]*/, /*[ aFilParser]*/, /*[ cID]*/ )
+	//oBrowse:AddFilter( "Parcialmente Pago", ' SZM->ZM_STATFIN == "2" '									, /*[ lNoCheck]*/.F.,/*[ lSelected]*/.F., /*[ cAlias]*/, /*[ lFilterAsk]*/, /*[ aFilParser]*/, /*[ cID]*/)
+	//oBrowse:AddFilter( "Contrato Quitado/Baixado",' SZM->ZM_STATFIN == "3" '							, /*[ lNoCheck]*/.F.,/*[ lSelected]*/.F., /*[ cAlias]*/, /*[ lFilterAsk]*/, /*[ aFilParser]*/, /*[ cID]*/)
+	//oBrowse:AddFilter( "Contrato Contabilizado",'SZM->ZM_STATFIN == "1" .And. SZM->ZM_LA == "S" ', /*[ lNoCheck]*/.F.,/*[ lSelected]*/.F., /*[ cAlias]*/, /*[ lFilterAsk]*/, /*[ aFilParser]*/, /*[ cID]*/)	
+	//Ativa o Browse
+	ACTIVATE FWBROWSE oBrowse
+	
+ACTIVATE MSDIALOG oDlg CENTERED
+
+
 Return
 
-User Function DPDINIC_DOC()
+Static Function APERDAINC(cAlias,nRecno,nOpcx)
+Local lRet := .F.
+Local aAlterFields 	:= {}
+Local lOkGrv 		:= .F.    
+Local cFieldOk      := ""
+Private cTitulo		:= cCadastro
+Private aSize 		:= {}
+Private aObjects 	:= {}
+Private aInfo 		:= {}
+Private aPosObj 	:= {}
+Private aPosGet 	:= {}
+Private lOkSaida 	:= .F.                         
+Private aFieldsPza 	:= {"NOUSER"}
+Private aAltAcols 	:={"ZA_MOTIVO","ZA_QTDORI","ZA_OPERADO","ZA_RECURSO"} 
+Private nCols		:= 0
 
-Return "000001"
+Private aColsNew := {"NOUSER"}
+
+
+Private nPosLin	:= 0
+
+Private _oDlg
+Private oGetdados              
+
+VISUAL  := (nOpcx == 2)
+INCLUI	:= (nOpcx == 3)
+ALTERA	:= (nOpcx == 4)
+EXCLUI	:= (nOpcx == 5)
+
+Private oFont1	:= TFont():New("Verdana",,024,,.T.,,,,,.F.,.F.)
+Private oFont2	:= TFont():New("Verdana",,044,,.T.,,,,,.F.,.F.)
+Private oFont18	:= TFont():New("Verdana",,018,,.T.,,,,,.F.,.F.)
+
+Static oEnchoice
+PRIVATE aTELA[0][0]
+PRIVATE aGETS[0]
+PRIVATE lTemMvBco := .F.
+Private nOPCselX	:= 0
+Default nRecno := 0
+
+aSize	:= MsAdvSize( .F. )
+aInfo   := { aSize[ 1 ], aSize[ 2 ], aSize[ 3 ], aSize[ 4 ], 3, 2 }
+
+AAdd( aObjects, { 100, 100, .T., .T. } )
+AAdd( aObjects, { 100, 100, .T., .T. } )
+AAdd( aObjects, { 100, 005, .T., .F. } )
+
+aPosObj	:= MsObjSize(aInfo,aObjects)
+aPosGet := MsObjGetPos(aSize[3]-aSize[1],315,{{003,033,160,200,240,263}} )
+
+DbSelectarea("PZA")
+
+cCamposPza :=  "PZA_CODIGO/PZA_RECURSO/PZA_OP/PZA_PRODOP/PZA_DESCRI/PZA_DATA/PZA_HORA/PZA_OPERAD/PZA_TPPERD/PZA_USUARI/PZA_SERIAL/PZA_STATUS"
+cCamposSZA :=  "ZA_DOCUMEN/ZA_DATA/ZA_OP/ZA_RECURSO/ZA_PRODUTO/ZA_DESC/ZA_MOTIVO/ZA_DESCPER/ZA_QTDORI/ZA_SALDO/ZA_OPERADO/ZA_HORA/ZA_USUARIO/ZA_SERIAL/ZA_CODPZA"
+//Carrega Variaveis na Memoria
+RegToMemory("PZA", .T., .T.,.T.)
+aEval(ApBuildHeader("PZA", Nil), {|x| iiF(Alltrim(x[2]) $ cCamposPZA , Aadd(aFieldsPza, x[2]),)})
+aAlterFields := aClone(aFieldsPza)         
+
+
+
+RegToMemory("SZA", .T., .T.,.T.)
+aEval(ApBuildHeader("SZA", Nil), {|x| iiF(Alltrim(x[2]) $ cCamposSZA , Aadd(aHeader, x),)})
+
+//Carrega o Acols 
+If ALTERA .OR. VISUAL
+	CarregAcols()
+Endif
+
+
+DEFINE MSDIALOG _oDlg TITLE cCadastro FROM aSize[7],aSize[1] TO aSize[6],aSize[5] OF oMainWnd PIXEL
+
+	oFWLayer2 := FWLayer():New()		
+	oFWLayer2:Init(_oDlg,.F.)
+
+	oFWLayer2:AddCollumn("Col03",06,.T.)
+	oFWLayer2:AddCollumn("Col04",94,.T.)
+
+	oFWLayer2:AddWindow("Col03","Win03"	,"AÁoes"				,100,.F.,.F.,/*bAction*/,/*cIDLine*/,/*bGotFocus*/)
+	oFWLayer2:AddWindow("Col04","Win04"	,"CabeÁalho Perda"	,035,.F.,.F.,/*bAction*/,/*cIDLine*/,/*bGotFocus*/)
+	oFWLayer2:AddWindow("Col04","Win05"	,"Itens Perda"	,065,.F.,.F.,/*bAction*/,/*cIDLine*/,/*bGotFocus*/)
+	//oFWLayer2:AddWindow("Col04","Win07"	,"Total do Parcelament"	,013,.F.,.F.,/*bAction*/,/*cIDLine*/,/*bGotFocus*/)
+
+	oWin3 := oFWLayer2:GetWinPanel("Col03","Win03")
+	oWin4 := oFWLayer2:GetWinPanel("Col04","Win04")
+	oWin5 := oFWLayer2:GetWinPanel("Col04","Win05")                                   
+	//oWin7 := oFWLayer2:GetWinPanel("Col04","Win07")
+
+	@ 000, 000 BTNBMP oBitmap1  RESNAME "FINAL"  SIZE 008, 035 OF oWin3 MESSAGE "Sair";
+	Action( If(MSGYESNO("Deseja realmente sair do sistema?","ValidaÁ„o"),lOkSaida:=.T.,),IIF(lOkSaida,_oDlg:End(),))
+	oBitmap1:cCaption := " <F4>"
+	oBitmap1:Align  := CONTROL_ALIGN_BOTTOM
+	SetKey(VK_F4 ,{||If(MSGYESNO("Deseja realmente sair do sistema?","ValidaÁ„o"),lOkSaida:=.T.,),IIF( lOkSaida,_oDlg:End(),)})
+    
+   	@ 000, 000 BTNBMP oBitmap2  RESNAME "OK"  SIZE 008, 035 OF oWin3 MESSAGE "Gravar Perda" ;
+	Action( Iif(ValidGRV(nOpcx,{{"PZA"},{"SZA"}}),lOkGrv := GravaPerda(),MsgStop("Erro de GravaÁ„o","Erro")),IIF(lokGrv,_oDlg:End(),/*Else*/),IIF(lokGrv,nOPCselX := 1,/*Else*/))
+	oBitmap2:cCaption := "<F10>"
+	oBitmap2:Align  := CONTROL_ALIGN_TOP
+	SetKey(VK_F10,{||  Iif(ValidGRV(nOpcx,{{"PZA"},{"SZA"}}), lOkGrv := GravaPerda(),MsgStop("Erro de GravaÁ„o","Erro")),iIf(lOkGrv,_oDlg:End(),/*Else*/),IIF(lokGrv,nOPCselX := 1,/*Else*/),Nil } )
+	oBitmap2:LVISIBLECONTROL := IIF(INCLUI .or. ALTERA,.T.,.F.) 
+	
+	//Enchoice 
+	lMemory := .T.     
+	        
+	oEnchoice := MsMGet():New("PZA",nRecno,nOpcx,,,,aFieldsPza,aPosObj[1],aAlterFields,1,,,,oWin4,.F./*lConF3*/,.T./*lMemory*/,.T./*lColuna*/,/*caTela*/,;
+							  /*lNoFolder*/,/*lProperty*/,/*aField*/,/*aFolder*/,/*lCreate afolder*/,/*lNoMDIStretch*/,,.F./*lOrderACho*/)
+	                                                                                                  
+	oGetDados := MsNewGetDados():New(0,0,0,0,nOpcx,/*lLinOk*//*"U_VLDLACOLS"*/,/*lTudOk*/,"+ZA_DOCUMEN"/*CpoInc*/,aAltAcols,,,cFieldOk,,,oWin5,aHeader,aCols)
+	oGetDados:oBrowse:Align := CONTROL_ALIGN_ALLCLIENT
+	//oGetDados:BCHANGE := {|| U_AVLDDGCP(ReadVar())} 
+	//oGetDados:BFIELDOK := {|| U_AVLDDGCP(ReadVar())}
+	
+		
+	
+ACTIVATE MSDIALOG _oDlg ON INIT({|| If(!obrigatorio(aGets,aTela),nOpcA:=0,_oDlg:End()) }) CENTERED
+
+If lOkSaida .OR. nOPCselX == 0
+	//ROLLBACKSXE()
+EndIf
+
+If nOpcX == 1
+	//CLICOU EM OK
+
+Else
+	//CLICOU EM CANCELAR
+EndIf
+
+Return lRet
+//GATILHO DOMPERDA PZA
+User Function VLDTBPZA(cVarDigit)
+Local lRetVld := .T.
+Local aColsSZA := {}
+Local nP 	   :=0
+Default cVarDigit := ""    //Vari·vel Digitada
+
+IF  cVarDigit $ "M->PZA_OP"	
+	If INCLUI
+		If Empty(Alltrim(M->PZA_SERIAL))
+			SC2->(DbSetOrder(1))
+			if SC2->(DbSeek(xFilial("SC2")+M->PZA_OP ))
+		
+				M->PZA_PRODOP := SC2->C2_PRODUTO
+				M->PZA_DESCRI := POSICIONE("SB1",1,XFILIAL("SB1")+SC2->C2_PRODUTO,"B1_DESC")
+			
+				cQrySZA:= "SELECT D4_FILIAL  ZA_FILIAL "
+				cQrySZA+= ENTER + "  ,''  ZA_DOCUMEN " 
+				cQrySZA+= ENTER + "  ,D4_DATA  ZA_DATA "
+				cQrySZA+= ENTER + "  ,D4_OP  ZA_OP "
+				cQrySZA+= ENTER + "  ,'' ZA_RECURSO "
+				cQrySZA+= ENTER + "  ,D4_COD ZA_PRODUTO "
+				cQrySZA+= ENTER + "  ,B1_DESC ZA_DESC "
+				cQrySZA+= ENTER + "  ,'' ZA_MOTIVO "
+				cQrySZA+= ENTER + "  ,'' ZA_DESCPER "
+				cQrySZA+= ENTER + "  ,0 ZA_QTDORI "
+				cQrySZA+= ENTER + "  ,0 ZA_SALDO "
+				cQrySZA+= ENTER + "  ,'' ZA_OPERADO "
+				cQrySZA+= ENTER + "  ,'' ZA_HORA   "
+				cQrySZA+= ENTER + "  ,'P' ZA_TIPO  "
+				cQrySZA+= ENTER + "  ,'' ZA_PRODPG "
+				cQrySZA+= ENTER + "  ,'' ZA_USUARIO "
+				cQrySZA+= ENTER + "  ,'' ZA_FLAG   "
+				cQrySZA+= ENTER + "  ,'' ZA_MAQUINA "
+				cQrySZA+= ENTER + "  ,'' ZA_SERIAL "
+				cQrySZA+= ENTER + "  ,'' ZA_CODPZA "
+				cQrySZA+= ENTER + "  FROM " + RetSqlName("SD4") + " SD4 " 
+				cQrySZA+= ENTER + "  JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ ='' AND SB1. B1_FILIAL = '" + xFilial("SB1") + "' AND SB1.B1_COD =SD4.D4_COD "
+				cQrySZA+= ENTER + "  WHERE SD4.D_E_L_E_T_ ='' AND SD4.D4_FILIAL  ='" + xFilial("SD4") + "' AND LEFT(SD4.D4_OP,8) = '" + SUBSTR(ALLTRIM(M->PZA_OP),1,8) + "' "
+				
+				If Select("TBSZA") > 0 
+					TBSZA->(DbCloseArea())
+				EndIf
+				TCQUERY cQrySZA NEW ALIAS "TBSZA"
+
+				If TBSZA->(!EOF())
+					While TBSZA->(!EOF())
+						AaDd(aColsSza,Array(Len(aHeader) + 1))
+						For nP:= 1 to Len(aHeader)
+
+							aColsSZA[Len(aColsSza)][nP] := TBSZA->(&(aHeader[nP][2]))
+
+							If aHeader[nP][2] == "ZA_DOCUMEN"
+								aColsSZA[Len(aColsSza)][nP] := U_IZAZEDOC()
+							elseif Alltrim(aHeader[nP][2]) == "ZA_CODPZA"
+								aColsSZA[Len(aColsSza)][nP] := M->PZA_CODIGO	
+							eLseIf Alltrim(aHeader[nP][2]) == "ZA_RECURSO"
+								aColsSZA[Len(aColsSza)][nP] := M->PZA_RECURS
+							eLseIf Alltrim(aHeader[nP][2]) == "ZA_USUARIO"
+								aColsSZA[Len(aColsSza)][nP] := M->PZA_USUARI
+							eLseIf Alltrim(aHeader[nP][2]) == "ZA_DATA"
+								aColsSZA[Len(aColsSza)][nP] := M->PZA_DATA
+							eLseIf Alltrim(aHeader[nP][2]) == "ZA_HORA"
+								aColsSZA[Len(aColsSza)][nP] := M->PZA_HORA				
+							EndIf
+								
+						Next nP
+						//Campo do Deletado
+						aColsSZA[Len(aColsSza)][Len(aColsSZA[Len(aColsSza)])] := .F.
+						TBSZA->(DbSkip())
+					EndDo
+					oGetDados:aCols := aClone(aColsSZA)
+					TBSZA->(DbCloseArea())
+				else
+					MsgSop("OP N√O POSSUI EMPENHO NA SD4")
+					lRetVld := .F.
+				EndIf
+			else
+				MsgStop("Ordem de produÁ„o n„o encontrada com o cÛdigo informado","Ordem de ProuduÁ„o")
+				lRetVld := .F.
+			EndIf
+		else
+			MsgStop("ObrigatÛrio informar o cÛdigo serial para dar continuidade","Ordem de Produc„o")
+			lRetVld := .F.	
+		EndIf
+	Endif
+ElseIf cVarDigit $ "M->PZA_SERIAL"
+	If!Empty(M->PZA_SERIAL)
+		XD4->(DbSetOrder(3))
+		If XD4->(DbSeek(xFilial("XD4")+M->PZA_SERIAL))
+			lRetVld := .T.
+		else
+			MsgStop("CÛdigo Serial Digitado n„o encontrado na XD4","Erro Codigo Serial")
+			lRetVld := .F.	
+		Endif
+	EndIf
+EndIf                                
+//teste
+
+oGetDados:Refresh()
+_odlg:Refresh()
+
+Return lRetVld 
+
+Static Function ValidGRV(nOpcx,aTabs)
+Local lRet := .T.
+
+Return lRet
+
+Static Function CarregAcols()
+Local cQryPZA := ""
+Local nP := 0
+Local aColsSza := {}
+
+cQryPZA := " SELECT * "
+cQryPZA += " FROM " + RetSqlName("SZA")  +" SZA "
+cQryPZA += " WHERE D_E_L_E_T_ ='' AND SZA.ZA_FILIAL  ='" + xFilial("SZA") + "' AND SZA.ZA_CODPZA = '" + PZA->PZA_CODIGO + "'"
+
+If Select("TMPZA") > 0 
+	TMPZA->(DbCloseArea())
+EndIf
+TCQUERY cQryPZA NEW ALIAS "TMPZA"
+If TMPZA->(!EOF())
+	While TMPZA->(!EOF())
+		AaDd(aColsSza,Array(Len(aHeader) + 1))
+						For nP:= 1 to Len(aHeader)
+							aColsSZA[Len(aColsSza)][nP] := TBSZA->(&(aHeader[nP][2]))						
+						Next nP
+						//Campo do Deletado
+						aColsSZA[Len(aColsSza)][Len(aColsSZA[Len(aColsSza)])] := .F.
+		TMPZA->(DbSkip())
+	EndDo
+	oGetDados:aCols := aClone(aColsSZA)
+EndIf
+oGetDados:Refresh()
+_odlg:Refresh()
+
+Return
+
+Static Function GravaPerda()
+Local lRet := .T.
+Local lOkPza := .F.
+Local lOkSza := .F.
+Local nK := 0
+Local nH := 0
+Local nPosQtd := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_QTDORI" } )
+Local nPosDoc := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_DOCUMEN" } )
+Private cArm:= '96'
+
+IF INCLUI
+	Begin Transaction
+	If Reclock("PZA",.T.)
+		For nK:= 1 To Len(aFieldsPza)
+			PZA->(&(aFieldsPza[nK])) := M->(&(FieldsPza[nK]))
+		Next nK	
+		PZA->(MsUnlock())	
+		lOkPza := .T.	
+	Endif
+
+	If lOkPza
+		aGrvsOk := {}
+		For nK := 1 to len(oGetdados:Acols)
+			If !oGetdados:Acols[nK][Len(oGetdados:Acols[nK])]
+				//So gravar se a quantidade infromada de perda for maior que zero
+				If oGetDados:aCols[nK][nPosQtd] > 0 
+					If Reclock("SZA",.T.)
+						For nH:=1 To Len(aHeader)						
+							SZA->(&(aHeader[nH][2])) := oGetDados:aCols[nK][nH]
+						Next nH
+						SZA->(MsUnlock())
+						lOkSza := .T.
+					EndIf
+					SB1->(DbSetOrder(1))
+					SB1->(DbSeek(xFilial("SB1")+SZA->ZA_PRODUTO))
+					If SB1->B1_APROPRI == 'I' .or. Subs(SB1->B1_COD,1,8) == '50010100'
+						_nQtdTot    := SZA->ZA_SALDO
+
+						Reclock("SZA",.F.)
+						SZA->ZA_SALDO := 0
+						SZA->( msUnlock() )
+					
+					Else    
+						//⁄ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒø
+						//≥ GERA EMPENHO NA CRIACAO DA PERDA≥
+						//¿ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒŸ
+						SD4PERDA(SZA->ZA_PRODUTO, cArm, SZA->ZA_OP, SZA->ZA_QTDORI,.F. ) 
+						U_CRIAP07(SZA->ZA_PRODUTO, cArm)	
+						//FIM						
+					EndIf 
+					aaDd(aGrvsOk,{SZA->ZA_DOCUMEN,SZA->ZA_PRODUTO,SZA->ZA_OP})
+				EndIf
+			EndIf
+		Next nK
+	EndIf	
+	
+	If !lOkSza .Or. !lOkPza
+		DisarmTransaction()
+		MsgStop("Erro na gravaÁ„o dos dados")
+		lRet := .F.
+	Endif
+	End Transaction 
+	
+	//Se deu Tudo certo imprime etiquetas
+	if lRet 
+		If MsgYesNo("Deseja imprimir a(s) etiqueta(s)?")
+			If len(aGrvsOk) > 0	
+				//Pesquisar pelo cÛdigo do documento que È unico					
+				SZA->(DbSetOrder(2))
+				For nK := 1 to len(aGrvsOk)
+					IF SZA->(DbSeek(xfilial("SZA") + aGrvsOk[nk][1]))
+						if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
+							Etiqueta()
+						EndIf
+					Endif
+				Next nK
+			ENdif
+		EndIf
+	EndIf		
+elseIf ALTERA
+	SZA->(DbSetOrder(2))
+	
+	For nK := 1 to len(oGetdados:Acols)
+		If !oGetdados:Acols[nK][Len(oGetdados:Acols[nK])]
+			//So gravar se a quantidade infromada de perda for maior que zero
+			If SZA->(DbSeek(xFilial("SZA")+  oGetDados:aCols[nK][nPosDoc] ))
+
+				If Reclock("SZA",.F.)
+					
+					For nH:=1 To Len(aHeader)						
+						If SZA->(&(aHeader[nH][2]))  <> oGetDados:aCols[nK][nH]
+							SZA->(&(aHeader[nH][2])) := oGetDados:aCols[nK][nH]
+						EndIf
+					Next nH
+					SZA->(MsUnlock())
+					lOkSza := .T.
+				EndIf
+				SB1->(DbSetOrder(1))
+				SB1->(DbSeek(xFilial("SB1")+SZA->ZA_PRODUTO))
+				If SB1->B1_APROPRI == 'I' .or. Subs(SB1->B1_COD,1,8) == '50010100'
+					_nQtdTot    := SZA->ZA_SALDO
+
+					Reclock("SZA",.F.)
+					SZA->ZA_SALDO := 0
+					SZA->( msUnlock() )
+				
+				Else    
+					//⁄ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒø
+					//≥ GERA EMPENHO NA CRIACAO DA PERDA≥
+					//¿ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒŸ
+					SD4PERDA(SZA->ZA_PRODUTO, cArm, SZA->ZA_OP, SZA->ZA_QTDORI,.F. ) 
+					U_CRIAP07(SZA->ZA_PRODUTO, cArm)	
+					//FIM						
+				EndIf 
+				aaDd(aGrvsOk,{SZA->ZA_DOCUMEN,SZA->ZA_PRODUTO,SZA->ZA_OP})
+			
+			EndIf
+		EndIf
+	Next nK
+	
+	lRet := .T.
+else
+	lRet := .T.
+EndIf
+Return lRet
 
 Static Function Etiqueta()
 Local _cPorta    := "LPT1"
@@ -182,117 +600,8 @@ MSCBClosePrinter()
 
 RestArea(_aAreaGER)
 
-
-/*
-MSCBPrinter("TLP 2844",_cPorta,,,.F.)
-MSCBBegin(1,6)
-MSCBSay(28,01,"ALMOXARIFADO :"+SBE->BE_LOCAL,"N","2","1,1")
-MSCBSay(28,03,"ENDERECO :"+SBE->BE_LOCALIZ,"N","2","1,1")
-MSCBSayBar(27,06,SBE->BE_LOCAL+SubStr(SBE->BE_LOCALIZ,1,13),"N","MB07",10,.F.,.T.,.F.,,2,1,Nil,Nil,Nil,Nil)
-MSCBEnd()
-MSCBClosePrinter()
-*/
-
-
-
 Return
 
-
-User Function DPDALTERA()
-
-If SZA->ZA_QTDORI == SZA->ZA_SALDO
-	nOK := AxAltera("SZA",0,4)
-	
-	If nOk == 1 
-		
-		//⁄ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒø
-		//≥ GERA EMPENHO NA ALTERACAO DA PERDA≥
-		//¿ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒŸ
-		//SD4PERDA(SZA->ZA_PRODUTO, '96', SZA->ZA_OP, SZA->ZA_QTDORI,.F. ) 
-		//FIM
-		
-		Reclock("SZA",.F.)
-		SZA->ZA_DATA := DATE()
-		SZA->ZA_HORA := Time()
-		SZA->( msUnlock() )  
-		
-		
-		if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
-			If MsgYesNo("Deseja imprimir a etiqueta?")
-				Etiqueta()
-			EndIf
-		ENdif	
-	EndIf
-Else
-	MsgStop("AlteraÁ„o n„o permitida. Perda j· atendida.")
-EndIf
-
-Return
-
-
-User Function DPDREIMP()
-
-if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
-	If SZA->ZA_QTDORI == SZA->ZA_SALDO
-		If MsgYesNo("Deseja imprimir a etiqueta?")
-			Etiqueta()
-		EndIf
-	Else
-		MsgStop("Reimpress„o n„o permitida. Perda j· atendida.")
-	EndIf
-Endif
-Return
-
-User Function DPDDELETA()
-
-If SZA->ZA_SALDO == 0
-	MsgStop("Perda com pagamento j· efetuado. N„o ser· possÌvel excluir este apontamento.")
-Else
-	If SZA->ZA_QTDORI <> SZA->ZA_SALDO
-		MsgStop("Perda com pagamento parcial j· efetuado. N„o ser· possÌvel excluir este apontamento.")
-	Else        
-		//⁄ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒø
-		//≥ EXCLUI EMPENHO≥
-		//¿ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒŸ
-		SD4PERDA(SZA->ZA_PRODUTO, '96', SZA->ZA_OP, SZA->ZA_QTDORI, .T. ) 
-		//FIM  	
-		RegToMemory("SZA",.F.)
-		AxDeleta("SZA"  , SZA->( Recno() )     , 5    )
-	EndIf
-EndIf
-
-Return
-
-User Function CADDPDTOK()
-Local _Retorno := .F.
-
-If !Empty(M->ZA_OP)
-	_Retorno := .T.
-Else
-	MsgStop("Para apontamentos do tipo Perdas da ProduÁ„o, È obrigatÛrio informar a Ordem de ProduÁ„o.")
-	_Retorno := .F.
-EndIf
-//EndIf
-
-
-
-
-Return _Retorno
-
-/*
-‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
-±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-±±…ÕÕÕÕÕÕÕÕÕÕ—ÕÕÕÕÕÕÕÕÕÕÀÕÕÕÕÕÕÕ—ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÀÕÕÕÕÕÕ—ÕÕÕÕÕÕÕÕÕÕÕÕÕª±±
-±±∫Programa  ≥MT410TOK  ∫Autor  ≥Jonas Pereira 		 ∫ Data ≥  09/10/18   ∫±±
-±±ÃÕÕÕÕÕÕÕÕÕÕÿÕÕÕÕÕÕÕÕÕÕ ÕÕÕÕÕÕÕœÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ ÕÕÕÕÕÕœÕÕÕÕÕÕÕÕÕÕÕÕÕπ±±
-±±∫Desc.     ≥ Gera empenho no lancamento de perda		  ∫±±
-±±∫          ≥ 							                                  ∫±±
-±±ÃÕÕÕÕÕÕÕÕÕÕÿÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕπ±±
-±±∫Uso       ≥ AP                                                         ∫±±
-±±»ÕÕÕÕÕÕÕÕÕÕœÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕº±±
-±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-ﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂﬂ
-*/
 Static Function SD4PERDA(cProduto, cLocal, cOP, nQtd, lExclui )                 
 
 Local lReturn  := .t.
@@ -373,114 +682,101 @@ Endif
 
 RestArea(aArea)                                     
 
-Return lReturn 
+Return lReturn
 
-//Static function cEMPSB2(cProduto, cLocal, nQTD, lExclui)
+User Function PZAREIMP()
+Local cQryPZA := ""
 
-//Local nVal                                             
+cQryPZA := " SELECT * "
+cQryPZA += " FROM " + RetSqlName("SZA")  +" SZA "
+cQryPZA += " WHERE D_E_L_E_T_ ='' AND SZA.ZA_FILIAL  ='" + xFilial("SZA") + "' AND SZA.ZA_CODPZA = '" + PZA->PZA_CODIGO + "'"
 
-If lExclui    
-	nVal := Alltrim(Str(nQTD*(-1)))
-Else                               
-	nVal := Alltrim(Str(nQTD))
+If Select("TMPZA") > 0 
+	TMPZA->(DbCloseArea())
 EndIf
-
-//AjustaEmpenho
-Reclock("P05",.T.)
-P05->P05_FILIAL := "01"
-P05->P05_ALIAS  := "SB2"
-P05->P05_INDICE := "1"
-P05->P05_CHAVE  := "01" + cProduto + cLocal
-P05->P05_CAMPO  := "B2_QEMP"
-P05->P05_TIPO   := "N"
-P05->P05_SOMA   := nVal
-P05->P05_DTINC  := dDataBase
-P05->P05_HRINC  := Time()
-P05->P05_PRODUT := cProduto
-P05->P05_LOCAL  := cLocal
-P05->( msUnlock() )
-
+TCQUERY cQryPZA NEW ALIAS "TMPZA"
+If TMPZA->(!EOF())
+	If MsgYesNo("Deseja imprimir a etiqueta?")
+		SZA->(DbSetOrder(2))
+		While TMPZA->(!EOF())
+			iF SZA->(DbSeek(xFilial("SZA") + TMPZA->ZA_DOCUMEN))
+				if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
+					If SZA->ZA_QTDORI == SZA->ZA_SALDO				
+						Etiqueta()						
+					Else
+						MsgStop("Reimpress„o n„o permitida. Perda j· atendida. produto:" + SZA->ZA_PRODUTO + " OP: " + SZA->ZA_OP)
+					EndIf				
+				EndIf
+			Endif
+			TMPZA->(DbSkip())	
+		Enddo
+	Endif
+Endif
+TMPZA->(DbCloseArea())
 Return
 
 
-User Function fButtCel()
-Local oCelCort1
-Local oCelCort2
-Local oCelCort3
-Local oCelCort4
-Local oCelCort5
-Local oCelCort6
+User Function PZADELETA()
+Local cQryPZA := ""
+Local lOkParaExc := .T.
+Local cMensErro := ""
 
-Local oFont1 := TFont():New("Arial",,050,,.T.,,,,,.F.,.F.)
-Static oDlgBtC
+cQryPZA := " SELECT R_E_C_N_O_ RECNOSZA "
+cQryPZA += " FROM " + RetSqlName("SZA")  +" SZA "
+cQryPZA += " WHERE D_E_L_E_T_ ='' AND SZA.ZA_FILIAL  ='" + xFilial("SZA") + "' AND SZA.ZA_CODPZA = '" + PZA->PZA_CODIGO + "'"
 
-Local cCSSBtN1 :="QPushButton{background-color: #f6f7fa; color: #707070; font: bold 22px Arial; }"+;
-		"QPushButton:pressed {background-color: #50b4b4; color: white; font: bold 22px  Arial; }"+;
-		"QPushButton:hover {background-color: #878787 ; color: white; font: bold 22px  Arial; }"
-
-  DEFINE MSDIALOG oDlgBtC TITLE "Escolha a cÈlula de trabalho" FROM 000, 000  TO 550, 800 COLORS 0, 16777215 PIXEL
-	@ 033, 040 BUTTON oCelCort1 PROMPT "CORTE 1" SIZE 150, 053 OF oDlgBtC ACTION (cCelula := "CORTE 1", oDlgBtc:end() ) FONT oFont1 PIXEL
-	oCelCort1:setCSS(cCSSBtN1)
-	@ 033, 212 BUTTON oCelCort2 PROMPT "CORTE 2" SIZE 150, 053 OF oDlgBtC ACTION (cCelula := "CORTE 2", oDlgBtc:end()) FONT oFont1 PIXEL
-	oCelCort2:setCSS(cCSSBtN1)
-	@ 110, 040 BUTTON oCelCort3 PROMPT "CORTE 3" SIZE 150, 053 OF oDlgBtC ACTION (cCelula := "CORTE 3", oDlgBtc:end()) FONT oFont1 PIXEL
-	oCelCort3:setCSS(cCSSBtN1)
-	@ 110, 212 BUTTON oCelCort4 PROMPT "CORTE 4" SIZE 150, 053 OF oDlgBtC ACTION (cCelula := "CORTE 4", oDlgBtc:end()) FONT oFont1 PIXEL
-	oCelCort4:setCSS(cCSSBtN1)
-	@ 187, 040 BUTTON oCelCort5 PROMPT "TRUNK 1" SIZE 150, 053 OF oDlgBtC ACTION (cCelula := "TRUNK 1", oDlgBtc:end() ) FONT oFont1 PIXEL
-	oCelCort5:setCSS(cCSSBtN1)
-	@ 187, 212 BUTTON oCelCort6 PROMPT "DROP 1" SIZE 150, 053 OF oDlgBtC ACTION (cCelula := "DROP 1", oDlgBtc:end() ) FONT oFont1 PIXEL
-	oCelCort6:setCSS(cCSSBtN1)
-	
-	ACTIVATE MSDIALOG oDlgBtC CENTERED
-
-	Reclock("SZA",.F.)
-	SZA->ZA_MAQUINA := (cCelula)
-	SZA->( msUnlock() )
-
-				
-		P10->(DbSetOrder(1))//P10_FILIAL, P10_OP, P10_FIBRA
-		RecLock("P10",.T.)
-		P10->P10_FILIAL	:= xFilial("P10")
-		P10->P10_OP       := SZA->ZA_OP
-		P10->P10_DTPROG	  := SZA->ZA_DATA
-		P10->P10_FIBRA    := SZA->ZA_PRODUTO
-		P10->P10_SQCORT	  := '000'
-		P10->P10_MAQUIN    := cCelula
-		P10->(MsUnLock())
-	
-Return 
-
-
-User Function DPDZEDOC()
-Local _Retorno := ""
-Local nLoop    := 0
-Local lLoop    := .T.
-Local aAreaGER := GetArea()
-Local aAreaSX6 := SX6->( GetArea() )
-
-SX6->( Dbsetorder(1) )
-
-If SX6->( dbSeek(xFilial("SD3")+"MV_XZAZEDO") )
-	While lLoop .and. nLoop < 1000
-		If RecLock("SX6",.F.) .And. lLoop
-			_NextDoc        := Alltrim(SX6->X6_CONTEUD)
-			SX6->X6_CONTEUD := SOMA1(_NextDoc)
-			SX6->( Msunlock() )
-			
-			lLoop    := .F.
-			_Retorno := _NextDoc
+If Select("TMPZA") > 0 
+	TMPZA->(DbCloseArea())
+EndIf
+TCQUERY cQryPZA NEW ALIAS "TMPZA"
+SZA->(DbSetOrder(2))
+If TMPZA->(!EOF())
+	While TMPZA->(!EOF())		
+		SZA->(DbGoTo(TMPZA->RECNOSZA))
+		If SZA->ZA_DOCUMEN == TMPZA->ZA_DOCUMEN
+			If SZA->ZA_QTDORI <> SZA->ZA_SALDO 		
+				lOkParaExc := .F.
+				cMensErro += "Com Pagamento Parcial - Doc: " + SZA->ZA_DOCUMEN + " Prod: " + SZA->ZA_PRODUTO + " OP: " + SZA->ZA_OP + ENTER
+			ElseIf SZA->ZA_SALDO == 0
+				lOkParaExc := .F.
+				cMensErro += "Com Pagamento Total - Doc: " + SZA->ZA_DOCUMEN + " Prod: " + SZA->ZA_PRODUTO + " OP: " + SZA->ZA_OP + ENTER
+			EndIf
+		EndIf		
+		TMPZA->(DbSkip())
+	EndDo
+	If !lOkParaExc
+		MsgStop("Perda com pagamento j· efetuado. N„o ser· possÌvel excluir este apontamento." + ENTER + cMensErro)
+	Else
+		SZA->(DbSetOrder(2))
+		TMPZA->(DbGoTop())
+		Begin Transaction
+		While TMPZA->(!EOF())
+			SZA->(DbGoTo(TMPZA->RECNOSZA))			
+			If SZA->ZA_DOCUMEN == TMPZA->ZA_DOCUMEN				       
+				//⁄ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒø
+				//≥ EXCLUI EMPENHO≥
+				//¿ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒŸ
+				SD4PERDA(SZA->ZA_PRODUTO, '96', SZA->ZA_OP, SZA->ZA_QTDORI, .T. ) 
+				//FIM  	
+				//RegToMemory("SZA",.F.)
+				//AxDeleta("SZA"  , SZA->( Recno() )     , 5    )
+				Reclock("SZA",.f.)
+					SZA->(DbDelete())
+				SZA->(MsUnlock())
+				lOkParaExc := .T.
+			EndIF
+			TMPZA->(DbSkip())
+		EndDo
+		If lOkParaExc
+			Reclock("PZA",.F.)
+				PZA->(DbDelete())
+			PZA->(MsUnlock())
+		else
+			DisarmTransaction()	
+			MsgStop("N„o Foi PossÌvel Deletar o registro")
 		EndIf
-		nLoop ++
-	End
-EndIf
-
-RestArea(aAreaSX6)
-RestArea(aAreaGER)
-                     
-If Empty(_Retorno)
-   MsgYesNo('Parametro MV_XXNEXTD n„o criado!')
-   _Retorno := ''
-EndIf
-
-Return _Retorno
+		End Transaction
+	EndIf
+Endif
+TMPZA->(DbCloseArea())
+Return lOkParaExc
