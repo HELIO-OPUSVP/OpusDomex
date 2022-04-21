@@ -63,9 +63,9 @@ Return
 Static Function fprocPortal()
 
 	PRIVATE _oChave
-	Private _cChave := '31160308178370000125550010000173441002239569 '  // Space(44)
+//	Private _cChave := '31160308178370000125550010000173441002239569 '  // Space(44)
 //	Private _cChave := '43200273694119000185550000000843311545613846'  // Space(44)
-//    Private _cChave := Space(44)
+    Private _cChave := Space(44)
 	Private _cCnpj   :=substr(_cChave,7,14)
 
 	Private nXXFLAG

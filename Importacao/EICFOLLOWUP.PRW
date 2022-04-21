@@ -1,5 +1,5 @@
-#Include "Protheus.ch"
-#include "rwmake.ch"
+#Include "Protheus.ch" 
+#include "rwmake.ch" 
 #include "totvs.ch"
 #INCLUDE "TOPCONN.CH"
 #INCLUDE "FIVEWIN.CH"
@@ -213,7 +213,7 @@ User Function EICFLWUP()
 	nUsado	:= len(aHeader)
 	aAdd(aCols,Array(nUsado+1))
 
-	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V3.1")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
+	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V3.4")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
 
 	@ 032, 003 GROUP oGroup1 TO 092, 649 PROMPT "Filtros" OF oDlg COLOR 0, 16777215 PIXEL
 
@@ -308,7 +308,8 @@ Static Function Atu_aCols2()
 	cQuerySC7 := " UPDATE SC7010 SET C7_XDATPRF=C7_DATPRF WHERE C7_XDATPRF='' AND C7_DATPRF<>''  AND C7_FILIAL='"+xFILIAL('SC7')+"'  AND D_E_L_E_T_='' "
 	TCSqlExec(cQuerySC7)
 
-	cQuery := "SELECT W2_ORIGEM,WN_PO_NUM AS W2_PO_SIGA,CCH_PAIS,TRIM(W3_PO_DA)+' DA' AS W2_PO_NUM,WN_ITEM_DA AS  W3_POSICAO,W2_PO_DT,A2_NREDUZ,W2_DIAS_PA,"
+  //cQuery := "SELECT W2_ORIGEM,WN_PO_NUM AS W2_PO_SIGA,CCH_PAIS,TRIM(W3_PO_DA)+' DA' AS W2_PO_NUM,WN_ITEM_DA AS  W3_POSICAO,W2_PO_DT,A2_NREDUZ,W2_DIAS_PA,"
+    cQuery := "SELECT W2_ORIGEM,WN_PO_NUM AS W2_PO_SIGA,CCH_PAIS,W3_PO_NUM            AS W2_PO_NUM,W3_POSICAO AS  W3_POSICAO,W2_PO_DT,A2_NREDUZ,W2_DIAS_PA,"	
 	cQuery += "       W3_COD_I,B1_DESC,W3_QTDE,W3_PRECO,W3_QTDE*W3_PRECO VL_TOT ,WN_DOC,WN_QUANT,WN_HAWB,WN_INVOICE,WN_SDOC,WN_QUANT,WN_ITEM,A2_COD,A2_LOJA,WN_HAWB, "
 	cQuery += "       W3_XXOBS,W3_XCONFDT,W3_XNEWDT,W3_XPRVPO,W3_XCOLETA,W3_XETD,W3_XETA,W3_XPRALER,W3_XPRDSB,W3_XENTREG,W3_XFREIGT, "
 	cQuery += "       W3_XMODAL,W3_XDTPCOL,W3_XHOUSE , "
@@ -335,6 +336,11 @@ Static Function Atu_aCols2()
 	cQuery += " AND  B1_FILIAL='"+xFILIAL('SB1')+"' "
 	cQuery += " AND  WN_FILIAL='"+xFILIAL('SWN')+"' "
 
+	//-------------HAWB
+	//IF !EMPTY(cimp)
+	//    cQuery += " AND WN_HAWB ='"+cIMP+"' "
+	// ENDIF
+	//-------------HAWB
 	IF !EMPTY(cnf)
 		cQuery += " AND  WN_DOC LIKE('%"+ALLTRIM(cnf)+"%')  "
 	ENDIF
@@ -390,6 +396,12 @@ Static Function Atu_aCols2()
 	cQuery += " AND  CCH_FILIAL='"+xFILIAL('CCH')+"' "
 	cQuery += " AND  B1_FILIAL='"+xFILIAL('SB1')+"' "
 	cQuery += " AND  WN_FILIAL='"+xFILIAL('SWN')+"' "
+
+	//-------------HAWB
+	//IF !EMPTY(cimp)
+	//    cQuery += " AND WN_HAWB ='"+cIMP+"' "
+	// ENDIF
+	//-------------HAWB
 	IF !EMPTY(cnf)
 		cQuery += " AND  WN_DOC LIKE('%"+ALLTRIM(cnf)+"%')  "
 	ENDIF
@@ -433,22 +445,30 @@ Static Function Atu_aCols2()
 	cQuery += " AND W2_PO_NUM >='"+cGetPoEIC1+"'      AND W2_PO_NUM <='"+cGetPoEIC2+"' "
 	cQuery += " AND W3_COD_I  >='"+cGetPn1+"'         AND W3_COD_I  <='"+cGetPn2+"' "
 	cQuery += " AND W3_SEQ=0"
+	cQuery += " AND  SW5.D_E_L_E_T_=''"
 	cQuery += " AND  SW2.D_E_L_E_T_=''"
 	cQuery += " AND  SW3.D_E_L_E_T_=''"
 	cQuery += " AND  SA2.D_E_L_E_T_=''"
 	cQuery += " AND  CCH.D_E_L_E_T_=''"
 	cQuery += " AND  SB1.D_E_L_E_T_=''"
+    cQuery += " AND  W5_FILIAL='"+xFILIAL('SW5')+"' "	
 	cQuery += " AND  W2_FILIAL='"+xFILIAL('SW2')+"' "
 	cQuery += " AND  W3_FILIAL='"+xFILIAL('SW3')+"' "
 	cQuery += " AND  A2_FILIAL='"+xFILIAL('SA2')+"' "
 	cQuery += " AND  CCH_FILIAL='"+xFILIAL('CCH')+"' "
 	cQuery += " AND  B1_FILIAL='"+xFILIAL('SB1')+"' "
 	cQuery += "	 AND W2_PO_NUM+W3_COD_I+W3_POSICAO NOT IN
-	cQuery += "     (SELECT WN_PO_EIC+WN_PRODUTO+WN_ITEM FROM SWN010 WHERE D_E_L_E_T_='' AND WN_PO_EIC=W2_PO_NUM AND WN_PRODUTO=W3_COD_I
+	cQuery += "     (SELECT WN_PO_EIC+WN_PRODUTO+WN_ITEM FROM SWN010  WITH(NOLOCK) WHERE D_E_L_E_T_='' AND WN_PO_EIC=W2_PO_NUM AND WN_PRODUTO=W3_COD_I
 	cQuery += "  AND WN_ITEM=W3_POSICAO )
 	cQuery += "	AND   W2_PO_NUM+W3_COD_I+W3_POSICAO NOT IN  "
-	cQuery += "  (SELECT W5_PO_NUM+W5_COD_I+W5_POSICAO FROM SW5010 WHERE D_E_L_E_T_=''  "
+	cQuery += "  (SELECT W5_PO_NUM+W5_COD_I+W5_POSICAO FROM SW5010  WITH(NOLOCK) WHERE D_E_L_E_T_=''  "
 	cQuery += "  AND W5_PO_NUM=W2_PO_NUM AND W5_COD_I=W3_COD_I AND W5_POSICAO=W3_POSICAO AND W5_HAWB<>'') "
+
+	//-------------HAWB
+	//IF !EMPTY(cimp)
+	//    cQuery += " AND W5_HAWB ='"+cIMP+"' "
+	// ENDIF
+	//-------------HAWB
 
 	IF !EMPTY(cnf)
 		cQuery += " AND  WN_DOC LIKE('%"+ALLTRIM(cnf)+"%')  "
@@ -509,8 +529,14 @@ Static Function Atu_aCols2()
 	cQuery += " (SELECT WN_PO_EIC+WN_PRODUTO+WN_HAWB FROM SWN010 WHERE D_E_L_E_T_='' AND WN_PO_EIC=W2_PO_NUM AND WN_PRODUTO=W3_COD_I AND WN_HAWB=W5_HAWB ) "
 	cQuery += " AND TRIM(W2_PO_SIGA)+TRIM(W3_COD_I)+SUBSTRING(W5_HAWB,1,11) NOT IN "
 	cQuery += " (SELECT TRIM(WN_PO_NUM)+TRIM(WN_PRODUTO)+SUBSTRING(WN_HAWB,1,11) "
-	cQuery += " FROM SWN010 WHERE D_E_L_E_T_='' AND SUBSTRING(WN_HAWB,1,11)=SUBSTRING(W5_HAWB,1,11) "
+	cQuery += " FROM SWN010  WITH(NOLOCK) WHERE D_E_L_E_T_='' AND SUBSTRING(WN_HAWB,1,11)=SUBSTRING(W5_HAWB,1,11) "
 	cQuery += " AND TRIM(WN_PO_NUM)=TRIM(W2_PO_SIGA) AND TRIM(WN_PRODUTO)=TRIM(W3_COD_I) ) "
+
+	//-------------HAWB
+	//IF !EMPTY(cimp)
+	//    cQuery += " AND W5_HAWB ='"+cIMP+"' "
+	// ENDIF
+	//-------------HAWB
 
 	IF !EMPTY(cnf)
 		cQuery += " AND  WN_DOC LIKE('%"+ALLTRIM(cnf)+"%')  "
@@ -566,10 +592,10 @@ Static Function Atu_aCols2()
 	cQuery += " AND  CCH_FILIAL='"+xFILIAL('CCH')+"' "
 	cQuery += " AND  B1_FILIAL='"+xFILIAL('SB1')+"' "
 	cQuery += "	 AND W2_PO_NUM+W3_COD_I+W3_POSICAO NOT IN
-	cQuery += "     (SELECT WN_PO_EIC+WN_PRODUTO+WN_ITEM FROM SWN010 WHERE D_E_L_E_T_='' AND WN_PO_EIC=W2_PO_NUM AND WN_PRODUTO=W3_COD_I
+	cQuery += "     (SELECT WN_PO_EIC+WN_PRODUTO+WN_ITEM FROM SWN010  WITH(NOLOCK) WHERE D_E_L_E_T_='' AND WN_PO_EIC=W2_PO_NUM AND WN_PRODUTO=W3_COD_I
 	cQuery += "  AND WN_ITEM=W3_POSICAO )
 	cQuery += "	AND   W2_PO_NUM+W3_COD_I+W3_POSICAO NOT IN  "
-	cQuery += "  (SELECT W5_PO_NUM+W5_COD_I+W5_POSICAO FROM SW5010 WHERE D_E_L_E_T_=''  "
+	cQuery += "  (SELECT W5_PO_NUM+W5_COD_I+W5_POSICAO FROM SW5010   WITH(NOLOCK) WHERE D_E_L_E_T_=''  "
 	cQuery += "  AND W5_PO_NUM=W2_PO_NUM AND W5_COD_I=W3_COD_I AND W5_POSICAO=W3_POSICAO ) "
 
 	IF !EMPTY(cnf)
@@ -638,17 +664,6 @@ Static Function Atu_aCols2()
 
 		IncProc()
 
-		//(2) A5_FILIAL+A5_PRODUTO+A5_FORNECE+A5_LOJA
-		cCODPRF :=''
-		cCODPRF :=ALLTRIM(POSICIONE('SA5',2,xFILIAL('SA5')+TRB->W3_COD_I+TRB->A2_COD+TRB->A2_LOJA,'A5_CODPRF'))
-
-		IF (TRB->W2_PO_NUM+'/'+TRB->W3_POSICAO+' - '+TRB->W2_PO_SIGA) == cPONUM
-			nLINHA := nLINHA
-		ELSE
-			nLINHA := nLINHA+1
-			cPONUM := TRB->W2_PO_NUM+'/'+TRB->W3_POSICAO+' - '+TRB->W2_PO_SIGA
-		ENDIF
-
 		cHAWB      := ''
 		cW6_DI_NUM := ''
 
@@ -677,8 +692,17 @@ Static Function Atu_aCols2()
 			ENDIF
 		ENDIF
 
-		dDatanf := posicione('SF1',1,xFILIAL('SF1')+TRB->WN_DOC+TRB->WN_SDOC+TRB->A2_COD+TRB->A2_LOJA+'N','F1_EMISSAO')
-		dDatPC  := posicione('SC7',4,xFILIAL('SC7')+TRB->W3_COD_I+SUBSTR(TRB->W2_PO_SIGA,1,6)+TRB->W3_POSICAO+TRB->W3_POSICAO,'C7_XDATPRF')
+		IF (TRB->W2_PO_NUM+'/'+TRB->W3_POSICAO+' - '+TRB->W2_PO_SIGA) == cPONUM
+			nLINHA := nLINHA
+		ELSE
+			nLINHA := nLINHA+1
+			cPONUM := TRB->W2_PO_NUM+'/'+TRB->W3_POSICAO+' - '+TRB->W2_PO_SIGA
+		ENDIF
+
+		//(2) A5_FILIAL+A5_PRODUTO+A5_FORNECE+A5_LOJA
+		//cCODPRF :=ALLTRIM(POSICIONE('SA5',2,xFILIAL('SA5')+TRB->W3_COD_I+TRB->A2_COD+TRB->A2_LOJA,'A5_CODPRF'))
+		//dDatanf := posicione('SF1',1,xFILIAL('SF1')+TRB->WN_DOC+TRB->WN_SDOC+TRB->A2_COD+TRB->A2_LOJA+'N','F1_EMISSAO')
+		//dDatPC  := posicione('SC7',4,xFILIAL('SC7')+TRB->W3_COD_I+SUBSTR(TRB->W2_PO_SIGA,1,6)+TRB->W3_POSICAO+TRB->W3_POSICAO,'C7_XDATPRF')
 
 		cW8_INVOICE := ''
 		SW8->( dbSetOrder(RetOrder("SW8","W8_FILIAL+W8_FORN+W8_FORLOJ+W8_COD_I+W8_PO_NUM+W8_POSICAO")) )
@@ -693,7 +717,11 @@ Static Function Atu_aCols2()
 		ENDIF
 
 		IF EMPTY(TRB->W3_XMODAL)
-			cMODAL :=POSICIONE('SYQ',1,xFILIAL('SYQ')+TRB->W2_TIPO_EM,'YQ_COD_DI')
+			//cMODAL :=POSICIONE('SYQ',1,xFILIAL('SYQ')+TRB->W2_TIPO_EM,'YQ_COD_DI')
+			SYQ->( dbSetOrder(1) )
+			If SYQ->( dbSeek( xFilial()+TRB->W2_TIPO_EM ) )
+				cMODAL :=SYQ->YQ_COD_DI
+			ENDIF
 		ELSE
 			cMODAL := TRB->W3_XMODAL
 		ENDIF
@@ -717,16 +745,16 @@ Static Function Atu_aCols2()
      BUS       03     1-Maritimo      60
      GOT       03     1-Maritimo      45
 		*/
-		cQRYTIME :=" SELECT YR_TRANS_T FROM TRANSIT_TIME "
-		cQRYTIME +=" WHERE YR_ORIGEM='"+alltrim(TRB->W2_ORIGEM)+"' AND  SUBSTRING(YQ_COD_DI,1,1)='"+SUBSTR(cMODAL,1,1)+"' "
-		If Select("TR8") > 0
-			TR8->(dbCloseArea())
-		EndIf
-		dbUseArea( .T.,"TOPCONN", TcGenQry( ,,cQRYTIME ), "TR8", .F., .T. )
-		nTRSTIME:=TR8->YR_TRANS_T
-		If Select("TR8") > 0
-			TR8->(dbCloseArea())
-		EndIf
+		//cQRYTIME :=" SELECT YR_TRANS_T FROM TRANSIT_TIME "
+		//cQRYTIME +=" WHERE YR_ORIGEM='"+alltrim(TRB->W2_ORIGEM)+"' AND  SUBSTRING(YQ_COD_DI,1,1)='"+SUBSTR(cMODAL,1,1)+"' "
+		//If Select("TR8") > 0
+		//	TR8->(dbCloseArea())
+		//EndIf
+		//dbUseArea( .T.,"TOPCONN", TcGenQry( ,,cQRYTIME ), "TR8", .F., .T. )
+		//nTRSTIME:=TR8->YR_TRANS_T
+		//If Select("TR8") > 0
+		//	TR8->(dbCloseArea())
+		//EndIf
 
 		*-------------------------------------------------------------------------------------*
 		IF substr(cComboBox6,1,1)=='N' .and. empty(cimp)// .or.substr(cimp,1,3)=='ABE' .or.substr(cimp,1,3)=='abe' )
@@ -790,6 +818,9 @@ Static Function Atu_aCols2()
 					cOBS:='Residuo '+cOBS
 				ENDIF
 			ENDIF
+			dDatPC  := SC7->C7_XDATPRF
+		ELSE
+			dDatPC  := DATE()
 		ENDIF
 		//----------------------------------------------------------------------------------
 		nQTDIMP:=0
@@ -837,24 +868,24 @@ Static Function Atu_aCols2()
 
 			EndIf
 		ELSE
-			cQRYTIME :=" SELECT YR_TRANS_T FROM TRANSIT_TIME "
-			cQRYTIME +=" WHERE YR_ORIGEM='"+alltrim(TRB->W2_ORIGEM)+"' AND  SUBSTRING(YQ_COD_DI,1,1)='"+SUBSTR(cMODAL,1,1)+"' "
-			If Select("TR8") > 0
-				TR8->(dbCloseArea())
-			EndIf
-			dbUseArea( .T.,"TOPCONN", TcGenQry( ,,cQRYTIME ), "TR8", .F., .T. )
-			nTRSTIME:=TR8->YR_TRANS_T
-			If Select("TR8") > 0
-				TR8->(dbCloseArea())
-			EndIf
-			//IF nTRSTIME<=0
-			//	MSGALERT('Transit Time Origem '+SW6->W6_ORIGEM+' Modal '+cMODAL+' = '+STR(nTRSTIME) )
-			//endif
+			//cQRYTIME :=" SELECT YR_TRANS_T FROM TRANSIT_TIME "
+			//cQRYTIME +=" WHERE YR_ORIGEM='"+alltrim(TRB->W2_ORIGEM)+"' AND  SUBSTRING(YQ_COD_DI,1,1)='"+SUBSTR(cMODAL,1,1)+"' "
+			//If Select("TR8") > 0
+			//	TR8->(dbCloseArea())
+			//EndIf
+			//dbUseArea( .T.,"TOPCONN", TcGenQry( ,,cQRYTIME ), "TR8", .F., .T. )
+			//nTRSTIME:=TR8->YR_TRANS_T
+			//If Select("TR8") > 0
+			//	TR8->(dbCloseArea())
+			//EndIf
+			////IF nTRSTIME<=0
+			////	MSGALERT('Transit Time Origem '+SW6->W6_ORIGEM+' Modal '+cMODAL+' = '+STR(nTRSTIME) )
+			////endif
 		ENDIF
 
 		nSLDIMP:=0
 
-		cQRYIMP := " SELECT SUM(W5_QTDE) AS XQTDIMP FROM "+RETSQLNAME('SW5')+"  "
+		cQRYIMP := " SELECT SUM(W5_QTDE) AS XQTDIMP FROM "+RETSQLNAME('SW5')+"  WITH(NOLOCK) "
 		cQRYIMP += " WHERE D_E_L_E_T_='' AND  W5_PO_NUM='"+TRB->W2_PO_NUM+"' "
 		cQRYIMP += " AND  W5_POSICAO='"+TRB->W3_POSICAO+"' AND W5_SEQ<>0
 		cQRYIMP += " AND  W5_COD_I  ='"+TRB->W3_COD_I+"'  "
@@ -874,16 +905,44 @@ Static Function Atu_aCols2()
 		EndIf
 
 		dPRVRDT:=STOD(TRB->W3_XPRDSB)
-		IF !EMPTY(TRB->W3_XETA)
-			dPRVRDT := DaySum(STOD(TRB->W3_XETA), 3)
+		IF !EMPTY(TRB->W3_XETA)//MLS ETA AEREO +3  MARITMO+15
+			//ZZT_MODAL:
+			//1-MARITMO
+			//4-AEREO
+			IF SUBSTRING(CMODAL,1,1)=='1'
+				dPRVRDT := DaySum(STOD(TRB->W3_XETA), 15)
+			ELSE
+				dPRVRDT := DaySum(STOD(TRB->W3_XETA), 3)
+			ENDIF
 			dPRVRDT := DataValida(dPRVRDT,.T.)
 		ENDIF
 		IF !EMPTY(TRB->W3_XPRALER)
-			dPRVRDT := DaySum(STOD(TRB->W3_XPRALER) , 3)
+			IF SUBSTRING(CMODAL,1,1)=='1'
+				dPRVRDT := DaySum(STOD(TRB->W3_XPRALER), 15)
+			ELSE
+				dPRVRDT := DaySum(STOD(TRB->W3_XPRALER) , 3)
+			ENDIF
 			dPRVRDT := DataValida(dPRVRDT,.T.)
 		ENDIF
 
 		IF lGRAVA == .T.
+			//cCODPRF :=ALLTRIM(POSICIONE('SA5',2,xFILIAL('SA5')+TRB->W3_COD_I+TRB->A2_COD+TRB->A2_LOJA,'A5_CODPRF'))
+			SA5->( dbSetOrder(2) )
+			If SA5->( dbSeek( xFilial()+TRB->W3_COD_I+TRB->A2_COD+TRB->A2_LOJA ) )
+				cCODPRF :=SA5->A5_CODPRF
+			ELSE
+				cCODPRF :=''
+			ENDIF
+
+			//dDatanf := posicione('SF1',1,xFILIAL('SF1')+TRB->WN_DOC+TRB->WN_SDOC+TRB->A2_COD+TRB->A2_LOJA+'N','F1_EMISSAO')
+			SF1->( dbSetOrder(1) )
+			If SF1->( dbSeek( xFilial()+TRB->WN_DOC+TRB->WN_SDOC+TRB->A2_COD+TRB->A2_LOJA+'N' ) )
+				dDatanf :=SF1->F1_EMISSAO
+			ELSE
+				dDatanf :=''
+			ENDIF
+			//dDatPC  := posicione('SC7',4,xFILIAL('SC7')+TRB->W3_COD_I+SUBSTR(TRB->W2_PO_SIGA,1,6)+TRB->W3_POSICAO+TRB->W3_POSICAO,'C7_XDATPRF')
+
 			/*    01 @BMP                   */	AADD(aCols1, {oBmpAux   ,  ;
 				/*02 Linha       ZZT_NLINHA */	Transform(nLINHA,"@E 99999") ,;
 				/*03 Origin      ZZT_ORIGIN */	TRB->W2_ORIGEM+'-'+TRB->CCH_PAIS  ,;
@@ -1151,14 +1210,22 @@ USER FUNCTION fGRVZZT(NLIN,lFST)
 		ENDIF
 
 		IF !EMPTY(aCols[N][nPos26]) //ZZT_ETA
-			dPRV := DaySum(aCols[N][nPos26], 3) //DaySum(Data, nDias)
+			IF SUBSTRING(aCols[N][nPos20],1,1)=='1' // ZZT_MODAL 1-MARITMO 4-AEREO
+				dPRV := DaySum(aCols[N][nPos26], 15) //DaySum(Data, nDias)
+			ELSE
+				dPRV := DaySum(aCols[N][nPos26], 3) //DaySum(Data, nDias)
+			ENDIF
 			dPRV := DataValida(dPRV,.T.)
 			M->ZZT_PRVRDT   := dPRV
 			aCols[N][nPos28] := dPRV
 		ENDIF
 
 		IF !EMPTY(aCols[N][nPos27]) //ZZT_DTALER
-			dPRV := DaySum(aCols[N][nPos27], 3) //DaySum(Data, nDias)
+			IF SUBSTRING(aCols[N][nPos20],1,1)=='1' // ZZT_MODAL 1-MARITMO 4-AEREO
+				dPRV := DaySum(aCols[N][nPos27], 15) //DaySum(Data, nDias)
+			ELSE
+				dPRV := DaySum(aCols[N][nPos27], 3) //DaySum(Data, nDias)
+			ENDIF
 			dPRV := DataValida(dPRV,.T.)
 			M->ZZT_PRVRDT   := dPRV
 			aCols[N][nPos28] := dPRV
@@ -1369,7 +1436,7 @@ STATIC FUNCTION fGRAVAZZT()
 	// HOMOLOGACAO "I0011575               /0001"
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	cQRDEL2 := " DELETE FROM ZZT010 WHERE SUBSTRING(ZZT_PO_SIG,1,6)+SUBSTRING(ZZT_PO_NUM,25,4) NOT IN  "
-	cQRDEL2 += " (SELECT C7_NUM+C7_ITEM FROM SC7010  WHERE C7_NUM=SUBSTRING(ZZT_PO_SIG,1,6) AND C7_ITEM=SUBSTRING(ZZT_PO_NUM,25,4) AND D_E_L_E_T_='') "
+	cQRDEL2 += " (SELECT C7_NUM+C7_ITEM FROM SC7010  WITH(NOLOCK)  WHERE C7_NUM=SUBSTRING(ZZT_PO_SIG,1,6) AND C7_ITEM=SUBSTRING(ZZT_PO_NUM,25,4) AND D_E_L_E_T_='') "
 	cQRDEL2 += " AND SUBSTRING(ZZT_PO_NUM,1,2)<>'DA' AND ZZT_NFISCA='' "
 	TCSqlExec(cQRDEL2)
 	//---------------------------------------------------------------------------------------------------
@@ -1417,7 +1484,9 @@ STATIC FUNCTION fGRAVAZZT()
 			/*34 Invoice      */ ZZT_INVOIC :=aCols1[nX][34]
 			/*35 Nota Fiscal  */ ZZT_NFISCA :=aCols1[nX][35]
 			/*36 Qtde nfe     */ ZZT_QTDNFE :=aCols1[nX][36]
-			/*37 Data NF      */ ZZT_DTNF   :=aCols1[nX][37]
+			IF !EMPTY(aCols1[nX][37])
+			   /*37 Data NF      */ ZZT_DTNF   :=aCols1[nX][37]
+			ENDIF
 			/*38 Sld_PO_Qty   */ ZZT_SLDPO  :=aCols1[nX][38]
 			/*39 QTY_IMP      */ ZZT_QTDIMP  :=aCols1[nX][39]
 			/*40 QTY_IMP      */ ZZT_SLD_PO  :=aCols1[nX][40]

@@ -22,6 +22,7 @@ Local mv_par02    := 1         //Qtd Embalagem
 Local mv_par03    := 1         //Qtd Etiquetas
 
 Private lAchou    := .T.
+Private x
 Default cNumOP    := ""
 Default cNumSenf  := ""
 Default nQtdEmb   := 0

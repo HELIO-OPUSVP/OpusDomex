@@ -16,7 +16,7 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function DOMETQ51(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca)
+User Function DOMETQ51(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao,nPesoVol,lColetor,cNumSerie,cNumPeca,cLocImp)
 
 	Local mv_par02    := 1         //Qtd Embalagem
 	Local mv_par03    := 1         //Qtd Etiquetas
@@ -28,6 +28,7 @@ User Function DOMETQ51(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	Default nQtdEtq   := 0
 	Default cNumSerie := "1"
 	Default cNumPeca  := ""
+	Default cLocImp   := ""
 
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 	//³Busca quantidades para impressão											 ³
@@ -114,7 +115,7 @@ User Function DOMETQ51(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	For x := 1 to mv_par03
 
 		cVar1:= SC6->C6_SEUCOD
-		cVar2:= SubStr(SB1->B1_DESC,1,20)
+		cVar2:= SB1->B1_DESC
 		cVar3:= cYYYY+cWW
 		cVar4:= SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
 		cVar5:= SC6->C6_XXRSTAT
@@ -126,7 +127,7 @@ User Function DOMETQ51(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		AADD(aVar,cVar3)
 		AADD(aVar,cVar4)
 		AADD(aVar,cVar5)
-		
+		 
 
 		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄxÔ[¿
 		//³Executa IMPRESSÃO NA ZEBRA			         	 ³

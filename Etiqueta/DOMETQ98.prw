@@ -181,11 +181,10 @@ Static Function DOMETQ98A(cNumOp,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 	If SC2->( dbSeek( xFilial() + cNumOP ) )
 		If SB1->( dbSeek( xFilial() + SC2->C2_PRODUTO ) )
 			For nQ := 1 to nQtdEtq
+			
 				If !CB5SetImp(cLocImp,.F.)
 					MsgAlert("Local de impressao invalido!","Aviso")
 					Return .F.
-				else
-					MSCBBegin(1,6)
 				EndIf
 
 				If Empty(cNumPeca)
@@ -255,7 +254,10 @@ Static Function DOMETQ98A(cNumOp,cNumSenf, nQtdEmb, nQtdEtq, cNivel, aFilhas , l
 					aDomEtDl3A_CancFil := aFilhas
 					cDomEtDl39_CancPes := _PesoAuto // nPesoVol    // Incluido _PesoAuto para evitar error.log:
 				EndIf
+				
+			
 
+				// MSCBBegin(1,6) retirado porqeu na segunda execução estava dando erro na função cb5setimp
 				If !Empty(cSetor)
 					MSCBSAY(30,03,cSetor,"N","1","1,2")
 				Else

@@ -242,6 +242,7 @@ Return(nRet)
 "Gestor XML  -  V5.00 / 23.08.21" - Habilitadas rotinas de Pre Nota no Recebimento em Producao   
 "Gestor XML  -  V5.01 / 22.09.21" - Entrada de DOMEX Filial sem Pedido de Compra   
 "Gestor XML  -  V5.02 / 16.02.22" - Tratamento para Filtras XML somente da Filial Logada   
+"Gestor XML  -  V5.03 / 17.03.22" - Tratamento para PRECO UNITARIO DIVERGENTE   
 
 */
 
@@ -263,7 +264,7 @@ Static Function GerXmlNF()
 	Private _lTESOK   	:= .T.
 	Private _lDmxFilial := .F.   // MAURESI - 16/02/2022
 
-	Private cTitCad  		:= "Gestor XML  -  V5.02 / 16.02.22"
+	Private cTitCad  		:= "Gestor XML  -  V5.03 / 17.03.22"
 	Private cStrCad  		:= ""
 	Private cCadastro		:= ""
 	Private aRotina  		:= fMenu()
@@ -3292,7 +3293,8 @@ Static Function fLinkPesqu()
 //cQry += cQbra + "  (C7_QUANT-C7_QUJE-C7_QTDACLA) AS YY_SALDO "
 	cQry += cQbra + "  (C7_QUANT-C7_QUJE) AS YY_SALDO, "   //MAURESI - 23/12/2020 - DESCONSIDERA QTDA CLASSFICAR
 	cQry += cQbra + "   C7_VLDESC         AS YY_VALDESC, "   //MAURESI - 04/08/2020 - VALOR DE DESCONTO
-	cQry += cQbra + "   C7_FRETE          AS YY_VALFRE "   //MAURESI - 11/08/2020 - VALOR DE FRETE
+	cQry += cQbra + "   C7_VALFRE          AS YY_VALFRE "   //MAURESI - 11/08/2020 - VALOR DE FRETE
+//	cQry += cQbra + "   C7_FRETE          AS YY_VALFRE "   //MAURESI - 11/08/2020 - VALOR DE FRETE
 
 
 	cQry += cQbra + "   FROM "+RetSqlName("SC7")+" SC7 "
@@ -3873,15 +3875,39 @@ Static Function fYYClick()
 //³Aviso de Quantidade e Valor divergente do Pedido com NF                 ³
 //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 	If _Retorno .and. lMarca
-		nXXPrcUni := Round((oXXGetDad:aCols[N1][nXXQTD2]/oXXGetDad:aCols[N1][nXXQTD1]) * oXXGetDad:aCols[N1][nXXPRCUNIT],fX3Ret("D1_VUNIT","X3_DECIMAL"))
-		nYYPrcUni := oYYGetDad:aCols[nLinhaYY][nYYPRCUNIT]
 
-		If nXXPrcUni <> nYYPrcUni
-			if _lMSG02
-				MsgInfo("Preços unitários divergentes:" + Chr(13) + "NF: " + Transform(nXXPrcUni,fX3Ret("D1_VUNIT","X3_PICTURE")) + Chr(13) + "PC: " + Transform(nYYPrcUni,fX3Ret("C7_PRECO","X3_PICTURE")  ) )
-				_Retorno:= .F.  // MAURESI - 16/03/2022
-			Endif
-		EndIf
+		//Chamado #032330 - mauresi 21/03/2022
+		//Trata diferenca de 0,03 na validacao PC x XML		
+		if U_VALIDACAO("MAURESI",.T.,"22/03/2022")
+
+			nXXPrcUni := Round((oXXGetDad:aCols[N1][nXXQTD2]/oXXGetDad:aCols[N1][nXXQTD1]) * oXXGetDad:aCols[N1][nXXPRCUNIT], 2 )
+			nYYPrcUni := Round(oYYGetDad:aCols[nLinhaYY][nYYPRCUNIT] , 2 )
+
+			// Se diferença for maior que 0,03 exibe mensagem.
+			If  ABS( nXXPrcUni - nYYPrcUni) > 0.03 
+				if _lMSG02
+					MsgInfo("Preços unitários divergentes:" + Chr(13) + "NF: " + Transform(nXXPrcUni,fX3Ret("D1_VUNIT","X3_PICTURE")) + Chr(13) + "PC: " + Transform(nYYPrcUni,fX3Ret("C7_PRECO","X3_PICTURE")  ) + Chr(13) + Chr(13) + "Verifique os valores e refaça a operação!")
+					_Retorno:= .F.  // MAURESI - 16/03/2022
+				Endif
+			EndIf
+
+		else
+	
+			nXXPrcUni := Round((oXXGetDad:aCols[N1][nXXQTD2]/oXXGetDad:aCols[N1][nXXQTD1]) * oXXGetDad:aCols[N1][nXXPRCUNIT],fX3Ret("D1_VUNIT","X3_DECIMAL"))
+			nYYPrcUni := oYYGetDad:aCols[nLinhaYY][nYYPRCUNIT]
+			
+			If nXXPrcUni <> nYYPrcUni
+				if _lMSG02
+					MsgInfo("Preços unitários divergentes:" + Chr(13) + "NF: " + Transform(nXXPrcUni,fX3Ret("D1_VUNIT","X3_PICTURE")) + Chr(13) + "PC: " + Transform(nYYPrcUni,fX3Ret("C7_PRECO","X3_PICTURE")  ) + Chr(13) + Chr(13) + "Verifique os valores e refaça a operação!")
+					_Retorno:= .F.  // MAURESI - 16/03/2022
+				Endif
+			EndIf
+			
+		Endif
+
+		
+
+
 	EndIf
 
 
@@ -3913,7 +3939,7 @@ Static Function fYYClick()
 
 		If _nXVALFRE <> _nYVALFRE
 			if _lMSG02
-				MsgInfo("Valor de FRETE Divergente:" + Chr(13) + "NF: " + Transform(_nXVALFRE,fX3Ret("D1_VUNIT","X3_PICTURE")) + Chr(13) + "PC: " + Transform(_nYVALFRE,fX3Ret("C7_FRETE","X3_PICTURE")  ) )
+				MsgInfo("Valor de FRETE Divergente:" + Chr(13) + "NF: " + Transform(_nXVALFRE,fX3Ret("D1_VUNIT","X3_PICTURE")) + Chr(13) + "PC: " + Transform(_nYVALFRE,fX3Ret("C7_VALFRE","X3_PICTURE")  ) )
 				_Retorno:= .F.
 			Endif
 		EndIf

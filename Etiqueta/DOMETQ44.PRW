@@ -221,7 +221,7 @@ User Function DOMETQ44(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 					cMVPAR06 := SUBSTR(cSemana,5,2)+"/"+SUBSTR(cSemana,3,2)
 
 
-					cParam   := cMVPAR01a+cMVPAR01b+cMVPAR01c+";"+cMVPAR02+";"+cMVPAR03+";"+cMVPAR04+";"+cMVPAR05+";"+cMVPAR06+";"
+					// cParam   := cMVPAR01a+cMVPAR01b+cMVPAR01c+";"+cMVPAR02+";"+cMVPAR03+";"+cMVPAR04+";"+cMVPAR05+";"+cMVPAR06+";"
 
 					AADD(_aArq,'CT~~CD,~CC^~CT~'+ CRLF)
 					AADD(_aArq,'^XA'+ CRLF)
@@ -289,11 +289,11 @@ User Function DOMETQ44(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 					cMVPAR02 := "LADO: B"
 					cMVPAR03 := "PN:"+SB1->B1_COD
 					cMVPAR04 := "SN:"+nSomaSer
-					cMVPAR05 := "IL:"+cIL1+"dB"
+					cMVPAR05 := "IL:"+cIL2+"dB"
 					cMVPAR06 := SUBSTR(cSemana,5,2)+"/"+SUBSTR(cSemana,3,2)
 
 
-					cParam   := cMVPAR01a+cMVPAR01b+cMVPAR01c+";"+cMVPAR02+";"+cMVPAR03+";"+cMVPAR04+";"+cMVPAR05+";"+cMVPAR06+";"
+					// cParam   := cMVPAR01a+cMVPAR01b+cMVPAR01c+";"+cMVPAR02+";"+cMVPAR03+";"+cMVPAR04+";"+cMVPAR05+";"+cMVPAR06+";"
 
 					AADD(_aArq,'CT~~CD,~CC^~CT~'+ CRLF)
 					AADD(_aArq,'^XA'+ CRLF)

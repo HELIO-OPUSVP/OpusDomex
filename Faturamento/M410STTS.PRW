@@ -72,7 +72,7 @@ User Function M410STTS()
 					SC6->(dbSeek(xFilial()+SC5->C5_NUM))
 					If SC6->C6_XANEXO <> "C"  //Não esta bloqueado pela analise de crédito do cliente
 						//Verifica a margem de lucro e bloqueia caso necessário
-						If U_VldMargem(.F.,.T.)  //Margem dentro dos parametros
+						If U_VldMarge(.F.,.T.)  //Margem dentro dos parametros
 							SC6->( dbSetOrder(1) )
 							SC6->(dbSeek(xFilial()+SC5->C5_NUM))
 							While SC6->(!Eof()) .And. SC6->C6_NUM == SC5->C5_NUM

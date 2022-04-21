@@ -145,6 +145,7 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		EndIf
 	EndIf
 
+//
 	If lAchou
 		aRetAnat := U_fCodNat(SB1->B1_COD)
 		lAchou   := aRetAnat[1]
@@ -251,12 +252,12 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	EndIf
 
 	If lImpressao
-		For x := 1 To MVPAR03
+		
 			//Controla o numero da etiqueta de embalagens
 			If Empty(cNumPeca)
 				_cProxPeca := U_IXD1PECA()
-			Else
-				_cProxPeca := cNumPeca
+			 Else
+			 	_cProxPeca := cNumPeca
 			EndIf
 
 			For _nX := 1 to Len(aFilhas)
@@ -271,10 +272,11 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 				XD2->( msUnlock() )
 			Next _nX
 
+			For x := 1 To MVPAR03 
 
 			Reclock("XD1",.T.)
 			XD1->XD1_FILIAL  := xFilial("XD1")
-			XD1->XD1_XXPECA  := U_IXD1PECA() //_cProxPeca
+			XD1->XD1_XXPECA  := _cProxPeca 
 			XD1->XD1_FORNEC  := Space(06)
 			XD1->XD1_LOJA    := Space(02)
 			XD1->XD1_DOC     := Space(06)
@@ -316,6 +318,17 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 				cDomEtDl39_CancPes := nPesoVol
 			EndIf
 
+		__MVPAR01 := _cProxPeca
+		__MVPAR02 := ""
+		__MVPAR03 := StrZero(MVPAR02,4)+" Unidade(s)"
+		__MVPAR04 := U_fTratTxt(SB1->B1_DESC)                                       
+		__MVPAR05 := "PN RDT: "+U_fTratTxt(SB1->B1_COD)
+		__MVPAR06 := U_fTratTxt(SA1->A1_NREDUZ)+" - "+U_fTratTxt(SC6->C6_SEUCOD)
+		__MVPAR07 := "PED.CLIENTE: "+Subs(U_fTratTxt(SC5->C5_ESP1),1,45)
+		__MVPAR08 := "ITEM DO PEDIDO/CLIENTE: "+U_fTratTxt(SC6->C6_SEUDES)
+		__MVPAR09 := "SEMANA: "+U_fSemaAno()+"/"+SubStr(StrZero(Year(Date()),4),3,2)
+
+			
 			cVar1:= StrZero(MVPAR02,4)
 			cVar2:= U_fTratTxt(SB1->B1_DESC)
 			cVar3:= U_fTratTxt(SB1->B1_COD)
@@ -341,6 +354,9 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 				cVar8:= ""
 				cVar12:= ""
 			EndIf
+
+			cVar13:= __MVPAR01 
+
 			aVar:={}
 			AADD(aVar,cVar1)
 			AADD(aVar,cVar2)
@@ -354,6 +370,7 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			AADD(aVar,cVar10)
 			AADD(aVar,cVar11)
 			AADD(aVar,cVar12)
+			AADD(aVar,cVar13)
 
 			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄxÔ[¿
 			//³Executa IMPRESSÃO NA ZEBRA			         	 ³

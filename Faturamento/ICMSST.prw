@@ -1,22 +1,30 @@
-#Include "rwMake.ch"
-#include "totvs.ch"
-#include "protheus.ch"
-#include "topconn.ch"
+#Include "Protheus.ch"
+#Include "TopConn.ch"
 
-/*
-ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
-±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
-±±ºPrograma  ³GrvPrNet   ºAutor  ³Osmar Ferreira      º Data ³  14/04/20   º±±
-±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
-±±ºDesc.     ³  Calculo do preço Net - DOMEX 			                  º±±
-±±º          ³                                                            º±±
-±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
-±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
-*/
+User Function ICMSST()
+	Local cPedido  := '053037'
+	Local aAreaSC5 := SC5->( GetArea() )
+	Local aAreaSC6 := SC6->( GetArea() )
 
-User Function GrvPrNet(cNumPV)
+    SC5->( dbSetOrder(01) )
+	SC5->( dbSeek(xFilial() + cPedido) )
+	
+    Alert("Gerando ST...")
+
+    While !SC5->( Eof() )
+        U_fGrvPrNet(cPedido)
+		SC5->( dbSkip() )
+	EndDo
+
+    Alert("Fim de operação...")
+	
+    RestArea(aAreaSC6)
+	RestArea(aAreaSC5)
+Return
+
+
+
+User Function fGrvPrNet(cNumPV)
 	Local nItAtu    := 0
 	Local nQtdPeso  := 0
 	Local nTotalST  := 0
@@ -30,8 +38,8 @@ User Function GrvPrNet(cNumPV)
 
 //Posiciona no cabeçalho do pedido de venda
 
-	SC5->(dbSetOrder(1))
-	SC5->(dbSeek(xFilial()+cNumPV))
+	//SC5->(dbSetOrder(1))
+	//SC5->(dbSeek(xFilial()+cNumPV))
 
 	MaFisSave()
 
@@ -124,30 +132,34 @@ User Function GrvPrNet(cNumPV)
 		AADD(aValorNet,SC6->C6_PRCVEN - (nVlrPis / SC6->C6_QTDVEN) - (nVlrCof / SC6->C6_QTDVEN) - ;
 			(nValICM  / SC6->C6_QTDVEN) - (nValIPI / SC6->C6_QTDVEN) - nValSol)
 
-		RecLock("SC6",.f.)
-		If SC6->C6_XCUSUNI == 0
-			aCusto    :=  {}
-		    aCusto    := U_RetCust(SC6->C6_PRODUTO,'S')
-    		nCusMedio := aCusto[1]
-    		cStatus   := aCusto[2]
-            SC6->C6_XCUSUNI := nCusMedio
-            SC6->C6_XSTACUS := cStatus
+		//RecLock("SC6",.f.)
+		//If SC6->C6_XCUSUNI == 0
+		//	aCusto    :=  {}
+		//    aCusto    := U_RetCust(SC6->C6_PRODUTO,'S')
+		//	nCusMedio := aCusto[1]
+		//	cStatus   := aCusto[2]
+		//    SC6->C6_XCUSUNI := nCusMedio
+		//    SC6->C6_XSTACUS := cStatus
+		//EndIf
+
+		//SC6->C6_XPRCNET := aValorNet[nOpcao]
+		If SC6->C6_XICMRET = 0
+			RecLock("SC6",.f.)
+			  SC6->C6_XICMRET := nValSol
+			SC6->(MsUnLock())
 		EndIf
 
-		SC6->C6_XPRCNET := aValorNet[nOpcao]
-		SC6->C6_XICMRET := nValSol
-
-		If U_Validacao("OSMAR")
-			SB1->(dbSeek(xFilial()+SC6->C6_PRODUTO))
-			If (SB1->B1_TIPO == "SI" .Or. SB1->B1_TIPO == "SV")
-				SC6->C6_XMARGEM := 0
-			Else
-		        SC6->C6_XMARGEM := ((SC6->C6_XPRCNET - SC6->C6_XCUSUNI) / SC6->C6_XPRCNET) * 100
-		    EndIf
-		Else
-		   SC6->C6_XMARGEM := ((SC6->C6_XPRCNET - SC6->C6_XCUSUNI) / SC6->C6_XPRCNET) * 100
-		EndIf   
-		SC6->(MsUnLock())
+		//If U_Validacao("OSMAR")
+		//	SB1->(dbSeek(xFilial()+SC6->C6_PRODUTO))
+		//	If (SB1->B1_TIPO == "SI" .Or. SB1->B1_TIPO == "SV")
+		//		SC6->C6_XMARGEM := 0
+		//	Else
+		//        SC6->C6_XMARGEM := ((SC6->C6_XPRCNET - SC6->C6_XCUSUNI) / SC6->C6_XPRCNET) * 100
+		//    EndIf
+		//Else
+		//   SC6->C6_XMARGEM := ((SC6->C6_XPRCNET - SC6->C6_XCUSUNI) / SC6->C6_XPRCNET) * 100
+		//EndIf
+		//SC6->(MsUnLock())
 
 		SC6->(DbSkip())
 	EndDo
@@ -159,24 +171,3 @@ User Function GrvPrNet(cNumPV)
 
 Return
 
-/*
-Definição dos valores totais dos produtos que constarão na proposta
-1 - PRECO UNIT. SEM PIS/ COFINS, ICMS E IPI 		Sem imposto nenhum            
-2 - PRECO UNIT. COM PIS/ COFINS, SEM ICMS E IPI 	Só com PIS/COFINS
-3 - PRECO UNIT. COM PIS/ COFINS E ICMS, SEM IPI     Com PIS/COFINS e ICMS       
-4 - PRECO UNIT. COM PIS/ COFINS, ICMS E IPI         Com todos       
-5 - PRECO UNIT. COM PIS/ COFINS, ICMS, IPI E ST     Com todos + ST       
-
-	Do Case
-	Case cA1XXORPR1 == "1"
-		nA1XXORPR1 := Round((SCK->CK_PRCVEN * ((100 - ( nIpi + nPiscof)) /100)) - nVIcmPorPC ,2)
-	Case cA1XXORPR1 == "2"
-		nA1XXORPR1 := Round(SCK->CK_PRCVEN  - nVIcmPorPC,2) //* ((100 - nIcm) / 100),2) 
-	Case cA1XXORPR1 == "3"
-		nA1XXORPR1 := SCK->CK_PRCVEN 
-	Case cA1XXORPR1 == "4"
-		nA1XXORPR1 := ROUND(SCK->CK_PRCVEN * (1+(nIpi /100)),2)
-	Case cA1XXORPR1 == "5"
-		nA1XXORPR1 := ROUND((SCK->CK_PRCVEN * (1+(nIpi /100))) + Round(nValIcmSt/ nQtd,3),2)
-	End Case
-*/
