@@ -140,7 +140,7 @@ BrwLegenda("","Legenda",{;
 */
 	//Adiciona Legenda no Browse
 	ADD LEGEND DATA ' Empty(PZA->PZA_STATUS) '	COLOR "BR_VERDE"	TITLE "Perdas a pagar"	OF oBrowse
-	//ADD LEGEND DATA ' ZM_STATFIN == "1" .And. ZM_LA <> "S" '	COLOR "BR_AZUL"	    TITLE "Contrato Liberado"			 OF oBrowse
+	ADD LEGEND DATA ' PZA->PZA_STATUS == "1" '	COLOR "BR_VERMELHO"	 TITLE "Perdas Pagas"			 OF oBrowse
 	//ADD LEGEND DATA ' ZM_STATFIN == "2" '	COLOR "BR_LARANJA"	 TITLE "Parcialmente Pago"			 OF oBrowse
 	//ADD LEGEND DATA ' ZM_STATFIN == "3" '	COLOR "BR_VERMELHO"	 TITLE "Contrato Quitado/Baixado" OF oBrowse
 	//ADD LEGEND DATA ' ZM_STATFIN == "1" .And. ZM_LA == "S" '  COLOR "BR_VIOLETA"	 TITLE "Contrato Contabilizado"	 OF oBrowse    
@@ -177,7 +177,7 @@ Static Function APERDAINC(cAlias,nRecno,nOpcx)
 Local lRet := .F.
 Local aAlterFields 	:= {}
 Local lOkGrv 		:= .F.    
-Local cFieldOk      := ""
+Local cFieldOk      := "U_VLDTBSZA(ReadVar())"
 Private cTitulo		:= cCadastro
 Private aSize 		:= {}
 Private aObjects 	:= {}
@@ -280,7 +280,7 @@ DEFINE MSDIALOG _oDlg TITLE cCadastro FROM aSize[7],aSize[1] TO aSize[6],aSize[5
 	oEnchoice := MsMGet():New("PZA",nRecno,nOpcx,,,,aFieldsPza,aPosObj[1],aAlterFields,1,,,,oWin4,.F./*lConF3*/,.T./*lMemory*/,.T./*lColuna*/,/*caTela*/,;
 							  /*lNoFolder*/,/*lProperty*/,/*aField*/,/*aFolder*/,/*lCreate afolder*/,/*lNoMDIStretch*/,,.F./*lOrderACho*/)
 	                                                                                                  
-	oGetDados := MsNewGetDados():New(0,0,0,0,nOpcx,/*lLinOk*//*"U_VLDLACOLS"*/,/*lTudOk*/,"+ZA_DOCUMEN"/*CpoInc*/,aAltAcols,,,cFieldOk,,,oWin5,aHeader,aCols)
+	oGetDados := MsNewGetDados():New(0,0,0,0,nOpcx,/*lLinOk*//*"U_VLDLACOLS"*/,/*lTudOk*/,/*"+ZA_DOCUMEN"*//*CpoInc*/,aAltAcols,,,cFieldOk,,,oWin5,aHeader,aCols)
 	oGetDados:oBrowse:Align := CONTROL_ALIGN_ALLCLIENT
 	//oGetDados:BCHANGE := {|| U_AVLDDGCP(ReadVar())} 
 	//oGetDados:BFIELDOK := {|| U_AVLDDGCP(ReadVar())}
@@ -427,16 +427,17 @@ If TMPZA->(!EOF())
 	While TMPZA->(!EOF())
 		AaDd(aColsSza,Array(Len(aHeader) + 1))
 						For nP:= 1 to Len(aHeader)
-							aColsSZA[Len(aColsSza)][nP] := TBSZA->(&(aHeader[nP][2]))						
+							aColsSZA[Len(aColsSza)][nP] := TMPZA->(&(aHeader[nP][2]))						
 						Next nP
 						//Campo do Deletado
 						aColsSZA[Len(aColsSza)][Len(aColsSZA[Len(aColsSza)])] := .F.
 		TMPZA->(DbSkip())
 	EndDo
-	oGetDados:aCols := aClone(aColsSZA)
+	//oGetDados:aCols := aClone(aColsSZA)
+	aCols := aClone(aColsSZA)
 EndIf
-oGetDados:Refresh()
-_odlg:Refresh()
+//oGetDados:Refresh()
+//_odlg:Refresh()
 
 Return
 
@@ -520,8 +521,11 @@ IF INCLUI
 		EndIf
 	EndIf		
 elseIf ALTERA
+	If PZA->PZA_STATUS <> "1" //Encerrado
+		MsgStop("Não é possivel alterar registro de perdas finalizado.","Exclusão Perda")
+		Return .F.
+	Endif
 	SZA->(DbSetOrder(2))
-	
 	For nK := 1 to len(oGetdados:Acols)
 		If !oGetdados:Acols[nK][Len(oGetdados:Acols[nK])]
 			//So gravar se a quantidade infromada de perda for maior que zero
@@ -720,7 +724,10 @@ User Function PZADELETA()
 Local cQryPZA := ""
 Local lOkParaExc := .T.
 Local cMensErro := ""
-
+If PZA->PZA_STATUS <> "1" //Encerrado
+	MsgStop("Não é possivel excluir registro de perdas finalizado.","Exclusão Perda")
+	Return .F.
+Endif
 cQryPZA := " SELECT R_E_C_N_O_ RECNOSZA "
 cQryPZA += " FROM " + RetSqlName("SZA")  +" SZA "
 cQryPZA += " WHERE D_E_L_E_T_ ='' AND SZA.ZA_FILIAL  ='" + xFilial("SZA") + "' AND SZA.ZA_CODPZA = '" + PZA->PZA_CODIGO + "'"
@@ -780,3 +787,8 @@ If TMPZA->(!EOF())
 Endif
 TMPZA->(DbCloseArea())
 Return lOkParaExc
+
+User Function VLDTBSZA()
+Local lRet := .T.
+
+Return lRet

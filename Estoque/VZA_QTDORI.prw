@@ -83,16 +83,18 @@ EndIf
 Private cLocProcDom := GetMV("MV_XXLOCPR")
 SB1->( dbSetOrder(1) )
 
+if IsInCallStack("U_DOMPERDA")
+	nPosProd := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_PRODUTO" } )
+	nPosOP 	 := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_OP" } )
+	nPosSaldo := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_SALDO" } )
+	M->ZA_PRODUTO := oGetdados:aCols[oGetdados:nAt][nPosProd]	
+	M->ZA_OP := oGetdados:aCols[oGetdados:nAt][nPosOP]
+	M->ZA_SALDO := oGetdados:aCols[oGetdados:nAt][nPosSaldo]
+EndIf
+
 If !Empty(M->ZA_QTDORI)
 	//Ajustado para validar a digitação da quanitade na tela de perda.
-	if IsInCallStack("U_DOMPERDA")
-		nPosProd := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_PRODUTO" } )
-		nPosOP 	 := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_OP" } )
-		nPosSaldo := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_SALDO" } )
-		M->ZA_PRODUTO := oGetdados:aCols[oGetdados:nAt][nPosProd]	
-		M->ZA_OP := oGetdados:aCols[oGetdados:nAt][nPosOP]
-		M->ZA_SALDO := oGetdados:aCols[oGetdados:nAt][nPosSaldo]
-	EndIf
+	
 	If !Empty(M->ZA_PRODUTO)
 		If SB1->( dbSeek( xFilial() + M->ZA_PRODUTO ) )
 			If Empty(M->ZA_OP)
@@ -279,6 +281,10 @@ If !Empty(M->ZA_QTDORI)
 		M->ZA_SALDO := 0
 	EndIf
 Else
+	If IsInCallStack("U_DOMPERDA")
+		M->ZA_SALDO := M->ZA_QTDORI
+		oGetdados:aCols[oGetdados:nAt][nPosSaldo] := M->ZA_QTDORI
+	EndIf	
 	_Retorno := .T.
 EndIf
 
