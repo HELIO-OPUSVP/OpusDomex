@@ -99,7 +99,7 @@ DEFINE MSDIALOG oDlg TITLE cCadastro FROM aSize[7],aSize[1] TO aSize[6],aSize[5]
 	@ 000, 000 SAY oBtn11 PROMPT Space(100) SIZE 049, 001 OF oWin1 PIXEL
 	oBtn11:Align  := CONTROL_ALIGN_TOP
 	
-	oBtn2 := TButton():New(0,0,"Alterar",oWin1,{|| lOkAlt := APERDAINC("PZA",PZA->(Recno()),4),oBrowse:Refresh() },00,14,,,.F.,.T.,.F.,,.F.,,,.F.) 
+	oBtn2 := TButton():New(0,0,"Alterar",oWin1,{|| lOkAlt := IIF( VldPerda(), APERDAINC("PZA",PZA->(Recno()),4),.F.),oBrowse:Refresh() },00,14,,,.F.,.T.,.F.,,.F.,,,.F.) 
 	oBtn2:Align  := CONTROL_ALIGN_TOP
 
 	@ 000, 000 SAY oBtn22 PROMPT Space(100) SIZE 049, 001 OF oWin1 PIXEL
@@ -147,10 +147,10 @@ BrwLegenda("","Legenda",{;
 	
 	
 	//Colunas do Browse Principal
-	ADD COLUMN oColumn1 DATA { || PZA_CODIGO  } TITLE Posicione("SX3",2,"PZA_CODIGO" ,"X3_TITULO") SIZE TamSx3("PZA_CODIGO" )[1] OF oBrowse
- 	ADD COLUMN oColumn2 DATA { || PZA_OP  	  } TITLE Posicione("SX3",2,"PZA_OP","X3_TITULO") SIZE TamSx3("PZA_OP")[1] OF oBrowse
- 	ADD COLUMN oColumn3 DATA { || PZA_PRODOP  } TITLE Posicione("SX3",2,"PZA_PRODOP","X3_TITULO") SIZE TamSx3("PZA_PRODOP")[1] OF oBrowse
- 	ADD COLUMN oColumn4 DATA { || PZA_RECURSO } TITLE Posicione("SX3",2,"PZA_RECURSO","X3_TITULO") SIZE TamSx3("PZA_RECURSO")[1] OF oBrowse
+	ADD COLUMN oColumn1 DATA { || PZA_CODIGO } TITLE Posicione("SX3",2,"PZA_CODIGO" ,"X3_TITULO") SIZE TamSx3("PZA_CODIGO" )[1] OF oBrowse
+ 	ADD COLUMN oColumn2 DATA { || PZA_OP  	 } TITLE Posicione("SX3",2,"PZA_OP","X3_TITULO") SIZE TamSx3("PZA_OP")[1] OF oBrowse
+ 	ADD COLUMN oColumn3 DATA { || PZA_PRODOP } TITLE Posicione("SX3",2,"PZA_PRODOP","X3_TITULO") SIZE TamSx3("PZA_PRODOP")[1] OF oBrowse
+ 	ADD COLUMN oColumn4 DATA { || PZA_RECURS } TITLE Posicione("SX3",2,"PZA_RECURSO","X3_TITULO") SIZE TamSx3("PZA_RECURSO")[1] OF oBrowse
  	ADD COLUMN oColumn5 DATA { || PZA_DATA	 } TITLE Posicione("SX3",2,"PZA_DATA","X3_TITULO") SIZE TamSx3("PZA_DATA")[1] OF oBrowse   
  	ADD COLUMN oColumn6 DATA { || PZA_HORA 	 } TITLE Posicione("SX3",2,"PZA_HORA","X3_TITULO") SIZE TamSx3("PZA_HORA")[1] OF oBrowse
  	//ADD COLUMN oColumn7 DATA { || ZM_CODBCO  } TITLE Posicione("SX3",2,"ZM_CODBCO" ,"X3_TITULO") SIZE TamSx3("ZM_CODBCO" )[1] OF oBrowse
@@ -292,7 +292,7 @@ DEFINE MSDIALOG _oDlg TITLE cCadastro FROM aSize[7],aSize[1] TO aSize[6],aSize[5
 ACTIVATE MSDIALOG _oDlg ON INIT({|| If(!obrigatorio(aGets,aTela),nOpcA:=0,_oDlg:End()) }) CENTERED
 
 If lOkSaida .OR. nOPCselX == 0
-	//ROLLBACKSXE()
+	ROLLBACKSXE()
 EndIf
 
 If nOpcX == 1
@@ -828,4 +828,13 @@ Return lOkParaExc
 User Function VLDTBSZA()
 Local lRet := .T.
 
+Return lRet
+
+Static Function VldPerda()
+Local lRet := .T.
+//Não permitir alterar processos finalizados
+If PZA->PZA_STATUS == "1"
+	MsgStop("Não é possível fazer alteração em processo de perda encerrado","Erro Alterar")
+	lRet := .F.
+EndIf
 Return lRet
