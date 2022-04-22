@@ -239,9 +239,9 @@ aEval(ApBuildHeader("SZA", Nil), {|x| iiF(Alltrim(x[2]) $ cCamposSZA , Aadd(aHea
 
 //Carrega o Acols 
 If ALTERA .OR. VISUAL	
-
 	CarregAcols()
-	
+else
+	aCols := {}		
 EndIf
 
 
@@ -331,8 +331,8 @@ IF  cVarDigit $ "M->PZA_OP"
 				cQrySZA+= ENTER + "  ,B1_DESC ZA_DESC "
 				cQrySZA+= ENTER + "  ,'' ZA_MOTIVO "
 				cQrySZA+= ENTER + "  ,'' ZA_DESCPER "
-				cQrySZA+= ENTER + "  ,0 ZA_QTDORI "
-				cQrySZA+= ENTER + "  ,0 ZA_SALDO "
+				cQrySZA+= ENTER + "  ,G1_QUANT ZA_QTDORI "
+				cQrySZA+= ENTER + "  ,G1_QUANT ZA_SALDO "
 				cQrySZA+= ENTER + "  ,'' ZA_OPERADO "
 				cQrySZA+= ENTER + "  ,'' ZA_HORA   "
 				cQrySZA+= ENTER + "  ,'P' ZA_TIPO  "
@@ -343,7 +343,8 @@ IF  cVarDigit $ "M->PZA_OP"
 				cQrySZA+= ENTER + "  ,'' ZA_SERIAL "
 				cQrySZA+= ENTER + "  ,'' ZA_CODPZA "
 				cQrySZA+= ENTER + "  FROM " + RetSqlName("SD4") + " SD4 " 
-				cQrySZA+= ENTER + "  JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ ='' AND SB1. B1_FILIAL = '" + xFilial("SB1") + "' AND SB1.B1_COD =SD4.D4_COD "
+				cQrySZA+= ENTER + "  JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ ='' AND SB1.B1_FILIAL = '" + xFilial("SB1") + "' AND SB1.B1_COD =SD4.D4_COD "
+				cQrySZA+= ENTER + "  JOIN " + RetSqlName("SG1") + " SG1 ON SG1.D_E_L_E_T_ ='' AND SG1.G1_FILIAL = '" + xFilial("SG1") + "' AND SG1.G1_COD =SD4.D4_PRODUTO AND SG1.G1_COMP = SD4.D4_COD "
 				cQrySZA+= ENTER + "  WHERE SD4.D_E_L_E_T_ ='' AND SD4.D4_FILIAL  ='" + xFilial("SD4") + "' AND LEFT(SD4.D4_OP,8) = '" + SUBSTR(ALLTRIM(M->PZA_OP),1,8) + "' "
 				
 				If Select("TBSZA") > 0 
