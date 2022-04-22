@@ -837,8 +837,11 @@ User Function VLDTBSZA(cVarDigit)
 	DEFAULT cVarDigit := ""
 
 	IF cVarDigit == "M->ZA_QTDREF"
+		M->ZA_QTDORI := M->ZA_SALDO := M->ZA_QTDREF
 		oGetDados:aCols[oGetDados:nAt][nPosQtd]		:= M->ZA_QTDREF
 		oGetDados:aCols[oGetDados:nAt][nPosSaldo]	:= M->ZA_QTDREF
+		oGetDados:Refresh()
+		_oDlg:Refresh()
 	Endif
 
 Return lRet
