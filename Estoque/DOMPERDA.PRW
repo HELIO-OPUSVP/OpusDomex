@@ -94,7 +94,7 @@ User Function DOMPERDA()
 	oBtn0 := TButton():New(0,0,"Sair",oWin1,{|| oDlg:End() },00,14,,,.F.,.T.,.F.,,.F.,,,.F.)
 	oBtn0:Align  := CONTROL_ALIGN_BOTTOM
 
-	oBtn1 := TButton():New(0,0,"Inlcuir",oWin1,{|| APERDAINC("",0,3),oBrowse:Refresh() },00,14,,,.F.,.T.,.F.,,.F.,,,.F.)
+	oBtn1 := TButton():New(0,0,"Inlcuir",oWin1,{|| APERDAINC("",0,3),oBrowse:Refresh(),oWin2:Refresh() },00,14,,,.F.,.T.,.F.,,.F.,,,.F.)
 	oBtn1:Align  := CONTROL_ALIGN_TOP
 
 	@ 000, 000 SAY oBtn11 PROMPT Space(100) SIZE 049, 001 OF oWin1 PIXEL
@@ -545,6 +545,7 @@ Static Function GravaPerda()
 
 		//Se deu Tudo certo imprime etiquetas
 		if lRet
+			ConfirmSX8() 
 			If MsgYesNo("Deseja imprimir a(s) etiqueta(s)?")
 				If len(aGrvsOk) > 0
 					//Pesquisar pelo código do documento que é unico
@@ -581,8 +582,8 @@ Static Function GravaPerda()
 					If Reclock("SZA",.F.)
 
 						For nH:=1 To Len(aHeader)
-							If SZA->(&(aHeader[nH][2]))  <> oGetDados:aCols[nK][nH]
-								SZA->(&(aHeader[nH][2])) := oGetDados:aCols[nK][nH]
+							If SZA->(aHeader[nH][2])  <> oGetDados:aCols[nK][nH]
+								SZA->(aHeader[nH][2]) := oGetDados:aCols[nK][nH]
 							EndIf
 						Next nH
 						SZA->(MsUnlock())
