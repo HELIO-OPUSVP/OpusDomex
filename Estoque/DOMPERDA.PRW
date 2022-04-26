@@ -840,7 +840,7 @@ User Function VLDTBSZA(cVarDigit)
 	Local lRet := .T.
 	Local nPosQtd 	:= aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_QTDORI" } )
 	Local nPosSaldo := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_SALDO" } )
-	
+	Local nPosQRef := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_QTDREF" } )
 	DEFAULT cVarDigit := ""
 
 	IF cVarDigit == "M->ZA_QTDREF"
@@ -849,6 +849,11 @@ User Function VLDTBSZA(cVarDigit)
 		oGetDados:aCols[oGetDados:nAt][nPosSaldo]	:= M->ZA_QTDREF
 		oGetDados:Refresh()
 		_oDlg:Refresh()
+	ElseIf  cVarDigit == "M->ZA_QTDORI"
+		if M->ZA_QTDORI > oGetDados:aCols[oGetDados:nAt][nPosQRef]			 
+			MsgStop("Quantidade digitada não pode ser maior que a quantidade Referência","Erro Quantidade")
+			lRet := .F.
+		Endif
 	Endif
 
 Return lRet
