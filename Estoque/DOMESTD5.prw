@@ -21,8 +21,8 @@
 
 User function DOMESTD5()
 
-	Startjob("U_fCorSD5",getenvserver(),.F.,'01','01')  // Empresa 01 filial 01
-	Startjob("U_fCorSD5",getenvserver(),.F.,'01','02')  // Empresa 01 filial 02
+	//Startjob("U_fCorSD5",getenvserver(),.F.,'01','01')  // Empresa 01 filial 01
+	//Startjob("U_fCorSD5",getenvserver(),.F.,'01','02')  // Empresa 01 filial 02
 
 Return
 
