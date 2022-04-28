@@ -521,21 +521,21 @@ Static Function GravaPerda()
 							EndIf
 							SB1->(DbSetOrder(1))
 							SB1->(DbSeek(xFilial("SB1")+SZA->ZA_PRODUTO))
-							If SB1->B1_APROPRI == 'I' .or. Subs(SB1->B1_COD,1,8) == '50010100'
+							/*If SB1->B1_APROPRI == 'I' .or. Subs(SB1->B1_COD,1,8) == '50010100'
 								_nQtdTot    := SZA->ZA_SALDO
 
 								Reclock("SZA",.F.)
 								SZA->ZA_SALDO := 0
 								SZA->( msUnlock() )
 
-							Else
+							Else*/
 								//旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커
 								//� GERA EMPENHO NA CRIACAO DA PERDA�
 								//읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸
 								SD4PERDA(SZA->ZA_PRODUTO, cArm, SZA->ZA_OP, SZA->ZA_QTDORI,.F. )
 								U_CRIAP07(SZA->ZA_PRODUTO, cArm)
 								//FIM
-							EndIf
+							//EndIf
 							aaDd(aGrvsOk,{SZA->ZA_DOCUMEN,SZA->ZA_PRODUTO,SZA->ZA_OP})
 						EndIf
 					EndIf
