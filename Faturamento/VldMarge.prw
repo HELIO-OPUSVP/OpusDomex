@@ -47,8 +47,8 @@ User Function VldMarge(lMsg,lWflow)
 	nPC6_XMARGEM := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_XMARGEM" } )
 
 	For y := 1 To Len(aCols)
-
-		If U_Validacao("OSMAR")
+		//Tira a margem de lucro para produtos tipo serviço
+		If U_Validacao("OSMAR",.T.)  //02/05/2022
 			SB1->( dbSeek(xFilial() + aCols[y,nPC6_PRODUTO]  ) )
 			If aCols[y,nPC6_XMARGEM] < nPerMargem .And. (SB1->B1_TIPO <> "SI" .And. SB1->B1_TIPO <> "SV") 
 				cTexto += aCols[y,nPC6_ITEM] +" / "+ aCols[y,nPC6_PRODUTO]+" Margem -> " + Str(aCols[y,nPC6_XMARGEM])+ Chr(13)
@@ -284,7 +284,8 @@ User Function xGrvPrNet()
 		aCols[x,nPC6_XSTACUS] := cStatus
 		aCols[x,nPC6_XPRCNET] := nPrcNet
 				
-		If U_Validacao("OSMAR")
+		//Tira a margem de lucro para produtos tipo serviço				
+		If U_Validacao("OSMAR",.T.)  // 02/05/2022
 			SB1->(dbSeek(xFilial()+cProdVenda))
 			If (SB1->B1_TIPO == "SI" .Or. SB1->B1_TIPO == "SV")
 			   aCols[x,nPC6_XMARGEM] :=  0
