@@ -397,10 +397,16 @@ Exit
 
 	SB1->( dbSeek(xFilial() + aCols[n,nPos_PRODUTO]) )
 	
-	//Para produtos tipo "SI-Serviços" o preço de venda não será validado
-    If SB1->B1_TIPO == 'SI'
-       lValTabVen := .f.
-    EndIf 
+	//Para produtos tipo "SI/SV -Serviços" o preço de venda não será validado
+	If U_VALIDACAO("OSMAR")
+	    If (SB1->B1_TIPO == 'SV' .Or. SB1->B1_TIPO == 'SI')
+    	   lValTabVen := .f.
+    	EndIf 
+	Else
+	    If SB1->B1_TIPO == 'SI'
+    	   lValTabVen := .f.
+    	EndIf 
+	EndIf
 
 	If _Retorno .and. (INCLUI .or. ALTERA) .And. lValTabVen
 		//If M->C5_TIPO == 'N'
