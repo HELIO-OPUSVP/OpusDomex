@@ -22,6 +22,8 @@ User Function DOMETQ51(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	Local mv_par03    := 1         //Qtd Etiquetas
 	Local x
 	Private lAchou    := .T.
+	Private aPar:={}
+	Private aRetPar:={}
 	Default cNumOP    := ""
 	Default cNumSenf  := ""
 	Default nQtdEmb   := 0
@@ -100,6 +102,15 @@ User Function DOMETQ51(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		cTipoETQ:=space(15)
 	ENDCASE
 
+	if empty(Alltrim(cLocImp))
+		aAdd(aPar,{1,"Escolha a Impressora " ,SPACE(6) ,"@!"       ,'.T.' , 'CB5', '.T.', 20 , .T. } )
+		If !ParamBox(aPar,"INFORMAR IMPRESSORA",@aRetPar)
+			Return "INFORMAR IMPRESSORA"
+		EndIf
+		cLocImp := ALLTRIM(aRetPar[1])
+	Endif
+
+
 	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄxÔ[¿
 	//³Montagem do código de barras 2D						 ³
 	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄxÔ[¿
@@ -119,7 +130,7 @@ User Function DOMETQ51(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		cVar3:= cYYYY+cWW
 		cVar4:= SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
 		cVar5:= SC6->C6_XXRSTAT
-		
+
 
 		aVar:={}
 		AADD(aVar,cVar1)
@@ -127,7 +138,7 @@ User Function DOMETQ51(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		AADD(aVar,cVar3)
 		AADD(aVar,cVar4)
 		AADD(aVar,cVar5)
-		 
+
 
 		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄxÔ[¿
 		//³Executa IMPRESSÃO NA ZEBRA			         	 ³
