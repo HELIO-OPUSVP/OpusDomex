@@ -242,6 +242,7 @@ Static Function ColetorMenu(cDep)
 		AADD(aAcessos, 17)
 		AADD(aAcessos, 18)
 		AADD(aAcessos, 19)
+		AADD(aAcessos, 26)
 
 
 	EndIf
@@ -256,7 +257,7 @@ Static Function ColetorMenu(cDep)
 
 
 // Rotina 20
-	If aScan(aAcessos,20) <> 0
+	If aScan(aAcessos,22) <> 0
 		Private oBtn03 := Nil
 		@ nLin, nCol BUTTON oBtn03 PROMPT "Endereçamento Recebimento" ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW01(), U_DOMACD01())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 := "QPushButton{background-image: url(rpo:armazem.png);"+cPush+;
@@ -858,6 +859,18 @@ Static Function ColetorMenu(cDep)
 			"QPushButton:hover {background-image: url(rpo:armimg32.png);"+cHover
 		oBtn17:SetCSS( cCSSBtN1 )
 		nLin += nSkipLin
+	EndIf
+
+	If U_VALIDACAO ("RODA")
+		If aScan(aAcessos,26) <> 0
+			Private oBtn26 := Nil
+			@ nLin, nCol BUTTON oBtn26 PROMPT "Inventário Cíclico MG"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACD45("02"), U_DOMACW45("02"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
+				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
+				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
+			oBtn26:SetCSS( cCSSBtN1 )
+			nLin += nSkipLin
+		EndIf
 	EndIf
 
 

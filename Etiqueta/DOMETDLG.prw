@@ -240,7 +240,7 @@ User Function DOMETDLG()
 				U_DOMETQ50(mv_par02,mv_par03,""      ,mv_par04, mv_par05, .F.     , "",0)
 			ElseIf mv_par06 == "51" // Layout 51 - (NOVO LAYOUT SUBSTITUTO DA 85) Ricardo Roda
 				U_DOMETQ51(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07)
-			ElseIf mv_par06 == "52" // Layout 51 - (NOVO LAYOUT SUBSTITUTO DA 85) Ricardo Roda
+			ElseIf mv_par06 == "52" // Layout 52 - (NOVO LAYOUT SUBSTITUTO DA 71) Ricardo Roda
 				U_DOMETQ52(mv_par02,mv_par03,mv_par04,mv_par05,'1',{},.T.,__PESO,lColetor,mv_par07) 
 			ElseIf mv_par06 == "115"  // Layout 49 - etiqueta V-Tal
 				U_DOMET115(mv_par02,mv_par05,mv_par07)

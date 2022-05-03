@@ -138,8 +138,9 @@ User Function GrvPrNet(cNumPV)
 		EndIf
 
 		SC6->C6_XPRCNET := aValorNet[nOpcao]
-		SC6->C6_XICMRET := nICMSRet
-
+		If Empty(SC6->C6_NOTA)
+		   SC6->C6_XICMRET := nICMSRet
+		EndIf
 		//Tira a margem de lucro para produtos tipo serviço
 		If U_Validacao("OSMAR",.T.)  // 02/05/2022
 			SB1->(dbSeek(xFilial()+SC6->C6_PRODUTO))
