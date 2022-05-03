@@ -69,10 +69,22 @@ User Function DOMPERDA()
 	aPosObj	:= MsObjSize(aInfo,aObjects)
 	aPosGet	:= MsObjGetPos((aSize[3]-aSize[1]),315,{{004,024,240,270}} )
 
-//Tabela principal da Rotina
+	//Tabela principal da Rotina
 	DbSelectArea(cTabPrinc)
 	(cTabPrinc)->(DbSetOrder(1))
-
+	
+	
+	//Ajsutar status da Tabela pza	
+	cSQl:= " UPDATE PZA SET PZA_STATUS ='1' "
+	cSQl+= " FROM " + RetSqlName("PZA") + " PZA (NOLOCK) "
+	cSQl+= " JOIN ( "
+	cSQl+= " SELECT ZA_FILIAL,ZA_CODPZA,SUM(ZA_SALDO) QTD FROM " + RetSqlName("SZA") + " (NOLOCK) "
+	cSQl+= " WHERE ZA_FILIAL='" + xFilial("SZA") + "' AND D_E_L_E_T_ =''  AND ZA_CODPZA <> '' "
+	cSQl+= " AND ZA_SALDO = 0 AND ZA_DATA>='20220401' "
+	cSQl+= " GROUP BY ZA_FILIAL, ZA_CODPZA "
+	cSQl+= " HAVING  SUM(ZA_SALDO) = 0) TMP ON TMP.ZA_FILIAL = PZA.PZA_FILIAL AND  TMP.ZA_CODPZA=PZA.PZA_CODIGO "
+	cSQl+= " WHERE PZA.D_E_L_E_T_ ='' AND PZA.PZA_FILIAL = '" + xFilial("PZA") + "' AND PZA.PZA_STATUS <> '1' "
+	TCSQLEXEC(cSQL)
 
 	DEFINE MSDIALOG oDlg TITLE cCadastro FROM aSize[7],aSize[1] TO aSize[6],aSize[5] OF oMainWnd STYLE nOR( WS_VISIBLE,WS_POPUP ) PIXEL
 
@@ -220,7 +232,7 @@ Static Function APERDAINC(cAlias,nRecno,nOpcx)
 	cCamposPza :=  "PZA_CODIGO/PZA_RECURSO/PZA_OP/PZA_PRODOP/PZA_DESCRI/PZA_DATA/PZA_HORA/PZA_OPERAD/PZA_TPPERD/PZA_USUARI/PZA_SERIAL/PZA_STATUS"
 	cCamposSZA :=  "ZA_DOCUMEN/ZA_DATA/ZA_OP/ZA_RECURSO/ZA_PRODUTO/ZA_DESC/ZA_MOTIVO/ZA_DESCPER/ZA_QTDREF/ZA_QTDORI/ZA_SALDO/ZA_OPERADO/ZA_HORA/ZA_USUARIO/ZA_SERIAL/ZA_CODPZA"
 
-//Carrega Variaveis na Memoria
+	//Carrega Variaveis na Memoria
 	RegToMemory("PZA", INCLUI, .T.,.T.)
 	aEval(ApBuildHeader("PZA", Nil), {|x| iiF(Alltrim(x[2]) $ cCamposPZA , Aadd(aFieldsPza, x[2]),)})
 	aAlterFields := aClone(aFieldsPza)
@@ -229,8 +241,7 @@ Static Function APERDAINC(cAlias,nRecno,nOpcx)
 	aEval(ApBuildHeader("SZA", Nil), {|x| iiF(Alltrim(x[2]) $ cCamposSZA , Aadd(aHeader, x),)})
 
 
-
-//Carrega o Acols 
+	//Carrega o Acols 
 	If ALTERA .OR. VISUAL
 		CarregAcols()
 	else
