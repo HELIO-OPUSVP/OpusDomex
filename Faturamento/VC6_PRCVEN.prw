@@ -39,10 +39,17 @@ User Function VC6_PRCVEN()
 
     SB1->( dbSetOrder(01) )
     SB1->( dbSeek(xFilial() + aCols[N,nPC6_PRODUTO]) )
-    //Para produtos tipo "SI-Serviços" o preço de venda não será validado
-    If SB1->B1_TIPO == 'SI'
-       lValida := .f.
-    EndIf 
+	//Para produtos tipo "SI/SV -Serviços" o preço de venda não será validado
+	If U_VALIDACAO("OSMAR")
+	    If (SB1->B1_TIPO == 'SV' .Or. SB1->B1_TIPO == 'SI')
+    	   lValida := .f.
+    	EndIf 
+	Else
+	    If SB1->B1_TIPO == 'SI'
+    	   lValida := .f.
+    	EndIf 
+	EndIf
+
 
     If !lValida
        RestArea(aAreaSB1)

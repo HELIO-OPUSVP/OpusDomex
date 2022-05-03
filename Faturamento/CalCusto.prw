@@ -53,7 +53,8 @@ User Function CalCusto(cProduto)
 		//SC6->( dbGoTo(PVA->R_E_C_N_O_) )
 
 		If SC6->(dbSeek(xFilial()+PVA->C6_NUM+PVA->C6_ITEM+cProduto))
-			If U_Validacao("OSMAR")
+			//Tira a margem de lucro para produtos tipo serviço
+			If U_Validacao("OSMAR",.T.)  //02/05/2022
 				If SC6->C6_XCUSUNI <> nCusMedio .or. SC6->C6_XSTACUS <> cStatus .or. (SC6->C6_XMARGEM <> ((SC6->C6_XPRCNET - SC6->C6_XCUSUNI) / SC6->C6_XPRCNET) * 100)
                     SB1->( dbSeek(xFilial()+cProduto) )
 					RecLock("SC6",.F.)

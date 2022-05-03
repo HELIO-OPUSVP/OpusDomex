@@ -1,8 +1,11 @@
+
 #Include "Protheus.ch"
-#Include "TopConn.ch"
+#include "rwmake.ch"   
+#Include "Topconn.ch"    
+
 
 User Function ICMSST()
-	Local cPedido  := '053037'
+	Local cPedido  := '054679' //'054816'  //'054679'
 	Local aAreaSC5 := SC5->( GetArea() )
 	Local aAreaSC6 := SC6->( GetArea() )
 
@@ -11,10 +14,10 @@ User Function ICMSST()
 	
     Alert("Gerando ST...")
 
-    While !SC5->( Eof() )
+    //While !SC5->( Eof() )
         U_fGrvPrNet(cPedido)
-		SC5->( dbSkip() )
-	EndDo
+	//	SC5->( dbSkip() )
+	//EndDo
 
     Alert("Fim de operação...")
 	
@@ -93,6 +96,14 @@ User Function fGrvPrNet(cNumPV)
 		MaFisAlt("NF_DESCONTO", A410Arred(MaFisRet(, "NF_VALMERC")*SC5->C5_PDESCAB/100, "C6_VALOR") + MaFisRet(, "NF_DESCONTO"))
 	EndIf
 
+	//27/04/2022
+	
+		MaFisEndLoad(1,1)
+		MafisRecal(,1)
+	//27/04/2022	
+
+
+
 	//Reposiciona nos itens para pegar os dados
 	SC6->(DbGoTop())
 	SC6->(DbSeek(FWxFilial('SC6') + SC5->C5_NUM))
@@ -100,21 +111,25 @@ User Function fGrvPrNet(cNumPV)
 	While ! SC6->(EoF()) .And. SC6->C6_NUM == SC5->C5_NUM
 		//Pega os valores
 		nItAtu++
+		
+		SB1->(DbSeek(FWxFilial("SB1")+SC6->C6_PRODUTO))
+
 		nBasICM    := MaFisRet(nItAtu, "IT_BASEICM")
 		nValICM    := MaFisRet(nItAtu, "IT_VALICM")
 		nValIPI    := MaFisRet(nItAtu, "IT_VALIPI")
 		nAlqICM    := MaFisRet(nItAtu, "IT_ALIQICM")
 		nAlqIPI    := MaFisRet(nItAtu, "IT_ALIQIPI")
-		nValSol    := (MaFisRet(nItAtu, "IT_VALSOL") / SC6->C6_QTDVEN)
-		nBasSol    := MaFisRet(nItAtu, "IT_BASESOL")
+		nICMSRet   := MaFisRet(nItAtu, "IT_VALSOL")
+		nValSol    := nICMSRet / SC6->C6_QTDVEN
+		nBasSol    := MaFisRet(nItAtu, "IT_BASESOL")     
 		nVlrPis    := MaFisRet(nItAtu,"IT_VALPS2")
 		nVlrCof    := MaFisRet(nItAtu,"IT_VALCF2")
 		nPrcUniSol := SC6->C6_PRCVEN + nValSol
 		nTotSol    := nPrcUniSol * SC6->C6_QTDVEN
-		nTotalST   += MaFisRet(nItAtu, "IT_VALSOL")
+		nTotalST   += nICMSRet
 		nTotIPI    += nValIPI
 		nValorTot  += SC6->C6_VALOR
-
+	
 		aValorNet := {}
 
 		//Definição do valor do produto
@@ -143,11 +158,12 @@ User Function fGrvPrNet(cNumPV)
 		//EndIf
 
 		//SC6->C6_XPRCNET := aValorNet[nOpcao]
-		If SC6->C6_XICMRET = 0
+		//If SC6->C6_XICMRET = 0
 			RecLock("SC6",.f.)
-			  SC6->C6_XICMRET := nValSol
+			  //SC6->C6_XICMRET := NoRound(nValSol,2)
+			  SC6->C6_XICMRET := nICMSRet
 			SC6->(MsUnLock())
-		EndIf
+		//EndIf
 
 		//If U_Validacao("OSMAR")
 		//	SB1->(dbSeek(xFilial()+SC6->C6_PRODUTO))
