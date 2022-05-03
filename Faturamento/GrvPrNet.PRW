@@ -97,13 +97,16 @@ User Function GrvPrNet(cNumPV)
 		nValIPI    := MaFisRet(nItAtu, "IT_VALIPI")
 		nAlqICM    := MaFisRet(nItAtu, "IT_ALIQICM")
 		nAlqIPI    := MaFisRet(nItAtu, "IT_ALIQIPI")
-		nValSol    := (MaFisRet(nItAtu, "IT_VALSOL") / SC6->C6_QTDVEN)
+		//nValSol    := (MaFisRet(nItAtu, "IT_VALSOL") / SC6->C6_QTDVEN)
+		nICMSRet   := MaFisRet(nItAtu, "IT_VALSOL")
+		nValSol    := nICMSRet / SC6->C6_QTDVEN
 		nBasSol    := MaFisRet(nItAtu, "IT_BASESOL")
 		nVlrPis    := MaFisRet(nItAtu,"IT_VALPS2")
 		nVlrCof    := MaFisRet(nItAtu,"IT_VALCF2")
 		nPrcUniSol := SC6->C6_PRCVEN + nValSol
 		nTotSol    := nPrcUniSol * SC6->C6_QTDVEN
-		nTotalST   += MaFisRet(nItAtu, "IT_VALSOL")
+		//nTotalST   += MaFisRet(nItAtu, "IT_VALSOL")
+		nTotalST   += nICMSRet
 		nTotIPI    += nValIPI
 		nValorTot  += SC6->C6_VALOR
 
@@ -135,7 +138,7 @@ User Function GrvPrNet(cNumPV)
 		EndIf
 
 		SC6->C6_XPRCNET := aValorNet[nOpcao]
-		SC6->C6_XICMRET := nValSol
+		SC6->C6_XICMRET := nICMSRet
 
 		//Tira a margem de lucro para produtos tipo serviço
 		If U_Validacao("OSMAR",.T.)  // 02/05/2022

@@ -5,7 +5,7 @@
 
 
 User Function ICMSST()
-	Local cPedido  := '054679'
+	Local cPedido  := '054679' //'054816'  //'054679'
 	Local aAreaSC5 := SC5->( GetArea() )
 	Local aAreaSC6 := SC6->( GetArea() )
 
@@ -119,24 +119,17 @@ User Function fGrvPrNet(cNumPV)
 		nValIPI    := MaFisRet(nItAtu, "IT_VALIPI")
 		nAlqICM    := MaFisRet(nItAtu, "IT_ALIQICM")
 		nAlqIPI    := MaFisRet(nItAtu, "IT_ALIQIPI")
-		nValSol    := (MaFisRet(nItAtu, "IT_VALSOL") / SC6->C6_QTDVEN)
-		nBasSol    := MaFisRet(nItAtu, "IT_BASESOL")     //Diferença
+		nICMSRet   := MaFisRet(nItAtu, "IT_VALSOL")
+		nValSol    := nICMSRet / SC6->C6_QTDVEN
+		nBasSol    := MaFisRet(nItAtu, "IT_BASESOL")     
 		nVlrPis    := MaFisRet(nItAtu,"IT_VALPS2")
 		nVlrCof    := MaFisRet(nItAtu,"IT_VALCF2")
 		nPrcUniSol := SC6->C6_PRCVEN + nValSol
 		nTotSol    := nPrcUniSol * SC6->C6_QTDVEN
-		nTotalST   += MaFisRet(nItAtu, "IT_VALSOL")	
+		nTotalST   += nICMSRet
 		nTotIPI    += nValIPI
 		nValorTot  += SC6->C6_VALOR
-
-		//Alert(nBasICM)
-		//Alert(nValICM)
-		//Alert(nValIPI)
-		//Alert(nAlqICM)
-		//Alert(nAlqIPI)
-		//Alert(nBasSol)  //Diferença
-
-
+	
 		aValorNet := {}
 
 		//Definição do valor do produto
@@ -167,7 +160,8 @@ User Function fGrvPrNet(cNumPV)
 		//SC6->C6_XPRCNET := aValorNet[nOpcao]
 		//If SC6->C6_XICMRET = 0
 			RecLock("SC6",.f.)
-			  SC6->C6_XICMRET := nValSol
+			  //SC6->C6_XICMRET := NoRound(nValSol,2)
+			  SC6->C6_XICMRET := nICMSRet
 			SC6->(MsUnLock())
 		//EndIf
 
