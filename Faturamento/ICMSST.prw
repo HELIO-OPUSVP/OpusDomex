@@ -5,7 +5,7 @@
 
 
 User Function ICMSST()
-	Local cPedido  := '054679' //'054816'  //'054679'
+	Local cPedido  := '054947'  //'053037' //'054816'  //'054679'
 	Local aAreaSC5 := SC5->( GetArea() )
 	Local aAreaSC6 := SC6->( GetArea() )
 
@@ -14,8 +14,10 @@ User Function ICMSST()
 	
     Alert("Gerando ST...")
 
-    //While !SC5->( Eof() )
-        U_fGrvPrNet(cPedido)
+   // While !SC5->( Eof() )
+		If SC5->C5_TIPOCLI <> 'R'
+           U_fGrvPrNet(cPedido)
+		EndIf
 	//	SC5->( dbSkip() )
 	//EndDo
 
@@ -98,8 +100,8 @@ User Function fGrvPrNet(cNumPV)
 
 	//27/04/2022
 	
-		MaFisEndLoad(1,1)
-		MafisRecal(,1)
+	//	MaFisEndLoad(1,1)
+	//	MafisRecal(,1)
 	//27/04/2022	
 
 
@@ -130,6 +132,11 @@ User Function fGrvPrNet(cNumPV)
 		nTotIPI    += nValIPI
 		nValorTot  += SC6->C6_VALOR
 	
+
+		Alert(nAlqIPI)
+		Alert(nICMSRet)
+
+
 		aValorNet := {}
 
 		//Definição do valor do produto
@@ -159,10 +166,10 @@ User Function fGrvPrNet(cNumPV)
 
 		//SC6->C6_XPRCNET := aValorNet[nOpcao]
 		//If SC6->C6_XICMRET = 0
-			RecLock("SC6",.f.)
+		//--	RecLock("SC6",.f.)
 			  //SC6->C6_XICMRET := NoRound(nValSol,2)
-			  SC6->C6_XICMRET := nICMSRet
-			SC6->(MsUnLock())
+		//--	  SC6->C6_XICMRET := nICMSRet
+		//--	SC6->(MsUnLock())
 		//EndIf
 
 		//If U_Validacao("OSMAR")
