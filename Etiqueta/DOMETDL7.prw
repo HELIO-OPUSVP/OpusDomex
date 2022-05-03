@@ -2586,7 +2586,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 				Else
 					//solicitação Denis em 16/11/21 devido a problemas do grupo  FTTA
 					If lEricsson
-						if U_VALIDACAO("RODA")
+						if U_VALIDACAO("RODA") .or. .T.
 							MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca,cFila) }) // Layout 002 Zebra Ericsson- Por Roda
 						else
 							MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
@@ -2598,7 +2598,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 				EndIF
 			Else
 				If lEricsson
-					if U_VALIDACAO("RODA")
+					if U_VALIDACAO("RODA") .or. .T.
 						MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca,cFila) }) // Layout 002 Zebra Ericsson- Por Roda
 					else
 						MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
@@ -2684,7 +2684,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 	EndIf
 	If __mv_par06 == "94"
 		cLayoutEnt := "94"
-		if U_VALIDACAO("RODA")
+		if U_VALIDACAO("RODA") .or. .T.
 			lRotValid := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL,cFila) //Layout 002 Zebra Ericsson- Por Roda
 		ELSE
 			lRotValid := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.F.,nPesoBip,lColetor,cNumSerie,NIL) //Layout 002 Crystal Ericsson - Por Michel A. Sander
@@ -2702,7 +2702,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 					oImprime:Disable()
 					Return
 				Else
-					IF U_VALIDACAO("RODA")
+					IF U_VALIDACAO("RODA") .or. .T.
 						MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca,cFila) }) // Layout 002 Zebra Ericsson- Por Roda
 					ELSE
 						MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
@@ -2713,7 +2713,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 					cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
 				EndIF
 			Else
-				if U_VALIDACAO("RODA")
+				if U_VALIDACAO("RODA") .or. .T.
 					MsgRun("Imprimindo etiqueta Layout 48   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ48(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca,cFila) }) // Layout 002 Zebra Ericsson- Por Roda
 				Else
 					MsgRun("Imprimindo etiqueta Layout 97   1/2","Aguarde...",{|| lRetEtq := U_DOMETQ97(__mv_par02,__mv_par03,__mv_par04,__mv_par05,cProxNiv,aQtdBip,.T.,nPesoBip,lColetor,cNumSerie,cNumPeca) }) // Layout 002 Crystal Ericsson- Por Michel A. Sander
@@ -3037,7 +3037,7 @@ Return
 				U_DOMETQ94(cErictDl32_CancOP,cErictDl33_CancEmb,cErictDl34_CancKit,cErictDl35_CancUni,cErictDl38_CancNiv,aErictDl3A_CancFil,.T.,cErictDl39_CancPes,lColetor,cNumSerie)		//Layout 94 - Por Michel A. Sander
 				Sleep(3000)
 				// Layout 002 Crystal
-				iF U_VALIDACAO("RODA")
+				iF U_VALIDACAO("RODA") .or. .T.
 					U_DOMETQ48(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie,nil,cFila)		//Layout 48 Zebra Ericsson- Por Roda
 				ELSE
 					U_DOMETQ97(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie)		//Layout 97 - Por Michel A. Sander
