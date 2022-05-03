@@ -767,7 +767,7 @@ User Function PZAREIMP()
 			While TMPZA->(!EOF())
 				iF SZA->(DbSeek(xFilial("SZA") + TMPZA->ZA_DOCUMEN))
 					if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
-						If SZA->ZA_QTDORI == SZA->ZA_SALDO
+						If SZA->ZA_QTDORI == SZA->ZA_SALDO .And. SZA->ZA_QTDORI > 0  .And. SZA->ZA_SALDO > 0 
 							Etiqueta()
 						Else
 							MsgStop("Reimpressão não permitida. Perda já atendida. produto:" + SZA->ZA_PRODUTO + " OP: " + SZA->ZA_OP)

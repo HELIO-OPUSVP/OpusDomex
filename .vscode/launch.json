@@ -37,7 +37,10 @@
 		},
 		{
 			"label": "sigamdi"
+		},
+		{
+			"label": "sigaest"
 		}
 	],
-	"lastProgramExecuted": "sigamdi"
+	"lastProgramExecuted": "sigaest"
 }
