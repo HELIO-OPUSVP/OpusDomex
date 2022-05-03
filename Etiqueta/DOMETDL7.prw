@@ -1099,7 +1099,7 @@ Static Function ValidaEtiq(lTeste)
 				lValidaRot := .F.
 				If U_VALIDACAO("HELIO",.T.,'','17/02/22')
 					If cFilAnt == '01'
-						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/TRUE" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
+						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/CMTP/TRUE" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 							lValidaRot := .T.
 						EndIf
 					EndIf
@@ -1120,7 +1120,7 @@ Static Function ValidaEtiq(lTeste)
 				Endif
 				If lValidaRot
 
-					nQtdEmbNv1 :=  Int(U_RetEmbala(SC2->C2_PRODUTO,"1")[2])
+					nQtdEmbNv1 :=  Round(U_RetEmbala(SC2->C2_PRODUTO,"1")[2],0)
 					nQTotPklOp  := 0
 					nQPklOcor7 := 0
 					nQPklOcor8 := 0
@@ -1287,7 +1287,7 @@ Static Function ValidaEtiq(lTeste)
 							cProxNiv   := "2"
 							aRetEmbala := U_RetEmbala(SC2->C2_PRODUTO,cProxNiv)
 							cProxEmb   := Posicione("SB1",1,xFilial("SB1")+aRetEmbala[1],"B1_DESC")
-							nQProxEmb  := Int(aRetEmbala[2])
+							nQProxEmb  := Round(aRetEmbala[2],0)
 							oQProxEmb:Refresh()
 							oProxEmb:Refresh()
 
@@ -1622,7 +1622,7 @@ Static Function ValidaEtiq(lTeste)
 				lValidaRot := .F.
 				If U_VALIDACAO("HELIO",.T.,'','17/02/22')
 					If cFilAnt == '01'
-						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/TRUE" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
+						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/CMTP/TRUE" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 							lValidaRot := .T.
 						EndIf
 					EndIf
@@ -1646,7 +1646,7 @@ Static Function ValidaEtiq(lTeste)
 				If lValidaRot
 			
 				If !Alltrim(SC2->C2_OBS) $ "SEMTRAVAROTEIRO"
-					nQtdEmbNv1 :=  Int(U_RetEmbala(SC2->C2_PRODUTO,"1")[2])
+					nQtdEmbNv1 :=  Round(U_RetEmbala(SC2->C2_PRODUTO,"1")[2],0)
 					
 					nQTotPklOp  := 0
 					nQPklOcor7 := 0
@@ -1911,12 +1911,12 @@ Static Function ValidaEtiq(lTeste)
 					//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 
 					If "HUAWEI DO BRASIL" $ Upper(SA1->A1_NOME)
-						U_DOMETQ98(cNumOpBip,NIL,1,1,"1",aUsoSerie,.T.,0,.F., Alltrim(cEtiqOrig),,,cCodHuawei) //Layout 98 - Etiqueta Somente com CODBAR
+						U_DOMETQ98(cNumOpBip,NIL,1,1,"1",aUsoSerie,.T.,0,.F., Alltrim(cEtiqOrig),,'OP:'+SC2->C2_NUM+SC2->C2_ITEM,cCodHuawei) //Layout 98 - Etiqueta Somente com CODBAR
 					Else
 						If nRadio == 1 // Embalagem SEM Etiqueta de Fornecedor
 							fImpSeri(cNumOpBip,cEtiqOrig,aUsoSerie)
 						Else				// Embalagem COM Etiqueta de Fornecedor (Imprime Nossa Etiqueta com Número de Série)
-							U_DOMETQ98(cNumOpBip,NIL,1,1,"1",aUsoSerie,.T.,0,.F.,Alltrim(cEtiqOrig),,,cCodHuawei) //Layout 98 - Etiqueta Somente com CODBAR
+							U_DOMETQ98(cNumOpBip,NIL,1,1,"1",aUsoSerie,.T.,0,.F.,Alltrim(cEtiqOrig),,'OP:'+SC2->C2_NUM+SC2->C2_ITEM,cCodHuawei) //Layout 98 - Etiqueta Somente com CODBAR
 						EndIf
 					EndIf
 
@@ -2045,7 +2045,7 @@ Static Function ValidaEtiq(lTeste)
 										Sleep(3000)		// Delay de 5 segundos para buffer
 									Endif
 
-									U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
+									U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","OP: " + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN) //Layout 98 - Etiqueta Somente com CODBAR
 								Else
 									ImpEtqBip(Nil,Alltrim(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN),nQtdBip, .F. )
 								EndIf
@@ -2061,7 +2061,7 @@ Static Function ValidaEtiq(lTeste)
 									Endif
 								Endif
 
-								U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
+								U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","OP:"+ SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN) //Layout 98 - Etiqueta Somente com CODBAR
 							EndIf
 						
 						EndIf
@@ -2113,7 +2113,7 @@ Static Function ValidaEtiq(lTeste)
 						Else
 							U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 							Sleep(3000)		// Delay de 5 segundos para buffer
-							U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
+							U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","OP: " + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN) //Layout 98 - Etiqueta Somente com CODBAR
 						EndIf
 					EndIf
 
@@ -2162,7 +2162,7 @@ Static Function ValidaEtiq(lTeste)
 						Endif
 					
 						
-						U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQtdBip,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 98 - Etiqueta Somente com CODBAR
+						U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQtdBip,1,"1",aSerial,.T.,0,lUsaColet, "","","OP: " + SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN) //Layout 98 - Etiqueta Somente com CODBAR
 					EndIf
 					aSerial := {}
 					aQtdBip  := {}
@@ -2736,7 +2736,7 @@ Static Function ImpEtqBip(cPecaBip,cOP,nQLidaSer,lApontaOP,lFinalOP)
 				oImprime:Disable()
 				Return
 			Else
-				MsgRun("Imprimindo etiqueta Layout 98","Aguarde...",{|| lRetEtq := U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aQtdBip,.T.,0,lUsaColet, "",cNumPeca)  }) //Layout 98 - Etiqueta Somente com CODBAR
+				MsgRun("Imprimindo etiqueta Layout 98","Aguarde...",{|| lRetEtq := U_DOMETQ98(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aQtdBip,.T.,0,lUsaColet, "",cNumPeca,"OP"+SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN)  }) //Layout 98 - Etiqueta Somente com CODBAR
 				Sleep(5000)		// Delay de 5 segundos para buffer
 				cDomEtDl36_CancLay := __mv_par06 // Salva a impressao atual	para possível cancelamento
 			EndIF
@@ -3047,7 +3047,7 @@ Return
 				// Cancela as Etiquetas do primeiro nivel do serial
 				U_DOMETQ94(cErictDl32_CancOP,cErictDl33_CancEmb,cErictDl34_CancKit,cErictDl35_CancUni,cErictDl38_CancNiv,aErictDl3A_CancFil,.T.,cErictDl39_CancPes,lColetor,cNumSerie)		//Layout 94 - Por Michel A. Sander
 				Sleep(3000)		// Delay de 3 segundos para buffer
-				U_DOMETQ98(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie) //Layout 98 - Etiqueta Somente com CODBAR
+				U_DOMETQ98(cDomEtDl32_CancOP,cDomEtDl33_CancEmb,cDomEtDl34_CancKit,cDomEtDl35_CancUni,cDomEtDl38_CancNiv,aDomEtDl3A_CancFil,.T.,cDomEtDl39_CancPes,lColetor,cNumSerie,,"OP: " + cDomEtDl32_CancOP) //Layout 98 - Etiqueta Somente com CODBAR
 			EndIf
 		EndIf
 		If cDomEtDl36_CancLay == "87"
@@ -3180,7 +3180,7 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 		ElseIf cLayout == "36"
 			U_DOMETQ36(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
 		ElseIf cLayout == "41"
-			U_DOMETQ98(cOp,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 98 - Etiqueta Somente com CODBAR
+			U_DOMETQ98(cOp,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie,,"OP: " + cOp) //Layout 98 - Etiqueta Somente com CODBAR
 			If lEricsson
 				U_DOMETQ41(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie ,"","000000") //Layout 41 - Por Ricardo Roda
 			Endif
@@ -3207,7 +3207,7 @@ Static Function fImpSeri(cOP,cNumSerie,aFilhas)
 				U_DOMETQ87(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 87 - HUAWEI 50x100 mm Por Michel A. Sander CRYSTAL REPORTS
 			EndIf
 		ElseIf cLayout == "94"
-			U_DOMETQ98(cOp,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 98 - Etiqueta Somente com CODBAR
+			U_DOMETQ98(cOp,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie,,'OP:'+cOp) //Layout 98 - Etiqueta Somente com CODBAR
 			U_DOMETQ94(cOP,Nil,1,1,'1',aFilhas,.T.,_PesoAuto,lColetor, cNumSerie) //Layout 36 - Por Michel A. Sander
 		ElseIf cLayout == "99"
 			IF U_VALIDACAO("RODA",.T.,'','20/08/21')  // RODA 20/08/2021
