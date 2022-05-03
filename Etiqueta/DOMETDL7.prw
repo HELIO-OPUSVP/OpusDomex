@@ -2025,7 +2025,7 @@ Static Function ValidaEtiq(lTeste)
 							
 						Else
 
-							If AllTrim(_cGrupoUso) == "JUMP" .Or. SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX"
+							If AllTrim(_cGrupoUso) == "JUMP" .Or. SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX" .Or. AllTrim(_cGrupoUso) == "CMTP"
 								//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 								//³ImpEtqBip() - Aponta OP e imprime etiqueta de embalagem ³
 								//³																		  ³
@@ -2034,7 +2034,7 @@ Static Function ValidaEtiq(lTeste)
 								//³nPARAM 01 - Quantidade lida									  ³
 								//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
 								//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-								If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX" ) .And. lEricsson
+								If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX"  )  .And. lEricsson
 									
 									if U_VALIDACAO("RODA",.T.,'','04/11/21')
 										iF lEricsson		
@@ -2086,7 +2086,7 @@ Static Function ValidaEtiq(lTeste)
 			
 					Else
 
-						If AllTrim(_cGrupoUso) == "JUMP" .Or. SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX"
+						If AllTrim(_cGrupoUso) == "JUMP" .Or. SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX" .Or. AllTrim(_cGrupoUso) == "CMTP"
 							//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 							//³ImpEtqBip() - Aponta OP e imprime etiqueta de embalagem ³
 							//³																		  ³
