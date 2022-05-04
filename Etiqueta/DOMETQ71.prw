@@ -114,7 +114,7 @@ cSQL += RetSqlName("SB1")+".D_E_L_E_T_ = '' AND "
 cSQL += RetSqlName("SG1")+".D_E_L_E_T_ = '' AND "
 cSQL += "G1_COD = '"+SC2->C2_PRODUTO+"' AND "
 cSQL += "(G1_XXQTET1 > 0 OR G1_XXQTET2 > 0) AND "
-cSQL += "SUBSTRING(B1_GRUPO,1,3) = 'TRU'"
+cSQL += "SUBSTRING(B1_GRUPO,1,3) IN ('TRU','CMT') "
 dbUseArea(.T.,"TOPCONN",TcGenQry(,,cSQL),"ETQ",.F.,.T.)
 
 If ETQ->(Eof())
@@ -146,7 +146,7 @@ cIL2     := AllTrim(TransForm(SB1->B1_XXIL2,"9.99"))
 nAviso   := Aviso("Atenção","Tipo de impressão",{"Total","Parcial"})
 nChoice  := If(nAviso==1,SC2->C2_QUANT,mv_par03)
 aEtqs    := {}   
-
+x 		 := 0
 For x := 1 to nChoice
    
    lUnico := .F.

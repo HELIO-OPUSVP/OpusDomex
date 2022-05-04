@@ -1933,7 +1933,7 @@ Static Function ValidaEtiq(lTeste)
 
 				Else
 
-					If SubStr(AllTrim(_cGrupoUso),1,3) == "TRU"
+					If SubStr(AllTrim(_cGrupoUso),1,3) == "TRU" .OR. SubStr(AllTrim(_cGrupoUso),1,3) == "CMT"
 						cProxNiv := cSerNiv
 					Else
 						cProxNiv := Soma1(cSerNiv)
