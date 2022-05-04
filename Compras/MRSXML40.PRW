@@ -787,6 +787,7 @@ Static Function fSalvaZZ3()
 
 Return
 
+/*
 User Function FiSC7POR()
 	_Retorno := .F.
 
@@ -858,3 +859,5 @@ User Function VcpoPort()  // Valida Pedido Portal
 		EndIf
 	ENDIF
 Return _Retorno
+
+*/

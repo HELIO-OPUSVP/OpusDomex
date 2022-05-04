@@ -66,7 +66,7 @@ Static Function fprocPortal()
 //	Private _cChave := '31160308178370000125550010000173441002239569 '  // Space(44)
 //	Private _cChave := '43200273694119000185550000000843311545613846'  // Space(44)
     Private _cChave := Space(44)
-	Private _cCnpj   :=substr(_cChave,7,14)
+	Private _cCnpj  := substr(_cChave,7,14)
 
 	Private nXXFLAG
 	Private nXXITEMXML
@@ -101,7 +101,7 @@ Static Function fprocPortal()
 		_Cfornec := _cCodFOR+'-'+_cLojFOR+' '+_cNomFOR
 	ENDIF
 
-	DEFINE MSDIALOG oDlg1 TITLE OemToAnsi("Rosenberguer - Portal Xml") FROM 0,0 TO 470,910 PIXEL of oMainWnd PIXEL
+	DEFINE MSDIALOG oDlg1 TITLE OemToAnsi("Rosenberguer - Portal Xml - 04/05/2022") FROM 0,0 TO 470,910 PIXEL of oMainWnd PIXEL
 
 	@ 005, 008	SAY oTexto1   VAR OemToAnsi('Chave Eletronica NF-e ( XML )')  PIXEL SIZE 170,15
 	oTexto1:oFont := TFont():New('Arial',,15,,.T.,,,,.T.,.F.)
@@ -255,7 +255,7 @@ Static Function fNewGet(aSizeDlg,oDialg,aItens,aUnidMed,aPrdDesc,aPrdXML)
 	//aAdd(aHeadXX,{"Desconto"     ,"XX_VALDESC"   ,"@E 999,999,999.99"  ,          08,                                2, ""      , "€€€€€€€€€€€€€€", "N"    , ""      , "R"        , ""                 , ""         ,""                            ,"V"      , ""                            , ""        , ""        })
 	//aAdd(aHeadXX,{"Local"        ,"XX_LOCAL"     ,"@!"                 ,          02,                                0, ""      , "€€€€€€€€€€€€€€", "C"    , "NNR"   , "R"        , ""                 , ""         ,""                            ,"A"      , ""            				    , ""        , ""        })
 	//aAdd(aHeadXX,{"C.Custo"      ,"XX_CC"        ,"@!"                 ,          06,                                0, ""      , "€€€€€€€€€€€€€€", "C"    , "CTT"   , "R"        , ""                 , ""         ,""                            ,"A"      , ""				                , ""        , ""        })
-	aAdd(aHeadXX,{"Num.PC"         ,"XX_PEDIDO"    ,"@!"                 ,          08,                                0, ""      , "€€€€€€€€€€€€€€", "C"    , "SC7POR", "R"        , ""                 , ""         ,""                            ,"A"      , ""                            , ""        , ""  })
+	aAdd(aHeadXX,{"Num.PC"         ,"XX_PEDIDO"    ,"@!"                 ,          08,                                0, ""      , "€€€€€€€€€€€€€€", "C"    , "SC7PRT", "R"        , ""                 , ""         ,""                            ,"A"      , ""                            , ""        , ""  })     //"SC7POR"
 	aAdd(aHeadXX,{"It.PC"          ,"XX_ITEMPC"    ,"@!"                 ,          04,                                0, ""      , "€€€€€€€€€€€€€€", "C"    , ""      , "R"        , ""                 , ""         ,""                            ,"A"      , ""                            , ""        , ""  })
 	aAdd(aHeadXX,{"Produto"        ,"XX_PRODUTO"   ,"@!"                 ,          15,                                0, ""      , "€€€€€€€€€€€€€€", "C"    , ""      , "R"        , ""                 , ""         ,""                            ,"A"      , ""                            , ""        , ""  })
 	aAdd(aHeadXX,{"Prev Entrega"   ,"XX_DATPRF"    ,""                   ,          08,                                0, ""      , "€€€€€€€€€€€€€€", "D"    , ""      , "R"        , ""                 , ""         ,""                            ,"A"      , ""                            , ""        , ""  })
@@ -784,6 +784,7 @@ Static Function fSalvaZZ3()
 
 Return
 
+
 User Function FiSC7POR()
 	_Retorno := .F.
 
@@ -831,7 +832,7 @@ User Function VcpoPort()  // Valida Pedido Portal
 			SC7->( dbSetOrder(1) )
 			If SC7->( dbSeek( xFilial() + cPedido + M->XX_ITEM ) )
 					SA5->( dbSetOrder( RetOrder("SA5","A5_FILIAL+A5_FORNECE+A5_LOJA+A5_CODPRF") ) )
-					If 
+					//If 
 
 					cInternBkp := __cInternet
 					__cInternet := Nil
@@ -855,3 +856,13 @@ User Function VcpoPort()  // Valida Pedido Portal
 		EndIf
 	ENDIF
 Return _Retorno
+
+
+
+// Função para Carregar Consulta Específica criada no (( Consulta Padrão))
+
+User Function zConsSC7()
+//        lOk := u_zConsEsp("SC7", {"C7_FORNECE","C7_LOJA","C7_NUM","C7_ITEM","C7_PRODUTO","C7_DESCRI","C7_QUANT","C7_PRECO","C7_TOTAL"}, " AND C7_FORNECE+C7_LOJA = '"+_cCodFOR+_cLojFOR+"' AND C7_ENCER <> 'E' ", "C7_NUM")	
+        lOk := u_zConsEsp("SC7", {"C7_NUM","C7_ITEM","C7_PRODUTO","C7_DESCRI","C7_QUANT","C7_PRECO","C7_TOTAL"}, " AND C7_FORNECE+C7_LOJA = '"+_cCodFOR+_cLojFOR+"' AND C7_ENCER <> 'E' AND ((C7_QUANT-C7_QUJE) > 0) AND C7_CONAPRO <> 'B' AND C7_RESIDUO  = '' ", "C7_NUM")	
+
+Return lOk
