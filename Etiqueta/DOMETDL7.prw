@@ -1099,7 +1099,7 @@ Static Function ValidaEtiq(lTeste)
 				lValidaRot := .F.
 				If U_VALIDACAO("HELIO",.T.,'','17/02/22')
 					If cFilAnt == '01'
-						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/CMTP/TRUE" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
+						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/CMTP/TRUE/FTTA" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 							lValidaRot := .T.
 						EndIf
 					EndIf
@@ -1622,7 +1622,7 @@ Static Function ValidaEtiq(lTeste)
 				lValidaRot := .F.
 				If U_VALIDACAO("HELIO",.T.,'','17/02/22')
 					If cFilAnt == '01'
-						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/CMTP/TRUE" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
+						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/CMTP/TRUE/FTTA" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 							lValidaRot := .T.
 						EndIf
 					EndIf
@@ -2025,7 +2025,7 @@ Static Function ValidaEtiq(lTeste)
 							
 						Else
 
-							If AllTrim(_cGrupoUso) == "JUMP" .Or. SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX" .Or. AllTrim(_cGrupoUso) == "CMTP"
+							If AllTrim(_cGrupoUso) == "JUMP" .Or. SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX" .Or. AllTrim(_cGrupoUso) == "CMTP" .Or. AllTrim(_cGrupoUso) == "FTTA"
 								//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 								//³ImpEtqBip() - Aponta OP e imprime etiqueta de embalagem ³
 								//³																		  ³
@@ -2086,7 +2086,7 @@ Static Function ValidaEtiq(lTeste)
 			
 					Else
 
-						If AllTrim(_cGrupoUso) == "JUMP" .Or. SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX" .Or. AllTrim(_cGrupoUso) == "CMTP"
+						If AllTrim(_cGrupoUso) == "JUMP" .Or. SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX" .Or. AllTrim(_cGrupoUso) == "CMTP" .Or. AllTrim(_cGrupoUso) == "FTTA"
 							//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 							//³ImpEtqBip() - Aponta OP e imprime etiqueta de embalagem ³
 							//³																		  ³
