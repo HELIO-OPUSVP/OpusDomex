@@ -5,7 +5,7 @@
 
 
 User Function ICMSST()
-	Local cPedido  := '054947'  //'053037' //'054816'  //'054679'
+	Local cPedido  :=   '054965' //'054947'  //'053037' //'054816'  //'054679'
 	Local aAreaSC5 := SC5->( GetArea() )
 	Local aAreaSC6 := SC6->( GetArea() )
 
