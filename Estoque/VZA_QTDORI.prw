@@ -283,9 +283,9 @@ If !Empty(M->ZA_QTDORI)
 Else
 	If IsInCallStack("U_DOMPERDA")
 		M->ZA_SALDO := M->ZA_QTDORI
-		oGetdados:aCols[oGetdados:nAt][nPosSaldo] := M->ZA_QTDORI
+		oGetdados:aCols[oGetdados:nAt][nPosSaldo] := M->ZA_QTDORI	
+		_Retorno := .T.
 	EndIf	
-	_Retorno := .T.
 EndIf
 
 RestArea(aAreaSZA)

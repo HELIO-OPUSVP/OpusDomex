@@ -30,28 +30,43 @@ if IsInCallStack("U_DOMPERDA")
    If !Empty( oGetdados:aCols[oGetdados:nAt][nPosDescr ])
       M->ZA_DESCPER := oGetdados:aCols[oGetdados:nAt][nPosDescr ]
    Endif
-EndIf
-SC2->( dbSetOrder(1) )
-If SC2->( dbSeek( xFilial() + M->ZA_OP ) )
-   If SC2->C2_QUANT > SC2->C2_QUJE
-      If Empty(SC2->C2_DATRF)
-         M->ZA_PRODUTO := Space(len(M->ZA_PRODUTO))
-         M->ZA_DESC    := Space(len(M->ZA_DESC))
-         M->ZA_MOTIVO  := Space(len(M->ZA_MOTIVO))
-         M->ZA_DESCPER := Space(len(M->ZA_DESCPER))
-         M->ZA_SALDO   := 0
-         M->ZA_QTDORI  := 0
+   SC2->( dbSetOrder(1) )
+   If SC2->( dbSeek( xFilial() + M->ZA_OP ) )
+      If SC2->C2_QUANT > SC2->C2_QUJE
+         If !Empty(SC2->C2_DATRF)           
+            MsgStop("Ordem de Produção encerrada em " + DtoC(SC2->C2_DATRF) + ".")
+            _Retorno := .F.
+         EndIf
       Else
-         MsgStop("Ordem de Produção encerrada em " + DtoC(SC2->C2_DATRF) + ".")
+         MsgStop("Ordem de Produção encerrada." + Chr(10) + "Só é possível apontar perdas para Ordens de Produção que não foram totalmente produzidas.")
          _Retorno := .F.
       EndIf
    Else
-      MsgStop("Ordem de Produção encerrada." + Chr(10) + "Só é possível apontar perdas para Ordens de Produção que não foram totalmente produzidas.")
+      MsgStop("Ordem de Produção inválida.")
       _Retorno := .F.
    EndIf
 Else
-   MsgStop("Ordem de Produção inválida.")
-   _Retorno := .F.
+   SC2->( dbSetOrder(1) )
+   If SC2->( dbSeek( xFilial() + M->ZA_OP ) )
+      If SC2->C2_QUANT > SC2->C2_QUJE
+         If Empty(SC2->C2_DATRF)
+            M->ZA_PRODUTO := Space(len(M->ZA_PRODUTO))
+            M->ZA_DESC    := Space(len(M->ZA_DESC))
+            M->ZA_MOTIVO  := Space(len(M->ZA_MOTIVO))
+            M->ZA_DESCPER := Space(len(M->ZA_DESCPER))
+            M->ZA_SALDO   := 0
+            M->ZA_QTDORI  := 0
+         Else
+            MsgStop("Ordem de Produção encerrada em " + DtoC(SC2->C2_DATRF) + ".")
+            _Retorno := .F.
+         EndIf
+      Else
+         MsgStop("Ordem de Produção encerrada." + Chr(10) + "Só é possível apontar perdas para Ordens de Produção que não foram totalmente produzidas.")
+         _Retorno := .F.
+      EndIf
+   Else
+      MsgStop("Ordem de Produção inválida.")
+      _Retorno := .F.
+   EndIf
 EndIf
-
 Return _Retorno

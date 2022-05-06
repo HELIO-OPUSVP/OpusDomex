@@ -28,7 +28,7 @@ User Function DOMPERDA()
 //Local cCondic 	:= ""
 //Local cNoFields	:= ""
 	Local cTabPrinc	:= "PZA"
-
+	Private JaViuPza := .F.
 	Private aSize 		:= {}
 	Private aObjects 	:= {}
 	Private aInfo 		:= {}
@@ -313,9 +313,19 @@ User Function VLDTBPZA(cVarDigit)
 	Local nP 	   :=0
 	Local nPosSer := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_SERIAL" } )
 	Local nPosOpera := aScan( aHeader, {|x| Alltrim(x[2]) == "ZA_OPERADO" } )
+	Local cNumPza := M->PZA_CODIGO
 	//Local cLocProcDom := GetMV("MV_XXLOCPR")
 
 	Default cVarDigit := ""    //Variável Digitada
+	
+	//Confirmar numerações já utilizadas e trocar se for necessario
+	PZA->(DbsetOrder(1))
+	While PZA->(DbSeek(xFilial("PZA") + cNumPza))
+		ConfirmSx8()
+		cNumPza := GetSx8Num("PZA", "PZA_CODIGO")
+	End
+	//Atualiza a variável de mémoria do código para gravar a informação correta
+	M->PZA_CODIGO := cNumPza
 
 	IF  cVarDigit $ "M->PZA_OP"
 		If INCLUI
@@ -350,7 +360,7 @@ User Function VLDTBPZA(cVarDigit)
 							cQrySZA+= ENTER + "  ,'' ZA_CODPZA "
 							cQrySZA+= ENTER + "  FROM " + RetSqlName("SD4") + " SD4 "
 							cQrySZA+= ENTER + "  JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ ='' AND SB1.B1_FILIAL = '" + xFilial("SB1") + "' AND SB1.B1_COD =SD4.D4_COD "
-							cQrySZA+= ENTER + "  JOIN " + RetSqlName("SG1") + " SG1 ON SG1.D_E_L_E_T_ ='' AND SG1.G1_FILIAL = '" + xFilial("SG1") + "' AND SG1.G1_COD =SD4.D4_PRODUTO AND SG1.G1_COMP = SD4.D4_COD "
+							cQrySZA+= ENTER + "  LEFT JOIN " + RetSqlName("SG1") + " SG1 ON SG1.D_E_L_E_T_ ='' AND SG1.G1_FILIAL = '" + xFilial("SG1") + "' AND SG1.G1_COD =SD4.D4_PRODUTO AND SG1.G1_COMP = SD4.D4_COD "
 							cQrySZA+= ENTER + "  WHERE SD4.D_E_L_E_T_ ='' AND SD4.D4_FILIAL  ='" + xFilial("SD4") + "' AND LEFT(SD4.D4_OP,8) = '" + SUBSTR(ALLTRIM(M->PZA_OP),1,8) + "' AND SD4.D4_LOCAL NOT IN ('99','08','96') "
 
 							If Select("TBSZA") > 0
@@ -498,7 +508,18 @@ Static Function GravaPerda()
 	Local dDtGrava := Date()
 	Local cHrGrava := Time()
 	Private cArm:= '96'
+	Private cNumPza := M->PZA_CODIGO
 
+	/*
+	//Confirmar numerações já utilizadas e trocar se for necessario
+	PZA->(DbsetOrder(1))
+	While PZA->(DbSeek(xFilial("PZA") + cNumPza))
+  		ConfirmSx8()
+		cNumPza := GetSx8Num("PZA", "PZA_CODIGO")
+	End
+	//Atualiza a variável de mémoria do código para gravar a informação correta
+	M->PZA_CODIGO := cNumPza
+	*/
 	IF INCLUI
 		Begin Transaction
 			If Reclock("PZA",.T.)
@@ -606,23 +627,13 @@ Static Function GravaPerda()
 						SZA->(MsUnlock())
 						lOkSza := .T.
 					EndIf
-					SB1->(DbSetOrder(1))
-					SB1->(DbSeek(xFilial("SB1")+SZA->ZA_PRODUTO))
-					If SB1->B1_APROPRI == 'I' .or. Subs(SB1->B1_COD,1,8) == '50010100'
-						_nQtdTot    := SZA->ZA_SALDO
 
-						Reclock("SZA",.F.)
-						SZA->ZA_SALDO := 0
-						SZA->( msUnlock() )
-
-					Else
-						//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-						//³ GERA EMPENHO NA CRIACAO DA PERDA³
-						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-						SD4PERDA(SZA->ZA_PRODUTO, cArm, SZA->ZA_OP, SZA->ZA_QTDORI,.F. )
-						U_CRIAP07(SZA->ZA_PRODUTO, cArm)
-						//FIM
-					EndIf
+					//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+					//³ GERA EMPENHO NA CRIACAO DA PERDA³
+					//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+					SD4PERDA(SZA->ZA_PRODUTO, cArm, SZA->ZA_OP, SZA->ZA_QTDORI,.F. )
+					U_CRIAP07(SZA->ZA_PRODUTO, cArm)
+					//FIM
 					aaDd(aGrvsOk,{SZA->ZA_DOCUMEN,SZA->ZA_PRODUTO,SZA->ZA_OP})
 
 				EndIf
