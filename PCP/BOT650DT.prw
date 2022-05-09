@@ -254,7 +254,7 @@ Static Function Filtrar(lPerg)
 		cQuery += "AND (B1_GRUPO = 'CORD') "
 	ElseIf Alltrim(mv_par11) == 'TRUE' .Or. Alltrim(mv_par11) == 'TRUN'
 		cQuery += "AND (B1_GRUPO = 'TRUE' OR B1_GRUPO = 'TRUN') "
-	ElseIf Alltrim(mv_par11) == 'CMTP'  .and. U_VALIDACAO("RODA") .or. .T.
+	ElseIf Alltrim(mv_par11) == 'CMTP'  
 		cQuery += "AND (B1_GRUPO = 'CMTP') "
 	Else
 		cQuery += "AND B1_GRUPO = '"+mv_par11+"' "
@@ -351,7 +351,7 @@ Static Function Filtrar(lPerg)
 		ElseIf  Alltrim(mv_par11) == 'PCON'
 			SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100PC" ) )
 			_QtdMinMon:= SG1->G1_QUANT
-		ElseIf  Alltrim(mv_par11) == 'CMTP' .AND. U_VALIDACAO("RODA") .or. .T.
+		ElseIf  Alltrim(mv_par11) == 'CMTP' 
 			SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100DC" ) )
 			_QtdMinMon:= SG1->G1_QUANT
 		else
