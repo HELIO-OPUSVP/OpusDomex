@@ -249,16 +249,17 @@ Static Function Filtrar(lPerg)
 	cQuery += " AND C2_DATPRI >= '"+DtoS(mv_par03)+"' AND C2_DATPRI <= '"+DtoS(mv_par04)+"' AND C2_CLIENT >= '"+mv_par05+"' AND C2_CLIENT <= '"+mv_par06+"' "
 
 	If Alltrim(mv_par11) == 'DIO'
-		cQuery += "AND (B1_GRUPO = 'DIO ' OR B1_GRUPO = 'DIOE') "
+		cQuery += "AND (B1_GRUPO = 'DIO' OR B1_GRUPO = 'DIOE') "
+	ElseIf Alltrim(mv_par11) == 'CORD'
+		cQuery += "AND (B1_GRUPO = 'CORD') "
+	ElseIf Alltrim(mv_par11) == 'TRUE' .Or. Alltrim(mv_par11) == 'TRUN'
+		cQuery += "AND (B1_GRUPO = 'TRUE' OR B1_GRUPO = 'TRUN') "
+	ElseIf Alltrim(mv_par11) == 'CMTP'  .and. U_VALIDACAO("RODA") .or. .T.
+		cQuery += "AND (B1_GRUPO = 'CMTP') "
 	Else
-		If Alltrim(mv_par11) == 'CORD'
-			cQuery += "AND (B1_GRUPO = 'CORD') "
-		ElseIf Alltrim(mv_par11) == 'TRUE' .Or. Alltrim(mv_par11) == 'TRUN'
-			cQuery += "AND (B1_GRUPO = 'TRUE' OR B1_GRUPO = 'TRUN') "
-		Else
-			cQuery += "AND B1_GRUPO = '"+mv_par11+"' "
-		EndIf
+		cQuery += "AND B1_GRUPO = '"+mv_par11+"' "
 	EndIf
+
 
 	cQuery += "AND C2_PEDIDO >= '"+mv_par07+"' AND C2_PEDIDO <= '"+mv_par08+"' AND C2_DATRF = '' AND C2_PRODUTO = B1_COD "
 	If mv_par14 == 1 // Incluir OPs sem data de Programação
@@ -331,41 +332,32 @@ Static Function Filtrar(lPerg)
 
 		EndIf
 
+		If Alltrim(mv_par11) == 'TRUE' .Or. Alltrim(mv_par11) == 'TRUN'
+			SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100T" ) )
+			_QtdMinMon:= SG1->G1_QUANT
 
-		If U_VALIDACAO() .or. .T.//Roda 30/07/2021
-			If Alltrim(mv_par11) == 'TRUE' .Or. Alltrim(mv_par11) == 'TRUN'
-				SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100T" ) )
-				_QtdMinMon:= SG1->G1_QUANT
+		ElseIf  Alltrim(mv_par11) == 'DROP'
+			SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100DR" ) )
+			_QtdMinMon:= SG1->G1_QUANT
 
-			ElseIf  Alltrim(mv_par11) == 'DROP'
-				SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100DR" ) )
-				_QtdMinMon:= SG1->G1_QUANT
+		ElseIf  Alltrim(mv_par11) == 'FTTA'
+			SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100FTTA" ) )
+			_QtdMinMon:= SG1->G1_QUANT
 
-			ElseIf  Alltrim(mv_par11) == 'FTTA'
-				SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100FTTA" ) )
-				_QtdMinMon:= SG1->G1_QUANT
+		ElseIf Alltrim(mv_par11) == 'JUMPER'
+			SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100J" ) )
+			_QtdMinMon:= SG1->G1_QUANT
 
-			ElseIf Alltrim(mv_par11) == 'JUMPER'
-				SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100J" ) )
-				_QtdMinMon:= SG1->G1_QUANT
-
-			ElseIf  Alltrim(mv_par11) == 'PCON'
-				SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100PC" ) )
-				_QtdMinMon:= SG1->G1_QUANT
-			else
-				SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100" ) )
-				_QtdMinMon:= SG1->G1_QUANT
-			Endif
-		Else
-
-			If Alltrim(mv_par11) == 'TRUE' .Or. Alltrim(mv_par11) == 'TRUN'
-				SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100T" ) )
-				_QtdMinMon:= SG1->G1_QUANT
-			else
-				SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100" ) )
-				_QtdMinMon:= SG1->G1_QUANT
-			Endif
-		ENDIF
+		ElseIf  Alltrim(mv_par11) == 'PCON'
+			SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100PC" ) )
+			_QtdMinMon:= SG1->G1_QUANT
+		ElseIf  Alltrim(mv_par11) == 'CMTP' .AND. U_VALIDACAO("RODA") .or. .T.
+			SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100DC" ) )
+			_QtdMinMon:= SG1->G1_QUANT
+		else
+			SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100" ) )
+			_QtdMinMon:= SG1->G1_QUANT
+		Endif
 
 		SG1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO + "50010100CORTE" ) )
 		_QtdMinCor:= SG1->G1_QUANT
@@ -373,7 +365,7 @@ Static Function Filtrar(lPerg)
 		SB1->( dbSeek( xFilial() + QUERYSC2->C2_PRODUTO ) )
 
 		Reclock("TRB",.T.)
-		TRB->B1_GRUPO     := Posicione("SBM",1,xFilial("SBM")+QUERYSC2->B1_GRUPO,"BM_DESC")
+		TRB->B1_GRUPO     := QUERYSC2->B1_GRUPO//Posicione("SBM",1,xFilial("SBM")+QUERYSC2->B1_GRUPO,"BM_DESC")
 		TRB->C2_XXDTPRO   := StoD(QUERYSC2->C2_XXDTPRO)
 		TRB->C2_XXREVIM   := QUERYSC2->C2_XXREVIM
 		TRB->C2_DATPRI    := StoD(QUERYSC2->C2_DATPRI)

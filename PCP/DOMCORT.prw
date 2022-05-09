@@ -948,6 +948,9 @@ Static Function fVldApont(cCodOp,cCFibra, nApont)
 							Else
 								U_DOMETI01(cCodOP,nApont,_cNumSerie,cLocImp)
 							Endif
+
+							// Alteração para gravação do numero de vias  
+						
 							_cPrxDoc:= fPrxDoc()
 							For _i := 1 to nApont
 								Reclock("XD4", .T.)
@@ -958,9 +961,12 @@ Static Function fVldApont(cCodOp,cCFibra, nApont)
 								XD4->XD4_NOMUSR	:= cUserSis
 								XD4->XD4_DOC    := _cPrxDoc
 								XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
-								IF U_VALIDACAO("RODA").OR. .T.
-									XD4->XD4_PRODUT	:= cCFibra
-								ENDIF
+								XD4->XD4_PRODUT	:= cCFibra
+								
+								if U_VALIDACAO("RODA") .OR. .T.
+									XD4->XD4_QTVIAS:= nQtViaFS
+								Endif
+
 								XD4->(MsUnlock())
 								_cNumSerie += 1
 							Next _i
@@ -1083,9 +1089,12 @@ Static Function fVldApont(cCodOp,cCFibra, nApont)
 						XD4->XD4_NOMUSR	:= cUserSis
 						XD4->XD4_DOC      := _cPrxDoc
 						XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
-						IF U_VALIDACAO("RODA") .OR. .T.
-							XD4->XD4_PRODUT	:= cCFibra
-						ENDIF
+						XD4->XD4_PRODUT	:= cCFibra
+						
+						if U_VALIDACAO("RODA") .OR. .T.
+							XD4->XD4_QTVIAS:= nQtViaFS
+						Endif
+
 						XD4->(MsUnlock())
 						_cNumSerie += 1
 				Next _i
@@ -1267,9 +1276,12 @@ Static Function fVldApont2(cCodOp,cCFibra, nApont)
 								XD4->XD4_NOMUSR	:= cUserSis
 								XD4->XD4_DOC    := _cPrxDoc
 								XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
-								IF U_VALIDACAO("RODA").OR. .T.
-									XD4->XD4_PRODUT	:= cCFibra
-								ENDIF
+								XD4->XD4_PRODUT	:= cCFibra
+								
+								if U_VALIDACAO("RODA") .OR. .T.
+									XD4->XD4_QTVIAS:= nQtViaFS
+								Endif
+
 								XD4->(MsUnlock())
 								_cNumSerie += 1
 							Next _i
@@ -1870,9 +1882,12 @@ NIL)*/
 	XD4->XD4_NOMUSR	:= cUserSis
 	XD4->XD4_DOC	:= _cPrxDoc
 	XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
-	IF U_VALIDACAO("RODA").OR. .T.
-		XD4->XD4_PRODUT	:= cCFibra
-	ENDIF
+	XD4->XD4_PRODUT	:= cCFibra
+	
+	if U_VALIDACAO("RODA") .OR. .T.
+		XD4->XD4_QTVIAS:= nQtViaFS
+	Endif
+	
 	XD4->(MsUnlock())
 	
 	_cNumSerie += 1
@@ -2658,9 +2673,10 @@ Static oDlgx
 			XD4->XD4_NOMUSR	:= cUserSis
 			XD4->XD4_DOC    := _cPrxDoc
 			XD4->XD4_KEY 	:= iIf(lFurukawa,cvaltochar(_cNumSerie) + cCodFuruk,"S"+Alltrim(cCodOP)+Alltrim(cvaltochar(_cNumSerie)))
-			IF U_VALIDACAO("RODA").OR. .T.
-				XD4->XD4_PRODUT	:= cCFibra
-			ENDIF
+			XD4->XD4_PRODUT	:= cCFibra
+			if U_VALIDACAO("RODA") .OR. .T.
+				XD4->XD4_QTVIAS:= nQtViaFS
+			Endif
 			XD4->(MsUnlock())
 			_cNumSerie += 1
 		Next _i

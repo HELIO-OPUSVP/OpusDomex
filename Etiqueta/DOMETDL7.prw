@@ -3502,10 +3502,12 @@ Static Function fButtCel()
 
 	Static oDlg
 
-
 	DEFINE MSDIALOG oDlg TITLE "Escolha a sua célula de trabalho" FROM 000, 000  TO 480, 840 COLORS 0, 16777215 PIXEL
-
-	@ 010, 018 BUTTON oButton1 PROMPT "LINHA 1" SIZE 119, 043 OF oDlg ACTION (cCel := "LINHA 1", oDlg:end() ) PIXEL
+	if U_VALIDACAO("RODA").or. .T.
+		@ 010, 018 BUTTON oButton1 PROMPT "DATACENTER" SIZE 119, 043 OF oDlg ACTION (cCel := "LINHA 1", oDlg:end() ) PIXEL
+	Else
+		@ 010, 018 BUTTON oButton1 PROMPT "LINHA 1" SIZE 119, 043 OF oDlg ACTION (cCel := "LINHA 1", oDlg:end() ) PIXEL
+	Endif
 	oButton1:setCSS(cCSSBtN1)
 	@ 010, 151 BUTTON oButton2 PROMPT "LINHA 2" SIZE 119, 043 OF oDlg ACTION (cCel := "LINHA 2", oDlg:end() ) PIXEL
 	oButton2:setCSS(cCSSBtN1)

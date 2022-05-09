@@ -388,6 +388,8 @@ Static Function ReportPrin(oReport)
 			SG1->( dbSeek( xFilial() + (_cAlias)->C2_PRODUTO + "50010100J"        ) )
 		ElseIf mv_par05 $ "FTTA" .OR. mv_par05orig $ "FTTA"
 			SG1->( dbSeek( xFilial() + (_cAlias)->C2_PRODUTO + "50010100FTTA"        ) )					
+		ElseIf mv_par05 $ "CMTP" .OR. mv_par05orig $ "CMTP" .AND. U_VALIDACAO("RODA") .or. .T.
+			SG1->( dbSeek( xFilial() + (_cAlias)->C2_PRODUTO + "50010100DC"        ) )					
 		Else
 			SG1->( dbSeek( xFilial() + (_cAlias)->C2_PRODUTO + "50010100"        ) )
 		Endif
