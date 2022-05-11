@@ -34,8 +34,8 @@ User Function DOMPERDA()
 	Private aInfo 		:= {}
 	Private aPosObj 	:= {}
 	Private aPosGet		:= {}
-//Private aHeader		:= {}
-//Private aCols		:= {}
+	Private aHeader		:= {}
+	Private aCols		:= {}
 	Private nUsado 		:= 0
 	Private cFiltro	:= ""
 	Private aRotina	:= StaticCall(MATA410,MenuDef)
@@ -57,8 +57,8 @@ User Function DOMPERDA()
 	Static oWin3
 	Static oWin4
 	Static oWin5
-	Static aHeader := {}
-	Static aCols   := {}
+	//Static aHeader := {}
+	//Static aCols   := {}
 
 	aSize	:= MsAdvSize( .F. )
 	aInfo 	:= { aSize[ 1 ], aSize[ 2 ], aSize[ 3 ], aSize[ 4 ], 3, 3 }
@@ -106,7 +106,7 @@ User Function DOMPERDA()
 	oBtn0 := TButton():New(0,0,"Sair",oWin1,{|| oDlg:End() },00,14,,,.F.,.T.,.F.,,.F.,,,.F.)
 	oBtn0:Align  := CONTROL_ALIGN_BOTTOM
 
-	oBtn1 := TButton():New(0,0,"Inlcuir",oWin1,{|| APERDAINC("",0,3),oBrowse:Refresh(),oWin2:Refresh() },00,14,,,.F.,.T.,.F.,,.F.,,,.F.)
+	oBtn1 := TButton():New(0,0,"Incluir",oWin1,{|| APERDAINC("",0,3),oBrowse:Refresh(),oWin2:Refresh() },00,14,,,.F.,.T.,.F.,,.F.,,,.F.)
 	oBtn1:Align  := CONTROL_ALIGN_TOP
 
 	@ 000, 000 SAY oBtn11 PROMPT Space(100) SIZE 049, 001 OF oWin1 PIXEL
@@ -229,9 +229,10 @@ Static Function APERDAINC(cAlias,nRecno,nOpcx)
 
 	DbSelectarea("PZA")
 
-	cCamposPza :=  "PZA_CODIGO/PZA_RECURSO/PZA_OP/PZA_PRODOP/PZA_DESCRI/PZA_DATA/PZA_HORA/PZA_OPERAD/PZA_TPPERD/PZA_USUARI/PZA_SERIAL/PZA_STATUS"
+	cCamposPza :=  "PZA_CODIGO/PZA_RECURSO/PZA_OP/PZA_PRODOP/PZA_DESCRI/PZA_DATA/PZA_HORA/PZA_OPERAD/PZA_TPPERD/PZA_USUARI/PZA_SERIAL/PZA_STATUS/PZA_MOTIV/"
 	cCamposSZA :=  "ZA_DOCUMEN/ZA_DATA/ZA_OP/ZA_RECURSO/ZA_PRODUTO/ZA_DESC/ZA_MOTIVO/ZA_DESCPER/ZA_QTDREF/ZA_QTDORI/ZA_SALDO/ZA_OPERADO/ZA_HORA/ZA_USUARIO/ZA_SERIAL/ZA_CODPZA"
-
+	aHeader := {}
+	aCols   :={}
 	//Carrega Variaveis na Memoria
 	RegToMemory("PZA", INCLUI, .T.,.T.)
 	aEval(ApBuildHeader("PZA", Nil), {|x| iiF(Alltrim(x[2]) $ cCamposPZA , Aadd(aFieldsPza, x[2]),)})
@@ -494,6 +495,8 @@ Static Function CarregAcols()
 			TMPZA->(DbSkip())
 		EndDo
 		aCols := aClone(aColsSZA)
+	else
+		aCols := 	Array(Len(aHeader) + 1)
 	EndIf
 Return
 
@@ -510,69 +513,52 @@ Static Function GravaPerda()
 	Private cArm:= '96'
 	Private cNumPza := M->PZA_CODIGO
 
-	/*
-	//Confirmar numerações já utilizadas e trocar se for necessario
-	PZA->(DbsetOrder(1))
-	While PZA->(DbSeek(xFilial("PZA") + cNumPza))
-  		ConfirmSx8()
-		cNumPza := GetSx8Num("PZA", "PZA_CODIGO")
-	End
-	//Atualiza a variável de mémoria do código para gravar a informação correta
-	M->PZA_CODIGO := cNumPza
-	*/
+	
 	IF INCLUI
 		Begin Transaction
-			If Reclock("PZA",.T.)
-				For nK:= 1 To Len(aFieldsPza)
-					PZA->(&(aFieldsPza[nK])) := M->(&(aFieldsPza[nK]))
-				Next nK
-				PZA->PZA_FILIAL := xFilial("PZA")
-				PZA->PZA_DATA   := dDtGrava
-				PZA->PZA_HORA   := cHrGrava
+	
+			
+			aGrvsOk := {}
+			For nK := 1 to len(oGetdados:Acols)
+				If !oGetdados:Acols[nK][Len(oGetdados:Acols[nK])]
+					//So gravar se a quantidade infromada de perda for maior que zero
+					If oGetDados:aCols[nK][nPosQtd] > 0
+						If Reclock("SZA",.T.)
+							For nH:=1 To Len(aHeader)
+								SZA->(&(aHeader[nH][2])) := oGetDados:aCols[nK][nH]
+							Next nH
+							SZA->ZA_FILIAL := xFilial("SZA")
+							SZA->ZA_DATA   := dDtGrava
+							SZA->ZA_HORA   := cHrGrava
 
-				PZA->(MsUnlock())
-				lOkPza := .T.
-			Endif
-
-			If lOkPza
-				aGrvsOk := {}
-				For nK := 1 to len(oGetdados:Acols)
-					If !oGetdados:Acols[nK][Len(oGetdados:Acols[nK])]
-						//So gravar se a quantidade infromada de perda for maior que zero
-						If oGetDados:aCols[nK][nPosQtd] > 0
-							If Reclock("SZA",.T.)
-								For nH:=1 To Len(aHeader)
-									SZA->(&(aHeader[nH][2])) := oGetDados:aCols[nK][nH]
-								Next nH
-								SZA->ZA_FILIAL := xFilial("SZA")
-								SZA->ZA_DATA   := dDtGrava
-								SZA->ZA_HORA   := cHrGrava
-
-								SZA->(MsUnlock())
-								lOkSza := .T.
-							EndIf
-							SB1->(DbSetOrder(1))
-							SB1->(DbSeek(xFilial("SB1")+SZA->ZA_PRODUTO))
-							/*If SB1->B1_APROPRI == 'I' .or. Subs(SB1->B1_COD,1,8) == '50010100'
-								_nQtdTot    := SZA->ZA_SALDO
-
-								Reclock("SZA",.F.)
-								SZA->ZA_SALDO := 0
-								SZA->( msUnlock() )
-
-							Else*/
-								//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-								//³ GERA EMPENHO NA CRIACAO DA PERDA³
-								//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-								SD4PERDA(SZA->ZA_PRODUTO, cArm, SZA->ZA_OP, SZA->ZA_QTDORI,.F. )
-								U_CRIAP07(SZA->ZA_PRODUTO, cArm)
-								//FIM
-							//EndIf
-							aaDd(aGrvsOk,{SZA->ZA_DOCUMEN,SZA->ZA_PRODUTO,SZA->ZA_OP})
+							SZA->(MsUnlock())
+							lOkSza := .T.
+							aaDd(aGrvsOk,{SZA->ZA_DOCUMEN,SZA->ZA_PRODUTO,SZA->ZA_OP,SZA->(RECNO())})
 						EndIf
+						
+						SB1->(DbSetOrder(1))
+						SB1->(DbSeek(xFilial("SB1")+SZA->ZA_PRODUTO))
+						
+						SD4PERDA(SZA->ZA_PRODUTO, cArm, SZA->ZA_OP, SZA->ZA_QTDORI,.F. )
+						U_CRIAP07(SZA->ZA_PRODUTO, cArm)
+						
 					EndIf
-				Next nK
-			EndIf
+				EndIf
+			Next nK
+			
+			if lOkSza
+				If Reclock("PZA",.T.)
+					For nK:= 1 To Len(aFieldsPza)
+						PZA->(&(aFieldsPza[nK])) := M->(&(aFieldsPza[nK]))
+					Next nK
+					PZA->PZA_FILIAL := xFilial("PZA")
+					PZA->PZA_DATA   := dDtGrava
+					PZA->PZA_HORA   := cHrGrava
+
+					PZA->(MsUnlock())
+					lOkPza := .T.
+				Endif
+			Endif
 
 			If !lOkSza .Or. !lOkPza
 				DisarmTransaction()
@@ -589,9 +575,16 @@ Static Function GravaPerda()
 					//Pesquisar pelo código do documento que é unico
 					SZA->(DbSetOrder(2))
 					For nK := 1 to len(aGrvsOk)
-						IF SZA->(DbSeek(xfilial("SZA") + aGrvsOk[nk][1]))
+						SZA->(DbGoto(aGrvsOk[nK][4]))
+						IF Alltrim(SZA->ZA_DOCUMEN) == Alltrim(aGrvsOk[nK][4]) //SZA->(DbSeek(xfilial("SZA") + aGrvsOk[nk][1]))
 							if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
-								Etiqueta()
+								
+								//Etiqueta()
+								If SZA->ZA_QTDORI == SZA->ZA_SALDO .And. SZA->ZA_QTDORI > 0  .And. SZA->ZA_SALDO > 0 
+									Etiqueta()
+								Else
+									MsgStop("Impressão não permitida. Perda já atendida. produto:" + SZA->ZA_PRODUTO + " OP: " + SZA->ZA_OP)
+								EndIf
 								oGetDados:Refresh()
 								_odlg:Refresh()
 							else
