@@ -975,31 +975,31 @@ Static Function ValidaEtiq(lTeste)
 				End
 				/*
 				If !MsgNoYes("Apontamento de etiqueta serial não permitido nesse momento, pois existe um apontamento de embalagem já iniciado."+CHR(13)+"Deseja continuar apontando etiquetas de embalagem?")
-			cEtiqueta := Space(_nTamEtiq)
-			aQtdBip   := {}
-			aQtdEtiq  := {}
-			nQtdBip   := 0
-			nQtdKit   := 0
-			nQProxEmb := 0
-			cProxEmb  := SPACE(60)
-			cEmbAtu	 := SPACE(60)
-			nQEmbAtu  := 0
-			oQEmbAtu:Refresh()
-			oEmbAtu:Refresh()
-			oProxEmb:Refresh()
-			oQProxEmb:Refresh()
-			oCliente:Refresh()
-			oProduto:Refresh()
-			oDescricao:Refresh()
-			oQOpBip:Refresh()
-			oSBip:Refresh()
-			oPdVen:Refresh()
-			oPdaOp:Refresh()
-			oQtdBip:Refresh()
-			oEtiqueta:Refresh()
-			oEtiqueta:SetFocus()
-			oImprime:Disable()
-			Return (.F.)
+				cEtiqueta := Space(_nTamEtiq)
+				aQtdBip   := {}
+				aQtdEtiq  := {}
+				nQtdBip   := 0
+				nQtdKit   := 0
+				nQProxEmb := 0
+				cProxEmb  := SPACE(60)
+				cEmbAtu	 := SPACE(60)
+				nQEmbAtu  := 0
+				oQEmbAtu:Refresh()
+				oEmbAtu:Refresh()
+				oProxEmb:Refresh()
+				oQProxEmb:Refresh()
+				oCliente:Refresh()
+				oProduto:Refresh()
+				oDescricao:Refresh()
+				oQOpBip:Refresh()
+				oSBip:Refresh()
+				oPdVen:Refresh()
+				oPdaOp:Refresh()
+				oQtdBip:Refresh()
+				oEtiqueta:Refresh()
+				oEtiqueta:SetFocus()
+				oImprime:Disable()
+				Return (.F.)'
 				End
 				*/
 
@@ -1020,7 +1020,7 @@ Static Function ValidaEtiq(lTeste)
 				//para pesquisar o cpodigo já utilizado, a exemplo da etiqueta S92612 0100130, que estava retornando a S92612 01001300
 				//Inio Vaidacao
 				/*
-			lAchouEtq := .T.
+				lAchouEtq := .T.
 				If Left(AllTrim(cEtiqOrig),1) == "S"
 				aAreaSave := GetArea()
 
@@ -1619,32 +1619,32 @@ Static Function ValidaEtiq(lTeste)
 			//If (GetMv("MV_XVERROT") .or. (GetEnvServ() == 'VALIDACAO')) .And. AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) == "DROP"
 		
 			// Validações de Roteiro    Antigo if: //If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
-				lValidaRot := .F.
-				If U_VALIDACAO("HELIO",.T.,'','17/02/22')
-					If cFilAnt == '01'
-						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/CMTP/TRUE/FTTA" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
-							lValidaRot := .T.
-						EndIf
-					EndIf
-					If cFilAnt == '02'
-						If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP" .And. lComTravR
-							//lValidaRot := .T.
-						EndIf
-					EndIf
-				Else
-					If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
+			lValidaRot := .F.
+			If U_VALIDACAO("HELIO",.T.,'','17/02/22')
+				If cFilAnt == '01'
+					If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON/TRUN/CMTP/TRUE/FTTA" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 						lValidaRot := .T.
 					EndIf
 				EndIf
-				
-				//Adicionado Por Jackson Santos  - Não Obrigar Roteiro se for KitPig
-				lKitPigRot := (Alltrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_XKITPIG"))=="S")
-				If lKitPigRot 
-					lValidaRot := .F.
-				Endif
+				If cFilAnt == '02'
+					If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP" .And. lComTravR
+						//lValidaRot := .T.
+					EndIf
+				EndIf
+			Else
+				If AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "DROP/CORD/PCON" .And. cFilAnt <> "02" .And. lComTravR  // PCON acrescentado em 04/11/21 por Helio/Ricardo
+					lValidaRot := .T.
+				EndIf
+			EndIf
+		
+			//Adicionado Por Jackson Santos  - Não Obrigar Roteiro se for KitPig
+			lKitPigRot := (Alltrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_XKITPIG"))=="S")
+			If lKitPigRot 
+				lValidaRot := .F.
+			Endif
 
-				If lValidaRot
-			
+			If lValidaRot
+		
 				If !Alltrim(SC2->C2_OBS) $ "SEMTRAVAROTEIRO"
 					nQtdEmbNv1 :=  Round(U_RetEmbala(SC2->C2_PRODUTO,"1")[2],0)
 					
@@ -1933,7 +1933,7 @@ Static Function ValidaEtiq(lTeste)
 
 				Else
 
-					If SubStr(AllTrim(_cGrupoUso),1,3) == "TRU" .OR. SubStr(AllTrim(_cGrupoUso),1,3) == "CMT"
+					If SubStr(AllTrim(_cGrupoUso),1,3) == "TRU" .OR. SubStr(AllTrim(_cGrupoUso),1,3) == "CMT" .OR. SubStr(AllTrim(_cGrupoUso),1,3) == "FTT"
 						cProxNiv := cSerNiv
 					Else
 						cProxNiv := Soma1(cSerNiv)
@@ -1957,6 +1957,22 @@ Static Function ValidaEtiq(lTeste)
 
 			EndIf
 
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³Verifica pendências de perda									³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			If U_VALIDACAO("JACKSON")
+				If nQProxEmb >= (SC2->C2_QUANT - SC2->C2_QUJE)   // Trocado de C2_XXQUJE para C2_QUJE      por Hélio em 25/09/18
+					If nPerdaBip > 0
+						While !MsgNoYes("Ordem de Produção com perda em aberto. Separação não permitida."+CHR(13)+"Deseja continuar?")
+						End
+						oImprime:Disable()
+						cEtiqueta := Space(_nTamEtiq)
+						oEtiqueta:Refresh()
+						oEtiqueta:SetFocus()
+						Return (.f.)
+					EndIf
+				EndIf
+			Endif	
 			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 			//³Atualiza etiqueta serial bipada								³
 			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
