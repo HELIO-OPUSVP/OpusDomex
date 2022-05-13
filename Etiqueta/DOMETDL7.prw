@@ -1934,7 +1934,11 @@ Static Function ValidaEtiq(lTeste)
 				Else
 
 					If SubStr(AllTrim(_cGrupoUso),1,3) == "TRU" .OR. SubStr(AllTrim(_cGrupoUso),1,3) == "CMT" .OR. SubStr(AllTrim(_cGrupoUso),1,3) == "FTT"
-						cProxNiv := cSerNiv
+						If U_Validacao("JACKSON") .And. lEricsson .And.  SubStr(AllTrim(_cGrupoUso),1,3) == "FTT"
+							cProxNiv := Soma1(cSerNiv)
+						Else
+							cProxNiv := cSerNiv
+						EndIf
 					Else
 						cProxNiv := Soma1(cSerNiv)
 					EndIf
@@ -1960,19 +1964,18 @@ Static Function ValidaEtiq(lTeste)
 			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 			//³Verifica pendências de perda									³
 			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-			If U_VALIDACAO("JACKSON")
-				If nQProxEmb >= (SC2->C2_QUANT - SC2->C2_QUJE)   // Trocado de C2_XXQUJE para C2_QUJE      por Hélio em 25/09/18
-					If nPerdaBip > 0
-						While !MsgNoYes("Ordem de Produção com perda em aberto. Separação não permitida."+CHR(13)+"Deseja continuar?")
-						End
-						oImprime:Disable()
-						cEtiqueta := Space(_nTamEtiq)
-						oEtiqueta:Refresh()
-						oEtiqueta:SetFocus()
-						Return (.f.)
-					EndIf
+			If nQProxEmb >= (SC2->C2_QUANT - SC2->C2_QUJE)   // Trocado de C2_XXQUJE para C2_QUJE      por Hélio em 25/09/18
+				If nPerdaBip > 0
+					While !MsgNoYes("Ordem de Produção com perda em aberto. Separação não permitida."+CHR(13)+"Deseja continuar?")
+					End
+					oImprime:Disable()
+					cEtiqueta := Space(_nTamEtiq)
+					oEtiqueta:Refresh()
+					oEtiqueta:SetFocus()
+					Return (.f.)
 				EndIf
-			Endif	
+			EndIf
+		
 			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 			//³Atualiza etiqueta serial bipada								³
 			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
@@ -2050,7 +2053,7 @@ Static Function ValidaEtiq(lTeste)
 								//³nPARAM 01 - Quantidade lida									  ³
 								//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
 								//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-								If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX"  )  .And. lEricsson
+								If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .Or. AllTrim(_cGrupoUso) == "FLEX" .Or. AllTrim(_cGrupoUso) == "FTTA" )  .And. lEricsson
 									
 									if U_VALIDACAO("RODA",.T.,'','04/11/21')
 										iF lEricsson		
@@ -2111,7 +2114,7 @@ Static Function ValidaEtiq(lTeste)
 							//³nPARAM 01 - Quantidade lida									  ³
 							//³lPARAM 01 - Aponta OP (.T. = Sim | .F. = Não)			  ³
 							//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-							If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .OR. SubStr(AllTrim(_cGrupoUso),1,4)=="FLEX")  .And. lEricsson
+							If (SubStr(AllTrim(_cGrupoUso),1,3)=="TRU" .OR. SubStr(AllTrim(_cGrupoUso),1,4)=="FLEX" .OR. SubStr(AllTrim(_cGrupoUso),1,4)=="FTTA")  .And. lEricsson
 								
 								if U_VALIDACAO("RODA",.T.,'','04/11/21')// ricardo roda 04/11/2021
 								IF lEricsson
@@ -2169,9 +2172,9 @@ Static Function ValidaEtiq(lTeste)
 						
 					Else
 						If U_VALIDACAO("RODA",.T.,'04/11/21','17/02/22') // ricardo roda 04/11/2021
-						IF lEricsson
-							U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
-						Endif
+							IF lEricsson
+								U_DOMETQ41(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQEmbAtu,1,"1",aSerial,.T.,0,lUsaColet, "","","000000") //Layout 002 Crystal Ericsson - Por Michel A. Sander
+							Endif
 						Else
 							U_DOMETQ94(SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN,NIL,nQtdBip,1,"1",aSerial,.T.,0,lUsaColet, "") //Layout 002 Crystal Ericsson - Por Michel A. Sander
 							Sleep(3000)		// Delay de 5 segundos para buffer
