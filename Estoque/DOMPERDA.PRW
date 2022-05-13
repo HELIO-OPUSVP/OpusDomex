@@ -334,80 +334,86 @@ User Function VLDTBPZA(cVarDigit)
 				SC2->(DbSetOrder(1))
 				if SC2->(DbSeek(xFilial("SC2")+M->PZA_OP ))
 					If Empty(Alltrim(SC2->C2_DATRF))
-						if ALLTRIM(M->PZA_OP) == IIF(LEFT(ALLTRIM(M->PZA_SERIAL),1) =="S",SUBSTR(ALLTRIM(M->PZA_SERIAL),2,11),LEFT(ALLTRIM(M->PZA_SERIAL),11))
-							M->PZA_PRODOP := SC2->C2_PRODUTO
-							M->PZA_DESCRI := POSICIONE("SB1",1,XFILIAL("SB1")+SC2->C2_PRODUTO,"B1_DESC")
+						XD4->(DbSetOrder(3))
+						If XD4->(DbSeek(xFilial("XD4")+M->PZA_SERIAL))	
+							//if ALLTRIM(M->PZA_OP) == IIF(LEFT(ALLTRIM(M->PZA_SERIAL),1) =="S",SUBSTR(ALLTRIM(M->PZA_SERIAL),2,11),LEFT(ALLTRIM(M->PZA_SERIAL),11))
+							If ALLTRIM(M->PZA_OP) == Alltrim(XD4->XD4_OP)
+								M->PZA_PRODOP := SC2->C2_PRODUTO
+								M->PZA_DESCRI := POSICIONE("SB1",1,XFILIAL("SB1")+SC2->C2_PRODUTO,"B1_DESC")
 
-							cQrySZA:= "SELECT D4_FILIAL  ZA_FILIAL "
-							cQrySZA+= ENTER + "  ,''  ZA_DOCUMEN "
-							cQrySZA+= ENTER + "  ,D4_DATA  ZA_DATA "
-							cQrySZA+= ENTER + "  ,D4_OP  ZA_OP "
-							cQrySZA+= ENTER + "  ,'' ZA_RECURSO "
-							cQrySZA+= ENTER + "  ,D4_COD ZA_PRODUTO "
-							cQrySZA+= ENTER + "  ,B1_DESC ZA_DESC "
-							cQrySZA+= ENTER + "  ,'' ZA_MOTIVO "
-							cQrySZA+= ENTER + "  ,'' ZA_DESCPER "
-							cQrySZA+= ENTER + "  ,G1_QUANT ZA_QTDREF "
-							cQrySZA+= ENTER + "  ,0 ZA_QTDORI "
-							cQrySZA+= ENTER + "  ,0 ZA_SALDO "
-							cQrySZA+= ENTER + "  ,'' ZA_OPERADO "
-							cQrySZA+= ENTER + "  ,'' ZA_HORA   "
-							cQrySZA+= ENTER + "  ,'P' ZA_TIPO  "
-							cQrySZA+= ENTER + "  ,'' ZA_PRODPG "
-							cQrySZA+= ENTER + "  ,'' ZA_USUARIO "
-							cQrySZA+= ENTER + "  ,'' ZA_FLAG   "
-							cQrySZA+= ENTER + "  ,'' ZA_MAQUINA "
-							cQrySZA+= ENTER + "  ,'' ZA_SERIAL "
-							cQrySZA+= ENTER + "  ,'' ZA_CODPZA "
-							cQrySZA+= ENTER + "  FROM " + RetSqlName("SD4") + " SD4 "
-							cQrySZA+= ENTER + "  JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ ='' AND SB1.B1_FILIAL = '" + xFilial("SB1") + "' AND SB1.B1_COD =SD4.D4_COD "
-							cQrySZA+= ENTER + "  LEFT JOIN " + RetSqlName("SG1") + " SG1 ON SG1.D_E_L_E_T_ ='' AND SG1.G1_FILIAL = '" + xFilial("SG1") + "' AND SG1.G1_COD =SD4.D4_PRODUTO AND SG1.G1_COMP = SD4.D4_COD "
-							cQrySZA+= ENTER + "  WHERE SD4.D_E_L_E_T_ ='' AND SD4.D4_FILIAL  ='" + xFilial("SD4") + "' AND LEFT(SD4.D4_OP,8) = '" + SUBSTR(ALLTRIM(M->PZA_OP),1,8) + "' AND SD4.D4_LOCAL NOT IN ('99','08','96') "
+								cQrySZA:= "SELECT D4_FILIAL  ZA_FILIAL "
+								cQrySZA+= ENTER + "  ,''  ZA_DOCUMEN "
+								cQrySZA+= ENTER + "  ,D4_DATA  ZA_DATA "
+								cQrySZA+= ENTER + "  ,D4_OP  ZA_OP "
+								cQrySZA+= ENTER + "  ,'' ZA_RECURSO "
+								cQrySZA+= ENTER + "  ,D4_COD ZA_PRODUTO "
+								cQrySZA+= ENTER + "  ,B1_DESC ZA_DESC "
+								cQrySZA+= ENTER + "  ,'' ZA_MOTIVO "
+								cQrySZA+= ENTER + "  ,'' ZA_DESCPER "
+								cQrySZA+= ENTER + "  ,G1_QUANT ZA_QTDREF "
+								cQrySZA+= ENTER + "  ,0 ZA_QTDORI "
+								cQrySZA+= ENTER + "  ,0 ZA_SALDO "
+								cQrySZA+= ENTER + "  ,'' ZA_OPERADO "
+								cQrySZA+= ENTER + "  ,'' ZA_HORA   "
+								cQrySZA+= ENTER + "  ,'P' ZA_TIPO  "
+								cQrySZA+= ENTER + "  ,'' ZA_PRODPG "
+								cQrySZA+= ENTER + "  ,'' ZA_USUARIO "
+								cQrySZA+= ENTER + "  ,'' ZA_FLAG   "
+								cQrySZA+= ENTER + "  ,'' ZA_MAQUINA "
+								cQrySZA+= ENTER + "  ,'' ZA_SERIAL "
+								cQrySZA+= ENTER + "  ,'' ZA_CODPZA "
+								cQrySZA+= ENTER + "  FROM " + RetSqlName("SD4") + " SD4 "
+								cQrySZA+= ENTER + "  JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ ='' AND SB1.B1_FILIAL = '" + xFilial("SB1") + "' AND SB1.B1_COD =SD4.D4_COD "
+								cQrySZA+= ENTER + "  LEFT JOIN " + RetSqlName("SG1") + " SG1 ON SG1.D_E_L_E_T_ ='' AND SG1.G1_FILIAL = '" + xFilial("SG1") + "' AND SG1.G1_COD =SD4.D4_PRODUTO AND SG1.G1_COMP = SD4.D4_COD "
+								cQrySZA+= ENTER + "  WHERE SD4.D_E_L_E_T_ ='' AND SD4.D4_FILIAL  ='" + xFilial("SD4") + "' AND LEFT(SD4.D4_OP,8) = '" + SUBSTR(ALLTRIM(M->PZA_OP),1,8) + "' AND SD4.D4_LOCAL NOT IN ('99','08','96') "
 
-							If Select("TBSZA") > 0
-								TBSZA->(DbCloseArea())
-							EndIf
-							TCQUERY cQrySZA NEW ALIAS "TBSZA"
+								If Select("TBSZA") > 0
+									TBSZA->(DbCloseArea())
+								EndIf
+								TCQUERY cQrySZA NEW ALIAS "TBSZA"
 
-							If TBSZA->(!EOF())
-								While TBSZA->(!EOF())
-									AaDd(aColsSza,Array(Len(aHeader) + 1))
-									For nP:= 1 to Len(aHeader)
+								If TBSZA->(!EOF())
+									While TBSZA->(!EOF())
+										AaDd(aColsSza,Array(Len(aHeader) + 1))
+										For nP:= 1 to Len(aHeader)
 
-										aColsSZA[Len(aColsSza)][nP] := TBSZA->(&(aHeader[nP][2]))
+											aColsSZA[Len(aColsSza)][nP] := TBSZA->(&(aHeader[nP][2]))
 
-										If aHeader[nP][2] == "ZA_DOCUMEN"
-											aColsSZA[Len(aColsSza)][nP] := U_IZAZEDOC()
-										elseif Alltrim(aHeader[nP][2]) == "ZA_CODPZA"
-											aColsSZA[Len(aColsSza)][nP] := M->PZA_CODIGO
-										eLseIf Alltrim(aHeader[nP][2]) == "ZA_RECURSO"
-											aColsSZA[Len(aColsSza)][nP] := M->PZA_RECURS
-										eLseIf Alltrim(aHeader[nP][2]) == "ZA_USUARIO"
-											aColsSZA[Len(aColsSza)][nP] := M->PZA_USUARI
-										eLseIf Alltrim(aHeader[nP][2]) == "ZA_DATA"
-											aColsSZA[Len(aColsSza)][nP] := M->PZA_DATA
-										eLseIf Alltrim(aHeader[nP][2]) == "ZA_HORA"
-											aColsSZA[Len(aColsSza)][nP] := M->PZA_HORA
-										ElseIf 	Alltrim(aHeader[nP][2]) == "ZA_OPERADO"
-											aColsSZA[Len(aColsSza)][nP] := M->PZA_OPERAD
-										ElseIf 	Alltrim(aHeader[nP][2]) == "ZA_SERIAL"
-											aColsSZA[Len(aColsSza)][nP] := M->PZA_SERIAL
-										EndIf
+											If aHeader[nP][2] == "ZA_DOCUMEN"
+												aColsSZA[Len(aColsSza)][nP] := U_IZAZEDOC()
+											elseif Alltrim(aHeader[nP][2]) == "ZA_CODPZA"
+												aColsSZA[Len(aColsSza)][nP] := M->PZA_CODIGO
+											eLseIf Alltrim(aHeader[nP][2]) == "ZA_RECURSO"
+												aColsSZA[Len(aColsSza)][nP] := M->PZA_RECURS
+											eLseIf Alltrim(aHeader[nP][2]) == "ZA_USUARIO"
+												aColsSZA[Len(aColsSza)][nP] := M->PZA_USUARI
+											eLseIf Alltrim(aHeader[nP][2]) == "ZA_DATA"
+												aColsSZA[Len(aColsSza)][nP] := M->PZA_DATA
+											eLseIf Alltrim(aHeader[nP][2]) == "ZA_HORA"
+												aColsSZA[Len(aColsSza)][nP] := M->PZA_HORA
+											ElseIf 	Alltrim(aHeader[nP][2]) == "ZA_OPERADO"
+												aColsSZA[Len(aColsSza)][nP] := M->PZA_OPERAD
+											ElseIf 	Alltrim(aHeader[nP][2]) == "ZA_SERIAL"
+												aColsSZA[Len(aColsSza)][nP] := M->PZA_SERIAL
+											EndIf
 
-									Next nP
-									//Campo do Deletado
-									aColsSZA[Len(aColsSza)][Len(aColsSZA[Len(aColsSza)])] := .F.
-									TBSZA->(DbSkip())
-								EndDo
-								oGetDados:aCols := aClone(aColsSZA)
-								TBSZA->(DbCloseArea())
+										Next nP
+										//Campo do Deletado
+										aColsSZA[Len(aColsSza)][Len(aColsSZA[Len(aColsSza)])] := .F.
+										TBSZA->(DbSkip())
+									EndDo
+									oGetDados:aCols := aClone(aColsSZA)
+									TBSZA->(DbCloseArea())
+								else
+									MsgStop("OP NÃO POSSUI EMPENHO NA SD4")
+									lRetVld := .F.
+								EndIf							
 							else
-								MsgStop("OP NÃO POSSUI EMPENHO NA SD4")
+								MsgStop("Serial Informado não pertence a op digitada.","Erro Serial")
 								lRetVld := .F.
 							EndIf
 						else
-							MsgStop("Serial Informado não pertence a op digitada.","Erro Serial")
-							lRetVld := .F.
+							MsgStop("Serial Informado não encontrado na tabela XD4")
 						EndIf
 					else
 						MsgStop("Ordem de Produção encerrada!","Ordem de Produção Encerrada")
@@ -427,7 +433,8 @@ User Function VLDTBPZA(cVarDigit)
 			XD4->(DbSetOrder(3))
 			If XD4->(DbSeek(xFilial("XD4")+M->PZA_SERIAL))
 				If XD4->XD4_STATUS == "2"//Etiqueta Lida no Roteiro
-					if ALLTRIM(M->PZA_OP) == IIF(LEFT(ALLTRIM(M->PZA_SERIAL),1) =="S",SUBSTR(ALLTRIM(M->PZA_SERIAL),2,11),LEFT(ALLTRIM(M->PZA_SERIAL),11)) .Or. Empty(Alltrim(M->PZA_OP))
+					//if ALLTRIM(M->PZA_OP) == IIF(LEFT(ALLTRIM(M->PZA_SERIAL),1) =="S",SUBSTR(ALLTRIM(M->PZA_SERIAL),2,11),LEFT(ALLTRIM(M->PZA_SERIAL),11)) .Or. Empty(Alltrim(M->PZA_OP))
+					if ALLTRIM(M->PZA_OP) == Alltrim(XD4->D4_OP) .Or. Empty(Alltrim(M->PZA_OP))
 						lRetVld := .T.
 						For nP := 1 To Len(oGetDados:Acols)
 							If !oGetDados:Acols[nP][Len(oGetDados:Acols[nP])]
@@ -576,7 +583,7 @@ Static Function GravaPerda()
 					SZA->(DbSetOrder(2))
 					For nK := 1 to len(aGrvsOk)
 						SZA->(DbGoto(aGrvsOk[nK][4]))
-						IF Alltrim(SZA->ZA_DOCUMEN) == Alltrim(aGrvsOk[nK][4]) //SZA->(DbSeek(xfilial("SZA") + aGrvsOk[nk][1]))
+						IF Alltrim(SZA->ZA_DOCUMEN) == Alltrim(aGrvsOk[nK][1]) //SZA->(DbSeek(xfilial("SZA") + aGrvsOk[nk][1]))
 							if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
 								
 								//Etiqueta()
