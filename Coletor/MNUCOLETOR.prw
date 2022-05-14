@@ -284,29 +284,25 @@ Static Function ColetorMenu(cDep)
 		nLin += nSkipLin
 	EndIf
 
-	If 'JONAS.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
 		If aScan(aAcessos,22) <> 0
 			Private oBtn04 := Nil
-			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico (Matriz)"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACD45("01"), U_DOMACD45("01"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico (Matriz)"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW45("01"), U_DOMACD45("01"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
 				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
 				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
 			oBtn04:SetCSS( cCSSBtN1 )
 			nLin += nSkipLin
 		EndIf
-	EndIf
 
-	If 'JONAS.OPUS' $ Upper(GetEnvServer()) .OR.  'VALIDACAO' $ Upper(GetEnvServer())
 		If aScan(aAcessos,22) <> 0
 			Private oBtn04 := Nil
-			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico (Filial MG)"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACD45("02"), U_DOMACD45("02"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			@ nLin, nCol BUTTON oBtn04 PROMPT "Inventário Cíclico (Filial MG)"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW45("02"), U_DOMACD45("02"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
 				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
 				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover
 			oBtn04:SetCSS( cCSSBtN1 )
 			nLin += nSkipLin
 		EndIf
-	EndIf
 
 	If aScan(aAcessos,22) <> 0
 		Private oBtn04 := Nil
@@ -861,10 +857,10 @@ Static Function ColetorMenu(cDep)
 		nLin += nSkipLin
 	EndIf
 
-	If U_VALIDACAO ("RODA")
+	If U_VALIDACAO ("RODA") .or. .T.
 		If aScan(aAcessos,26) <> 0
 			Private oBtn26 := Nil
-			@ nLin, nCol BUTTON oBtn26 PROMPT "Inventário Cíclico MG"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACD45("02"), U_DOMACW45("02"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+			@ nLin, nCol BUTTON oBtn26 PROMPT "Inventário Cíclico MG"  ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACW45("02"), U_DOMACD45("02"))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 			cCSSBtN1 := "QPushButton{background-image: url(rpo:bpmsdoca.png);"+cPush+;
 				"QPushButton:pressed {background-image: url(rpo:bpmsdoca.png);"+cPressed+;
 				"QPushButton:hover {background-image: url(rpo:bpmsdoca.png);"+cHover

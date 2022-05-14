@@ -279,7 +279,7 @@ _aCols:={}
 
 //Seleciona o ultimo inventario ciclico gerado
 cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE ZZR_FILIAL='"+FilOri+"' AND D_E_L_E_T_='' AND ZZR_DTREAL='' " 
-cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' and ZZR_SEQ>"+ZZR->ZZR_SEQ+" "
+cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' and ZZR_SEQ > "+cSeq+" "
 cQuery += " ORDER BY R_E_C_N_O_ "
 
 If Select("TMP") <> 0
@@ -497,7 +497,7 @@ Local _nTamEtiq   :=Len(CriaVar("XD1_XXPECA",.F.))
 Local aDadosINV   :={}
 Local aDadosZZR   :={}
 Local nPos        :=0
-
+Local x
 
 Private lMsHelpAuto := .T.
 Private lMsErroAuto := .F.
@@ -535,7 +535,7 @@ While _nI <= Len(_aCols)
 							ELSE
 								Aadd(_aEndereco,{SB1->B1_COD,SBE->BE_LOCAL,SBF->BF_LOCALIZ,SBF->BF_QUANT,SBF->BF_LOTECTL})
 							ENDIF
-						ENDIF,
+						ENDIF
 					EndIf
 				EndIf
 			EndIf

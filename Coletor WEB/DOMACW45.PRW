@@ -1,8 +1,15 @@
+#include "TbiConn.ch"
+#include "TbiCode.ch"
+#include "Rwmake.ch"
+#include "Topconn.ch"
+#include "Protheus.ch"
+#Include "ap5mail.ch"
 
+#DEFINE ENTER CHAR(13) + CHAR(10)
 /*
 ‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
 ±±…ÕÕÕÕÕÕÕÕÕÕ—ÕÕÕÕÕÕÕÕÕÕÀÕÕÕÕÕÕÕ—ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÀÕÕÕÕÕÕ—ÕÕÕÕÕÕÕÕÕÕÕÕÕª±±
-±±∫Programa  ≥DOMACD18  ∫Autor  ≥Jonas Pereira      ∫ Data ≥  08/09/2021   ∫±±
+±±∫Programa  ≥DOMACW45  ∫Autor  ≥Jonas Pereira      ∫ Data ≥  08/09/2021   ∫±±
 ±±ÃÕÕÕÕÕÕÕÕÕÕÿÕÕÕÕÕÕÕÕÕÕ ÕÕÕÕÕÕÕœÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ ÕÕÕÕÕÕœÕÕÕÕÕÕÕÕÕÕÕÕÕπ±±
 ±±∫Desc.     ≥ Programa de invent·rio CICLICO                        ∫±±
 ±±∫          ≥                                                            ∫±±
@@ -21,9 +28,9 @@
 #Include "ap5mail.ch"
 
 *---------------------------------------------------------------------------------------------
-User Function DOMACW45()
+User Function DOMACW45 (__cFilial)
 	*---------------------------------------------------------------------------------------------
-
+	Local nWebPx:= 1.3
 	Private oTxtEnd,oGetEnd,oTxtEtiq,oGetEtiq,oTxtProd,oGetProd,oTxtQtd,oGetQtd,oMark,oTxtQTDETQ
 	Private _nTamEtiq      := 21
 	Private _cEndereco     := Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
@@ -51,8 +58,10 @@ User Function DOMACW45()
 	Private _nQTDAJU       :=0
 	Private _nVALAJU       :=0
 	Private _nQTDTOT       :=0
-	Private nWebPx:= 1.5
-
+	Private aLstAlmox      :={}
+	Private cAlmoxarifado  :=""
+	Private cPerInv := ""
+	Private aRecSB7 := {}
 	Private cPush:= "background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,stop: 0 gray, stop: 0.4 white,stop: 1 gray);color: #171717; font: bold "+cvaltochar(10*nWebPx)+"px Arial;"+;
 		"background-repeat:no-repeat ;border-radius: 6px;}"
 	Private cPressed:= "background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,stop: 0 gray, stop: 0.4 white,stop: 1 blue);color: #171717; font: bold "+cvaltochar(10*nWebPx)+"px Arial;"+;
@@ -61,70 +70,383 @@ User Function DOMACW45()
 		"background-repeat:no-repeat ;border-radius: 6px;}"
 
 
-	If! Empty(_cCtrNum)
-		fOkTela()
+
+Private cTitulo    :=  ""
+Private nRecZZR    := 0
+Private _pro       := ""
+Private _DescPro   := ""
+Private _DT        := ""
+Private _oCodPro
+Private _oDescPro
+Private lNext      := .t.
+Private cSeq       := ""
+Private _nMais1	   := 0	
+	   
+
+Private _aCols:={}
+
+Private FilOri := __cFilial
+
+If! Empty(_cCtrNum)
+    fAlmoxinv()
 	Else
 		U_MsgColetor("Verifique o par‚metro "+_cParametro)
 	EndIf
 
 Return
 
+Static function fAlmoxinv()
+Local lRetAlm := .t.
+Local nWebPx:= 1.3
+
+//Seleciona os almoxarifados pendentes de invent·rio...
+cQuery := " SELECT ZZR_LOCAL, LEFT(ZZR_DTPLAN,6) AS PERIODO FROM " + RetSqlName("ZZR") + " (NOLOCK) "
+cQuery += " WHERE ZZR_FILIAL='"+FilOri+"' AND D_E_L_E_T_='' AND ZZR_DTREAL='' "
+cQuery += " AND LEFT(ZZR_DTPLAN,6) = ( "
+cQuery += " SELECT (CASE WHEN MAX(ZZR_DTPLAN) IS NULL THEN LEFT(CONVERT(VARCHAR(10), DATEADD(month, -1, GETDATE()), 112),6)  "
+cQuery += " ELSE LEFT(MAX(ZZR_DTPLAN),6) END) AS DTULT FROM " + RetSqlName("ZZR") + "  (NOLOCK)  "
+cQuery += " WHERE ZZR_FILIAL='"+FilOri+"' AND D_E_L_E_T_=''  "
+cQuery += " ) "
+cQuery += " GROUP BY ZZR_LOCAL, LEFT(ZZR_DTPLAN,6)  "
+cQuery += " ORDER BY ZZR_LOCAL "
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+TCQUERY cQuery NEW ALIAS "TMP"
+
+While TMP->(!EOF())
+	aadd(aLstAlmox,TMP->ZZR_LOCAL)
+    cPerInv := TMP->PERIODO
+    TMP->(dbskip())
+Enddo
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+
+Define MsDialog oInvSel Title OemToAnsi("Invent·rio CÌclico") From 0,0 To nAMaxTela,nLMaxTela Pixel of oMainWnd PIXEL
+
+@ 020,010*nWebPx	SAY oTexto1 Var '   Abaixo lista de almorarifados'    SIZE 100*nWebPx,10*nWebPx PIXEL
+@ 030*nWebPx,010*nWebPx	SAY oTexto1 Var ' pendentes, para realizaÁ„o do invent·rio '    SIZE 100*nWebPx,10*nWebPx PIXEL
+@ 040*nWebPx,010*nWebPx	SAY oTexto1 Var ' cÌclicono perÌodo de '+SUBSTR(cPerInv,5,2)+ '-'+SUBSTR(cPerInv,1,4)+', selecione:'    SIZE 100*nWebPx,10*nWebPx PIXEL
+
+
+@ 060*nWebPx, 030*nWebPx	SAY oTexto2 Var 'Almoxarifado'    SIZE 50*nWebPx,10*nWebPx PIXEL
+oTexto2:oFont := TFont():New('Arial',,17*nWebPx,,.T.,,,,.T.,.F.)
+
+@ 070*nWebPx, 040*nWebPx COMBOBOX oCombo2  VAR cAlmoxarifado ITEMS aLstAlmox    SIZE 25*nWebPx,10*nWebPx PIXEL //VALID VLDCONT() PIXEL
+oCombo1:oFont := TFont():New('Arial',,17*nWebPx,,.T.,,,,.T.,.F.)
+
+@ 130*nWebPx,025*nWebPx Button "Confirma" Size 40*nWebPx,15*nWebPx Action fOkTela() Pixel Of oInvSel
+
+Activate MsDialog oInvSel
+
+
+Return 
+
+
+Static function VLDALMOX()
+Local lRetAlmox := .t.
+
+If Empty(cAlmoxarifado)
+    lRetAlmox := .f. 
+    U_MsgColetor("Selecione um almoxarifado para prosseguir.")
+EndIf
+
+Return lRetAlmox
+
 	*---------------------------------------------------------------------------------------------
 Static Function fOkTela()
 	*---------------------------------------------------------------------------------------------
+Local nWebPx:= 1.3
 
-	Local cTitulo:=  ""
-	_aCols:={}
+	
+if cFilAnt == "01"
+	cTitulo:= "Invent·rio CÌclico - Armazem "+cAlmoxarifado
+ElseIf cFilAnt == '02'
+	cTitulo:= "Invent·rio CÌclico MG - Armazem "+cAlmoxarifado
+Endif
 
 
-	if cFilAnt == "01"
-		cTitulo:= "Invent·rio"
-	ElseIf cFilAnt == '02'
-		cTitulo:= "Invent·rio MG"
-	Endif
+//Seleciona o ultimo inventario ciclico gerado
+cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE ZZR_FILIAL='"+FilOri+"' AND D_E_L_E_T_='' AND ZZR_DTREAL='' " 
+cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' "
+cQuery += " ORDER BY R_E_C_N_O_ "
 
-	Define MsDialog oInv Title OemToAnsi(cTitulo) From 0,0 To 450,302 Pixel of oMainWnd PIXEL
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
 
-	@ 010,003 Say oTxtEnd Var "EndereÁo " Pixel Of oMainWnd
-	@ 005*nWebPx,030*nWebPx MsGet oGetEnd  Var _cEndereco Valid fValEnd() Size 70*nWebPx,10*nWebPx Pixel Of oMainWnd
-	oTxtEnd:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
-	oGetEnd:oFont := TFont():New('Arial',,20*nWebPx,,.T.,,,,.T.,.F.)
+TCQUERY cQuery NEW ALIAS "TMP"
 
-	@ 020*nWebPx,003 Say oTxtEtiq   Var "Etiqueta " Pixel Of oMainWnd
-	@ 020*nWebPx,030*nWebPx MsGet oGetEtiq Var _cEtiqueta  Size 70*nWebPx,10*nWebPx Valid fValEtiq() Pixel Of oMainWnd
-	oTxtEtiq:oFont:= TFont():New('Arial',,17*nWebPx,,.T.,,,,.T.,.F.)
-	oGetEtiq:oFont:= TFont():New('Arial',,20*nWebPx                                         ,,.T.,,,,.T.,.F.)
+If  TMP->(!EOF())
+	nRecZZR :=TMP->REC
+    TMP->(dbskip())
+Else
+//n„o ha itens a serem inventariados no almoxarifado
+    U_MsgColetor("N„o h· itens a serem invent·riados.")
+    Return
+EndIf
 
-	@ 035*nWebPx,003 Say oTxtProd   Var "Produto "  Pixel Of oMainWnd
-	@ 035*nWebPx,030*nWebPx MsGet oGetProd Var _cProduto When .F. Size 70*nWebPx,10*nWebPx  Pixel Of oMainWnd
-	oTxtProd:oFont:= TFont():New('Arial',,17*nWebPx,,.T.,,,,.T.,.F.)
-	oGetProd:oFont:= TFont():New('Arial',,20*nWebPx,,.T.,,,,.T.,.F.)
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+ZZR->(DBSETORDER(1))
+ZZR->(DBGOTO(nRecZZR))
+
+If nRecZZR == ZZR->(RECNO())
+
+    _cProduto := ZZR->ZZR_PRODUT
+    _pro      := ZZR->ZZR_PRODUT
+	_Despro   := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
+	_DT       := DTOC(ZZR->ZZR_DTPLAN)
+	cSeq      := ZZR->ZZR_SEQ
+    
+    Define MsDialog oInv Title OemToAnsi(cTitulo) From 0,0 To nAMaxTela,nLMaxTela Pixel of oMainWnd PIXEL
+
+   // @ 005,005 Say oTxtProd   Var "Produto "  Pixel Of oInv
+    //@ 005,045 MsGet oGetProd Var _pro When .F. Size 70,10  Pixel Of oInv
+  //  oTxtProd:oFont:= TFont():New('Arial',,17,,.T.,,,,.T.,.F.)
+   // oGetProd:oFont:= TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
+
+
+	@ 000, 005*nWebPx	SAY _oCodPro   VAR "Produto: " + _pro  PIXEL SIZE 160*nWebPx, 13*nWebPx
+	_oCodPro:oFont := TFont():New('Arial',,17*nWebPx,,.T.,,,,.T.,.F.)
+
+	@ 010*nWebPx, 005*nWebPx	SAY _oDescPro   VAR _Despro  PIXEL SIZE 160*nWebPx, 20*nWebPx
+	_oDescPro:oFont := TFont():New('Arial',,15*nWebPx,,.T.,,,,.T.,.F.)
+
+	//@ 084*nWebPx, 008	SAY _oDescPro  VAR "Desc.:   " + _cDesPro  PIXEL SIZE 100*nWebPx,20*nWebPx
+	//_oDescPro:oFont := TFont():New('Arial',,19*nWebPx,,.T.,,,,.T.,.F.)
+
+	@ 033*nWebPx,005*nWebPx Say oTxtDt    Var "Dt. Planejada " Pixel Of oInv
+    @ 033*nWebPx,045*nWebPx MsGet oGetDt  Var _DT When .F. Size 70*nWebPx,08*nWebPx Pixel Of oInv
+    oTxtDt:oFont := TFont():New('Arial',,14*nWebPx,,.T.,,,,.T.,.F.)
+    oGetDt:oFont := TFont():New('Arial',,17*nWebPx,,.T.,,,,.T.,.F.)
+
+
+    @ 045*nWebPx,005*nWebPx Say oTxtEnd    Var "EndereÁo " Pixel Of oInv
+    @ 045*nWebPx,045*nWebPx MsGet oGetEnd  Var _cEndereco Valid fValEnd() Size 70*nWebPx,08*nWebPx Pixel Of oInv
+    oTxtEnd:oFont := TFont():New('Arial',,14*nWebPx,,.T.,,,,.T.,.F.)
+    oGetEnd:oFont := TFont():New('Arial',,17*nWebPx,,.T.,,,,.T.,.F.)
+
+    @ 057*nWebPx,005*nWebPx Say oTxtEtiq   Var "Etiqueta " Pixel Of oInv
+    @ 057*nWebPx,045*nWebPx MsGet oGetEtiq Var _cEtiqueta  Size 70*nWebPx,08*nWebPx Valid fValEtiq() Pixel Of oInv
+    oTxtEtiq:oFont:= TFont():New('Arial',,14*nWebPx,,.T.,,,,.T.,.F.)
+    oGetEtiq:oFont:= TFont():New('Arial',,17*nWebPx,,.T.,,,,.T.,.F.)
+
 
 	fGetDados()
+	
+    @ 069*nWebPx,005*nWebPx Say oTxtQtd    Var "Quantidade " Pixel Of oInv
+    @ 069*nWebPx,045*nWebPx MsGet oGetQtd  Var _nQtd Valid fOkQtd() Picture "@E 999,999.9999" Size 70*nWebPx,08*nWebPx  Pixel Of oInv
+    oTxtQtd:oFont := TFont():New('Arial',,14*nWebPx,,.T.,,,,.T.,.F.)
+    oGetQtd:oFont := TFont():New('Arial',,17*nWebPx,,.T.,,,,.T.,.F.)
 
-	@ 050*nWebPx,003 Say oTxtQtd    Var "Quant. " Pixel Of oMainWnd
-	@ 050*nWebPx,030*nWebPx MsGet oGetQtd  Var _nQtd Valid fOkQtd() Picture "@E 999,999.9999" Size 70*nWebPx,10*nWebPx  Pixel Of oMainWnd
-	oTxtQtd:oFont := TFont():New('Arial',,17*nWebPx,,.T.,,,,.T.,.F.)
-	oGetQtd:oFont := TFont():New('Arial',,20*nWebPx,,.T.,,,,.T.,.F.)
+    @ 135*nWebPx,095*nWebPx Say oTxtQTDETQ Var Transform(nTxtQTDETQ,"@E 999,999") Pixel Of oInv
+    oTxtQTDETQ:oFont := TFont():New('Arial',,17*nWebPx,,.T.,,,,.T.,.F.)
 
-	@ 130*nWebPx,060*nWebPx Say oTxtQTDETQ Var Transform(nTxtQTDETQ,"@E 999,999") Pixel Of oMainWnd
-	oTxtQTDETQ:oFont := TFont():New('Arial',,22*nWebPx,,.T.,,,,.T.,.F.)
+    @ 132*nWebPx,073*nWebPx  BITMAP oBmp1 ResName "LEFT"   Of oInv Size 070*nWebPx,20*nWebPx WHEN lNext ON CLICK fante() NoBorder  Pixel
+	@ 132*nWebPx,087*nWebPx  BITMAP oBmp2 ResName "RIGHT"  Of oInv Size 070*nWebPx,20*nWebPx ON CLICK fnext() NoBorder  Pixel
+    @ 130*nWebPx,003*nWebPx Button "Confirma" Size 27*nWebPx,15*nWebPx Action fOkProc() Pixel Of oInv
+    @ 130*nWebPx,035*nWebPx Button "Cancelar" Size 27*nWebPx,15*nWebPx Action Close(oInv) Pixel Of oInv
 
-	@ 130*nWebPx,005*nWebPx Button _oBtn PROMPT "Confirma" Size 40*nWebPx,15*nWebPx  Pixel Of oMainWnd ACTION (FWMsgRun(oMainWnd, {|| fOkProc()  }, "Processando...", "Processando Dados ..." ))
-	cCSSBtN1 := "QPushButton{"+cPush+;
-		"QPushButton:pressed {"+cPressed+;
-		"QPushButton:hover {"+cHover
-	_oBtn:setCSS(cCSSBtN1)
+    Activate MsDialog oInv
 
-//@ 130,070 Button "Cancelar" Size 40,15 Action Close(oInv) Pixel Of oInv
+ELSE
 
-	Activate MsDialog oInv
+    U_MsgColetor("Registro n„o encontrado na tabela de invent·rio cÌclico.")
+    RETURN
+
+EndIf
+
+Return
+
+
+Static function fnext()
+
+_nTamEtiq      := 21
+_cEndereco     := Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
+_cEtiqueta     := Space(_nTamEtiq)
+_nQtd          := CriaVar("XD1_QTDATU",.F.)
+_cLoteEti      := CriaVar("BF_LOTECTL",.F.)
+ _aCols         := {}
+ _aLog          := {}
+ _aEnder        := {}
+ nTxtQTDETQ     := 0
+ _lCALC         := .T.
+ _nTotItem      := 0
+ _cDocInv       := ""
+ aEmpSB2
+ lInvOK         :=.F.
+ lRetTelaBE     :=.F.
+ _nVLUNIT       :=0
+ _nQTDATU       :=0
+ _nQTDAJU       :=0
+ _nVALAJU       :=0
+ _nQTDTOT       :=0
+ 
+lNext := .t.
+_aCols:={}
+
+//Seleciona o ultimo inventario ciclico gerado
+cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE ZZR_FILIAL='"+FilOri+"' AND D_E_L_E_T_='' AND ZZR_DTREAL='' " 
+cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' and ZZR_SEQ>"+cSeq+" "
+cQuery += " ORDER BY R_E_C_N_O_ "
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+TCQUERY cQuery NEW ALIAS "TMP"
+
+If  TMP->(!EOF())
+	nRecZZR :=TMP->REC
+    TMP->(dbskip())
+Else
+//n„o ha itens a serem inventariados no almoxarifado
+    U_MsgColetor("N„o h· itens a serem invent·riados.")
+    Return
+EndIf
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+ZZR->(DBSETORDER(1))
+ZZR->(DBGOTO(nRecZZR))
+
+If nRecZZR == ZZR->(RECNO())
+
+    _cProduto  := ZZR->ZZR_PRODUT
+    _pro       := ZZR->ZZR_PRODUT
+	_Despro    := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
+	_DT        := DTOC(ZZR->ZZR_DTPLAN)
+	 _cEndereco     := Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
+	_cEtiqueta
+
+	
+    _aCols:={}
+
+	fGetDados()
+	_oCodPro:Refresh	
+	_oDescPro:Refresh
+    oGetDt:Refresh
+	oGetEnd:Refresh
+	oTxtEtiq:Refresh
+	oGetEtiq:Refresh
+	oTxtProd:Refresh
+	oGetProd:Refresh
+	oTxtQtd:Refresh
+	oGetQtd:Refresh
+	oTxtQTDETQ:Refresh
+
+EndIf
+
+
+
+
+Return
+
+
+Static function fante()
+
+_nTamEtiq      := 21
+_cEndereco     := Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
+_cEtiqueta     := Space(_nTamEtiq)
+_nQtd          := CriaVar("XD1_QTDATU",.F.)
+_cLoteEti      := CriaVar("BF_LOTECTL",.F.)
+ _aCols         := {}
+ _aLog          := {}
+ _aEnder        := {}
+ nTxtQTDETQ     := 0
+ _lCALC         := .T.
+ _nTotItem      := 0
+ _cDocInv       := ""
+ aEmpSB2
+ lInvOK         :=.F.
+ lRetTelaBE     :=.F.
+ _nVLUNIT       :=0
+ _nQTDATU       :=0
+ _nQTDAJU       :=0
+ _nVALAJU       :=0
+ _nQTDTOT       :=0
+
+
+
+_aCols:={}
+
+
+//Seleciona o ultimo inventario ciclico gerado
+cQuery := " SELECT TOP 1 R_E_C_N_O_ AS REC FROM " + RetSqlName("ZZR") + " (NOLOCK) WHERE ZZR_FILIAL='"+FilOri+"' AND D_E_L_E_T_='' AND ZZR_DTREAL='' " 
+cQuery += " AND ZZR_LOCAL='"+cAlmoxarifado+"' AND LEFT(ZZR_DTPLAN,6)='"+cPerInv+"' and ZZR_SEQ<"+ZZR->ZZR_SEQ+" "
+cQuery += " ORDER BY R_E_C_N_O_ DESC "
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+TCQUERY cQuery NEW ALIAS "TMP"
+
+If  TMP->(!EOF())
+	nRecZZR :=TMP->REC
+    TMP->(dbskip())
+Else
+//n„o ha itens a serem inventariados no almoxarifado
+    U_MsgColetor("Primeiro item da lista.")
+    Return
+EndIf
+
+If Select("TMP") <> 0
+	TMP->( dbCloseArea() )
+EndIf
+
+ZZR->(DBSETORDER(1))
+ZZR->(DBGOTO(nRecZZR))
+
+If nRecZZR == ZZR->(RECNO())
+
+    _cProduto  := ZZR->ZZR_PRODUT
+    _pro       := ZZR->ZZR_PRODUT
+	_Despro    := substr(ZZR->ZZR_DESCRI,1,32) + ENTER  + substr(ZZR->ZZR_DESCRI,33,32) 
+	_DT        := DTOC(ZZR->ZZR_DTPLAN)
+	 _cEndereco     := Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
+	_cEtiqueta
+	If cSeq == ZZR->ZZR_SEQ
+		U_MsgColetor("Primeiro item da lista.")
+		lNext := .F.
+	EndIf
+	
+    _aCols:={}
+
+	fGetDados()
+	_oCodPro:Refresh	
+	_oDescPro:Refresh
+    oGetDt:Refresh
+	oGetEnd:Refresh
+	oTxtEtiq:Refresh
+	oGetEtiq:Refresh
+	oTxtProd:Refresh
+	oGetProd:Refresh
+	oTxtQtd:Refresh
+	oGetQtd:Refresh
+	oTxtQTDETQ:Refresh
+
+EndIf
+
+
+
 
 Return
 
 	*---------------------------------------------------------------------------------------------
 Static Function fOkProc()
 	*---------------------------------------------------------------------------------------------
+
 	If! Empty(_aCols)
 		fOkGrava()
 	Else
@@ -187,8 +509,14 @@ Return
 	*---------------------------------------------------------------------------------------------
 Static Function fOkGrava()
 	*---------------------------------------------------------------------------------------------
+Local _cNumSerie  :=Space(Len(CriaVar("B7_NUMSERI",.F.)))
+Local _nTamEtiq   :=Len(CriaVar("XD1_XXPECA",.F.))
+Local aDadosINV   :={}
+Local aDadosZZR   :={}
+Local nPos        :=0
+Local _nI
+Local  x
 
-	Local _nI
 	Private lMsHelpAuto := .T.
 	Private lMsErroAuto := .F.
 	Private _aEndereco  := {}
@@ -254,8 +582,8 @@ Static Function fOkGrava()
 		//5-Lote Etiqueta
 		//6-Documento Invent·rio
 
-		_cDocInv := Soma1(GetMV(_cParametro))
-		PUTMV(_cParametro,_cDocInv )
+		_cDocInv := "INI"+cPerInv//Soma1(GetMV(_cParametro))
+		//PUTMV(_cParametro,_cDocInv )
 
 		_cChave := _aCols[_nI][2]
 		While _cChave == _aCols[_nI][2]
@@ -267,7 +595,7 @@ Static Function fOkGrava()
 		End
 	End
 
-//------------------ MV_PAR01 -----------------------------/
+/*------------------ MV_PAR01 -----------------------------*/
 //PutSx1(	"MTA270", 0, 1, DDATABASE )
 
 	Dbselectarea("SX1")
@@ -297,6 +625,7 @@ Static Function fOkGrava()
 			//ENDIF
 			Aadd(_aInvent,{"B7_TIPO"    ,SB1->B1_TIPO         ,Nil})
 			Aadd(_aInvent,{"B7_DOC"     ,_aCols[_nI][6]       ,Nil})
+			Aadd(_aInvent,{"B7_NUMDOC"  ,_aCols[_nI][6]       ,Nil})
 			Aadd(_aInvent,{"B7_QUANT"   ,_aCols[_nI][4]       ,Nil})
 			Aadd(_aInvent,{"B7_DATA"    ,dDataBase            ,Nil})
 			Aadd(_aInvent,{"B7_LOTECTL" ,_aCols[_nI][5]       ,Nil})
@@ -355,6 +684,8 @@ Static Function fOkGrava()
 
 	lPrimeira := .T.
 
+	aRecSB7 := {}
+
 	If !lMsErroAuto
 
 		_cLocInv := '' //MLS 21/10/2015
@@ -374,7 +705,7 @@ Static Function fOkGrava()
 
 				__cInterNet := 'AUTOMATICO'
 
-				If SB7->(DBSeek(xFilial()+DTOS(DDATABASE)+_aCols[_nI][2]+_cLocInv+_cEndInv))
+			If SB7->(DBSeek(xFilial("SB7")+DTOS(DDATABASE)+_aCols[_nI][2]+_cLocInv+_cEndInv)) 
 					MATA340(.T.,_aCols[_nI][6],.T.)
 				EndIf
 
@@ -382,589 +713,743 @@ Static Function fOkGrava()
 
 				VoltaEmps()
 
-				If SB7->(DBSeek(xFilial()+DTOS(DDATABASE)+_aCols[_nI][2]+_cLocInv+_cEndInv))  //lMsErroAuto
-					//MostraErro("\UTIL\Inventario\Execucao\")
-					If SB7->B7_STATUS=='2'
-						If lPrimeira
-							lPrimeira := .F.
-							XD1->( dbSetOrder(4))
-							XD1->( dbSeek( xFilial() + Subs(_cProduto,1,15) ) )
-							While !XD1->( EOF() ) .and. XD1->XD1_FILIAL == xFilial("XD1") .and. Alltrim(XD1->XD1_COD) == Alltrim(_cProduto)
-								If XD1->XD1_OCORRE <> '5' .AND. XD1->XD1_LOCAL == _cLocInv
-									Reclock("XD1",.F.)
-									XD1->XD1_OCORRE := '5' //VERIFICAR PARA NAO REPASSAR TODOS COM 5
-									XD1->XD1_QTDATU := 0
-									XD1->( msUnlock() )
-								EndIf
-								XD1->( dbSkip() )
-							End
-						EndIf
-
-						XD1->( dbSetOrder(1)) // MLS XD1
-						If XD1->( dbSeek( xFilial("XD1") + _aCols[_nI][1] ) )
-							//IF _nTotItem == _aCols[_nI][7]
-							If XD1->XD1_QTDATU <> _aCols[_nI][4] .or. XD1->XD1_OCORRE <> '4' .or. Alltrim(XD1->XD1_LOCAL) <> Alltrim(_cLocInv) .or. Alltrim(XD1->XD1_LOCALI) <> Alltrim(_cEndInv)
-								Reclock("XD1",.F.)
-								XD1->XD1_QTDATU := _aCols[_nI][4]
-								XD1->XD1_OCORRE := '4'
-								XD1->XD1_LOCAL  := _cLocInv
-								XD1->XD1_LOCALI := _cEndInv
-								XD1->( MsUnlock() )
-							EndIf
-							//EndIf
-						EndIf
-
-						SB2->( dbSetOrder(1) )
-						If SB2->( dbSeek( xFilial("SB2")+ _aCols[_nI][2]+_cLocInv ) )
-							//AADD(_aLog,{_aCols[_nI][1],_aCols[_nI][2],_aCols[_nI][3],_aCols[_nI][4],_aCols[_nI][5],_aCols[_nI][6],_aCols[_nI][7],_aCols[_nI][8],SB2->B2_QATU,SB2->B2_VATU1 })
-							AADD(_aLog,{_aCols[_nI][1],_aCols[_nI][2],_cLocInv+_cEndInv,_aCols[_nI][4],_aCols[_nI][5],_aCols[_nI][6],_aCols[_nI][7],_aCols[_nI][8],SB2->B2_QATU,SB2->B2_VATU1 })
-						EndIf
+			If SB7->(DBSeek(xFilial("SB7")+DTOS(DDATABASE)+_aCols[_nI][2]+_cLocInv+_cEndInv))  //lMsErroAuto
+				//MostraErro("\UTIL\Inventario\Execucao\")				
+				If SB7->B7_STATUS=='2'       
+					nPos  := aScan(aRecSB7,{|x| x[1]==SB7->(RECNO())})					        
+					If Empty(nPos)
+                    	aadd(aRecSB7,{SB7->(RECNO())})             
 					EndIf
-				Else //Atualiza a etiqueta , caso a quantidade inventariada seja diferente.
+					If lPrimeira
+						lPrimeira := .F.
+						XD1->( dbSetOrder(4))
+						XD1->( dbSeek( xFilial("XD1") + Subs(_cProduto,1,15) ) )
+						While !XD1->( EOF() ) .and. XD1->XD1_FILIAL == xFilial("XD1") .and. Alltrim(XD1->XD1_COD) == Alltrim(_cProduto)
+							If XD1->XD1_OCORRE <> '5' .AND. XD1->XD1_LOCAL == _cLocInv
+								Reclock("XD1",.F.)
+								XD1->XD1_OCORRE := '5' //VERIFICAR PARA NAO REPASSAR TODOS COM 5
+								XD1->XD1_QTDATU := 0
+								XD1->( msUnlock() )
+							EndIf
+							XD1->( dbSkip() )
+						End
+					EndIf
+				
+					XD1->( dbSetOrder(1)) // MLS XD1
+					If XD1->( dbSeek( xFilial("XD1") + _aCols[_nI][1] ) )
+						//IF _nTotItem == _aCols[_nI][7]
+						If XD1->XD1_QTDATU <> _aCols[_nI][4] .or. XD1->XD1_OCORRE <> '4' .or. Alltrim(XD1->XD1_LOCAL) <> Alltrim(_cLocInv) .or. Alltrim(XD1->XD1_LOCALI) <> Alltrim(_cEndInv)
+							Reclock("XD1",.F.)
+							XD1->XD1_QTDATU := _aCols[_nI][4]
+							XD1->XD1_OCORRE := '4'
+							XD1->XD1_LOCAL  := _cLocInv
+							XD1->XD1_LOCALI := _cEndInv
+							XD1->( MsUnlock() )
+						EndIf
+						//EndIf
+					EndIf
+				
+					SB2->( dbSetOrder(1) )
+					If SB2->( dbSeek( xFilial("SB2")+ _aCols[_nI][2]+_cLocInv ) )
+						//AADD(_aLog,{_aCols[_nI][1],_aCols[_nI][2],_aCols[_nI][3],_aCols[_nI][4],_aCols[_nI][5],_aCols[_nI][6],_aCols[_nI][7],_aCols[_nI][8],SB2->B2_QATU,SB2->B2_VATU1 })
+						AADD(_aLog,{_aCols[_nI][1],_aCols[_nI][2],_cLocInv+_cEndInv,_aCols[_nI][4],_aCols[_nI][5],_aCols[_nI][6],_aCols[_nI][7],_aCols[_nI][8],SB2->B2_QATU,SB2->B2_VATU1 })
+					EndIf
+				EndIf				
+			Else //Atualiza a etiqueta , caso a quantidade inventariada seja diferente.
 					U_MsgColetor("Erro no processamento do invent·rio.")
-				EndIf
-				//U_MsgColetor("Invent·rio EFETUADO.")
-				If _nTotItem == _aCols[_nI][7]
-					lInvOK :=.T.
-				Else
-					lInvOK :=.F.
-				EndIf
-			ELSE
-				//U_MsgColetor("Invent·rio com quantidades divergente informar a controladoria.")
+			EndIf
+			//U_MsgColetor("Invent·rio EFETUADO.")
+			If _nTotItem == _aCols[_nI][7]
+				lInvOK :=.T.
+			Else
 				lInvOK :=.F.
-				SB2->( dbSetOrder(1) )
-				If SB2->( dbSeek( xFilial("SB2")+ _aCols[_nI][2]+_cLocInv ) )
-					AADD(_aLog,{_aCols[_nI][1],_aCols[_nI][2],_aCols[_nI][3],_aCols[_nI][4],_aCols[_nI][5],_aCols[_nI][6],_aCols[_nI][7],_aCols[_nI][8],SB2->B2_QATU,SB2->B2_VATU1 })
-				ENDIF
+			EndIf
+		ELSE
+			//U_MsgColetor("Invent·rio com quantidades divergente informar a controladoria.")
+			lInvOK :=.F.
+			SB2->( dbSetOrder(1) )
+			If SB2->( dbSeek( xFilial("SB2")+ _aCols[_nI][2]+_cLocInv ) )
+				AADD(_aLog,{_aCols[_nI][1],_aCols[_nI][2],_aCols[_nI][3],_aCols[_nI][4],_aCols[_nI][5],_aCols[_nI][6],_aCols[_nI][7],_aCols[_nI][8],SB2->B2_QATU,SB2->B2_VATU1 })
 			ENDIF
-		Next
-	EndIf
+		ENDIF
+	Next
+EndIf
 
-	IF lInvOK == .T.
-		U_MsgColetor("Invent·rio processado SEM alteraÁ„o da quantidade total em estoque.")
-	ELSE
-		U_MsgColetor("Invent·rio processado COM alteraÁ„o da quantidade total em estoque.")
-		//lRetTelaBE :=.F.
-	ENDIF
 
-//If! Empty(_aLog)
-//	IF _nTotItem <> _aCols[_nI][7]
-//	  fOkEmail()
-//	  //lRetTelaBE :=.F.
-//	ENDIF
-//EndIf
+
+SB7->(DBSETORDER(1))
+SD3->(DBSETORDER(2))
+For x := 1 to len(aRecSB7)
+    SB7->(DBGOTO(aRecSB7[x][1]))
+    If aRecSB7[x][1] == SB7->(RECNO())
+        If SD3->(DBSeek(xFilial("SD3")+SB7->B7_DOC+SB7->B7_COD))
+            While SD3->(!EOF()) .AND. SB7->B7_DOC == SD3->D3_DOC .AND. SB7->B7_COD== SD3->D3_COD
+                If SD3->D3_EMISSAO == SB7->B7_DATA .AND. SD3->D3_LOCAL == SB7->B7_LOCAL .AND. SD3->D3_LOCALIZ=SB7->B7_LOCALIZ
+                    AADD(aDadosINV, {SD3->D3_COD, SD3->D3_LOCAL, SD3->D3_NUMSEQ, SD3->D3_TM, SD3->D3_QUANT, SD3->D3_CUSTO1} )
+                EndIf
+            SD3->(DBSKIP())
+            Enddo
+        Else
+            AADD(aDadosINV, {SB7->B7_COD, SB7->B7_LOCAL, '', '', '', ''} )    
+        EndIf
+    EndIf
+Next x
+
+
+For x := 1 to len(aDadosINV)
+
+    nPos  := aScan(aDadosZZR,{|aVet| Alltrim(aVet[1])==alltrim(aDadosINV[x][1]) .AND. Alltrim(aVet[2])==alltrim(aDadosINV[x][2]) })
+ 			// aScan( aVetSZY, { |aVet| aVet[1] == SZY->ZY_PRODUTO } )
+    If !Empty(nPos)
+        If aDadosINV[x][4] == '999'
+           aDadosZZR[nPos][3] += "','"+aDadosINV[x][3] 
+           aDadosZZR[nPos][4] += aDadosINV[x][5] 
+           aDadosZZR[nPos][5] += aDadosINV[x][6] 
+        ElseIf aDadosINV[x][4] == '499'
+          aDadosZZR[nPos][3] += "','"+aDadosINV[x][3] 
+          aDadosZZR[nPos][6] += aDadosINV[x][5] 
+          aDadosZZR[nPos][7] += aDadosINV[x][6]         
+        EndiF
+    Else
+        If aDadosINV[x][4] == '999'
+            //                Produto         Local           NUMSEQ            QTD REQ          VLR REQ         QTD DEV   VLR DEV
+            aadd(aDadosZZR, {aDadosINV[x][1], aDadosINV[x][2], aDadosINV[x][3], aDadosINV[x][5],aDadosINV[x][6], 0, 0 })
+        ElseIf aDadosINV[x][4] == '499'
+            aadd(aDadosZZR, {aDadosINV[x][1], aDadosINV[x][2], aDadosINV[x][3], 0, 0, aDadosINV[x][5], aDadosINV[x][6] })
+        Else
+            aadd(aDadosZZR, {aDadosINV[x][1], aDadosINV[x][2], '',0, 0, 0, 0 })
+        EndiF
+    EndiF
+
+Next x
+
+ZZR->(DbsetOrder(3))
+For x := 1 to len(aDadosZZR)
+	If ZZR->(Dbseek(xFilial("ZZR") + cPerInv + aDadosZZR[x][1] + aDadosZZR[x][2]))
+		Reclock("ZZR",.F.)		
+		ZZR->ZZR_DTREAL := DDATABASE		
+		ZZR->ZZR_QTDAJU += aDadosZZR[x][6] - aDadosZZR[x][4]
+		ZZR->ZZR_VALAJU += aDadosZZR[x][7] - aDadosZZR[x][5]
+		ZZR->ZZR_STATUS := "P"
+		ZZR->ZZR_QTDREQ +=  aDadosZZR[x][4]
+		ZZR->ZZR_VALREQ +=  aDadosZZR[x][5]
+		ZZR->ZZR_QTDDEV +=  aDadosZZR[x][6]
+		ZZR->ZZR_VALDEV +=  aDadosZZR[x][7]
+		ZZR->ZZR_NUMSEQ :=  ZZR->ZZR_NUMSEQ+''+aDadosZZR[x][3]
+		ZZR->(MsUnLock())
+	EndIF
+Next x
+
+IF lInvOK == .T.
+	U_MsgColetor("Invent·rio processado SEM alteraÁ„o da quantidade total em estoque.")
+ELSE
+	U_MsgColetor("Invent·rio processado COM alteraÁ„o da quantidade total em estoque.")
+	//lRetTelaBE :=.F.
+ENDIF
+
 
 Return
 
-	*---------------------------------------------------------------------------------------------
+*---------------------------------------------------------------------------------------------
 Static Function fTelaBE(_aDadosBE)
-	*---------------------------------------------------------------------------------------------
-	Local oTxtBEProd ,oTxtBEMsg ,oGetProdBE
-	Local _aArea:= GetArea()
+*---------------------------------------------------------------------------------------------
+Local oTxtBEProd ,oTxtBEMsg ,oGetProdBE
+Local _aArea:= GetArea()
+Local nWebPx:= 1.3
+Define MsDialog oDlgBE Title OemToAnsi("Zerar Marcados") From 0,0 To nAMaxTela,nLMaxTela Pixel of oMainWnd PIXEL
 
-	Define MsDialog oDlgBE Title OemToAnsi("Zerar Marcados") From 0,0 To 450,302 Pixel of oMainWnd PIXEL
+@ 005,001 Say oTxtBEMsg Var "O SALDO do endereÁo ser· ZERADO. "  Pixel Of oDlgBE
+oTxtBEMsg:oFont:= TFont():New('Arial',,15*nWebPx,,.T.,,,,.T.,.F.)
 
-	@ 005,001 Say oTxtBEMsg Var "O SALDO do endereÁo ser· ZERADO. "  Pixel Of oDlgBE
-	oTxtBEMsg:oFont:= TFont():New('Arial',,15*nWebPx,,.T.,,,,.T.,.F.)
+@ 018*nWebPx,001*nWebPx Say oTxtBEProd Var "Produto "  Pixel Of oDlgBE
+@ 018*nWebPx,040*nWebPx MsGet oGetProdBE Var SB1->B1_COD When .F. Size 70*nWebPx,10*nWebPx  Pixel Of oDlgBE
+oTxtBEProd:oFont:= TFont():New('Arial',,15*nWebPx,,.T.,,,,.T.,.F.)
+oGetProdBE:oFont:= TFont():New('Arial',,15*nWebPx,,.T.,,,,.T.,.F.)
 
-	@ 018*nWebPx,001*nWebPx Say oTxtBEProd Var "Produto "  Pixel Of oDlgBE
-	@ 018*nWebPx,040*nWebPx MsGet oGetProdBE Var SB1->B1_COD When .F. Size 70*nWebPx,10*nWebPx  Pixel Of oDlgBE
-	oTxtBEProd:oFont:= TFont():New('Arial',,15*nWebPx,,.T.,,,,.T.,.F.)
-	oGetProdBE:oFont:= TFont():New('Arial',,15*nWebPx,,.T.,,,,.T.,.F.)
+fGetDadosBE(_aDadosBE)
 
-	fGetDadosBE(_aDadosBE)
+@ 130*nWebPx,005*nWebPx Button "Voltar"    Size 40*nWebPx,15*nWebPx Action FClosebe() Pixel Of oDlgBE
+@ 130*nWebPx,070*nWebPx Button "Processar" Size 40*nWebPx,15*nWebPx Action fOkBloq()  Pixel Of oDlgBE
 
-	@ 130*nWebPx,005*nWebPx Button "Voltar"    Size 40*nWebPx,15*nWebPx Action FClosebe() Pixel Of oDlgBE
-	@ 130*nWebPx,065*nWebPx Button "Processar" Size 40*nWebPx,15*nWebPx Action fOkBloq()  Pixel Of oDlgBE
-
-	Activate MsDialog oDlgBE
-	RestArea(_aArea)
+Activate MsDialog oDlgBE
+RestArea(_aArea)
 Return
 
 
 
-	*---------------------------------------------------------------------------------------------
+*---------------------------------------------------------------------------------------------
 Static Function FClosebe()
-	*---------------------------------------------------------------------------------------------
-	Close(oDlgBE)
-	lRetTelaBE :=.T.
+*---------------------------------------------------------------------------------------------
+Close(oDlgBE)
+lRetTelaBE :=.T.
 RETURN
 
 
-	*---------------------------------------------------------------------------------------------
+*---------------------------------------------------------------------------------------------
 Static Function fOkBloq()
-	*---------------------------------------------------------------------------------------------
-	Close(oDlgBE)
+*---------------------------------------------------------------------------------------------
+Local aRecSB7    := {}
+Local aDadosINV  := {}
+Local aDadosZZR  := {}
+Local  x
+
+Close(oDlgBE)
 //nQtdNaoZero := 0
-	_aEndBlq :={}
-	lNaoZero := .F.
+_aEndBlq :={}
+lNaoZero := .F.
 //lRetTelaBE := .T.  //MLS 28/10/15
 
-	dbSelectArea("TRB")
-	dbGotop()
-	Do While.Not.Eof()
-
-		If Marked("MARCA")
-			SB1->(dbSetOrder(1))
-			If SB1->(dbSeek(xFilial("SB1")+TRB->PRODUTO))
-				_cDocInv := Soma1(GetMV(_cParametro))
-				PUTMV(_cParametro,_cDocInv )
-
-				_aInvent:={}
-
-				Aadd(_aInvent,{"B7_FILIAL"  ,xFilial("SB7")       ,Nil})
-				Aadd(_aInvent,{"B7_COD"     ,SB1->B1_COD          ,Nil})
-				Aadd(_aInvent,{"B7_LOCAL"   ,TRB->LOC             ,Nil})
-				Aadd(_aInvent,{"B7_TIPO"    ,SB1->B1_TIPO         ,Nil})
-				Aadd(_aInvent,{"B7_DOC"     ,_cDocInv             ,Nil})
-				Aadd(_aInvent,{"B7_QUANT"   ,0                    ,Nil})
-				Aadd(_aInvent,{"B7_DATA"    ,dDataBase            ,Nil})
-				Aadd(_aInvent,{"B7_LOTECTL" ,TRB->LOTE            ,Nil})
-				Aadd(_aInvent,{"B7_DTVALID" ,dDataBase            ,Nil})
-				Aadd(_aInvent,{"B7_LOCALIZ" ,TRB->ENDERECO        ,Nil})
-				Aadd(_aInvent,{"B7_XXPECA"  ,"BLOQUEADO"          ,Nil})
-
-				AADD(_aLog,{"BLOQUEADO",SB1->B1_COD,TRB->ENDERECO,0,TRB->LOTE,_cDocInv,0,0,0,0 })
-
-
-				aAreaSB1 := SB1->( GetArea() )
-				lMsErroAuto := .F.
-
-				If SB1->B1_MSBLQL == '1'
-					lBloqueado := .T.
-					Reclock("SB1",.F.)
-					SB1->B1_MSBLQL := '2'
-					SB1->( msUnlock() )
-				Else
-					lBloqueado := .F.
-				EndIf
-
-
-				MSExecAuto({|x,y| Mata270(x,y)},_aInvent,.F.,3) //3-Inclusao //5-Exclusao
-
-				RestArea(aAreaSB1)
-
-				If lBloqueado
-					Reclock("SB1",.F.)
-					SB1->B1_MSBLQL := '1'
-					SB1->( msUnlock() )
-				EndIf
-
-				RestArea(aAreaSB1)
-
-				If lMsErroAuto
-					MostraErro("\UTIL\LOG\Bloqueio\Inclusao\")
-
-					U_MsgColetor("Erro ao zerar o endereco.(Inclus„o SB7)")
-				EndIf
-
-
-
-				If !lMsErroAuto
-
-					SB7->(dbSetOrder(1))
-					//SB1->(dbSetOrder(1))
-
-					//SB1->( dbSeek( xFilial() + SB1->B1_COD ) )
-
-					If SB7->(dbSeek(xFilial("SB7")+Dtos(dDataBase)+SB1->B1_COD+TRB->LOC+TRB->ENDERECO))
-
-						lMsErroAuto := .F.
-
-						GuardaEmps(SB1->B1_COD,TRB->LOC)
-
-						__cInterNet := 'AUTOMATICO'
-
-						MATA340(.T.,_cDocInv,.T.)
-
-
-						__cInterNet := Nil
-
-						//MSExecAuto({|x,y,z| U_Mata340R(x,y,z)}, _lAuto, _cDocInv, _lIndividual)
-						//MSExecAuto({|x,y,z| U_Umata340(x,y,z)}, _lAuto, _cDocInv, _lIndividual)
-						VoltaEmps()
-
-						If lMsErroAuto
-							MostraErro("\UTIL\Bloqueio\Execucao\")
-
-							U_MsgColetor("Erro bloqueio do endereco.(D3)")
-						Else
-							aAdd(_aEndBlq,{TRB->LOC,TRB->ENDERECO})
-						EndIf
-					Else
-						U_MsgColetor("Invent·rio n„o encontrado.")
-						lMsErroAuto:=.T.
-					EndIf
-
-				EndIf
-				//lRetTelaBE := .F. //MLS 28/10/15
+dbSelectArea("TRB")
+dbGotop()
+Do While.Not.Eof()
+	
+	If Marked("MARCA")
+		SB1->(dbSetOrder(1))
+		If SB1->(dbSeek(xFilial("SB1")+TRB->PRODUTO))
+			_cDocInv := "INZ"+cPerInv//Soma1(GetMV(_cParametro))
+			//PUTMV(_cParametro,_cDocInv )
+			
+			_aInvent:={}
+			
+			Aadd(_aInvent,{"B7_FILIAL"  ,xFilial("SB7")       ,Nil})
+			Aadd(_aInvent,{"B7_COD"     ,SB1->B1_COD          ,Nil})
+			Aadd(_aInvent,{"B7_LOCAL"   ,TRB->LOC             ,Nil})
+			Aadd(_aInvent,{"B7_TIPO"    ,SB1->B1_TIPO         ,Nil})
+			Aadd(_aInvent,{"B7_DOC"     ,_cDocInv             ,Nil})
+			Aadd(_aInvent,{"B7_NUMDOC"  ,_cDocInv             ,Nil})
+			Aadd(_aInvent,{"B7_QUANT"   ,0                    ,Nil})
+			Aadd(_aInvent,{"B7_DATA"    ,dDataBase            ,Nil})
+			Aadd(_aInvent,{"B7_LOTECTL" ,TRB->LOTE            ,Nil})
+			Aadd(_aInvent,{"B7_DTVALID" ,dDataBase            ,Nil})
+			Aadd(_aInvent,{"B7_LOCALIZ" ,TRB->ENDERECO        ,Nil})
+			Aadd(_aInvent,{"B7_XXPECA"  ,"BLOQUEADO"          ,Nil})
+			
+			AADD(_aLog,{"BLOQUEADO",SB1->B1_COD,TRB->ENDERECO,0,TRB->LOTE,_cDocInv,0,0,0,0 })
+			
+			
+			aAreaSB1 := SB1->( GetArea() )
+			lMsErroAuto := .F.
+			
+			If SB1->B1_MSBLQL == '1'
+				lBloqueado := .T.
+				Reclock("SB1",.F.)
+				SB1->B1_MSBLQL := '2'
+				SB1->( msUnlock() )
+			Else
+				lBloqueado := .F.
 			EndIf
-		Else
-			nQtdNaoZero += TRB->QTD
-			lNaoZero    := .T.
+
+			
+			MSExecAuto({|x,y| Mata270(x,y)},_aInvent,.F.,3) //3-Inclusao //5-Exclusao
+			
+			RestArea(aAreaSB1)
+			
+			If lBloqueado
+				Reclock("SB1",.F.)
+				SB1->B1_MSBLQL := '1'
+				SB1->( msUnlock() )
+			EndIf
+			
+			RestArea(aAreaSB1)
+			
+			If lMsErroAuto
+				MostraErro("\UTIL\LOG\Bloqueio\Inclusao\")
+				
+				U_MsgColetor("Erro ao zerar o endereco.(Inclus„o SB7)")
+			EndIf
+			
+			
+			
+			If !lMsErroAuto
+				
+				SB7->(dbSetOrder(1))
+				//SB1->(dbSetOrder(1))
+				
+				//SB1->( dbSeek( xFilial() + SB1->B1_COD ) )
+				
+				If SB7->(dbSeek(xFilial("SB7")+Dtos(dDataBase)+SB1->B1_COD+TRB->LOC+TRB->ENDERECO))
+					
+					lMsErroAuto := .F.
+					
+					GuardaEmps(SB1->B1_COD,TRB->LOC)
+
+					__cInterNet := 'AUTOMATICO'
+					
+					MATA340(.T.,_cDocInv,.T.)
+					
+			
+					__cInterNet := Nil
+			
+					//MSExecAuto({|x,y,z| U_Mata340R(x,y,z)}, _lAuto, _cDocInv, _lIndividual)    
+					//MSExecAuto({|x,y,z| U_Umata340(x,y,z)}, _lAuto, _cDocInv, _lIndividual)    
+					VoltaEmps()
+					
+					If lMsErroAuto
+						MostraErro("\UTIL\Bloqueio\Execucao\")
+						
+						U_MsgColetor("Erro bloqueio do endereco.(D3)")
+					Else
+						nPos  := aScan(aRecSB7,{|x| x[1]==SB7->(RECNO())})					        
+						If Empty(nPos)
+                    		aadd(aRecSB7,{SB7->(RECNO())})             
+						EndIf
+						aAdd(_aEndBlq,{TRB->LOC,TRB->ENDERECO})
+					EndIf
+				Else
+					U_MsgColetor("Invent·rio n„o encontrado.")
+					lMsErroAuto:=.T.
+				EndIf
+				
+			EndIf
+			//lRetTelaBE := .F. //MLS 28/10/15
 		EndIf
-		dbSelectArea("TRB")
-		dbSkip()
-	EndDo
-	lRetTelaBE := .F.  //MLS 28/10/15
+	Else
+		nQtdNaoZero += TRB->QTD
+		lNaoZero    := .T.
+	EndIf
+	dbSelectArea("TRB")
+	dbSkip()
+EndDo
+lRetTelaBE := .F.  //MLS 28/10/15
 //IF lRetTelaBE := .T.
 //	U_MsgColetor("Produto dever· ser inventariado em todos os enderecos, ou dever· ser zerado ")
 //ENDIF
 
-	If lNaoZero
-		U_MsgColetor("O produto dever ser inventariado ou zerado em todos os endereÁos com saldo.")
-	EndIf
+If lNaoZero
+	U_MsgColetor("O produto dever ser inventariado ou zerado em todos os endereÁos com saldo.")
+EndIf
+
+
+SB7->(DBSETORDER(1))
+SD3->(DBSETORDER(2))
+For x := 1 to len(aRecSB7)
+    SB7->(DBGOTO(aRecSB7[x][1]))
+    If aRecSB7[x][1] == SB7->(RECNO())
+        If SD3->(DBSeek(xFilial("SD3")+SB7->B7_DOC+SB7->B7_COD))
+            While SD3->(!EOF()) .AND. SB7->B7_DOC == SD3->D3_DOC .AND. SB7->B7_COD== SD3->D3_COD
+                If SD3->D3_EMISSAO == SB7->B7_DATA .AND. SD3->D3_LOCAL == SB7->B7_LOCAL
+                    AADD(aDadosINV, {SD3->D3_COD, SD3->D3_LOCAL, SD3->D3_NUMSEQ, SD3->D3_TM, SD3->D3_QUANT, SD3->D3_CUSTO1} )
+                EndIf
+            SD3->(DBSKIP())
+            Enddo
+        Else
+            AADD(aDadosINV, {SB7->B7_COD, SB7->B7_LOCAL, '', '', '', ''} )    
+        EndIf
+    EndIf
+Next x
+
+
+For x := 1 to len(aDadosINV)
+
+    nPos  := aScan(aDadosZZR,{|x| Alltrim(x[1])==alltrim(aDadosINV[x][1]) .AND. Alltrim(x[2])==alltrim(aDadosINV[x][2]) })
+
+    If !Empty(nPos)
+        If aDadosINV[x][4] == '999'
+           aDadosZZR[nPos][3] += "','"+aDadosINV[x][3] 
+           aDadosZZR[nPos][4] += aDadosINV[x][5] 
+           aDadosZZR[nPos][5] += aDadosINV[x][6] 
+        ElseIf aDadosINV[x][4] == '499'
+          aDadosZZR[nPos][3] += "','"+aDadosINV[x][3] 
+          aDadosZZR[nPos][6] += aDadosINV[x][5] 
+          aDadosZZR[nPos][7] += aDadosINV[x][6]         
+        EndiF
+    Else
+        If aDadosINV[x][4] == '999'
+            //                Produto         Local           NUMSEQ            QTD REQ          VLR REQ         QTD DEV   VLR DEV
+            aadd(aDadosZZR, {aDadosINV[x][1], aDadosINV[x][2], aDadosINV[x][3], aDadosINV[x][5],aDadosINV[x][6], 0, 0 })
+        ElseIf aDadosINV[x][4] == '499'
+            aadd(aDadosZZR, {aDadosINV[x][1], aDadosINV[x][2], aDadosINV[x][3], 0, 0, aDadosINV[x][5], aDadosINV[x][6] })
+        Else
+            aadd(aDadosZZR, {aDadosINV[x][1], aDadosINV[x][2], '',0, 0, 0, 0 })
+        EndiF
+    EndiF
+
+Next x
+
+ZZR->(DbsetOrder(3))
+For x := 1 to len(aDadosZZR)
+	If ZZR->(Dbseek(xFilial("ZZR") + cPerInv + aDadosZZR[x][1] + aDadosZZR[x][2]))
+		Reclock("ZZR",.F.)		
+		ZZR->ZZR_DTREAL := DDATABASE		
+		ZZR->ZZR_QTDAJU += aDadosZZR[x][6] - aDadosZZR[x][4]
+		ZZR->ZZR_VALAJU += aDadosZZR[x][7] - aDadosZZR[x][5]
+		ZZR->ZZR_STATUS := "P"
+		ZZR->ZZR_QTDREQ +=  aDadosZZR[x][4]
+		ZZR->ZZR_VALREQ +=  aDadosZZR[x][5]
+		ZZR->ZZR_QTDDEV +=  aDadosZZR[x][6]
+		ZZR->ZZR_VALDEV +=  aDadosZZR[x][7]
+		ZZR->ZZR_NUMSEQ :=  aDadosZZR[x][3]
+		ZZR->(MsUnLock())
+	EndIF
+Next x
 
 Return
 
-	*---------------------------------------------------------------------------------------------
+*---------------------------------------------------------------------------------------------
 Static Function fOkQtd()
-	*---------------------------------------------------------------------------------------------
-	Local _lDivB2B8 := .F.
-	Local _lLotBloq := .F.
+*---------------------------------------------------------------------------------------------
+Local _lDivB2B8 := .F.
+Local _lLotBloq := .F.
 
-	If XD1->XD1_QTDATU <> _nQtd
-		cTemp := 'Confirma a quantidade '+Chr(13)+'de '+Alltrim(Transform(_nQtd,"@E 999,999,999.9999"))+'?'
-
-		lRet := .T.
-		While lRet
-			If apMsgNoYes( cTemp )
-				lRet := .F.
-			EndIf
-		End
-	EndIf
+If XD1->XD1_QTDATU <> _nQtd
+	cTemp := 'Confirma a quantidade '+Chr(13)+'de '+Alltrim(Transform(_nQtd,"@E 999,999,999.9999"))+'?'
+	
+	lRet := .T.
+	While lRet
+		If U_uMsgYesNo( cTemp )
+			lRet := .F.
+		EndIf
+	End
+EndIf
 
 //Verifica divergÍncia entre o saldo do endereÁo com o atual.
-	SB2->(dbSetOrder(1) )
-	If SB2->(dbSeek(xFilial("SB2")+_cProduto+SubStr(_cEndereco,1,2)))
-		//If QtdComp(SB2->B2_QATU)-QtdComp(SB2->B2_QACLASS) # QtdComp(SaldoSBF(SubStr(_cEndereco,1,2),"",_cProduto))
-		//	_lDivB2B8:=.T.
-		//EndIf
-	EndIf
+SB2->(dbSetOrder(1) )
+If SB2->(dbSeek(xFilial("SB2")+_cProduto+SubStr(_cEndereco,1,2)))
+	//If QtdComp(SB2->B2_QATU)-QtdComp(SB2->B2_QACLASS) # QtdComp(SaldoSBF(SubStr(_cEndereco,1,2),"",_cProduto))
+	//	_lDivB2B8:=.T.
+	//EndIf
+EndIf
 
-	AADD(_aCols,{_cEtiqueta,_cProduto,_cEndereco,_nQtd,_cLoteEti,Space(_nTamDoc),SB2->B2_QATU,SB2->B2_VATU1})
+AADD(_aCols,{_cEtiqueta,_cProduto,_cEndereco,_nQtd,_cLoteEti,Space(_nTamDoc),SB2->B2_QATU,SB2->B2_VATU1})
 
-	dbSelectArea("TMP")
-	dbGotop()
-	If! TMP->( dbSeek(_cEtiqueta) )
-		Reclock("TMP",.T.)
-		Replace TMP->ETQ With _cEtiqueta // _cProduto
-		Replace TMP->QTD With _nQtd
-		MsUnLock()
-		nTxtQTDETQ:=nTxtQTDETQ+1
-		oTxtQTDETQ:Refresh()
-	Else
-		Reclock("TMP",.F.)
-		Replace TMP->QTD     With TMP->QTD+_nQtd
-		MsUnLock()
-	EndIf
+dbSelectArea("TMP")
+dbGotop()
+If! TMP->( dbSeek(_cEtiqueta) )
+	Reclock("TMP",.T.)
+	Replace TMP->ETQ With _cEtiqueta // _cProduto
+	Replace TMP->QTD With _nQtd
+	MsUnLock()
+	nTxtQTDETQ:=nTxtQTDETQ+1
+	oTxtQTDETQ:Refresh()
+Else
+	Reclock("TMP",.F.)
+	Replace TMP->QTD     With TMP->QTD+_nQtd
+	MsUnLock()
+EndIf
 
-	dbSelectArea("TMP")
-	dbGotop()
+dbSelectArea("TMP")
+dbGotop()
 
-	oMark:oBrowse:Refresh()
+oMark:oBrowse:Refresh()
 
-	_cEtiqueta:= Space(_nTamEtiq)
-	_nQtd     := CriaVar("XD1_QTDATU",.F.)
-	oInv      :Refresh()
-	oGetEtiq  :SetFocus()
+_cEtiqueta:= Space(_nTamEtiq)
+_nQtd     := CriaVar("XD1_QTDATU",.F.)
+oInv      :Refresh()
+oGetEtiq  :SetFocus()
 Return()
 
-	*---------------------------------------------------------------------------------------------
+*---------------------------------------------------------------------------------------------
 Static Function fGetDados()
-	*---------------------------------------------------------------------------------------------
-	Local _aStru  := {}
+*---------------------------------------------------------------------------------------------
+Local _aStru  := {}
+Local nWebPx:= 1.3
+If Select("TMP") > 0
+	TMP->(dbCloseArea())
+EndIf
 
-	If Select("TMP") > 0
-		TMP->(dbCloseArea())
-	EndIf
+AADD(_aStru, {"ETQ" ,"C",15,0} )
+AADD(_aStru, {"QTD"    ,"N",14,2} )
 
-	AADD(_aStru, {"ETQ" ,"C",15,0} )
-	AADD(_aStru, {"QTD"    ,"N",14,2} )
+_cArqTrab := CriaTrab(_aStru,.T.)
 
-	_cArqTrab := CriaTrab(_aStru,.T.)
+dbUseArea(.T.,__LocalDriver,_cArqTrab,"TMP",.F.)
 
-	dbUseArea(.T.,__LocalDriver,_cArqTrab,"TMP",.F.)
+IndRegua("TMP",_cArqTrab,"ETQ",,,)
 
-	IndRegua("TMP",_cArqTrab,"ETQ",,,)
+_aCampos := {}
 
-	_aCampos := {}
+AADD(_aCampos,{"ETQ"     ,"" ,"Etiqueta"    ,"@R"              } )
+AADD(_aCampos,{"QTD"     ,"" ,"Quant."      ,"@E 999,999.9999" } )
 
-	AADD(_aCampos,{"ETQ"     ,"" ,"Etiqueta"    ,"@R"              } )
-	AADD(_aCampos,{"QTD"     ,"" ,"Quant."      ,"@E 999,999.9999" } )
+oMark:= MsSelect():New("TMP",,,_aCampos,Nil,Nil,{82*nWebPx,00,127*nWebPx,117*nWebPx}) //64,00,127,117
+oMark:oFont:= TFont():New('Arial',,20*nWebPx,,.T.,,,,.T.,.F.)
+oMark:oBrowse:oFont:= TFont():New('Arial',,20*nWebPx,,.T.,,,,.T.,.F.)
+oMark:oBrowse:Refresh()
 
-	oMark:= MsSelect():New("TMP",,,_aCampos,Nil,Nil,{64*nWebPx,02,127*nWebPx,100*nWebPx})
-	oMark:oFont:= TFont():New('Arial',,20*nWebPx,,.T.,,,,.T.,.F.)
-	oMark:oBrowse:oFont:= TFont():New('Arial',,20*nWebPx,,.T.,,,,.T.,.F.)
-	oMark:oBrowse:Refresh()
-
-	dbSelectArea("TMP")
-	dbGotop()
+dbSelectArea("TMP")
+dbGotop()
 
 Return
 
-	*---------------------------------------------------------------------------------------------
+*---------------------------------------------------------------------------------------------
 Static Function fGetDadosBE(_aDadosBE)
-	*---------------------------------------------------------------------------------------------
-	Local _aStru   := {}
-	Local _nTamEnd := Len(CriaVar("BE_LOCALIZ",.F.))
-	Local _nTamCod := Len(CriaVar("B1_COD"    ,.F.))
-	Local _nTamLot := Len(CriaVar("BF_LOTECTL",.F.))
-	Local J
-	If Select("TRB") > 0
-		TRB->(dbCloseArea())
-	EndIf
+*---------------------------------------------------------------------------------------------
+Local _aStru   := {}
+Local _nTamEnd := Len(CriaVar("BE_LOCALIZ",.F.))
+Local _nTamCod := Len(CriaVar("B1_COD"    ,.F.))
+Local _nTamLot := Len(CriaVar("BF_LOTECTL",.F.))
+Local j
+Local nWebPx:= 1.3
 
-	AADD(_aStru, {"MARCA"   ,"C",01,0} )
-	AADD(_aStru, {"ENDERECO","C",_nTamEnd,0} )
-	AADD(_aStru, {"QTD"     ,"N",11,2} )
-	AADD(_aStru, {"LOC"     ,"C",02,0} )
-	AADD(_aStru, {"PRODUTO" ,"C",_nTamCod,0} )
-	AADD(_aStru, {"LOTE"    ,"C",_nTamLot,0} )
+If Select("TRB") > 0
+	TRB->(dbCloseArea())
+EndIf
 
-	_cArqTrabBE := CriaTrab(_aStru,.T.)
+AADD(_aStru, {"MARCA"   ,"C",01,0} )
+AADD(_aStru, {"ENDERECO","C",_nTamEnd,0} )
+AADD(_aStru, {"QTD"     ,"N",11,2} )
+AADD(_aStru, {"LOC"     ,"C",02,0} )
+AADD(_aStru, {"PRODUTO" ,"C",_nTamCod,0} )
+AADD(_aStru, {"LOTE"    ,"C",_nTamLot,0} )
 
-	dbUseArea(.T.,__LocalDriver,_cArqTrabBE,"TRB",.F.)
+_cArqTrabBE := CriaTrab(_aStru,.T.)
 
-	IndRegua("TRB",_cArqTrabBE,"ENDERECO",,,)
+dbUseArea(.T.,__LocalDriver,_cArqTrabBE,"TRB",.F.)
 
-	_aCamposBE := {}
+IndRegua("TRB",_cArqTrabBE,"ENDERECO",,,)
 
-	AADD(_aCamposBE,{"MARCA"       ,"" ,""             ,""                } )
-	AADD(_aCamposBE,{"ENDERECO"    ,"" ,"EndereÁo"     ,"@R"              } )
-	AADD(_aCamposBE,{"QTD"         ,"" ,"Quant."       ,"@E 999,999.9999"  } )
-	AADD(_aCamposBE,{"LOC"         ,"" ,"Local"        ,"@R"              } )
-	AADD(_aCamposBE,{"LOTE "       ,"" ,"Lote"         ,"@R"              } )
+_aCamposBE := {}
 
-	oMark2:= MsSelect():New("TRB","MARCA",,_aCamposBE,Nil,Nil,{34,00,127,117})
+AADD(_aCamposBE,{"MARCA"       ,"" ,""             ,""                } )
+AADD(_aCamposBE,{"ENDERECO"    ,"" ,"EndereÁo"     ,"@R"              } )
+AADD(_aCamposBE,{"QTD"         ,"" ,"Quant."       ,"@E 999,999.9999"  } )
+AADD(_aCamposBE,{"LOC"         ,"" ,"Local"        ,"@R"              } )
+AADD(_aCamposBE,{"LOTE "       ,"" ,"Lote"         ,"@R"              } )
 
-	For j:=1 To Len(_aDadosBE)
-		IF ALLTRIM(_aDadosBE[j][2])<>'97'
-			Reclock("TRB",.T.)
-			Replace TRB->PRODUTO  With _aDadosBE[j][1]
-			Replace TRB->LOC      With _aDadosBE[j][2]
-			Replace TRB->ENDERECO With _aDadosBE[j][3]
-			Replace TRB->QTD      With _aDadosBE[j][4]
-			Replace TRB->LOTE     With _aDadosBE[j][5]
-			MsUnLock()
-		ENDIF
-	Next
+oMark2:= MsSelect():New("TRB","MARCA",,_aCamposBE,Nil,Nil,{82*nWebPx,00,127*nWebPx,117*nWebPx})
 
-	dbSelectArea("TRB")
-	dbGotop()
-	oMark2:oBrowse:Refresh()
+For j:=1 To Len(_aDadosBE)
+	IF ALLTRIM(_aDadosBE[j][2])<>'97'
+		Reclock("TRB",.T.)
+		Replace TRB->PRODUTO  With _aDadosBE[j][1]
+		Replace TRB->LOC      With _aDadosBE[j][2]
+		Replace TRB->ENDERECO With _aDadosBE[j][3]
+		Replace TRB->QTD      With _aDadosBE[j][4]
+		Replace TRB->LOTE     With _aDadosBE[j][5]
+		MsUnLock()
+	ENDIF
+Next
+
+dbSelectArea("TRB")
+dbGotop()
+oMark2:oBrowse:Refresh()
 
 Return
 
-	*---------------------------------------------------------------------------------------------
+*---------------------------------------------------------------------------------------------
 Static Function fValEnd()
-	*---------------------------------------------------------------------------------------------
-	Local _lRet:=.T.
+*---------------------------------------------------------------------------------------------
+Local _lRet:=.T.
 
-	IF EMPTY(_cEndereco)
-		RETURN(.T.)
-	ENDIF
-
-	SBE->( dbSetOrder(1) )
-	If SBE->( dbSeek( xFilial("SBE") + Subs(_cEndereco,1,17) ) )
-		If SBE->BE_MSBLQL == '1'
-			_lRet := .F.
-			U_MsgColetor('EndereÁo bloqueado para uso.')
-		EndIf
+IF EMPTY(_cEndereco)
+	If !Empty(_aCols)
+		RETURN(.t.)    
 	Else
-		_lRet := .F.
-		U_MsgColetor('EndereÁo n„o encontrado.')
+		U_MsgColetor('EndereÁo em branco.')
+		RETURN(.f.)    
 	EndIf
+ENDIF
+
+SBE->( dbSetOrder(1) )
+If SBE->( dbSeek( xFilial("SBE") + Subs(_cEndereco,1,17) ) )
+	If SBE->BE_MSBLQL == '1'
+		U_MsgColetor('EndereÁo bloqueado para uso.')
+		_lRet := .F.		
+	EndIf
+Else
+	U_MsgColetor('EndereÁo n„o encontrado.')
+	_lRet := .F.	
+EndIf
 
 Return(_lRet)
 
-	*---------------------------------------------------------------------------------------------
+*---------------------------------------------------------------------------------------------
 Static Function fValEtiq()
-	*---------------------------------------------------------------------------------------------
-	Local _lRet   :=.T.
-	Local _nSaldo := 0
+*---------------------------------------------------------------------------------------------
+Local _lRet   :=.T.
+Local _nSaldo := 0
 
-	If Len(AllTrim(_cEtiqueta))==12 //EAN 13 s/ dÌgito verificador.
-		_cEtiqueta := "0"+_cEtiqueta
-		_cEtiqueta := Subs(_cEtiqueta,1,12)
-	EndIf
 
-	If Len(AllTrim(_cEtiqueta))==20 //CODE 128 c/ dÌgito verificador.
-		_cEtiqueta := Subs(AllTrim(_cEtiqueta),8,12)
-	EndIf
+IF EMPTY(_cEndereco)
+	U_MsgColetor('EndereÁo em branco.')
+	RETURN(.f.)    
+ENDIF
 
-	oGetEtiq:Refresh()
+If Len(AllTrim(_cEtiqueta))==12 //EAN 13 s/ dÌgito verificador.
+	_cEtiqueta := "0"+_cEtiqueta
+	_cEtiqueta := Subs(_cEtiqueta,1,12)
+EndIf
 
-	If Empty(_cEtiqueta)
-		_cEndereco:= Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
-		oGetEnd:REFRESH()
-		oGetEnd:SetFocus()
-		RETURN
-	ENDIF
+If Len(AllTrim(_cEtiqueta))==20 //CODE 128 c/ dÌgito verificador.
+	_cEtiqueta := Subs(AllTrim(_cEtiqueta),8,12)
+EndIf
 
-	If !Empty(_cEtiqueta)
-		XD1->( dbSetOrder(1))
-		If XD1->( dbSeek( xFilial("XD1") + _cEtiqueta ) )
-			SB1->( dbSetOrder(1) )
-			IF _cProduto<>XD1->XD1_COD .AND. !EMPTY(_cProduto)
-				U_MsgColetor("Produto Etiqueta diferente do processo")
-				RETURN
-			ENDIF
+oGetEtiq:Refresh()
+
+If Empty(_cEtiqueta)
+	_cEndereco:= Space(Len(CriaVar("BE_LOCALIZ",.F.))+3)
+	oGetEnd:REFRESH()
+	oGetEnd:SetFocus()
+	RETURN
+ENDIF
+
+If !Empty(_cEtiqueta)
+	XD1->( dbSetOrder(1))
+	If XD1->( dbSeek( xFilial("XD1") + _cEtiqueta ) )
+		SB1->( dbSetOrder(1) )
+		If Empty(alltrim(_cProduto))
 			_cProduto := XD1->XD1_COD
-
-			IF alltrim(XD1->XD1_LOCALI) <> alltrim(SUBSTR(_cEndereco,3,LEN(_cEndereco)))
-				U_MsgColetor("EndereÁo etiqueta diferente EndereÁo coletado. ")
-				//RETURN
-			ENDIF
-
-			If SB1->( dbSeek( xFilial("SB1") + _cProduto) )
-				If SB1->B1_LOCALIZ == 'S'
-					//Verifica se o produto possui saldo a endereÁar.
-					//dbSelectArea("SDA")
-					SDA->( dbSetOrder(1) )
-					SDA->( dbSeek(xFilial("SDA")+_cProduto+SubStr(_cEndereco,1,2)) )
-					While xFilial("SDA")+_cProduto+SubStr(_cEndereco,1,2) == SDA->DA_FILIAL+SDA->DA_PRODUTO+SDA->DA_LOCAL
-						_nSaldo += SDA->DA_SALDO
-						SDA->( dbSkip() )
-					End
-
-					If _nSaldo == 0
-
-						If Len(_aCols)>0
-							If aScan(_aCols,{ |x| Upper(AllTrim(x[1])) == Trim(_cEtiqueta) }) == 0   //Se a etiqueta n„o foi utilizada.
-								If! aScan(_aCols,{ |x| Upper(AllTrim(x[2])) == Trim(_cProduto) }) == 0 //Produto diferente
-									_cProduto  := SB1->B1_COD
-									_nQtd      := XD1->XD1_QTDATU
-									_cLoteEti  := If(Empty(XD1->XD1_LOTECT),"LOTE1308",XD1->XD1_LOTECT)
-								Else
-									_lRet:=.F.
-									U_MsgColetor("O produto"+Chr(13)+AllTrim(_cProduto)+" n„o est· sendo inventariado neste  momento.")
-								EndIf
+		EndIF
+		IF _cProduto<>XD1->XD1_COD //.AND. !EMPTY(_cProduto)
+			U_MsgColetor("Produto Etiqueta diferente do processo")
+			RETURN
+		ENDIF
+		//_cProduto := XD1->XD1_COD
+		
+		IF alltrim(XD1->XD1_LOCALI) <> alltrim(SUBSTR(_cEndereco,3,LEN(_cEndereco)))
+			U_MsgColetor("EndereÁo etiqueta diferente EndereÁo coletado. ")
+			//RETURN
+		ENDIF
+		
+		If SB1->( dbSeek( xFilial("SB1") + _cProduto) )
+			If SB1->B1_LOCALIZ == 'S'
+				//Verifica se o produto possui saldo a endereÁar.
+				//dbSelectArea("SDA")
+				SDA->( dbSetOrder(1) )
+				SDA->( dbSeek(xFilial("SDA")+_cProduto+SubStr(_cEndereco,1,2)) )
+				While xFilial("SDA")+_cProduto+SubStr(_cEndereco,1,2) == SDA->DA_FILIAL+SDA->DA_PRODUTO+SDA->DA_LOCAL
+					_nSaldo += SDA->DA_SALDO
+					SDA->( dbSkip() )
+				End
+				
+				If _nSaldo == 0
+					
+					If Len(_aCols)>0
+						If aScan(_aCols,{ |x| Upper(AllTrim(x[1])) == Trim(_cEtiqueta) }) == 0   //Se a etiqueta n„o foi utilizada.
+							If! aScan(_aCols,{ |x| Upper(AllTrim(x[2])) == Trim(_cProduto) }) == 0 //Produto diferente
+								_cProduto  := SB1->B1_COD
+								_nQtd      := XD1->XD1_QTDATU
+								_cLoteEti  := If(Empty(XD1->XD1_LOTECT),"LOTE1308",XD1->XD1_LOTECT)
 							Else
 								_lRet:=.F.
-								U_MsgColetor("Etiqueta  j· utilizada !")
+								U_MsgColetor("O produto"+Chr(13)+AllTrim(_cProduto)+" n„o est· sendo inventariado neste  momento.")
 							EndIf
 						Else
-							SB7->( dbSetOrder(1) )
-							If SB7->( dbSeek(xFilial() + DtoS(dDataBase) + SB1->B1_COD + XD1->XD1_LOCAL ) )
-								nTemp := 0
-								While !SB7->( EOF() ) .and. xFilial("SB7") + DtoS(dDataBase) + SB1->B1_COD + XD1->XD1_LOCAL == SB7->B7_FILIAL + DtoS(SB7->B7_DATA) + SB7->B7_COD + SB7->B7_LOCAL
-									nTemp++
-									SB7->( dbSkip() )
-								End
-								U_MsgColetor("Existem " + Alltrim(Str(nTemp)) + " registros de invent·rio lanÁados para este produto nesta data. Entre na rotina de exclus„o de invent·rios para continuar")
-								_lRet:=.F.
-								U_MsgColetor("Invent·rio abortado.")
-							Else
-								SB2->(dbSetOrder(1))
-								If SB2->(dbSeek(xFilial("SB2")+SB1->B1_COD+SubStr(_cEndereco,1,2)))
-									// Validando se o produto tem divergÍncia de SB2 para SBF
-									If QtdComp(SB2->B2_QATU)-QtdComp(SB2->B2_QACLASS) # QtdComp(SaldoSBF(SubStr(_cEndereco,1,2),"",_cProduto))
-										U_MsgColetor("DivergÍncia de Saldo FÌsico X Saldo por EndereÁo. N„o ser· possÌvel inventariar este produto.")
-										_lRet:=.F.
-										U_MsgColetor("Invent·rio abortado.")
-									Else
-										_cProduto := SB1->B1_COD
-										_nQtd     := XD1->XD1_QTDATU
-										_cLoteEti := ""
-
-										_cLoteEti := If(Empty(XD1->XD1_LOTECT),"LOTE1308",XD1->XD1_LOTECT)
-
-										oGetQtd :SetFocus()
-									EndIf
+							_lRet:=.F.
+							U_MsgColetor("Etiqueta  j· utilizada !")
+						EndIf
+					Else
+						SB7->( dbSetOrder(1) )
+						If SB7->( dbSeek(xFilial("SB7") + DtoS(dDataBase) + SB1->B1_COD + XD1->XD1_LOCAL ) )
+							nTemp := 0
+							While !SB7->( EOF() ) .and. xFilial("SB7") + DtoS(dDataBase) + SB1->B1_COD + XD1->XD1_LOCAL == SB7->B7_FILIAL + DtoS(SB7->B7_DATA) + SB7->B7_COD + SB7->B7_LOCAL
+								nTemp++
+								SB7->( dbSkip() )
+							End
+							U_MsgColetor("Existem " + Alltrim(Str(nTemp)) + " registros de invent·rio lanÁados para este produto nesta data. Entre na rotina de exclus„o de invent·rios para continuar")
+							_lRet:=.F.
+							U_MsgColetor("Invent·rio abortado.")
+						Else
+							SB2->(dbSetOrder(1))
+							If SB2->(dbSeek(xFilial("SB2")+SB1->B1_COD+SubStr(_cEndereco,1,2)))
+								// Validando se o produto tem divergÍncia de SB2 para SBF
+								If QtdComp(SB2->B2_QATU)-QtdComp(SB2->B2_QACLASS) # QtdComp(SaldoSBF(SubStr(_cEndereco,1,2),"",_cProduto))
+									U_MsgColetor("DivergÍncia de Saldo FÌsico X Saldo por EndereÁo. N„o ser· possÌvel inventariar este produto.")
+									_lRet:=.F.
+									U_MsgColetor("Invent·rio abortado.")
+								Else
+									_cProduto := SB1->B1_COD
+									_nQtd     := XD1->XD1_QTDATU
+									_cLoteEti := ""
+									
+									_cLoteEti := If(Empty(XD1->XD1_LOTECT),"LOTE1308",XD1->XD1_LOTECT)
+									
+									oGetQtd :SetFocus()
 								EndIf
 							EndIf
-
-						Endif
-					Else
-						_lRet := .F.
-						U_MsgColetor("ATEN«√O existe saldo a endereÁar. N„o È possÌvel inventariar produtos com pendÍncias de endereÁamento.")
-					EndIf
+						EndIf
+						
+					Endif
 				Else
-					_lRet:=.F.
-					U_MsgColetor("Produto n„o controla por endereÁo.")
+					_lRet := .F.
+					U_MsgColetor("ATEN«√O existe saldo a endereÁar. N„o È possÌvel inventariar produtos com pendÍncias de endereÁamento.")
 				EndIf
 			Else
 				_lRet:=.F.
-				U_MsgColetor("Produto N√O encontrado")
+				U_MsgColetor("Produto n„o controla por endereÁo.")
 			EndIf
 		Else
 			_lRet:=.F.
-			U_MsgColetor("Etiqueta n„o encontrada.")
+			U_MsgColetor("Produto N√O encontrado")
 		EndIf
-	EndIf
-
-	If! _lRet
-		_cEtiqueta:= Space(_nTamEtiq)
-		_cProduto := CriaVar("B1_COD",.F.)
-		oGetEtiq  :Refresh()
-		oGetEtiq  :SetFocus()
 	Else
-		oGetQtd :SetFocus()
-		oGetQtd :Refresh()
+		_lRet:=.F.
+		U_MsgColetor("Etiqueta n„o encontrada.")
 	EndIf
+EndIf
+
+If! _lRet
+	_cEtiqueta:= Space(_nTamEtiq)
+	_cProduto := CriaVar("B1_COD",.F.)
+	oGetEtiq  :Refresh()
+	oGetEtiq  :SetFocus()
+Else
+	oGetQtd :SetFocus()
+	oGetQtd :Refresh()
+EndIf
 
 Return(_lRet)
 
-	*---------------------------------------------------------------------------------------------
+*---------------------------------------------------------------------------------------------
 Static Function fOkEmail()
-	*---------------------------------------------------------------------------------------------
-	Local CrLf	     := Chr(13)+Chr(10)
-	Local cMsg	     := ""
-	Local lOk        := .F.
-	Local _cAccount  := AllTrim(GetNewPar("MV_RELACNT",""))
-	Local _cPassword := AllTrim(GetNewPar("MV_RELPSW"," "))
-	Local _lAutentica:= GetMv("MV_RELAUTH",,.F.)
-	Local _cUserAut  := AllTrim(GetMv("MV_RELAUSR",,_cAccount))
-	Local _cPassAut  := AllTrim(GetMv("MV_RELAPSW",,_cPassword))
-	Local _cServer   := AllTrim(GetMv('MV_RELSERV'))
-	Local _nX
-	PRIVATE _nEND    :=0
+*---------------------------------------------------------------------------------------------
+Local CrLf	     := Chr(13)+Chr(10)
+Local cMsg	     := ""
+Local lOk        := .F.
+Local _cAccount  := AllTrim(GetNewPar("MV_RELACNT",""))
+Local _cPassword := AllTrim(GetNewPar("MV_RELPSW"," "))
+Local _lAutentica:= GetMv("MV_RELAUTH",,.F.)
+Local _cUserAut  := AllTrim(GetMv("MV_RELAUSR",,_cAccount))
+Local _cPassAut  := AllTrim(GetMv("MV_RELAPSW",,_cPassword))
+Local _cServer   := AllTrim(GetMv('MV_RELSERV'))
+Local _nX
 
-	_cPara := "luciano.silva@rdt.com.br,denis.vieira@rosenbergerdomex.com.br,sergio.santos@rosenbergerdomex.com.br"
-	_cPara += ",carlos.sepinho@rosenbergerdomex.com.br,eder.augusto@rosenbergerdomex.com.br" //mls 27/08/2015
-	_cPara += "helio@opusvp.com.br"
+PRIVATE _nEND    :=0
 
-	_cSubject:="ERP Protheus - Inventario Coletor "
+//_cPara := "luciano.silva@rdt.com.br,denis.vieira@rosenbergerdomex.com.br,sergio.santos@rosenbergerdomex.com.br"
+//_cPara += ",carlos.sepinho@rosenbergerdomex.com.br,eder.augusto@rosenbergerdomex.com.br" //mls 27/08/2015
+_cPara := "jonas@opusvp.com.br"
 
-	cMsg := ''
-	cMsg += '<html>'
-	cMsg +='<style type="text/css">'
-	cMsg +='<!--'
-	cMsg +='  h1 {font-family:Arial Unicode MS;font-size: 11px;font-weight: normal;}'
-	cMsg +='  h4 {font-family:Arial Unicode MS;font-size: 13px;font-weight: bold;}'
-	cMsg +='  table.bordasimples {border-collapse: collapse;}'
-	cMsg +='  table.bordarodape {border-top: 2px solid #000;'
-	cMsg +='                      border-bottom: 2px solid #000;}'
-	cMsg +='  --></style>'
+_cSubject:="ERP Protheus - Inventario Coletor "
 
-	cMsg += '<font size="2" face="Arial">Invent·rio.  </font>'+CrLf+CrLf
+cMsg := ''
+cMsg += '<html>'
+cMsg +='<style type="text/css">'
+cMsg +='<!--'
+cMsg +='  h1 {font-family:Arial Unicode MS;font-size: 11px;font-weight: normal;}'
+cMsg +='  h4 {font-family:Arial Unicode MS;font-size: 13px;font-weight: bold;}'
+cMsg +='  table.bordasimples {border-collapse: collapse;}'
+cMsg +='  table.bordarodape {border-top: 2px solid #000;'
+cMsg +='                      border-bottom: 2px solid #000;}'
+cMsg +='  --></style>'
 
-	cMsg += '<table border="0" width="100%" height="20">'
-	cMsg += '<tr>'
-	cMsg += '<th width="05%" align="left" bgcolor="#87CEFA">'
-	cMsg += '<h4>Documento Invent·rio</font></th>'
+cMsg += '<font size="2" face="Arial">Invent·rio.  </font>'+CrLf+CrLf
 
-	cMsg += '<th width="12%" align="left" bgcolor="#87CEFA">'
-	cMsg += '<h4>Produto</font></th>'
+cMsg += '<table border="0" width="100%" height="20">'
+cMsg += '<tr>'
+cMsg += '<th width="05%" align="left" bgcolor="#87CEFA">'
+cMsg += '<h4>Documento Invent·rio</font></th>'
 
-	cMsg += '<th width="25%" align="left" bgcolor="#87CEFA">'
-	cMsg += '<h4>DescriÁ„o</font></th>'
+cMsg += '<th width="12%" align="left" bgcolor="#87CEFA">'
+cMsg += '<h4>Produto</font></th>'
 
-	cMsg += '<th width="08%" align="left" bgcolor="#87CEFA">'
-	cMsg += '<h4>Armazem</font></th>'
+cMsg += '<th width="25%" align="left" bgcolor="#87CEFA">'
+cMsg += '<h4>DescriÁ„o</font></th>'
 
-	cMsg += '<th width="08%" align="left" bgcolor="#87CEFA">'
-	cMsg += '<h4>EndereÁo</font></th>'
+cMsg += '<th width="08%" align="left" bgcolor="#87CEFA">'
+cMsg += '<h4>Armazem</font></th>'
 
-	cMsg += '<th width="05%" align="left" bgcolor="#87CEFA">'
-	cMsg += '<h4>Lote</font></th>'
+cMsg += '<th width="08%" align="left" bgcolor="#87CEFA">'
+cMsg += '<h4>EndereÁo</font></th>'
 
-	cMsg += '<th width="05%" align="left" bgcolor="#87CEFA">'
-	cMsg += '<h4>Etiqueta</font></th>'
+cMsg += '<th width="05%" align="left" bgcolor="#87CEFA">'
+cMsg += '<h4>Lote</font></th>'
 
-	cMsg += '<th width="10%" align="left" bgcolor="#87CEFA">'
-	cMsg += '<h4>Qtd Invent·rio</font></th>'
+cMsg += '<th width="05%" align="left" bgcolor="#87CEFA">'
+cMsg += '<h4>Etiqueta</font></th>'
+
+cMsg += '<th width="10%" align="left" bgcolor="#87CEFA">'
+cMsg += '<h4>Qtd Invent·rio</font></th>'
 
 //cMsg += '<th width="10%" align="left" bgcolor="#87CEFA">'
 //cMsg += '<h4>Qtd Anterior (Saldo Atual)</font></th>'
@@ -978,218 +1463,220 @@ Static Function fOkEmail()
 //cMsg += '<th width="05%" align="left" bgcolor="#87CEFA">'
 //cMsg += '<h4>Valor Atual</font></th>'
 
-	cMsg += '</tr>'
+cMsg += '</tr>'
 
-	_nVrTotAnt:=0
-	_nVrTotAtu:=0
+_nVrTotAnt:=0
+_nVrTotAtu:=0
 
-	cDados:=""
+cDados:=""
 
-	_nVLUNIT  :=0
-	_nQTDATU  :=0
-	_nQTDAJU  :=0
-	_nVALAJU  :=0
-	_nQTDTOT  :=0
+_nVLUNIT  :=0
+_nQTDATU  :=0
+_nQTDAJU  :=0
+_nVALAJU  :=0
+_nQTDTOT  :=0
 
-	For _nX:=1 To Len(_aLog)
+For _nX:=1 To Len(_aLog)
+	
+	SB1->(dbSetOrder(1))
+	SB1->(dbSeek(xFilial("SB1")+_aLog[_nX][2]))
+	
+	cDados += '<tr>'
+	cDados += '<td width="05%" align="left">'
+	cDados += '<h1>'+_aLog[_nX][6]+'</font></td>'
+	cDados += '<td width="12%" align="left">'
+	//cDados += '<h1>'+_aLog[_nX][2]+'   '+_aLog[_nX][1]+'</font></td>'
+	cDados += '<h1>'+_aLog[_nX][2]+'</font></td>'
+	
+	cDados += '<td width="25%" align="left">'
+	cDados += '<h1>'+AllTrim(SB1->B1_DESC)+'</font></td>'
+	
+	cDados += '<td width="08%" align="left">'
+	cDados += '<h1>'+SUBSTR(_aLog[_nX][3],1,2)+'</font></td>'
+	
+	cDados += '<td width="08%" align="left">'
+	cDados += '<h1>'+SUBSTR(_aLog[_nX][3],3,LEN(_aLog[_nX][3]))+'</font></td>'
+	
+	cDados += '<td width="05%" align="left">'
+	cDados += '<h1>'+_aLog[_nX][5]+'</font></td>'
+	
+	cDados += '<td width="05%" align="left">'
+	cDados += '<h1>'+_aLog[_nX][1]+'</font></td>'
+	
+	cDados += '<td width="10%" align="right">'
+	cDados += '<h1>'+TransForm(_aLog[_nX][4],"@E 999,999,999.9999")+'</font></td>'
+	
+	//	cDados += '<td width="10%" align="right">'
+	//	cDados += '<h1>'+TransForm(_aLog[_nX][7],"@E 999,999,999.99")+'</font></td>'
+	
+	//	cDados += '<td width="05%" align="right">'
+	//	cDados += '<h1>'+TransForm(_aLog[_nX][8],"@E 999,999,999.99")+'</font></td>'
+	
+	//	cDados += '<td width="10%" align="right">'
+	//	cDados += '<h1>'+TransForm(_aLog[_nX][9],"@E 999,999,999.99")+'</font></td>'
+	
+	//	cDados += '<td width="05%" align="right">'
+	//	cDados += '<h1>'+TransForm(_aLog[_nX][10],"@E 999,999,999.99")+'</font></td>'
+	
+	cDados += '</tr>'
+	
+	_nVrTotAnt+=_aLog[_nX][8]
+	_nVrTotAtu+=_aLog[_nX][10]
+	
+	_nQTDTOT:=_nQTDTOT+_aLog[_nX][4]
+	
+Next
+cMsg += cDados + Crlf
+cMsg += '</table>'+Crlf+Crlf
 
-		SB1->(dbSetOrder(1))
-		SB1->(dbSeek(xFilial("SB1")+_aLog[_nX][2]))
-
-		cDados += '<tr>'
-		cDados += '<td width="05%" align="left">'
-		cDados += '<h1>'+_aLog[_nX][6]+'</font></td>'
-		cDados += '<td width="12%" align="left">'
-		//cDados += '<h1>'+_aLog[_nX][2]+'   '+_aLog[_nX][1]+'</font></td>'
-		cDados += '<h1>'+_aLog[_nX][2]+'</font></td>'
-
-		cDados += '<td width="25%" align="left">'
-		cDados += '<h1>'+AllTrim(SB1->B1_DESC)+'</font></td>'
-
-		cDados += '<td width="08%" align="left">'
-		cDados += '<h1>'+SUBSTR(_aLog[_nX][3],1,2)+'</font></td>'
-
-		cDados += '<td width="08%" align="left">'
-		cDados += '<h1>'+SUBSTR(_aLog[_nX][3],3,LEN(_aLog[_nX][3]))+'</font></td>'
-
-		cDados += '<td width="05%" align="left">'
-		cDados += '<h1>'+_aLog[_nX][5]+'</font></td>'
-
-		cDados += '<td width="05%" align="left">'
-		cDados += '<h1>'+_aLog[_nX][1]+'</font></td>'
-
-		cDados += '<td width="10%" align="right">'
-		cDados += '<h1>'+TransForm(_aLog[_nX][4],"@E 999,999,999.9999")+'</font></td>'
-
-		//	cDados += '<td width="10%" align="right">'
-		//	cDados += '<h1>'+TransForm(_aLog[_nX][7],"@E 999,999,999.99")+'</font></td>'
-
-		//	cDados += '<td width="05%" align="right">'
-		//	cDados += '<h1>'+TransForm(_aLog[_nX][8],"@E 999,999,999.99")+'</font></td>'
-
-		//	cDados += '<td width="10%" align="right">'
-		//	cDados += '<h1>'+TransForm(_aLog[_nX][9],"@E 999,999,999.99")+'</font></td>'
-
-		//	cDados += '<td width="05%" align="right">'
-		//	cDados += '<h1>'+TransForm(_aLog[_nX][10],"@E 999,999,999.99")+'</font></td>'
-
-		cDados += '</tr>'
-
-		_nVrTotAnt+=_aLog[_nX][8]
-		_nVrTotAtu+=_aLog[_nX][10]
-
-		_nQTDTOT:=_nQTDTOT+_aLog[_nX][4]
-
-	Next
-	cMsg += cDados + Crlf
-	cMsg += '</table>'+Crlf+Crlf
-
-	_nVLUNIT:=0
-	IF LEN(_aLog)>0
-		_nX:=1
-		SB2->( dbSetOrder(1) )
-		If SB2->( dbSeek( xFilial("SB2")+ ALLTRIM(_aLog[_nX][2]) ) )
-			Do while .NOT. SB2->(EOF()) .AND. ALLTRIM(SB2->B2_COD)==ALLTRIM(_aLog[_nX][2])
-				IF SB2->B2_QATU>0
-					cMsg += '<font size="2" face="Arial">Armazem '+SB2->B2_LOCAL+' Saldo '+TransForm(SB2->B2_QATU,"@E 999,999,999.9999")+'</font>' +CrLf
-				ENDIF
-				IF ALLTRIM(SB2->B2_LOCAL)==SUBSTR(_aLog[_nX][3],1,2)
-					_nVLUNIT:=SB2->B2_CM1
-					_nQTDATU:=SB2->B2_QATU
-				ENDIF
-				SB2->(DBSKIP())
-			Enddo
-		EndIf
-	ENDIF
-	cMsg += CrLf
-
-	IF lInvOK ==.T.
-		//U_MsgColetor("Invent·rio EFETUADO.")
-		cMsg += '<font size="3" face="Arial">Inventario EFETUADO Quantidades Iguais '+'</font>' +CrLf+CrLf
-	ELSE
-		//U_MsgColetor("Invent·rio com quantidades divergente informar a controladoria.")
-		cMsg += '<font size="3" face="Arial">Inventario N√O EFETUADO Quantidades Divergente '+'</font>' +CrLf+CrLf
-	ENDIF
-
-	_nQTDAJU :=(_nQTDATU-_nQTDTOT )*(-1)
-	_nVALAJU :=_nQTDAJU*_nVLUNIT
-	cMsg += '<font size="3" face="Arial">Quantidade do ajuste '+TransForm(_nQTDAJU,"@E 9,999,999.9999")+'</font>' +CrLf
-	cMsg += '<font size="3" face="Arial">Valor do ajuste      '+TransForm(_nVALAJU,"@E 9,999,999.9999")+'</font>' +CrLf
-	cMsg += '<font size="2" face="Arial">Data/Hora do processamento:'+Dtoc(dDataBase)+' ‡s '+Time()+' hr.</font>' +CrLf+CrLf
-
-	cMsg += '<font size="3" face="Arial">Rosenberger Domex</font>' +CrLf
-	cMsg += '<font size="3" face="Arial">Favor n„o responder. </font>' +CrLf
-	cMsg += '</body>'+CrLf
-	cMsg += '</html>'+CrLf
-
-	Connect Smtp Server _cServer Account _cAccount PassWord _cPassAut Result lConectou
-
-	If _lAutentica
-		If !MailAuth(_cUserAut,_cPassAut)
-			U_MsgColetor("Falha na AutenticaÁ„o do Usu·rio")
-			Disconnect Smtp Server
-			lConectou :=.F.
-		EndIf
+_nVLUNIT:=0
+IF LEN(_aLog)>0
+	_nX:=1
+	SB2->( dbSetOrder(1) )
+	If SB2->( dbSeek( xFilial("SB2")+ ALLTRIM(_aLog[_nX][2]) ) )
+		Do while .NOT. SB2->(EOF()) .AND. ALLTRIM(SB2->B2_COD)==ALLTRIM(_aLog[_nX][2])
+			IF SB2->B2_QATU>0
+				cMsg += '<font size="2" face="Arial">Armazem '+SB2->B2_LOCAL+' Saldo '+TransForm(SB2->B2_QATU,"@E 999,999,999.9999")+'</font>' +CrLf
+			ENDIF
+			IF ALLTRIM(SB2->B2_LOCAL)==SUBSTR(_aLog[_nX][3],1,2)
+				_nVLUNIT:=SB2->B2_CM1
+				_nQTDATU:=SB2->B2_QATU
+			ENDIF
+			SB2->(DBSKIP())
+		Enddo
 	EndIf
+ENDIF
+cMsg += CrLf
 
-	If lConectou
-		Send Mail;
-			From _cAccount;
-			To _cPara;
-			Subject AllTrim(_cSubject);
-			Body cMsg;
-			Result lEnviado
-	End
-	Disconnect Smtp Server
+IF lInvOK ==.T.
+	//U_MsgColetor("Invent·rio EFETUADO.")
+	cMsg += '<font size="3" face="Arial">Inventario EFETUADO Quantidades Iguais '+'</font>' +CrLf+CrLf
+ELSE
+	//U_MsgColetor("Invent·rio com quantidades divergente informar a controladoria.")
+	cMsg += '<font size="3" face="Arial">Inventario N√O EFETUADO Quantidades Divergente '+'</font>' +CrLf+CrLf
+ENDIF
+
+_nQTDAJU :=(_nQTDATU-_nQTDTOT )*(-1)
+_nVALAJU :=_nQTDAJU*_nVLUNIT
+cMsg += '<font size="3" face="Arial">Quantidade do ajuste '+TransForm(_nQTDAJU,"@E 9,999,999.9999")+'</font>' +CrLf
+cMsg += '<font size="3" face="Arial">Valor do ajuste      '+TransForm(_nVALAJU,"@E 9,999,999.9999")+'</font>' +CrLf
+cMsg += '<font size="2" face="Arial">Data/Hora do processamento:'+Dtoc(dDataBase)+' ‡s '+Time()+' hr.</font>' +CrLf+CrLf
+
+cMsg += '<font size="3" face="Arial">Rosenberger Domex</font>' +CrLf
+cMsg += '<font size="3" face="Arial">Favor n„o responder. </font>' +CrLf
+cMsg += '</body>'+CrLf
+cMsg += '</html>'+CrLf
+
+Connect Smtp Server _cServer Account _cAccount PassWord _cPassAut Result lConectou
+
+If _lAutentica
+	If !MailAuth(_cUserAut,_cPassAut)
+		U_MsgColetor("Falha na AutenticaÁ„o do Usu·rio")
+		Disconnect Smtp Server
+		lConectou :=.F.
+	EndIf
+EndIf
+
+If lConectou
+	Send Mail;
+	From _cAccount;
+	To _cPara;
+	Subject AllTrim(_cSubject);
+	Body cMsg;
+	Result lEnviado
+End
+Disconnect Smtp Server
 
 Return
 
-	*---------------------------------------------------------------------------------------------
+*---------------------------------------------------------------------------------------------
 Static Function AlertC(cTexto)
-	*---------------------------------------------------------------------------------------------
-	Local aTemp := U_QuebraString(cTexto,20)
-	Local cTemp := ''
-	Local lRet  := .T.
-	Local x
+*---------------------------------------------------------------------------------------------
+Local aTemp := U_QuebraString(cTexto,20)
+Local cTemp := ''
+Local lRet  := .T.
+Local x
 
-	For x := 1 to Len(aTemp)
-		cTemp += aTemp[x] + Chr(13)
-	Next x
+For x := 1 to Len(aTemp)
+	cTemp += aTemp[x] + Chr(13)
+Next x
 
-	cTemp += 'Continuar?'
+cTemp += 'Continuar?'
 
-	If !apMsgNoYes( cTemp )
-		lRet:=.F.
-	EndIf
+If !U_uMsgYesNo( cTemp )
+	lRet:=.F.
+EndIf
 
 Return(lRet)
 
-	*---------------------------------------------------------------------------------------------
+*---------------------------------------------------------------------------------------------
 Static Function GuardaEmps(cProduto,cLocal)
-	*---------------------------------------------------------------------------------------------
-	Local x
-	aEmpSB2 := {}
-	SB2->( dbSetOrder(1) )
-	If SB2->( dbSeek( xFilial() + cProduto + cLocal ) )
-		If !Empty(SB2->B2_QEMP)
-			AADD(aEmpSB2,{SB2->(Recno()),SB2->B2_QEMP})
+*---------------------------------------------------------------------------------------------
+Local x
+
+aEmpSB2 := {}
+SB2->( dbSetOrder(1) )
+If SB2->( dbSeek( xFilial("SB2") + cProduto + cLocal ) )
+	If !Empty(SB2->B2_QEMP)
+		AADD(aEmpSB2,{SB2->(Recno()),SB2->B2_QEMP})
+	EndIf
+EndIf
+
+aEmpSBF := {}
+SBF->( dbSetOrder(2) )
+If SBF->( dbSeek( xFilial("SBF") + cProduto + cLocal ) )
+	While !SBF->( EOF() ) .and. SBF->BF_FILIAL + SBF->BF_PRODUTO + SBF->BF_LOCAL == xFilial("SBF") + cProduto + cLocal
+		If !Empty(SBF->BF_EMPENHO)
+			AADD(aEmpSBF,{SBF->(Recno()),SBF->BF_EMPENHO})
 		EndIf
-	EndIf
+		SBF->( dbSkip() )
+	End
+EndIf
 
-	aEmpSBF := {}
-	SBF->( dbSetOrder(2) )
-	If SBF->( dbSeek( xFilial() + cProduto + cLocal ) )
-		While !SBF->( EOF() ) .and. SBF->BF_FILIAL + SBF->BF_PRODUTO + SBF->BF_LOCAL == xFilial("SBF") + cProduto + cLocal
-			If !Empty(SBF->BF_EMPENHO)
-				AADD(aEmpSBF,{SBF->(Recno()),SBF->BF_EMPENHO})
-			EndIf
-			SBF->( dbSkip() )
-		End
-	EndIf
+aEmpSB8 := {}
+SB8->( dbSetOrder(1) )
+If SB8->( dbSeek( xFilial("SB8") + cProduto + cLocal ) )
+	While !SB8->( EOF() ) .and. SB8->B8_FILIAL + SB8->B8_PRODUTO + SB8->B8_LOCAL == xFilial("SB8") + cProduto + cLocal
+		If !Empty(SB8->B8_EMPENHO)
+			AADD(aEmpSB8,{SB8->(()),SB8->B8_EMPENHO})
+		EndIf
+		SB8->( dbSkip() )
+	End
+EndIf
 
-	aEmpSB8 := {}
-	SB8->( dbSetOrder(1) )
-	If SB8->( dbSeek( xFilial() + cProduto + cLocal ) )
-		While !SB8->( EOF() ) .and. SB8->B8_FILIAL + SB8->B8_PRODUTO + SB8->B8_LOCAL == xFilial("SB8") + cProduto + cLocal
-			If !Empty(SB8->B8_EMPENHO)
-				AADD(aEmpSB8,{SB8->(()),SB8->B8_EMPENHO})
-			EndIf
-			SB8->( dbSkip() )
-		End
-	EndIf
+For x := 1 to Len(aEmpSB2)
+	SB2->( dbGoTo(aEmpSB2[x,1]) )
+	Reclock("SB2",.F.)
+	SB2->B2_QEMP := 0
+	SB2->( msUnlock() )
+Next x
 
-	For x := 1 to Len(aEmpSB2)
-		SB2->( dbGoTo(aEmpSB2[x,1]) )
-		Reclock("SB2",.F.)
-		SB2->B2_QEMP := 0
-		SB2->( msUnlock() )
-	Next x
+For x := 1 to Len(aEmpSBF)
+	SBF->( dbGoTo(aEmpSBF[x,1]) )
+	Reclock("SBF",.F.)
+	SBF->BF_EMPENHO := 0
+	SBF->( msUnlock() )
+Next x
 
-	For x := 1 to Len(aEmpSBF)
-		SBF->( dbGoTo(aEmpSBF[x,1]) )
-		Reclock("SBF",.F.)
-		SBF->BF_EMPENHO := 0
-		SBF->( msUnlock() )
-	Next x
-
-	For x := 1 to Len(aEmpSB8)
-		SB8->( dbGoTo(aEmpSB8[x,1]) )
-		Reclock("SB8",.F.)
-		SB8->B8_EMPENHO := 0
-		SB8->( msUnlock() )
-	Next x
+For x := 1 to Len(aEmpSB8)
+	SB8->( dbGoTo(aEmpSB8[x,1]) )
+	Reclock("SB8",.F.)
+	SB8->B8_EMPENHO := 0
+	SB8->( msUnlock() )
+Next x
 
 Return
 
-	*---------------------------------------------------------------------------------------------
+*---------------------------------------------------------------------------------------------
 Static Function VoltaEmps()
-	*---------------------------------------------------------------------------------------------
-	Local x
-	For x := 1 to Len(aEmpSB2)
-		SB2->( dbGoTo(aEmpSB2[x,1]) )
-		Reclock("SB2",.F.)
-		SB2->B2_QEMP := aEmpSB2[x,2]
-		SB2->( msUnlock() )
-	Next x
+*---------------------------------------------------------------------------------------------
+Local x
+
+For x := 1 to Len(aEmpSB2)
+	SB2->( dbGoTo(aEmpSB2[x,1]) )
+	Reclock("SB2",.F.)
+	SB2->B2_QEMP := aEmpSB2[x,2]
+	SB2->( msUnlock() )
+Next x
 
 Return
