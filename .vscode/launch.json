@@ -7,7 +7,7 @@
 			"name": "TOTVS LOCAL",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
-			"smartclientBin": "C:/Totvs/smartclient_12.1.27/smartclient.exe",
+			"smartclientBin": "C:/TOTVS/Acessos_Clientes_SmartClient/DOMEX/smartclient64/smartclient.exe",
 			"isMultiSession": true,
 			"enableTableSync": true
 		}
@@ -40,7 +40,10 @@
 		},
 		{
 			"label": "sigaest"
+		},
+		{
+			"label": "sigacom"
 		}
 	],
-	"lastProgramExecuted": "sigaest"
+	"lastProgramExecuted": "sigacom"
 }

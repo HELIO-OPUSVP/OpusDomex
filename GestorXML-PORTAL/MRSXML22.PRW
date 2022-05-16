@@ -64,7 +64,7 @@ Static Function fprocPortal()
 
 	PRIVATE _oChave
 //	Private _cChave := '31160308178370000125550010000173441002239569 '  // Space(44)
-//	Private _cChave := '43200273694119000185550000000843311545613846'  // Space(44)
+//	Private _cChave := '35220503618641000100550010000558371447664993'  // Space(44)
     Private _cChave := Space(44)
 	Private _cCnpj  := substr(_cChave,7,14)
 
@@ -91,14 +91,14 @@ Static Function fprocPortal()
 	Private _Cfornec := SPACE(40)
 	Private _cCodFOR := SPACE(06)
 	Private _cLojFOR := SPACE(02)
-	Private _Cfornec := SPACE(30)
+	Private _cFornec := SPACE(30)
 	SA2->(DBSELECTAREA('SA2'))
 	SA2->(DBSETORDER(3))
 	If SA2->(DbSeek(xFilial("SA2")+_cCnpj))
 		_cCodFOR := SA2->A2_COD
 		_cLojFOR := SA2->A2_LOJA
 		_cNomFOR := SA2->A2_NOME
-		_Cfornec := _cCodFOR+'-'+_cLojFOR+' '+_cNomFOR
+		_cFornec := _cCodFOR+'-'+_cLojFOR+' '+_cNomFOR
 	ENDIF
 
 	DEFINE MSDIALOG oDlg1 TITLE OemToAnsi("Rosenberguer - Portal Xml - 04/05/2022") FROM 0,0 TO 470,910 PIXEL of oMainWnd PIXEL
@@ -154,7 +154,7 @@ Static Function fprocPortal()
 	fNewGet()
 
 	//@ 210,350 Button "Protocolo" Size 40,15 PIXEL OF oDlg1 ACTION PROTOCOL(_cChave)
-	@ 210,400 Button "Enviar" Size 40,15  PIXEL OF oDlg1 ACTION (Close(oDlg1))
+	@ 210,400 Button "Confirmar" Size 40,15  PIXEL OF oDlg1 ACTION (Close(oDlg1))
 
 	ACTIVATE MSDIALOG oDlg1 CENTERED
 
@@ -862,7 +862,7 @@ Return _Retorno
 // Função para Carregar Consulta Específica criada no (( Consulta Padrão))
 
 User Function zConsSC7()
-//        lOk := u_zConsEsp("SC7", {"C7_FORNECE","C7_LOJA","C7_NUM","C7_ITEM","C7_PRODUTO","C7_DESCRI","C7_QUANT","C7_PRECO","C7_TOTAL"}, " AND C7_FORNECE+C7_LOJA = '"+_cCodFOR+_cLojFOR+"' AND C7_ENCER <> 'E' ", "C7_NUM")	
-        lOk := u_zConsEsp("SC7", {"C7_NUM","C7_ITEM","C7_PRODUTO","C7_DESCRI","C7_QUANT","C7_PRECO","C7_TOTAL"}, " AND C7_FORNECE+C7_LOJA = '"+_cCodFOR+_cLojFOR+"' AND C7_ENCER <> 'E' AND ((C7_QUANT-C7_QUJE) > 0) AND C7_CONAPRO <> 'B' AND C7_RESIDUO  = '' ", "C7_NUM")	
+//        lOk :=  u_zConsEsp("SC7", {"C7_NUM","C7_ITEM","C7_PRODUTO","C7_DESCRI","C7_QUANT","C7_PRECO","C7_TOTAL"}, " AND C7_FORNECE+C7_LOJA = '"+_cCodFOR+_cLojFOR+"' AND C7_ENCER <> 'E' AND ((C7_QUANT-C7_QUJE) > 0) AND C7_CONAPRO <> 'B' AND C7_RESIDUO  = '' ", "C7_NUM,C7_ITEM")
+        lOk :=  u_zConsEsp("SC7", {"C7_NUM","C7_ITEM","C7_QUANT","XX_SALDO"}, " AND C7_FORNECE+C7_LOJA = '"+_cCodFOR+_cLojFOR+"' AND C7_ENCER <> 'E' AND ((C7_QUANT-C7_QUJE) > 0) AND C7_CONAPRO <> 'B' AND C7_RESIDUO  = '' ", "C7_NUM,C7_ITEM",{(C7_QUANT-C7_QUJE)} )
 
 Return lOk
