@@ -143,8 +143,8 @@ User Function DOMPERDA()
 	oBrowse:SetAlias("PZA")
 
 	//Adiciona Legenda no Browse
-	ADD LEGEND DATA ' Empty(PZA->PZA_STATUS) '	COLOR "BR_VERDE"	TITLE "Perdas a pagar"	OF oBrowse
-	ADD LEGEND DATA ' PZA->PZA_STATUS == "1" '	COLOR "BR_VERMELHO"	 TITLE "Perdas Pagas"			 OF oBrowse
+	ADD LEGEND DATA 'PZA->PZA_FILIAL ==  "' + xFilial("PZA") + '" .And. Empty(PZA->PZA_STATUS) '	COLOR "BR_VERDE"	TITLE "Perdas a pagar"	OF oBrowse
+	ADD LEGEND DATA 'PZA->PZA_FILIAL ==  "' + xFilial("PZA") + '" .And. PZA->PZA_STATUS == "1" '	COLOR "BR_VERMELHO"	 TITLE "Perdas Pagas"			 OF oBrowse
 
 	//Campos que serão tratados no browser
 	aCposCol := {"PZA_CODIGO","PZA_OP","PZA_PRODOP","PZA_RECURS","PZA_DATA","PZA_HORA"}
@@ -164,8 +164,8 @@ User Function DOMPERDA()
 	oBrowse:CleanFilter()
 	oBrowse:SetUseFilter()
 	oBrowse:SetFilterDefault ( "PZA->PZA_FILIAL == '"  + xFilial("PZA") +  "' " )
-	oBrowse:AddFilter( "Perdas em Aberto", ' Empty(PZA_STATUS) .Or. PZA_STATUS == "0"  '	, /*[ lNoCheck]*/.F.,/*[ lSelected]*/.F., /*[ cAlias]*/, /*[ lFilterAsk]*/, /*[ aFilParser]*/, /*[ cID]*/ )
-	oBrowse:AddFilter( "Perdas Encerradas",' PZA_STATUS == "1"  '									, /*[ lNoCheck]*/.F.,/*[ lSelected]*/.F., /*[ cAlias]*/, /*[ lFilterAsk]*/, /*[ aFilParser]*/, /*[ cID]*/ )
+	oBrowse:AddFilter( "Perdas em Aberto", ' PZA->PZA_FILIAL ==  "' + xFilial("PZA") + '" .And. Empty(PZA_STATUS) .Or. PZA_STATUS == "0"  '	, /*[ lNoCheck]*/.F.,/*[ lSelected]*/.F., /*[ cAlias]*/, /*[ lFilterAsk]*/, /*[ aFilParser]*/, /*[ cID]*/ )
+	oBrowse:AddFilter( "Perdas Encerradas",' PZA->PZA_FILIAL ==  "' + xFilial("PZA") + '" .And. PZA_STATUS == "1"  '									, /*[ lNoCheck]*/.F.,/*[ lSelected]*/.F., /*[ cAlias]*/, /*[ lFilterAsk]*/, /*[ aFilParser]*/, /*[ cID]*/ )
 	//oBrowse:AddFilter( "Parcialmente Pago", ' SZM->ZM_STATFIN == "2" '									, /*[ lNoCheck]*/.F.,/*[ lSelected]*/.F., /*[ cAlias]*/, /*[ lFilterAsk]*/, /*[ aFilParser]*/, /*[ cID]*/)
 	//oBrowse:AddFilter( "Contrato Quitado/Baixado",' SZM->ZM_STATFIN == "3" '							, /*[ lNoCheck]*/.F.,/*[ lSelected]*/.F., /*[ cAlias]*/, /*[ lFilterAsk]*/, /*[ aFilParser]*/, /*[ cID]*/)
 	//oBrowse:AddFilter( "Contrato Contabilizado",'SZM->ZM_STATFIN == "1" .And. SZM->ZM_LA == "S" ', /*[ lNoCheck]*/.F.,/*[ lSelected]*/.F., /*[ cAlias]*/, /*[ lFilterAsk]*/, /*[ aFilParser]*/, /*[ cID]*/)
@@ -335,7 +335,8 @@ User Function VLDTBPZA(cVarDigit)
 				if SC2->(DbSeek(xFilial("SC2")+M->PZA_OP ))
 					If Empty(Alltrim(SC2->C2_DATRF))
 						XD4->(DbSetOrder(3))
-						If XD4->(DbSeek(xFilial("XD4")+M->PZA_SERIAL))	
+						cSerial := StrTran(M->PZA_SERIAL, " ", "")
+						If XD4->(DbSeek(xFilial("XD4")+cSerial))	
 							//if ALLTRIM(M->PZA_OP) == IIF(LEFT(ALLTRIM(M->PZA_SERIAL),1) =="S",SUBSTR(ALLTRIM(M->PZA_SERIAL),2,11),LEFT(ALLTRIM(M->PZA_SERIAL),11))
 							If ALLTRIM(M->PZA_OP) == Alltrim(XD4->XD4_OP)
 								M->PZA_PRODOP := SC2->C2_PRODUTO
@@ -431,7 +432,8 @@ User Function VLDTBPZA(cVarDigit)
 	ElseIf cVarDigit $ "M->PZA_SERIAL"
 		If!Empty(M->PZA_SERIAL)
 			XD4->(DbSetOrder(3))
-			If XD4->(DbSeek(xFilial("XD4")+M->PZA_SERIAL))
+			cSerial := StrTran(M->PZA_SERIAL, " ", "")
+			If XD4->(DbSeek(xFilial("XD4")+cSerial))
 				If XD4->XD4_STATUS == "2"//Etiqueta Lida no Roteiro
 					//if ALLTRIM(M->PZA_OP) == IIF(LEFT(ALLTRIM(M->PZA_SERIAL),1) =="S",SUBSTR(ALLTRIM(M->PZA_SERIAL),2,11),LEFT(ALLTRIM(M->PZA_SERIAL),11)) .Or. Empty(Alltrim(M->PZA_OP))
 					if ALLTRIM(M->PZA_OP) == Alltrim(XD4->D4_OP) .Or. Empty(Alltrim(M->PZA_OP))
