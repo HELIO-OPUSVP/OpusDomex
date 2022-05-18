@@ -63,7 +63,6 @@ Return
 Static Function fprocPortal()
 
 	PRIVATE _oChave
-//	Private _cChave := '31160308178370000125550010000173441002239569 '  // Space(44)
 //	Private _cChave := '35220503618641000100550010000558371447664993'  // Space(44)
     Private _cChave := Space(44)
 	Private _cCnpj  := substr(_cChave,7,14)
@@ -101,7 +100,7 @@ Static Function fprocPortal()
 		_cFornec := _cCodFOR+'-'+_cLojFOR+' '+_cNomFOR
 	ENDIF
 
-	DEFINE MSDIALOG oDlg1 TITLE OemToAnsi("Rosenberguer - Portal Xml - 04/05/2022") FROM 0,0 TO 470,910 PIXEL of oMainWnd PIXEL
+	DEFINE MSDIALOG oDlg1 TITLE OemToAnsi("Rosenberguer - Portal Xml - 17/05/2022") FROM 0,0 TO 470,910 PIXEL of oMainWnd PIXEL
 
 	@ 005, 008	SAY oTexto1   VAR OemToAnsi('Chave Eletronica NF-e ( XML )')  PIXEL SIZE 170,15
 	oTexto1:oFont := TFont():New('Arial',,15,,.T.,,,,.T.,.F.)
@@ -556,15 +555,15 @@ Static Function fCarregaNF(_cChave)
 			//nD1TES     := aScan(aItens[1] , { |k| AllTrim(k[1]) == "D1_TES" 	  })
 			//nD1OPER    := aScan(aItens[1] , { |k| AllTrim(k[1]) == "D1_XOPER"	  })
 
+			oXXGetDad:aCols := {}
 			For x := 1 to Len(aItens)
 				nQtd1    := 0
 				nQtd2    := aItens[x][nD1QUANT][2]
 				//nFator   := aFatorCon[y,1]
 				//cTpFator := aFatorCon[y,2]
 
-				oXXGetDad:aCols := {}
 				AADD(oXXGetDad:aCols,array(Len(oXXGetDad:aHeader)+1))
-				oXXGetDad:aCols[x,Len(oXXGetDad:aHeader)+1] := .F.
+				oXXGetDad:aCols[x,Len(oXXGetDad:aHeader)+1] := .F.			
 				oXXGetDad:aCols[x,nXXITEMXML] := StrZero(x,4)
 				oXXGetDad:aCols[x,nXXPRODXML] := aPrdXML[x]
 				oXXGetDad:aCols[x,nXXDESCRIC] := aPrdDesc[x]
@@ -590,8 +589,6 @@ Static Function fCarregaNF(_cChave)
 		ENDIF
 
 	ENDIF
-
-
 
 
 
@@ -776,6 +773,7 @@ Static Function fSalvaZZ3()
 			(cTab3)->&(cAls3+"_ITEMPC") := oXXGetDad:aCols[x][nXXITEMPC]
 			(cTab3)->&(cAls3+"_QTD")    := oXXGetDad:aCols[x][nXXQTD2]
 			(cTab3)->&(cAls3+"_COD")    := oXXGetDad:aCols[x][nXXPRODUTO]
+			(cTab3)->&(cAls3+"_ORIGEM") :=  "I" // G=Gestor I=Interno(Portal) P=Portal Fornecedor			
 			//	(cTab3)->&(cAls3+"_DATPRF") := oXXGetDad:aCols[x]dXXDATPRF]
 			(cTab3)->( msUnlock() )
 		EndIf
@@ -860,9 +858,10 @@ Return _Retorno
 
 
 // Função para Carregar Consulta Específica criada no (( Consulta Padrão))
-
+/*
 User Function zConsSC7()
 //        lOk :=  u_zConsEsp("SC7", {"C7_NUM","C7_ITEM","C7_PRODUTO","C7_DESCRI","C7_QUANT","C7_PRECO","C7_TOTAL"}, " AND C7_FORNECE+C7_LOJA = '"+_cCodFOR+_cLojFOR+"' AND C7_ENCER <> 'E' AND ((C7_QUANT-C7_QUJE) > 0) AND C7_CONAPRO <> 'B' AND C7_RESIDUO  = '' ", "C7_NUM,C7_ITEM")
         lOk :=  u_zConsEsp("SC7", {"C7_NUM","C7_ITEM","C7_QUANT","XX_SALDO"}, " AND C7_FORNECE+C7_LOJA = '"+_cCodFOR+_cLojFOR+"' AND C7_ENCER <> 'E' AND ((C7_QUANT-C7_QUJE) > 0) AND C7_CONAPRO <> 'B' AND C7_RESIDUO  = '' ", "C7_NUM,C7_ITEM",{(C7_QUANT-C7_QUJE)} )
 
 Return lOk
+*/

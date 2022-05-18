@@ -34,6 +34,7 @@ Local cCpoRet
 
 Private __oGdItm99
 Public __cRetorn := ""
+Public __cRetorn2 := ""
 
 nConfLin := 0
 nConfCol := 0
@@ -47,7 +48,7 @@ EndIf
 //³Configurações do F3 personalizado                                          ³
 //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 
-cNomeJanela := "Seleção de Pedidos - Portal Rosenberger"
+cNomeJanela := "Seleção de Pedidos - Portal Rosenberger - 17/05/2022"
 
 hcAlias     := "SC7"
 
@@ -64,6 +65,8 @@ cPicture := "999999"
 cFilIni  := "  C7_FORNECE+C7_LOJA = '"+_cCodFOR+_cLojFOR+"' AND C7_ENCER <> 'E' AND ((C7_QUANT-C7_QUJE) > 0) AND C7_CONAPRO <> 'B' AND C7_RESIDUO  = '' "
 
 cCpoRet  := "C7_NUM"
+cCpoRet2 := "C7_ITEM"
+
 cCpoPara := "C7_NUM"
 
 // Tamanho da janela
@@ -94,10 +97,13 @@ aDlgTela[4] += nConfCol
 
 Define MsDialog oDialg Title cNomeJanela From aDlgTela[1],aDlgTela[2] To aDlgTela[3],aDlgTela[4] Of oMainWnd Pixel
 
+/*
+Desabilita caixa de pesquisa
+
 @ 20, 05 MSGET    oGet1    VAR cPesquisa Picture cPicture VALID fPesquisa(aHeaderNew,cFilIni,hcAlias,hcCampos,hcNaoCampos,cPesquisa,aIndice,cIndice) SIZE 250, 012 OF oDialg COLORS 0, 16777215 PIXEL
 @ 05, 05 COMBOBOX oCombo1  VAR cIndice ITEMS aIndice1     VALID fCombo() SIZE 250,12 PIXEL
 @ 05,255 Button "Pesquisar"    Size 40,10 Pixel Of oDialg Action fPesquisa(aHeaderNew,cFilIni,hcAlias,hcCampos,hcNaoCampos,cPesquisa,aIndice,cIndice)
-
+*/
 
 // Posicao do elemento do vetor aRotina que a MsNewGetDados usara como referencia
 Private cGetOpc        := GD_UPDATE                   // GD_INSERT+GD_DELETE+GD_UPDATE
@@ -221,13 +227,14 @@ Local aColsIni := {}
 cQuery := " SELECT C7_NUM,C7_ITEM, C7_QUANT,(C7_QUANT - C7_QUJE) AS C7SALDO "
 cQuery += " FROM " +RetSqlName("SC7")+ " SC7, "+RetSqlName("SA5") + " SA5 "
 cQuery += " WHERE     C7_FORNECE = '"+_cCodFOR + "' AND C7_LOJA = '"+_cLojFOR +"' "
-cQuery += "      AND C7_ENCER <> 'E' "
+cQuery += "       AND C7_ENCER <> 'E' "
 cQuery += " 	  AND ((C7_QUANT-C7_QUJE) > 0) " 
 cQuery += " 	  AND C7_CONAPRO <> 'B' "
 cQuery += " 	  AND C7_RESIDUO  = '' "
 cQuery += "       AND A5_FORNECE=C7_FORNECE AND A5_LOJA=C7_LOJA " 
 cQuery += " 	  AND C7_PRODUTO=A5_PRODUTO "
-cQuery += " 	  AND A5_CODPRF <> '' "
+cQuery += " 	  AND A5_CODPRF = '"+aCols[n,3] +"' "    // Posição do Produto XML no Array
+cQuery += " 	  AND A5_FILIAL = '' "                   // Somente xonsiderar Filial em Branco.  Filial 01 foi descontinuado, mas ainda está gravado na base
 cQuery += " 	  AND  SC7.D_E_L_E_T_ = '' AND SA5.D_E_L_E_T_='' "
 
 
@@ -238,6 +245,8 @@ If Select("TEMP001") <> 0
 EndIf
 
 TCQUERY cQuery NEW ALIAS "TEMP001"
+
+
 
 While !TEMP001->( EOF() )
 	
@@ -315,8 +324,8 @@ Return .T.
 Static Function fOk(aHeaderNew, cCpoRet, cCpoPara, lRetorno)
 
 &("M->"+cCpoPara) := __oGdItm99:acols[	__oGdItm99:oBrowse:nat , aScan(aHeaderNew, { |aVet| Alltrim(aVet[2]) == cCpoRet } ) ]
-__cRetorn		  :=  __oGdItm99:acols[	__oGdItm99:oBrowse:nat , aScan(aHeaderNew, { |aVet| Alltrim(aVet[2]) == cCpoRet } ) ]
-
+__cRetorn		  :=  __oGdItm99:acols[	__oGdItm99:oBrowse:nat , aScan(aHeaderNew, { |aVet| Alltrim(aVet[2]) == cCpoRet } ) ]  
+__cRetorn2		  :=  __oGdItm99:acols[	__oGdItm99:oBrowse:nat , aScan(aHeaderNew, { |aVet| Alltrim(aVet[2]) == cCpoRet2 } ) ]  
 lRetorno := .T.
       
 oDialg:End()

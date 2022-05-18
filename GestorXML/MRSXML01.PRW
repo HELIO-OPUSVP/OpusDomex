@@ -243,6 +243,7 @@ Return(nRet)
 "Gestor XML  -  V5.01 / 22.09.21" - Entrada de DOMEX Filial sem Pedido de Compra   
 "Gestor XML  -  V5.02 / 16.02.22" - Tratamento para Filtras XML somente da Filial Logada   
 "Gestor XML  -  V5.03 / 17.03.22" - Tratamento para PRECO UNITARIO DIVERGENTE   
+"Gestor XML  -  V5.04 / 18.05.22" - Grava flag na ZZ6_ORIGEM   
 
 */
 
@@ -264,7 +265,7 @@ Static Function GerXmlNF()
 	Private _lTESOK   	:= .T.
 	Private _lDmxFilial := .F.   // MAURESI - 16/02/2022
 
-	Private cTitCad  		:= "Gestor XML  -  V5.03 / 17.03.22"
+	Private cTitCad  		:= "Gestor XML  -  V5.04 / 18.05.22"
 	Private cStrCad  		:= ""
 	Private cCadastro		:= ""
 	Private aRotina  		:= fMenu()
@@ -8837,6 +8838,8 @@ Static Function fSalvaZZ3()
 				(cTab3)->&(cAls3+"_PEDIDO") := oXXGetDad:aCols[x][nXXPEDIDO]
 				(cTab3)->&(cAls3+"_ITEMPC") := oXXGetDad:aCols[x][nXXITEMPC]
 				(cTab3)->&(cAls3+"_QTD")    := oXXGetDad:aCols[x][nXXQTD1]
+				(cTab3)->&(cAls3+"_ORIGEM") :=  "G" // G=Gestor I=Interno(Portal) P=Portal Fornecedor			
+
 				(cTab3)->( msUnlock() )
 			EndIf
 		EndIf
