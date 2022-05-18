@@ -2048,7 +2048,7 @@ User Function fItensNFS()
     oGDAnexo:aCols := {}
 
 	cQry := ''
-	cQry += " Select F2_DOC As NOTA, D2_ITEM As ITEM, D2_COD As CODIGO, D2_QUANT As QTDE, C6_NUMOP+C6_ITEMOP As OP"
+	cQry += " Select F2_DOC As NOTA, D2_ITEM As ITEM, D2_COD As CODIGO, D2_QUANT As QTDE, C6_NUM As PV"
 	cQry += " From SF2010 SF2 With(Nolock)"
 	cQry += " Inner Join SD2010 SD2 With(Nolock) On D2_FILIAL = F2_FILIAL And D2_DOC = F2_DOC And D2_SERIE = F2_SERIE And SD2.D_E_L_E_T_ = ''"
 	cQry += " Left Outer Join SC6010 SC6 With(Nolock) On C6_FILIAL = D2_FILIAL And C6_NUM = D2_PEDIDO And C6_ITEM = D2_ITEMPV"
@@ -2078,7 +2078,7 @@ User Function fItensNFS()
 			P14->P14_ITEM   := NFS->ITEM
 			P14->P14_COD    := NFS->CODIGO
 			P14->P14_QTDORI := NFS->QTDE
-			P14->P14_OFORIG := NFS->OP
+			P14->P14_OFORIG := NFS->PV
 			MsUnLock("P14")
 
 		//	aAdd(oGdAnexo:aCols,{NFS->NOTA,NFS->ITEM,NFS->OP,NFS->CODIGO,NFS->QTDE,0,'',.F.})
