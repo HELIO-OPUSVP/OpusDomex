@@ -119,241 +119,246 @@ User Function XMtLegP12()
 Return
 
 
-//Static Function fCriaSX()
+Static Function fCriaSX()
 
 //Cria Tabela
-//	fCriaSX2()
+	fCriaSX2()
 //Cria Campos
-//	fCriaSX3()
+	fCriaSX3()
 //Cria Indice
-//	fCriaSIX()
+	fCriaSIX()
 
-//Return
+Return
 
-//Static Function fCriaSX2()
+Static Function fCriaSX2()
 
-//	Local cPath  := ""
-//	Local cNome  := ""
-//	Local aEstrut:= {}
-//	Local aSX2   := {}
-//	Local i      := 0
-//	Local j      := 0
+	Local cPath  := ""
+	Local cNome  := ""
+	Local aEstrut:= {}
+	Local aSX2   := {}
+	Local i      := 0
+	Local j      := 0
 
-//	aEstrut := {"X2_CHAVE","X2_PATH"   ,"X2_ARQUIVO","X2_NOME"                       ,"X2_NOMESPA"                    ,"X2_NOMEENG"                    ,"X2_DELET","X2_MODO","X2_MODOUN","X2_MODOEMP","X2_TTS","X2_ROTINA","X2_PYME","X2_UNICO"}
-//	Aadd(aSX2, {"P12"     ,""          ,""          ,"Registro Ocorrencia - Cabecalho"      ,"Registro Ocorrencia - Cabecalho"      ,"Registro Ocorrencia - Cabecalho"      ,0         ,"C"      ,"C"        ,"C"         ,""      ,""         ,"N"      ,""        })
-//	Aadd(aSX2, {"P13"     ,""          ,""          ,"Registro Ocorrencia - Itens"     ,"Registro Ocorrencia - Itens"     ,"Registro Ocorrencia - Itens"     ,0         ,"C"      ,"C"        ,"C"         ,""      ,""         ,"N"      ,""        })
-//	Aadd(aSX2, {"P14"     ,""          ,""          ,"Service Desk - Anexos"         ,"Service Desk - Anexos"         ,"Service Desk - Anexos"         ,0         ,"C"      ,"C"        ,"C"         ,""      ,""         ,"N"      ,""        })
+	aEstrut := {"X2_CHAVE","X2_PATH"   ,"X2_ARQUIVO","X2_NOME"                       ,"X2_NOMESPA"                    ,"X2_NOMEENG"                    ,"X2_DELET","X2_MODO","X2_MODOUN","X2_MODOEMP","X2_TTS","X2_ROTINA","X2_PYME","X2_UNICO"}
+	Aadd(aSX2, {"P12"     ,""          ,""          ,"Registro Ocorrencia - Cabecalho"      ,"Registro Ocorrencia - Cabecalho"      ,"Registro Ocorrencia - Cabecalho"      ,0         ,"C"      ,"C"        ,"C"         ,""      ,""         ,"N"      ,""        })
+	Aadd(aSX2, {"P13"     ,""          ,""          ,"Registro Ocorrencia - Itens"     ,"Registro Ocorrencia - Itens"     ,"Registro Ocorrencia - Itens"     ,0         ,"C"      ,"C"        ,"C"         ,""      ,""         ,"N"      ,""        })
+	Aadd(aSX2, {"P14"     ,""          ,""          ,"Service Desk - Anexos"         ,"Service Desk - Anexos"         ,"Service Desk - Anexos"         ,0         ,"C"      ,"C"        ,"C"         ,""      ,""         ,"N"      ,""        })
+//	Aadd(aSX2, {"SZM"     ,""          ,""          ,"Service Desk - Cad. Categorias","Service Desk - Cad. Categorias","Service Desk - Cad. Categorias",0         ,"C"      ,"C"        ,"C"         ,""      ,""         ,"N"      ,""        })
 
-//	dbSelectArea("SX2")
-//	dbSetOrder(1)
-//	dbSeek("SA1")
+	dbSelectArea("SX2")
+	dbSetOrder(1)
+	dbSeek("SA1")
 
-//	cPath := SX2->X2_PATH
-//	cNome := Substr(SX2->X2_ARQUIVO,4,5)
+	cPath := SX2->X2_PATH
+	cNome := Substr(SX2->X2_ARQUIVO,4,5)
 
-//	For i:= 1 To Len(aSX2)
-//		If !Empty(aSX2[i][1])
-//			If !dbSeek(aSX2[i,1])
-//				RecLock("SX2",.T.)
-//				For j:=1 To Len(aSX2[i])
-//					If FieldPos(aEstrut[j]) > 0
-//						FieldPut(FieldPos(aEstrut[j]),aSX2[i,j])
-//					EndIf
-//				Next j
-//				SX2->X2_PATH    := cPath
-//				SX2->X2_ARQUIVO := aSX2[i,1]+cNome
-//				dbCommit()
-//				MsUnLock()
-//			EndIf
-//		EndIf
-//	Next i
+	For i:= 1 To Len(aSX2)
+		If !Empty(aSX2[i][1])
+			If !dbSeek(aSX2[i,1])
+				RecLock("SX2",.T.)
+				For j:=1 To Len(aSX2[i])
+					If FieldPos(aEstrut[j]) > 0
+						FieldPut(FieldPos(aEstrut[j]),aSX2[i,j])
+					EndIf
+				Next j
+				SX2->X2_PATH    := cPath
+				SX2->X2_ARQUIVO := aSX2[i,1]+cNome
+				dbCommit()
+				MsUnLock()
+			EndIf
+		EndIf
+	Next i
 
-//Return
+Return
 
-//Static Function fCriaSX3()
+Static Function fCriaSX3()
 
-//	Local aSX3       := {}
-//	Local cAlias     := ""
-//	Local aEstrut    := {}
-//	Local aCampos    := {}
-//	Local i          := 0
-//	Local j          := 0
-//	Local lCriaPerg  := .F.
+	Local aSX3       := {}
+	Local cAlias     := ""
+	Local aEstrut    := {}
+	Local aCampos    := {}
+	Local i          := 0
+	Local j          := 0
+	Local lCriaPerg  := .F.
 
-//	Local cStatus    := "1=Em Andamento;2=Fechado"
-//	Local cSitiac    := "T=Aguardando Técnico;S=Aguardando Solicitante;R=Resolvido;C=Cancelado"
-//	Local cPriori    := "A=Alta(Sem Solucao de Contorno);M=Media(Com Solucao de Contorno);B=Baixa(Melhoria)"
+	Local cStatus    := "1=Em Andamento;2=Fechado"
+	Local cSitiac    := "T=Aguardando Técnico;S=Aguardando Solicitante;R=Resolvido;C=Cancelado"
+	Local cPriori    := "A=Alta(Sem Solucao de Contorno);M=Media(Com Solucao de Contorno);B=Baixa(Melhoria)"
 
-////P12 - TABELA
-////             X3_CAMPO   ,X3_TIPO  ,X3_TAMANHO   ,X3_DECIMAL   ,X3_TITULO     ,X3_PICTURE,   X3_CBOX                        ,X3_F3         ,HELP                                     ,                                         ,                                         ,
-//	aCampos := {}
-//	aAdd(aCampos,{"P12_FILIAL" ,"C"      ,2           ,0            ,"Filial      ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P12_NUM   " ,"C"      ,6           ,0            ,"Num. Chamado","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P12_DATA  " ,"D"      ,8           ,0            ,"Dt Inclusão ","@D"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P12_HORA  " ,"C"      ,5           ,0            ,"Hr Inclusão ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P12_CLIENT" ,"C"      ,6           ,0            ,"Cliente     ","@!"      ,   ""                             ,"SA1"         ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P12_LOJA  " ,"C"      ,2           ,0            ,"Loja        ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P12_NFSAI " ,"C"      ,9           ,0            ,"N Fis. Saída","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P12_SERIE " ,"C"      ,3           ,0            ,"Série NF    ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P12_STATUS" ,"C"      ,1           ,0            ,"Status      ","@!"      ,   cStatus                        ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P12_DESCRI" ,"C"      ,80          ,0            ,"Descrição   ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-
-
-////Conforme array acima, monta array abaixo
-//	aEstrut :=      { "X3_ARQUIVO" ,"X3_ORDEM"   ,"X3_CAMPO"    ,"X3_TIPO"     ,"X3_TAMANHO"  ,"X3_DECIMAL"  ,"X3_TITULO"    ,"X3_TITSPA"    ,"X3_TITENG"    ,"X3_DESCRIC"   ,"X3_DESCSPA"   ,"X3_DESCENG"   ,"X3_PICTURE"         ,"X3_VALID"                              ,"X3_USADO"          ,"X3_RELACAO" ,"X3_F3"      ,"X3_NIVEL","X3_RESERV" ,"X3_CHECK"  ,"X3_TRIGGER","X3_PROPRI" ,"X3_BROWSE"  ,"X3_VISUAL","X3_CONTEXT" ,"X3_OBRIGAT","X3_VLDUSER" ,"X3_CBOX"     ,"X3_CBOXSPA"  ,"X3_CBOXENG"  ,"X3_PICTVAR","X3_WHEN","X3_INIBRW","X3_GRPSXG","X3_FOLDER","X3_PYME","X3_CONDSQL"}
-//	For x:=1 To Len(aCampos)
-//		///cAlias := "S"+SubStr(aCampos[x][1],1,2)
-//		cAlias := SubStr(aCampos[x][1],1,3)
-//		If aCampos[x][1] $ "P12_FILIAL"
-//			Aadd(aSX3,{	cAlias       ,StrZero(x,2) ,aCampos[x][1] ,aCampos[x][2] ,aCampos[x][3] ,aCampos[x][4] ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][6]        ,"                                      ","€€€€€€€€€€€€€€€   ","           ",aCampos[x][8],1         ,"          ","          ","          ","P         ","N          ","A        ","R          ","          ","           ",aCampos[x][7] ,aCampos[x][7] ,aCampos[x][7] ,"          ","       ","         ","         ","         ","       ","          "})
-//		Else
-//			Aadd(aSX3,{	cAlias       ,StrZero(x,2) ,aCampos[x][1] ,aCampos[x][2] ,aCampos[x][3] ,aCampos[x][4] ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][6]        ,"                                      ","€€€€€€€€€€€€€€    ","           ",aCampos[x][8],1         ,"          ","          ","          ","P         ","S          ","A        ","R          ","          ","           ",aCampos[x][7] ,aCampos[x][7] ,aCampos[x][7] ,"          ","       ","         ","         ","         ","       ","          "})
-//		EndIF
-//	Next
-
-////P13 - TABELA
-////             X3_CAMPO   ,X3_TIPO  ,X3_TAMANHO   ,X3_DECIMAL   ,X3_TITULO     ,X3_PICTURE,   X3_CBOX                        ,X3_F3         ,HELP
-//	aCampos := {}
-//	aAdd(aCampos,{"P13_FILIAL" ,"C"      ,2            ,0            ,"Filial      ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P13_NUM   " ,"C"      ,6            ,0            ,"Num. Chamado","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P13_ITEM  " ,"C"      ,2            ,0            ,"Item        ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P13_NFORI"   ,"C"     ,09           ,2            ,"Nota Fiscal"	 ,""     ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P13_SERIE"   ,"C"     ,03           ,2            ,"Serie"	 ,"@!"     ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P13_DTEMIS"  ,"D"     ,08           ,2            ,"Dt Emissao"	 ,""     ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+//P12 - TABELA
+//             X3_CAMPO   ,X3_TIPO  ,X3_TAMANHO   ,X3_DECIMAL   ,X3_TITULO     ,X3_PICTURE,   X3_CBOX                        ,X3_F3         ,HELP                                     ,                                         ,                                         ,
+	aCampos := {}
+	aAdd(aCampos,{"P12_FILIAL" ,"C"      ,2           ,0            ,"Filial      ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P12_NUM   " ,"C"      ,6           ,0            ,"Num. Chamado","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P12_DATA  " ,"D"      ,8           ,0            ,"Dt Inclusão ","@D"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P12_HORA  " ,"C"      ,5           ,0            ,"Hr Inclusão ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P12_CLIENT" ,"C"      ,6           ,0            ,"Cliente     ","@!"      ,   ""                             ,"SA1"         ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P12_LOJA  " ,"C"      ,2           ,0            ,"Loja        ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P12_NFSAI " ,"C"      ,9           ,0            ,"N Fis. Saída","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P12_SERIE " ,"C"      ,3           ,0            ,"Série NF    ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P12_STATUS" ,"C"      ,1           ,0            ,"Status      ","@!"      ,   cStatus                        ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P12_DESCRI" ,"C"      ,80          ,0            ,"Descrição   ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
 
 
-////Conforme array acima, monta array abaixo
-//	aEstrut :=      { "X3_ARQUIVO" ,"X3_ORDEM"   ,"X3_CAMPO"    ,"X3_TIPO"     ,"X3_TAMANHO"  ,"X3_DECIMAL"  ,"X3_TITULO"    ,"X3_TITSPA"    ,"X3_TITENG"    ,"X3_DESCRIC"   ,"X3_DESCSPA"   ,"X3_DESCENG"   ,"X3_PICTURE"         ,"X3_VALID"                              ,"X3_USADO"          ,"X3_RELACAO" ,"X3_F3"      ,"X3_NIVEL","X3_RESERV" ,"X3_CHECK"  ,"X3_TRIGGER","X3_PROPRI" ,"X3_BROWSE"  ,"X3_VISUAL","X3_CONTEXT" ,"X3_OBRIGAT","X3_VLDUSER" ,"X3_CBOX"     ,"X3_CBOXSPA"  ,"X3_CBOXENG"  ,"X3_PICTVAR","X3_WHEN","X3_INIBRW","X3_GRPSXG","X3_FOLDER","X3_PYME","X3_CONDSQL"}
-//	For x:=1 To Len(aCampos)
-//		///cAlias := "S"+SubStr(aCampos[x][1],1,2)
-//		cAlias := SubStr(aCampos[x][1],1,3)
-//		If aCampos[x][1] $ "P13_FILIAL/P13_NUM"
-//			Aadd(aSX3,{	cAlias       ,StrZero(x,2) ,aCampos[x][1] ,aCampos[x][2] ,aCampos[x][3] ,aCampos[x][4] ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][6]        ,"                                      ","€€€€€€€€€€€€€€€   ","           ",aCampos[x][8],1         ,"          ","          ","          ","P         ","N          ","A        ","R          ","          ","           ",aCampos[x][7] ,aCampos[x][7] ,aCampos[x][7] ,"          ","       ","         ","         ","         ","       ","          "})
-//		Else
-//			Aadd(aSX3,{	cAlias       ,StrZero(x,2) ,aCampos[x][1] ,aCampos[x][2] ,aCampos[x][3] ,aCampos[x][4] ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][6]        ,"                                      ","€€€€€€€€€€€€€€    ","           ",aCampos[x][8],1         ,"          ","          ","          ","P         ","S          ","A        ","R          ","          ","           ",aCampos[x][7] ,aCampos[x][7] ,aCampos[x][7] ,"          ","       ","         ","         ","         ","       ","          "})
-//		EndIF
-//	Next
+//Conforme array acima, monta array abaixo
+	aEstrut :=      { "X3_ARQUIVO" ,"X3_ORDEM"   ,"X3_CAMPO"    ,"X3_TIPO"     ,"X3_TAMANHO"  ,"X3_DECIMAL"  ,"X3_TITULO"    ,"X3_TITSPA"    ,"X3_TITENG"    ,"X3_DESCRIC"   ,"X3_DESCSPA"   ,"X3_DESCENG"   ,"X3_PICTURE"         ,"X3_VALID"                              ,"X3_USADO"          ,"X3_RELACAO" ,"X3_F3"      ,"X3_NIVEL","X3_RESERV" ,"X3_CHECK"  ,"X3_TRIGGER","X3_PROPRI" ,"X3_BROWSE"  ,"X3_VISUAL","X3_CONTEXT" ,"X3_OBRIGAT","X3_VLDUSER" ,"X3_CBOX"     ,"X3_CBOXSPA"  ,"X3_CBOXENG"  ,"X3_PICTVAR","X3_WHEN","X3_INIBRW","X3_GRPSXG","X3_FOLDER","X3_PYME","X3_CONDSQL"}
+	For x:=1 To Len(aCampos)
+		///cAlias := "S"+SubStr(aCampos[x][1],1,2)
+		cAlias := SubStr(aCampos[x][1],1,3)
+		If aCampos[x][1] $ "P12_FILIAL"
+			Aadd(aSX3,{	cAlias       ,StrZero(x,2) ,aCampos[x][1] ,aCampos[x][2] ,aCampos[x][3] ,aCampos[x][4] ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][6]        ,"                                      ","€€€€€€€€€€€€€€€   ","           ",aCampos[x][8],1         ,"          ","          ","          ","P         ","N          ","A        ","R          ","          ","           ",aCampos[x][7] ,aCampos[x][7] ,aCampos[x][7] ,"          ","       ","         ","         ","         ","       ","          "})
+		Else
+			Aadd(aSX3,{	cAlias       ,StrZero(x,2) ,aCampos[x][1] ,aCampos[x][2] ,aCampos[x][3] ,aCampos[x][4] ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][6]        ,"                                      ","€€€€€€€€€€€€€€    ","           ",aCampos[x][8],1         ,"          ","          ","          ","P         ","S          ","A        ","R          ","          ","           ",aCampos[x][7] ,aCampos[x][7] ,aCampos[x][7] ,"          ","       ","         ","         ","         ","       ","          "})
+		EndIF
+	Next
 
-////P14 - TABELA
-////             X3_CAMPO   ,X3_TIPO  ,X3_TAMANHO   ,X3_DECIMAL   ,X3_TITULO     ,X3_PICTURE,   X3_CBOX                        ,X3_F3         ,HELP
-//	aCampos := {}
-//	aAdd(aCampos,{"P14_FILIAL" ,"C"      ,2            ,0            ,"Filial      ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P14_NUM",	"C"      ,6            ,0            ,"Num. Registro","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P14_NFORI"   ,"C"     ,09           ,2            ,"Nota Fiscal"	 ,""     ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P14_ITEM",	"C"      ,2            ,0            ,"N. Item"    ,"@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P14_QTDORI" ,"N"      ,11           ,2            ,"Qtde Total NF",""       ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P14_QTDNCF" ,"N"      ,11           ,2            ,"Qtde Não Conf",""       ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P14_DATA"   ,"D"      ,8            ,0            ,"Data"        ,"@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P14_HORA"   ,"C"      ,5            ,0            ,"Hora"        ,"@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-//	aAdd(aCampos,{"P14_OCORR",	"C"      ,50           ,0            ,"Ocorrência"     ,""      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
-////Conforme array acima, monta array abaixo
-//	aEstrut :=      { "X3_ARQUIVO" ,"X3_ORDEM"   ,"X3_CAMPO"    ,"X3_TIPO"     ,"X3_TAMANHO"  ,"X3_DECIMAL"  ,"X3_TITULO"    ,"X3_TITSPA"    ,"X3_TITENG"    ,"X3_DESCRIC"   ,"X3_DESCSPA"   ,"X3_DESCENG"   ,"X3_PICTURE"         ,"X3_VALID"                              ,"X3_USADO"          ,"X3_RELACAO" ,"X3_F3"      ,"X3_NIVEL","X3_RESERV" ,"X3_CHECK"  ,"X3_TRIGGER","X3_PROPRI" ,"X3_BROWSE"  ,"X3_VISUAL","X3_CONTEXT" ,"X3_OBRIGAT","X3_VLDUSER" ,"X3_CBOX"     ,"X3_CBOXSPA"  ,"X3_CBOXENG"  ,"X3_PICTVAR","X3_WHEN","X3_INIBRW","X3_GRPSXG","X3_FOLDER","X3_PYME","X3_CONDSQL"}
-//	For x:=1 To Len(aCampos)
-//		cAlias := SubStr(aCampos[x][1],1,3)
-//		If aCampos[x][1] $ "P14_FILIAL/P14_NUM"
-//			Aadd(aSX3,{	cAlias       ,StrZero(x,2) ,aCampos[x][1] ,aCampos[x][2] ,aCampos[x][3] ,aCampos[x][4] ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][6]        ,"                                      ","€€€€€€€€€€€€€€€   ","           ",aCampos[x][8],1         ,"          ","          ","          ","P         ","N          ","A        ","R          ","          ","           ",aCampos[x][7] ,aCampos[x][7] ,aCampos[x][7] ,"          ","       ","         ","         ","         ","       ","          "})
-//		Else
-//			Aadd(aSX3,{	cAlias       ,StrZero(x,2) ,aCampos[x][1] ,aCampos[x][2] ,aCampos[x][3] ,aCampos[x][4] ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][6]        ,"                                      ","€€€€€€€€€€€€€€    ","           ",aCampos[x][8],1         ,"          ","          ","          ","P         ","S          ","A        ","R          ","          ","           ",aCampos[x][7] ,aCampos[x][7] ,aCampos[x][7] ,"          ","       ","         ","         ","         ","       ","          "})
-//		EndIF
-//	Next
+//P13 - TABELA
+//             X3_CAMPO   ,X3_TIPO  ,X3_TAMANHO   ,X3_DECIMAL   ,X3_TITULO     ,X3_PICTURE,   X3_CBOX                        ,X3_F3         ,HELP
+	aCampos := {}
+	aAdd(aCampos,{"P13_FILIAL" ,"C"      ,2            ,0            ,"Filial      ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P13_NUM   " ,"C"      ,6            ,0            ,"Num. Chamado","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P13_ITEM  " ,"C"      ,2            ,0            ,"Item        ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	//aAdd(aCampos,{"P13_COD   " ,"C"      ,15           ,0            ,"Produto     ","@!"      ,   ""                             ,"SB1"         ,{""                                        ,""                                       ,""                                       } })
+	//aAdd(aCampos,{"P13_QTDTOT" ,"N"      ,11           ,2            ,"Qtde Total NF",""       ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	//aAdd(aCampos,{"P13_QTDNCF" ,"N"      ,11           ,2            ,"Qtde Não Conf",""       ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	//aAdd(aCampos,{"P13_DESCRI"  ,"C"     ,50           ,2            ,"Descrição"	 ,"@!"     ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P13_NFORI"   ,"C"     ,09           ,2            ,"Nota Fiscal"	 ,""     ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P13_SERIE"   ,"C"     ,03           ,2            ,"Serie"	 ,"@!"     ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P13_DTEMIS"  ,"D"     ,08           ,2            ,"Dt Emissao"	 ,""     ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
 
-//	dbSelectArea("SX3")
-//	dbSetOrder(2)
 
-//	For i:= 1 To Len(aSX3)
-//		If !Empty(aSX3[i][1])
-//			If !dbSeek(aSX3[i,3])
-//				RecLock("SX3",.T.)
-//				For j:=1 To Len(aSX3[i])
-//					If FieldPos(aEstrut[j])>0
-//						FieldPut(FieldPos(aEstrut[j]),aSX3[i,j])
-//					EndIf
-//				Next j
-//				dbCommit()
-//				MsUnLock()
-//				lCriaPerg := .T.
-//			EndIf
-//		EndIf
-//	Next i
+//Conforme array acima, monta array abaixo
+	aEstrut :=      { "X3_ARQUIVO" ,"X3_ORDEM"   ,"X3_CAMPO"    ,"X3_TIPO"     ,"X3_TAMANHO"  ,"X3_DECIMAL"  ,"X3_TITULO"    ,"X3_TITSPA"    ,"X3_TITENG"    ,"X3_DESCRIC"   ,"X3_DESCSPA"   ,"X3_DESCENG"   ,"X3_PICTURE"         ,"X3_VALID"                              ,"X3_USADO"          ,"X3_RELACAO" ,"X3_F3"      ,"X3_NIVEL","X3_RESERV" ,"X3_CHECK"  ,"X3_TRIGGER","X3_PROPRI" ,"X3_BROWSE"  ,"X3_VISUAL","X3_CONTEXT" ,"X3_OBRIGAT","X3_VLDUSER" ,"X3_CBOX"     ,"X3_CBOXSPA"  ,"X3_CBOXENG"  ,"X3_PICTVAR","X3_WHEN","X3_INIBRW","X3_GRPSXG","X3_FOLDER","X3_PYME","X3_CONDSQL"}
+	For x:=1 To Len(aCampos)
+		///cAlias := "S"+SubStr(aCampos[x][1],1,2)
+		cAlias := SubStr(aCampos[x][1],1,3)
+		If aCampos[x][1] $ "P13_FILIAL/P13_NUM"
+			Aadd(aSX3,{	cAlias       ,StrZero(x,2) ,aCampos[x][1] ,aCampos[x][2] ,aCampos[x][3] ,aCampos[x][4] ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][6]        ,"                                      ","€€€€€€€€€€€€€€€   ","           ",aCampos[x][8],1         ,"          ","          ","          ","P         ","N          ","A        ","R          ","          ","           ",aCampos[x][7] ,aCampos[x][7] ,aCampos[x][7] ,"          ","       ","         ","         ","         ","       ","          "})
+		Else
+			Aadd(aSX3,{	cAlias       ,StrZero(x,2) ,aCampos[x][1] ,aCampos[x][2] ,aCampos[x][3] ,aCampos[x][4] ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][6]        ,"                                      ","€€€€€€€€€€€€€€    ","           ",aCampos[x][8],1         ,"          ","          ","          ","P         ","S          ","A        ","R          ","          ","           ",aCampos[x][7] ,aCampos[x][7] ,aCampos[x][7] ,"          ","       ","         ","         ","         ","       ","          "})
+		EndIF
+	Next
 
-////Cria Help dos campos
-//	If lCriaPerg
-//		fHelpCpo(aCampos,1,9)
-//	EndIf
+//P14 - TABELA
+//             X3_CAMPO   ,X3_TIPO  ,X3_TAMANHO   ,X3_DECIMAL   ,X3_TITULO     ,X3_PICTURE,   X3_CBOX                        ,X3_F3         ,HELP
+	aCampos := {}
+	aAdd(aCampos,{"P14_FILIAL" ,"C"      ,2            ,0            ,"Filial      ","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P14_NUM",	"C"      ,6            ,0            ,"Num. Registro","@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P14_NFORI"   ,"C"     ,09           ,2            ,"Nota Fiscal"	 ,""     ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P14_ITEM",	"C"      ,2            ,0            ,"N. Item"    ,"@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P14_QTDORI" ,"N"      ,11           ,2            ,"Qtde Total NF",""       ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P14_QTDNCF" ,"N"      ,11           ,2            ,"Qtde Não Conf",""       ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P14_DATA"   ,"D"      ,8            ,0            ,"Data"        ,"@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P14_HORA"   ,"C"      ,5            ,0            ,"Hora"        ,"@!"      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+	aAdd(aCampos,{"P14_OCORR",	"C"      ,50           ,0            ,"Ocorrência"     ,""      ,   ""                             ,""            ,{""                                        ,""                                       ,""                                       } })
+//Conforme array acima, monta array abaixo
+	aEstrut :=      { "X3_ARQUIVO" ,"X3_ORDEM"   ,"X3_CAMPO"    ,"X3_TIPO"     ,"X3_TAMANHO"  ,"X3_DECIMAL"  ,"X3_TITULO"    ,"X3_TITSPA"    ,"X3_TITENG"    ,"X3_DESCRIC"   ,"X3_DESCSPA"   ,"X3_DESCENG"   ,"X3_PICTURE"         ,"X3_VALID"                              ,"X3_USADO"          ,"X3_RELACAO" ,"X3_F3"      ,"X3_NIVEL","X3_RESERV" ,"X3_CHECK"  ,"X3_TRIGGER","X3_PROPRI" ,"X3_BROWSE"  ,"X3_VISUAL","X3_CONTEXT" ,"X3_OBRIGAT","X3_VLDUSER" ,"X3_CBOX"     ,"X3_CBOXSPA"  ,"X3_CBOXENG"  ,"X3_PICTVAR","X3_WHEN","X3_INIBRW","X3_GRPSXG","X3_FOLDER","X3_PYME","X3_CONDSQL"}
+	For x:=1 To Len(aCampos)
+		cAlias := SubStr(aCampos[x][1],1,3)
+		If aCampos[x][1] $ "P14_FILIAL/P14_NUM"
+			Aadd(aSX3,{	cAlias       ,StrZero(x,2) ,aCampos[x][1] ,aCampos[x][2] ,aCampos[x][3] ,aCampos[x][4] ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][6]        ,"                                      ","€€€€€€€€€€€€€€€   ","           ",aCampos[x][8],1         ,"          ","          ","          ","P         ","N          ","A        ","R          ","          ","           ",aCampos[x][7] ,aCampos[x][7] ,aCampos[x][7] ,"          ","       ","         ","         ","         ","       ","          "})
+		Else
+			Aadd(aSX3,{	cAlias       ,StrZero(x,2) ,aCampos[x][1] ,aCampos[x][2] ,aCampos[x][3] ,aCampos[x][4] ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][5]  ,aCampos[x][6]        ,"                                      ","€€€€€€€€€€€€€€    ","           ",aCampos[x][8],1         ,"          ","          ","          ","P         ","S          ","A        ","R          ","          ","           ",aCampos[x][7] ,aCampos[x][7] ,aCampos[x][7] ,"          ","       ","         ","         ","         ","       ","          "})
+		EndIF
+	Next
 
-//Return
+	dbSelectArea("SX3")
+	dbSetOrder(2)
 
-//Static Function fHelpCpo(aCampos,nPosCpo,nPosHelp)
+	For i:= 1 To Len(aSX3)
+		If !Empty(aSX3[i][1])
+			If !dbSeek(aSX3[i,3])
+				RecLock("SX3",.T.)
+				For j:=1 To Len(aSX3[i])
+					If FieldPos(aEstrut[j])>0
+						FieldPut(FieldPos(aEstrut[j]),aSX3[i,j])
+					EndIf
+				Next j
+				dbCommit()
+				MsUnLock()
+				lCriaPerg := .T.
+			EndIf
+		EndIf
+	Next i
 
-//	Local x        := 00
-//	Local aHelpPor := {}
-//	Local aHelpEng := {}
-//	Local aHelpEsp := {}
+//Cria Help dos campos
+	If lCriaPerg
+		fHelpCpo(aCampos,1,9)
+	EndIf
 
-//	For x:=1 To Len(aCampos)
-//		aHelpPor := aCampos[x][nPosHelp]
-//		aHelpEng := aCampos[x][nPosHelp]
-//		aHelpEsp := aCampos[x][nPosHelp]
-//		PutHelp( "P"+aCampos[x][nPosCpo],aHelpPor, aHelpEng, aHelpEsp, .T. )
-//	Next x
+Return
 
-//Return
+Static Function fHelpCpo(aCampos,nPosCpo,nPosHelp)
 
-//Static Function fCriaSIX()
+	Local x        := 00
+	Local aHelpPor := {}
+	Local aHelpEng := {}
+	Local aHelpEsp := {}
 
-//	Local aSIX   := {}
-//	Local aEstrut:= {}
-//	Local i      := 0
-//	Local j      := 0
+	For x:=1 To Len(aCampos)
+		aHelpPor := aCampos[x][nPosHelp]
+		aHelpEng := aCampos[x][nPosHelp]
+		aHelpEsp := aCampos[x][nPosHelp]
+		PutHelp( "P"+aCampos[x][nPosCpo],aHelpPor, aHelpEng, aHelpEsp, .T. )
+	Next x
 
-//	aEstrut := {"INDICE","ORDEM","CHAVE","DESCRICAO","DESCSPA","DESCENG","PROPRI","F3","NICKNAME"}
+Return
+
+Static Function fCriaSIX()
+
+	Local aSIX   := {}
+	Local aEstrut:= {}
+	Local i      := 0
+	Local j      := 0
+
+	aEstrut := {"INDICE","ORDEM","CHAVE","DESCRICAO","DESCSPA","DESCENG","PROPRI","F3","NICKNAME"}
 
 //------------------- P12 -------------------
-//	Aadd(aSIX,{	"P12","1","P12_FILIAL+P12_NUM",;
-//		"Numero ",;
-//		"Numero ",;
-//		"Numero ",;
-//		"S","",""})
+	Aadd(aSIX,{	"P12","1","P12_FILIAL+P12_NUM",;
+		"Numero ",;
+		"Numero ",;
+		"Numero ",;
+		"S","",""})
 
-//	Aadd(aSIX,{	"P12","2","P12_FILIAL+P12_CLIENT",;
-//		"Cliente ",;
-//		"Cliente ",;
-//		"Cliente ",;
-//		"S","",""})
+	Aadd(aSIX,{	"P12","2","P12_FILIAL+P12_CLIENT",;
+		"Cliente ",;
+		"Cliente ",;
+		"Cliente ",;
+		"S","",""})
 
 //------------------- P13 -------------------
-//	Aadd(aSIX,{	"P13","1","P13_FILIAL+P13_NUM",;
-//		"Numero + Item + Cod.",;
-//		"Numero + Item + Cod.",;
-//		"Numero + Item + Cod.",;
-//		"S","",""})
+	Aadd(aSIX,{	"P13","1","P13_FILIAL+P13_NUM",;
+		"Numero + Item + Cod.",;
+		"Numero + Item + Cod.",;
+		"Numero + Item + Cod.",;
+		"S","",""})
 
 //------------------- P14 -------------------
-//	Aadd(aSIX,{	"P14","1","P14_FILIAL+P14_NUM+P14_NFORI+P14_ITEM",;
-//		"Num. Registro + Num. Item",;
-//		"Num. Registro + Num. Item",;
-//		"Num. Registro + Num. Item",;
-//		"S","",""})
+	Aadd(aSIX,{	"P14","1","P14_FILIAL+P14_NUM+P14_NFORI+P14_ITEM",;
+		"Num. Registro + Num. Item",;
+		"Num. Registro + Num. Item",;
+		"Num. Registro + Num. Item",;
+		"S","",""})
 
-//	dbSelectArea("SIX")
-//	dbSetOrder(1)
+	dbSelectArea("SIX")
+	dbSetOrder(1)
 
-//	For i:= 1 To Len(aSIX)
-//		If !Empty(aSIX[i,1])
-//			If !dbSeek(aSIX[i,1]+aSIX[i,2])
-//				RecLock("SIX",.T.)
-//				For j:=1 To Len(aSIX[i])
-//					If FieldPos(aEstrut[j])>0
-//						FieldPut(FieldPos(aEstrut[j]),aSIX[i,j])
-//					EndIf
-//				Next j
-//				dbCommit()
-//				MsUnLock()
-//			EndIf
-//		EndIf
-//	Next i
+	For i:= 1 To Len(aSIX)
+		If !Empty(aSIX[i,1])
+			If !dbSeek(aSIX[i,1]+aSIX[i,2])
+				RecLock("SIX",.T.)
+				For j:=1 To Len(aSIX[i])
+					If FieldPos(aEstrut[j])>0
+						FieldPut(FieldPos(aEstrut[j]),aSIX[i,j])
+					EndIf
+				Next j
+				dbCommit()
+				MsUnLock()
+			EndIf
+		EndIf
+	Next i
 
-//Return
+Return
 
 
 
@@ -395,33 +400,11 @@ User Function XMtVldP12(cCpoVld)
 			lRet := .F.
 		EndIf	
 
-		M->P12_TEMRET := U_fTempo()
-
 	EndCase
 
 Return(lRet)
 
 
-//Grava o tempo entre a data de emissão e a data de retorno ao cliente
-User Function fTempo()
-	Local nHH, nMM := 0
-	If (!Empty(M->P12_DTRET)) .And. (!Empty(M->P12_HRRET))
-		nHH := ((M->P12_DTRET - M->P12_DATA) * 24) + (Val(SubStr(M->P12_HRRET,1,2)) - Val(SubStr(M->P12_HORA,1,2)))
-		nMM := Val(SubStr(M->P12_HRRET,4,2)) - Val(SubStr(M->P12_HORA,4,2))
-
-		If nMM >= 0
-			nMM := nMM / 100
-			nHH := nHH + nMM
-		Else
-			nMM := nMM * (-1)
-			nHH := nHH - (nMM / 60)
-			nMM := nHH - Int(nHH)
-			nHH := Int(nHH) + (nMM * 60 / 100)
-		EndIf
-	
-	EndIf
-	
-Return(nHH)
 
 
 /*
@@ -534,8 +517,6 @@ User Function XMtCadP12(cAlias,nReg,nOpc)
 		INCLUI := .T.
 		ALTERA := .F.
 		EXCLUI := .F.
-		M->P12_DATA := dDataBase
-		M->P12_HORA := Time()
 	//	aAdd(aButtons,{"Documento",{||U_fItensNFS(cAlias, nReg, nOpc,,4,@aRetDoc)}, "Carregar Itens da Nota", "Carregar Itens da Nota"})
 	//	aAdd(aButtons,{"Documento",{||U_fItensNFS(nOpc)}, "Carregar Itens da Nota", "Carregar Itens da Nota"})
 
@@ -573,9 +554,8 @@ User Function XMtCadP12(cAlias,nReg,nOpc)
 	nPosInter := Len(aFolder)
 	//aAdd(aFolder	,"Anexos"       )
 	aAdd(aFolder	,"Itens da Nota Fiscal"  )
-	//nPosAnexo   := Len(aFolder)
-	nPosAnexo   :=  1
-	/////////////////nPosItensNf   := Len(aFolder)
+	nPosAnexo   := Len(aFolder)
+	/////////////////nPosItensNf   := Len(aFolder)-----aqui
 
 
 
@@ -754,7 +734,7 @@ Static Function fGDAnexo(hcOpc,nPosFolder,oGdAnexo)
 	cCpoSeek := "P14->P14_FILIAL+P14->P14_NUM"
 
 	//nQtdLnhs := 1
-	nQtdLnhs := 0
+	nQtdLnhs := 1
 	cVCampos := ""
 
 //Cria varias linhas em branco caso necessario
@@ -797,28 +777,28 @@ Return
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
-//Static Function fAbrirDoc()
+Static Function fAbrirDoc()
 
-//	Local cFileDes := ""
-//	Local cPathTmp := AllTrim(GetTempPath())
-//	Local nPosArqv := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_ARQUIVO" )})
+	Local cFileDes := ""
+	Local cPathTmp := AllTrim(GetTempPath())
+	Local nPosArqv := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_ARQUIVO" )})
 
-//	nLin := oGdAnexo:oBrowse:nAt
-//	cFileDes := AllTrim(oGdAnexo:aCols[nLin, nPosArqv])
-//	cPathTmp += SubStr(cFileDes,RAT('\',cFileDes)+1)
+	nLin := oGdAnexo:oBrowse:nAt
+	cFileDes := AllTrim(oGdAnexo:aCols[nLin, nPosArqv])
+	cPathTmp += SubStr(cFileDes,RAT('\',cFileDes)+1)
 
-//	If File(cPathTmp)
-//		fErase(cPathTmp)
-//	EndIf
-//	If File(cPathTmp)
-//		Alert("Arquivo já está aberto!")
-//		Return
-//	EndIf
+	If File(cPathTmp)
+		fErase(cPathTmp)
+	EndIf
+	If File(cPathTmp)
+		Alert("Arquivo já está aberto!")
+		Return
+	EndIf
 
-//	COPY File &cFileDes TO &cPathTmp
-//	ShellExecute("open",cPathTmp,"","", 5 )
+	COPY File &cFileDes TO &cPathTmp
+	ShellExecute("open",cPathTmp,"","", 5 )
 
-//Return
+Return
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
@@ -833,92 +813,92 @@ Return
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
-//Static Function fAnexar(cChamado)
+Static Function fAnexar(cChamado)
 
-//	Local cTipo 	:= "Todos os Arquivos (*.*)    | *.*    |"+;
-//		"Arquivos PDF (*.PDF)       | *.PDF  |"+;
-//		"Arquivos JPEG (*.JPG)      | *.JPG  |"+;
-//		"Arquivos do Word (*.DOCX)  | *.DOCX |"+;
-//		"Arquivos do Excel (*.XLSX) | *.XLSX |"
+	Local cTipo 	:= "Todos os Arquivos (*.*)    | *.*    |"+;
+		"Arquivos PDF (*.PDF)       | *.PDF  |"+;
+		"Arquivos JPEG (*.JPG)      | *.JPG  |"+;
+		"Arquivos do Word (*.DOCX)  | *.DOCX |"+;
+		"Arquivos do Excel (*.XLSX) | *.XLSX |"
 
-//	Local cTitulo	:= "Dialogo de Selecao de Arquivos"
-//	Local cDirIni	:= ""
-//	Local cDrive	:= ""
-//	Local cDir		:= ""
-//	Local cFile		:= ""
-//	Local cExten	:= ""
-//	Local cGetFile	:= cGetFile(cTipo,cTitulo,,cDirIni,.F.,GETF_LOCALHARD+GETF_NETWORKDRIVE)//GETF_ONLYSERVER+GETF_RETDIRECTORY+GETF_LOCALFLOPPY
-//	Local cNewFile	:= ""
+	Local cTitulo	:= "Dialogo de Selecao de Arquivos"
+	Local cDirIni	:= ""
+	Local cDrive	:= ""
+	Local cDir		:= ""
+	Local cFile		:= ""
+	Local cExten	:= ""
+	Local cGetFile	:= cGetFile(cTipo,cTitulo,,cDirIni,.F.,GETF_LOCALHARD+GETF_NETWORKDRIVE)//GETF_ONLYSERVER+GETF_RETDIRECTORY+GETF_LOCALFLOPPY
+	Local cNewFile	:= ""
 
-//	Local nPosItem := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_NUMINTE" )})
-//	Local nPosArqv := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_ARQUIVO" )})
-//	Local nPosData := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_DATA"    )})
-//	Local nPosHora := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_HORA"    )})
-//	Local nPosUser := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_USUARIO" )})
-//	Local nPosOrig := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_ORIGEM"  )})
+	Local nPosItem := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_NUMINTE" )})
+	Local nPosArqv := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_ARQUIVO" )})
+	Local nPosData := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_DATA"    )})
+	Local nPosHora := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_HORA"    )})
+	Local nPosUser := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_USUARIO" )})
+	Local nPosOrig := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_ORIGEM"  )})
 
 // Separa os componentes
-//	SplitPath( cGetFile, @cDrive, @cDir, @cFile, @cExten )
+	SplitPath( cGetFile, @cDrive, @cDir, @cFile, @cExten )
 
-//	If !Empty(cFile)
-//		If !File(cGetFile)
-//			Alert("Erro ao localizar arquivo origem!")
-//			Return
-//		EndIf
+	If !Empty(cFile)
+		If !File(cGetFile)
+			Alert("Erro ao localizar arquivo origem!")
+			Return
+		EndIf
 
-//		//Cria pasta caso não exita ainda
-//		// cSlvAnexos := "\ServiceDesk\Anexos\"
-//		MontaDir(cSlvAnexos+cChamado+"\")
+		//Cria pasta caso não exita ainda
+		// cSlvAnexos := "\ServiceDesk\Anexos\"
+		MontaDir(cSlvAnexos+cChamado+"\")
 
 		//Verifica Ultima Sequencia dos Anexos
-//		cNewFile := fNovoAnexo(cChamado,cExten)
+		cNewFile := fNovoAnexo(cChamado,cExten)
 
-//		cNewGetFile := cSlvAnexos+cChamado+"\"+cNewFile+cExten
-//		If File(cNewGetFile)
-//			Alert("Erro ao tentar anexar arquivo!")
-//			Return
-//		EndIf
-//		COPY File &cGetFile TO &cNewGetFile
+		cNewGetFile := cSlvAnexos+cChamado+"\"+cNewFile+cExten
+		If File(cNewGetFile)
+			Alert("Erro ao tentar anexar arquivo!")
+			Return
+		EndIf
+		COPY File &cGetFile TO &cNewGetFile
 
 		//Cria pasta caso não exita ainda (PASTA PARA SINCRONIZAÇÃO COM SISTEMOPUS)
-//		If M->ZJ_CLASSIF == '3' // Suporte nível 3 (consultoria)
-//			MontaDir(cAnexoOpus+cChamado+"\")
-//			cFileOpus := cAnexoOpus+cChamado+"\"+cNewFile+'_'+DtoC(Date())+"_"+Time()+"_"+Alltrim(UsrRetName(__cUserID))+cExten
+		If M->ZJ_CLASSIF == '3' // Suporte nível 3 (consultoria)
+			MontaDir(cAnexoOpus+cChamado+"\")
+			cFileOpus := cAnexoOpus+cChamado+"\"+cNewFile+'_'+DtoC(Date())+"_"+Time()+"_"+Alltrim(UsrRetName(__cUserID))+cExten
 
-//			COPY File &cGetFile TO &cFileOpus
+			COPY File &cGetFile TO &cFileOpus
 
-//			If !File(cAnexoOpus+cChamado+"\"+cExisteAnexo)
-//				COPY File &cAnexoOpus+cExisteAnexo TO &cAnexoOpus+cChamado+"\"+cExisteAnexo
-//			EndIf
-//		EndIf
+			If !File(cAnexoOpus+cChamado+"\"+cExisteAnexo)
+				COPY File &cAnexoOpus+cExisteAnexo TO &cAnexoOpus+cChamado+"\"+cExisteAnexo
+			EndIf
+		EndIf
 
-//		nLin := oGdAnexo:oBrowse:nAt
-//		oGdAnexo:aCols[nLin, nPosArqv] := cNewGetFile
-//		oGdAnexo:aCols[nLin, nPosOrig] := cGetFile
+		nLin := oGdAnexo:oBrowse:nAt
+		oGdAnexo:aCols[nLin, nPosArqv] := cNewGetFile
+		oGdAnexo:aCols[nLin, nPosOrig] := cGetFile
 
 		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 		//³Inclui registro no banco de conhecimento³
 		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-//		RecLock("ACB",.T.)
-//		ACB->ACB_FILIAL := xFilial("ACB")
-//		ACB->ACB_CODOBJ := GetSxeNum("ACB","ACB_CODOBJ")
-//		ACB->ACB_OBJETO := cNewGetFile
-//		ACB->ACB_DESCRI := "SERVICE DESK - CHAMADO: "+cChamado
-//		ACB->(MsUnLock())
-//		ACB->(ConfirmSx8())
+		RecLock("ACB",.T.)
+		ACB->ACB_FILIAL := xFilial("ACB")
+		ACB->ACB_CODOBJ := GetSxeNum("ACB","ACB_CODOBJ")
+		ACB->ACB_OBJETO := cNewGetFile
+		ACB->ACB_DESCRI := "SERVICE DESK - CHAMADO: "+cChamado
+		ACB->(MsUnLock())
+		ACB->(ConfirmSx8())
 
 		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 		//³Inclui a palavra-chave de pesquisa³
 		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-//		RecLock("ACC",.T.)
-//		ACC->ACC_FILIAL := xFilial("ACC")
-//		ACC->ACC_CODOBJ := ACB->ACB_CODOBJ
-//		ACC->ACC_KEYWRD := "CHAMADO: "+cChamado
-//		ACC->(MsUnLock())
+		RecLock("ACC",.T.)
+		ACC->ACC_FILIAL := xFilial("ACC")
+		ACC->ACC_CODOBJ := ACB->ACB_CODOBJ
+		ACC->ACC_KEYWRD := "CHAMADO: "+cChamado
+		ACC->(MsUnLock())
 
-//	EndIf
+	EndIf
 
-//Return
+Return
 
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
@@ -934,63 +914,63 @@ Return
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
-//Static Function fNovoAnexo(cChamado,cExten)
+Static Function fNovoAnexo(cChamado,cExten)
 
-//	Local nPosItem := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("P14_ITEM" )})
-//	//Local nPosArqv := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_ARQUIVO" )})
-//	Local nPosData := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("P14_DATA"    )})
-//	Local nPosHora := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("P14_HORA"    )})
-//	//Local nPosUser := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_USUARIO" )})
-//	//Local nPosOrig := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_ORIGEM"  )})
-//	Local nLinhaOK := 0
-//	Local x        := 0
-//	Local cNovoArq := ""
-//	Local cNovoItm := ""
-//	Local lLoop    := .T.
+	Local nPosItem := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("P14_ITEM" )})
+	//Local nPosArqv := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_ARQUIVO" )})
+	Local nPosData := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("P14_DATA"    )})
+	Local nPosHora := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("P14_HORA"    )})
+	//Local nPosUser := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_USUARIO" )})
+	//Local nPosOrig := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("ZL_ORIGEM"  )})
+	Local nLinhaOK := 0
+	Local x        := 0
+	Local cNovoArq := ""
+	Local cNovoItm := ""
+	Local lLoop    := .T.
 
 //Verifica se tem alguma linha em branco
-//	For x:=1 To Len(oGdAnexo:aCols)
-//		If Empty(oGdAnexo:aCols[x][nPosArqv])
-//			nLinhaOK := x
-//		EndIf
-//	Next x
+	For x:=1 To Len(oGdAnexo:aCols)
+		If Empty(oGdAnexo:aCols[x][nPosArqv])
+			nLinhaOK := x
+		EndIf
+	Next x
 
 //Se não tiver linha em branco, adicionar nova linha
-//	If Empty(nLinhaOK)
-//		//Cria uma linha no aCols
-//		aAdd(oGdAnexo:aCols,Array(Len(oGdAnexo:aHeader)+1))
-//		nLin := Len(oGdAnexo:aCols)
-//		oGdAnexo:aCols[nLin, Len(oGdAnexo:aHeader)+1] := .F.
-//	Else
-//		nLin := nLinhaOK
-//	EndIf
+	If Empty(nLinhaOK)
+		//Cria uma linha no aCols
+		aAdd(oGdAnexo:aCols,Array(Len(oGdAnexo:aHeader)+1))
+		nLin := Len(oGdAnexo:aCols)
+		oGdAnexo:aCols[nLin, Len(oGdAnexo:aHeader)+1] := .F.
+	Else
+		nLin := nLinhaOK
+	EndIf
 
 //Alimenta Colunas
-//	oGdAnexo:aCols[nLin, nPosItem] := StrZero(nLin,3)
-//	//oGdAnexo:aCols[nLin, nPosArqv] := ""
-//	oGdAnexo:aCols[nLin, nPosData] := Date()
-//	oGdAnexo:aCols[nLin, nPosHora] := Time()
-//	//oGdAnexo:aCols[nLin, nPosUser] := UsrRetName(__cUserID)
-//	//oGdAnexo:aCols[nLin, nPosOrig] :=  ""
+	oGdAnexo:aCols[nLin, nPosItem] := StrZero(nLin,3)
+	//oGdAnexo:aCols[nLin, nPosArqv] := ""
+	oGdAnexo:aCols[nLin, nPosData] := Date()
+	oGdAnexo:aCols[nLin, nPosHora] := Time()
+	//oGdAnexo:aCols[nLin, nPosUser] := UsrRetName(__cUserID)
+	//oGdAnexo:aCols[nLin, nPosOrig] :=  ""
 
 //Atualiza tela
-//	oGdAnexo:oBrowse:nAt := nLin
-//	oGdAnexo:oBrowse:Refresh()
-//	oGdAnexo:oBrowse:SetFocus()
+	oGdAnexo:oBrowse:nAt := nLin
+	oGdAnexo:oBrowse:Refresh()
+	oGdAnexo:oBrowse:SetFocus()
 
-//	cNovoItm := StrZero(nLin,2)
-//	cNovoArq := cSlvAnexos+cChamado+"\"+cNovoItm+cExten
+	cNovoItm := StrZero(nLin,2)
+	cNovoArq := cSlvAnexos+cChamado+"\"+cNovoItm+cExten
 
-//	While lLoop
-//		If File(cNovoArq)
-//			cNovoItm := Soma1(cNovoItm)
-//			cNovoArq := cSlvAnexos+cChamado+"\"+cNovoItm+cExten
-//		Else
-//			lLoop := .F.
-//		EndIf
-//	End
+	While lLoop
+		If File(cNovoArq)
+			cNovoItm := Soma1(cNovoItm)
+			cNovoArq := cSlvAnexos+cChamado+"\"+cNovoItm+cExten
+		Else
+			lLoop := .F.
+		EndIf
+	End
 
-//Return(cNovoItm)
+Return(cNovoItm)
 
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
@@ -1015,11 +995,11 @@ Static Function fMudaLinha(nChamada)
 	Local nPosDtEmis := aScan(oGdInter:aHeader,{|x|Alltrim(x[2])==AllTrim("P13_DTEMIS")})
 
 
-//	SF2->( dbSetOrder(01) )
-//	If SF2->(dbSeek(xFilial("SF2")+AllTrim(oGdInter:aCols[nLinAlter][nPosNFOri])+;
-//			AllTrim(oGdInter:aCols[nLinAlter][nPosSerie])))
-//		oGdInter:aCols[nLinAlter][nPosDtEmis] := SF2->F2_EMISSAO
-//	EndIf
+	SF2->( dbSetOrder(01) )
+	If SF2->(dbSeek(xFilial("SF2")+AllTrim(oGdInter:aCols[nLinAlter][nPosNFOri])+;
+			AllTrim(oGdInter:aCols[nLinAlter][nPosSerie])))
+		oGdInter:aCols[nLinAlter][nPosDtEmis] := SF2->F2_EMISSAO
+	EndIf
 
 
 ////Local nPosDescr := aScan(oGdInter:aHeader,{|x|Alltrim(x[2])==AllTrim("P13_DESCRI")})
@@ -1665,72 +1645,72 @@ Return
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
-//User Function XfEnviaWf(cChamado,nOpc)
+User Function XfEnviaWf(cChamado,nOpc)
 
-//	Local cContato := ""
-//	Local aEmails  := {}
-//	Local aTecEng  := {}
-//	Local n 	   := 0
-//	Default nOpc   := 0
+	Local cContato := ""
+	Local aEmails  := {}
+	Local aTecEng  := {}
+	Local n 	   := 0
+	Default nOpc   := 0
 
 //Se não achar, sair sem enviar WF
-//	SZJ->(DbSetOrder(1))
-//	If SZJ->(!DbSeek(xFilial("SZJ")+cChamado))
-//		Return
-//	EndIf
+	SZJ->(DbSetOrder(1))
+	If SZJ->(!DbSeek(xFilial("SZJ")+cChamado))
+		Return
+	EndIf
 
 //Localizando contatos
-//	cContato := ""
-//	If SZJ->ZJ_COD_SOL=='000486' .Or. SZJ->ZJ_COD_SOL=='000421'
-//		cContato += IIf(Empty(cContato),"",";")+"mayara.sousa@rdt.com.br"
-//		cContato += IIf(Empty(cContato),"",";")+"aline.maciel@rdt.com.br"
-//	Else
-//		cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(SZJ->ZJ_COD_SOL))
-//		cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(SZJ->ZJ_COD_TEC))
-//	EndIf
+	cContato := ""
+	If SZJ->ZJ_COD_SOL=='000486' .Or. SZJ->ZJ_COD_SOL=='000421'
+		cContato += IIf(Empty(cContato),"",";")+"mayara.sousa@rdt.com.br"
+		cContato += IIf(Empty(cContato),"",";")+"aline.maciel@rdt.com.br"
+	Else
+		cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(SZJ->ZJ_COD_SOL))
+		cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(SZJ->ZJ_COD_TEC))
+	EndIf
 
 	//Adicione sempre o email do Denis para receber copia de tudo
-//	If !("DENIS.VIEIRA" $ Upper(cContato)) .And. cTipoHlp == "1"
-//		cContato += IIf(Empty(cContato),"",";")+"denis.vieira@rosenbergerdomex.com.br"
-//	EndIf
+	If !("DENIS.VIEIRA" $ Upper(cContato)) .And. cTipoHlp == "1"
+		cContato += IIf(Empty(cContato),"",";")+"denis.vieira@rosenbergerdomex.com.br"
+	EndIf
 
-//	If cTipoHlp $ "3/4"  //Chamado da engenharia e Qualidade
-//		cContato := ""
-//		cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(SZJ->ZJ_COD_SOL))
-//		If Empty(SZJ->ZJ_COD_TEC)
-//			aTecEng := {}
-//			aTecEng := StrToKArr(cCodTec,"/")
-//			For n := 1 To Len(aTecEng)
-//				cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(aTecEng[n]))
-//			Next n
-//		Else
-//			cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(SZJ->ZJ_COD_TEC))
-//		EndIf
-//	EndIf
+	If cTipoHlp $ "3/4"  //Chamado da engenharia e Qualidade
+		cContato := ""
+		cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(SZJ->ZJ_COD_SOL))
+		If Empty(SZJ->ZJ_COD_TEC)
+			aTecEng := {}
+			aTecEng := StrToKArr(cCodTec,"/")
+			For n := 1 To Len(aTecEng)
+				cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(aTecEng[n]))
+			Next n
+		Else
+			cContato += IIf(Empty(cContato),"",";")+AllTrim(UsrRetMail(SZJ->ZJ_COD_TEC))
+		EndIf
+	EndIf
 
-//	If nOpc == 3
+	If nOpc == 3
 
-//		If !("DEBORA" $ Upper(cContato)) .And. cTipoHlp == "2"
-//			cContato += IIf(Empty(cContato),"",";")+"debora.zani@rosenbergerdomex.com.br"
-//		EndIf
+		If !("DEBORA" $ Upper(cContato)) .And. cTipoHlp == "2"
+			cContato += IIf(Empty(cContato),"",";")+"debora.zani@rosenbergerdomex.com.br"
+		EndIf
 
-//		If !("ALESSANDRO OLIVEIRA" $ Upper(cContato)) .And. cTipoHlp == "2"
-//			cContato += IIf(Empty(cContato),"",";")+"alessandro.oliveira@rdt.com.br"
-//		EndIf
+		If !("ALESSANDRO OLIVEIRA" $ Upper(cContato)) .And. cTipoHlp == "2"
+			cContato += IIf(Empty(cContato),"",";")+"alessandro.oliveira@rdt.com.br"
+		EndIf
 
-//		If !("FELIPE MORAES" $ Upper(cContato)) .And. cTipoHlp == "2"
-//			cContato += IIf(Empty(cContato),"",";")+"felipe.moraes@rosenbergerdomex.com.br"
-//		EndIf
+		If !("FELIPE MORAES" $ Upper(cContato)) .And. cTipoHlp == "2"
+			cContato += IIf(Empty(cContato),"",";")+"felipe.moraes@rosenbergerdomex.com.br"
+		EndIf
 
-//		If !("JANINE SANTOS" $ Upper(cContato)) .And. cTipoHlp == "2"
-//			cContato += IIf(Empty(cContato),"",";")+"janine.santos@rdt.com.br"
-//		EndIf
+		If !("JANINE SANTOS" $ Upper(cContato)) .And. cTipoHlp == "2"
+			cContato += IIf(Empty(cContato),"",";")+"janine.santos@rdt.com.br"
+		EndIf
 
-//		If !("KAROLYNE" $ Upper(cContato)) .And. cTipoHlp == "2"
-//			cContato += IIf(Empty(cContato),"",";")+"karolyne.santos@rdt.com.br"
-//		EndIf
+		If !("KAROLYNE" $ Upper(cContato)) .And. cTipoHlp == "2"
+			cContato += IIf(Empty(cContato),"",";")+"karolyne.santos@rdt.com.br"
+		EndIf
 
-//	EndIf
+	EndIf
 
 /*
 	If !("MAXIMILIANO.REIS" $ Upper(cContato))
@@ -1741,39 +1721,39 @@ cContato += IIf(Empty(cContato),"",";")+"edmilson.goncalves@rosenbergerdomex.com
 	EndIf
 */
 
-//	If !("SUPORTE" $ Upper(cContato))
-//		cContato += IIf(Empty(cContato),"",";")+"suporte@rosenbergerdomex.com.br"
-//	EndIf
+	If !("SUPORTE" $ Upper(cContato))
+		cContato += IIf(Empty(cContato),"",";")+"suporte@rosenbergerdomex.com.br"
+	EndIf
 
 //Se for alteração realizada pelo Denis, não enviar e-mail pra ele mesmo(Denis)
-//	If nOpc == 4 .And. __cUserID $ "000206" .And. cTipoHlp == "1"
-//		//If nOpc == 4 .And. __cUserID $ "000373"  //  MAURESI
-//		cContato := StrTran(cContato,"denis.vieira@rosenbergerdomex.com.br","")
-//		//	cContato := StrTran(cContato,"denis.vieira@rosenbergerdomex.com.br;","")
-//		// cContato := StrTran(cContato,";denis.vieira@rosenbergerdomex.com.br","")
-//		//	cContato := StrTran(cContato,"denis.vieira@rosenbergerdomex.com.br" ,"")
-//		//	cContato := StrTran(cContato,"denis.vieira@rosenbergerdomex.com.br" ,"")
-//	EndIf
+	If nOpc == 4 .And. __cUserID $ "000206" .And. cTipoHlp == "1"
+		//If nOpc == 4 .And. __cUserID $ "000373"  //  MAURESI
+		cContato := StrTran(cContato,"denis.vieira@rosenbergerdomex.com.br","")
+		//	cContato := StrTran(cContato,"denis.vieira@rosenbergerdomex.com.br;","")
+		// cContato := StrTran(cContato,";denis.vieira@rosenbergerdomex.com.br","")
+		//	cContato := StrTran(cContato,"denis.vieira@rosenbergerdomex.com.br" ,"")
+		//	cContato := StrTran(cContato,"denis.vieira@rosenbergerdomex.com.br" ,"")
+	EndIf
 
-//	If nOpc == 4 .And. __cUserID $ "000422/000492"
-//		cContato := StrTran(cContato,"suporte@rosenbergerdomex.com.br","")
-//	EndIf
+	If nOpc == 4 .And. __cUserID $ "000422/000492"
+		cContato := StrTran(cContato,"suporte@rosenbergerdomex.com.br","")
+	EndIf
 
 //Trata emails pra ficarem minusculo
-//	cContato := Lower(cContato)
+	cContato := Lower(cContato)
 
 //Se não tiver pra quem enviar e-mail, sair da rotina
-//	If Empty(cContato)
-//		Return
-//	EndIf
+	If Empty(cContato)
+		Return
+	EndIf
 
 //Enviado e-mails individualmente pra tratar anexos
-//	aEmails := StrToKArr(cContato,";")
-//	For x:= 1 To Len(aEmails)
-//		fTrataAnexo(cChamado,aEmails[x])
-//	Next x
+	aEmails := StrToKArr(cContato,";")
+	For x:= 1 To Len(aEmails)
+		fTrataAnexo(cChamado,aEmails[x])
+	Next x
 
-//Return
+Return
 
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
@@ -1789,107 +1769,107 @@ cContato += IIf(Empty(cContato),"",";")+"edmilson.goncalves@rosenbergerdomex.com
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
-//Static Function fTrataAnexo(cChamado,cContato)
+Static Function fTrataAnexo(cChamado,cContato)
 
-//	Local x := 0
-//	Local aAreaSZJ   := SZJ->(GetArea())
-//	Local aAreaSZK   := SZK->(GetArea())
-//	Local aAreaSZL   := SZL->(GetArea())
-//	Local cDescri    := ""
-//	Local cAnexo     := ""
-//	Local cMvSdAnexo := GetMv("MV_SDANEXO") //ServiceDesk Anexo (email de quem recebe anexo)
+	Local x := 0
+	Local aAreaSZJ   := SZJ->(GetArea())
+	Local aAreaSZK   := SZK->(GetArea())
+	Local aAreaSZL   := SZL->(GetArea())
+	Local cDescri    := ""
+	Local cAnexo     := ""
+	Local cMvSdAnexo := GetMv("MV_SDANEXO") //ServiceDesk Anexo (email de quem recebe anexo)
 
 //IF MsgYesNo("Enviando workflow chamado " + cChamado + " para " + cContato)
 //EndIf
 
-//	Conout("fTrataAnexo - Enviando workflow chamado " + cChamado + " para " + cContato)
+	Conout("fTrataAnexo - Enviando workflow chamado " + cChamado + " para " + cContato)
 
 //Se não achar, sair sem enviar WF
-//	SZJ->(DbSetOrder(1))
-//	If SZJ->(!DbSeek(xFilial("SZJ")+cChamado))
-//		Return
-//	EndIf
+	SZJ->(DbSetOrder(1))
+	If SZJ->(!DbSeek(xFilial("SZJ")+cChamado))
+		Return
+	EndIf
 
 //Monta workflow e dispara envio
-//	oProcess:=TWFProcess():New("000001",OemToAnsi("Service Desk - Chamado : "+cChamado))
-//	oProcess:NewTask("000001","\workflow\html\Wf_Chamado.htm")
-//	oHtml   := oProcess:oHtml
+	oProcess:=TWFProcess():New("000001",OemToAnsi("Service Desk - Chamado : "+cChamado))
+	oProcess:NewTask("000001","\workflow\html\Wf_Chamado.htm")
+	oHtml   := oProcess:oHtml
 
-//	oProcess:ClientName(cUserName)
-//	oProcess:UserSiga := "000000"
-//	oProcess:cSubject := "[Service Desk] Chamado : "+cChamado+" - "+fDscStatus(SZJ->ZJ_STATUS)
+	oProcess:ClientName(cUserName)
+	oProcess:UserSiga := "000000"
+	oProcess:cSubject := "[Service Desk] Chamado : "+cChamado+" - "+fDscStatus(SZJ->ZJ_STATUS)
 
-//	oProcess:cTo      := cContato
+	oProcess:cTo      := cContato
 
-//	oProcess:cFromName:= "WF Rosenberger"
-//	oProcess:cFromAddr:= "siga@rosenbergerdomex.com.br"
+	oProcess:cFromName:= "WF Rosenberger"
+	oProcess:cFromAddr:= "siga@rosenbergerdomex.com.br"
 
-//	oProcess:oHtml:ValByName( "cNumChamado"		, SZJ->ZJ_NUMCHAM )
-//	oProcess:oHtml:ValByName( "cSolicitante"		, AllTrim(UsrRetName(SZJ->ZJ_COD_SOL)) )
-//	oProcess:oHtml:ValByName( "cTecnico"			, AllTrim(UsrRetName(SZJ->ZJ_COD_TEC)) )
-//	oProcess:oHtml:ValByName( "cStatus"				, fDscStatus(SZJ->ZJ_STATUS) )
-//	oProcess:oHtml:ValByName( "cSituacao"			, fDscSituac(SZJ->ZJ_SITUAC) )
-//	oProcess:oHtml:ValByName( "cDtAbertura"		, DtoC(SZJ->ZJ_DT_INC ) )
-//	oProcess:oHtml:ValByName( "cDtFechamento"		, DtoC(SZJ->ZJ_DT_FECH) )
+	oProcess:oHtml:ValByName( "cNumChamado"		, SZJ->ZJ_NUMCHAM )
+	oProcess:oHtml:ValByName( "cSolicitante"		, AllTrim(UsrRetName(SZJ->ZJ_COD_SOL)) )
+	oProcess:oHtml:ValByName( "cTecnico"			, AllTrim(UsrRetName(SZJ->ZJ_COD_TEC)) )
+	oProcess:oHtml:ValByName( "cStatus"				, fDscStatus(SZJ->ZJ_STATUS) )
+	oProcess:oHtml:ValByName( "cSituacao"			, fDscSituac(SZJ->ZJ_SITUAC) )
+	oProcess:oHtml:ValByName( "cDtAbertura"		, DtoC(SZJ->ZJ_DT_INC ) )
+	oProcess:oHtml:ValByName( "cDtFechamento"		, DtoC(SZJ->ZJ_DT_FECH) )
 
-////Itens
-//	SZK->(DbSetOrder(1))
-//	If SZK->(DbSeek(SZJ->ZJ_FILIAL+SZJ->ZJ_NUMCHAM))
-//		Do While SZK->(!Eof()) .And. SZK->ZK_FILIAL+SZK->ZK_NUMCHAM == SZJ->ZJ_FILIAL+SZJ->ZJ_NUMCHAM
-//			cDescri := StrTran(SZK->ZK_DESCRIC,Chr(13),"<br>")
-//			aAdd((oHtml:ValByName("a.Item"  )) ,SZK->ZK_NUMINTE		)
-//			aAdd((oHtml:ValByName("a.Data"  )) ,DtoC(SZK->ZK_DT_INC)	)
-//			aAdd((oHtml:ValByName("a.Hora"  )) ,SZK->ZK_HR_INC			)
-//			aAdd((oHtml:ValByName("a.Nome"  )) ,SZK->ZK_NOMEORI		)
-//			aAdd((oHtml:ValByName("a.Texto" )) ,cDescri					)
-//			SZK->(DbSkip())
-//		EndDo
-//	Else
-//		aAdd((oHtml:ValByName("a.Item"  )) ,""	)
-//		aAdd((oHtml:ValByName("a.Data"  )) ,""	)
-//		aAdd((oHtml:ValByName("a.Hora"  )) ,""	)
-//		aAdd((oHtml:ValByName("a.Nome"  )) ,""	)
-//		aAdd((oHtml:ValByName("a.Texto" )) ,""	)
-//	EndIf
+//Itens
+	SZK->(DbSetOrder(1))
+	If SZK->(DbSeek(SZJ->ZJ_FILIAL+SZJ->ZJ_NUMCHAM))
+		Do While SZK->(!Eof()) .And. SZK->ZK_FILIAL+SZK->ZK_NUMCHAM == SZJ->ZJ_FILIAL+SZJ->ZJ_NUMCHAM
+			cDescri := StrTran(SZK->ZK_DESCRIC,Chr(13),"<br>")
+			aAdd((oHtml:ValByName("a.Item"  )) ,SZK->ZK_NUMINTE		)
+			aAdd((oHtml:ValByName("a.Data"  )) ,DtoC(SZK->ZK_DT_INC)	)
+			aAdd((oHtml:ValByName("a.Hora"  )) ,SZK->ZK_HR_INC			)
+			aAdd((oHtml:ValByName("a.Nome"  )) ,SZK->ZK_NOMEORI		)
+			aAdd((oHtml:ValByName("a.Texto" )) ,cDescri					)
+			SZK->(DbSkip())
+		EndDo
+	Else
+		aAdd((oHtml:ValByName("a.Item"  )) ,""	)
+		aAdd((oHtml:ValByName("a.Data"  )) ,""	)
+		aAdd((oHtml:ValByName("a.Hora"  )) ,""	)
+		aAdd((oHtml:ValByName("a.Nome"  )) ,""	)
+		aAdd((oHtml:ValByName("a.Texto" )) ,""	)
+	EndIf
 
-////Anexos
-//	SZL->(DbSetOrder(1))
-//	If SZL->(DbSeek(SZJ->ZJ_FILIAL+SZJ->ZJ_NUMCHAM))
-//		Do While SZL->(!Eof()) .And. SZL->ZL_FILIAL+SZL->ZL_NUMCHAM == SZJ->ZJ_FILIAL+SZJ->ZJ_NUMCHAM
-//			aAdd((oHtml:ValByName("b.Anexo"		)) ,SZL->ZL_NUMINTE	)
-//			aAdd((oHtml:ValByName("b.Data"		)) ,DtoC(SZL->ZL_DATA))
-//			aAdd((oHtml:ValByName("b.Hora"		)) ,SZL->ZL_HORA		)
-//			aAdd((oHtml:ValByName("b.ArqChamado")) ,SZL->ZL_ARQUIVO	)
-//			aAdd((oHtml:ValByName("b.ArqOrigem" )) ,SZL->ZL_ORIGEM	)
+//Anexos
+	SZL->(DbSetOrder(1))
+	If SZL->(DbSeek(SZJ->ZJ_FILIAL+SZJ->ZJ_NUMCHAM))
+		Do While SZL->(!Eof()) .And. SZL->ZL_FILIAL+SZL->ZL_NUMCHAM == SZJ->ZJ_FILIAL+SZJ->ZJ_NUMCHAM
+			aAdd((oHtml:ValByName("b.Anexo"		)) ,SZL->ZL_NUMINTE	)
+			aAdd((oHtml:ValByName("b.Data"		)) ,DtoC(SZL->ZL_DATA))
+			aAdd((oHtml:ValByName("b.Hora"		)) ,SZL->ZL_HORA		)
+			aAdd((oHtml:ValByName("b.ArqChamado")) ,SZL->ZL_ARQUIVO	)
+			aAdd((oHtml:ValByName("b.ArqOrigem" )) ,SZL->ZL_ORIGEM	)
 
-//			//Anexo arquivo no e-mail
-//			If !Empty(SZL->ZL_ARQUIVO) .And. Upper(AllTrim(cContato)) $ Upper(AllTrim(cMvSdAnexo))
-//				cAnexo := AllTrim(SZL->ZL_ARQUIVO)
-//				oProcess:AttachFile(cAnexo)
-//			EndIf
+			//Anexo arquivo no e-mail
+			If !Empty(SZL->ZL_ARQUIVO) .And. Upper(AllTrim(cContato)) $ Upper(AllTrim(cMvSdAnexo))
+				cAnexo := AllTrim(SZL->ZL_ARQUIVO)
+				oProcess:AttachFile(cAnexo)
+			EndIf
 
-//			SZL->(DbSkip())
-//		EndDo
-//	Else
-//		aAdd((oHtml:ValByName("b.Anexo"		)) ,"" )
-//		aAdd((oHtml:ValByName("b.Data"		)) ,"" )
-//		aAdd((oHtml:ValByName("b.Hora"		)) ,"" )
-//		aAdd((oHtml:ValByName("b.ArqChamado")) ,"" )
-//		aAdd((oHtml:ValByName("b.ArqOrigem" )) ,"" )
-//	EndIf
+			SZL->(DbSkip())
+		EndDo
+	Else
+		aAdd((oHtml:ValByName("b.Anexo"		)) ,"" )
+		aAdd((oHtml:ValByName("b.Data"		)) ,"" )
+		aAdd((oHtml:ValByName("b.Hora"		)) ,"" )
+		aAdd((oHtml:ValByName("b.ArqChamado")) ,"" )
+		aAdd((oHtml:ValByName("b.ArqOrigem" )) ,"" )
+	EndIf
 
-////Envia e-mail
-//	oProcess:Start()
-//	oProcess:Finish()
-//	WFSendMail({"01","01"})
+//Envia e-mail
+	oProcess:Start()
+	oProcess:Finish()
+	WFSendMail({"01","01"})
 
-////MsgInfo("Chamado "+SZJ->ZJ_NUMCHAM+" enviado para " + oProcess:cTo)
+//MsgInfo("Chamado "+SZJ->ZJ_NUMCHAM+" enviado para " + oProcess:cTo)
 
-//	RestArea(aAreaSZJ)
-//	RestArea(aAreaSZK)
-//	RestArea(aAreaSZL)
+	RestArea(aAreaSZJ)
+	RestArea(aAreaSZK)
+	RestArea(aAreaSZL)
 
-//Return
+Return
 
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
@@ -2068,7 +2048,7 @@ User Function fItensNFS()
     oGDAnexo:aCols := {}
 
 	cQry := ''
-	cQry += " Select F2_DOC As NOTA, D2_ITEM As ITEM, D2_COD As CODIGO, D2_QUANT As QTDE, C6_NUMOP+C6_ITEMOP As OP"
+	cQry += " Select F2_DOC As NOTA, D2_ITEM As ITEM, D2_COD As CODIGO, D2_QUANT As QTDE, C6_NUM As PV"
 	cQry += " From SF2010 SF2 With(Nolock)"
 	cQry += " Inner Join SD2010 SD2 With(Nolock) On D2_FILIAL = F2_FILIAL And D2_DOC = F2_DOC And D2_SERIE = F2_SERIE And SD2.D_E_L_E_T_ = ''"
 	cQry += " Left Outer Join SC6010 SC6 With(Nolock) On C6_FILIAL = D2_FILIAL And C6_NUM = D2_PEDIDO And C6_ITEM = D2_ITEMPV"
@@ -2098,7 +2078,7 @@ User Function fItensNFS()
 			P14->P14_ITEM   := NFS->ITEM
 			P14->P14_COD    := NFS->CODIGO
 			P14->P14_QTDORI := NFS->QTDE
-			P14->P14_OFORIG := NFS->OP
+			P14->P14_OFORIG := NFS->PV
 			MsUnLock("P14")
 
 		//	aAdd(oGdAnexo:aCols,{NFS->NOTA,NFS->ITEM,NFS->OP,NFS->CODIGO,NFS->QTDE,0,'',.F.})
@@ -2111,8 +2091,7 @@ User Function fItensNFS()
 	//EndIf
 
 	//oGDAnexo:aCols := {}
-	//fGDAnexo(4,2,@oGDAnexo)
-	fGDAnexo(4,1,@oGDAnexo)
+	fGDAnexo(4,2,@oGDAnexo)
 
 Return
 
@@ -2149,65 +2128,65 @@ Return
 
 
 
-//User Function XfEncOPUS()
-//	Local oConsultores
+User Function XfEncOPUS()
+	Local oConsultores
 
-//	Private aConsultores := {}
-//	Private aCodConsult  := {}
-//	Private cConsultores
-//	Private _RetF3SZ4
-//	Private cDescricao := "CHAMADO " + SZJ->ZJ_NUMCHAM + " - " + SZJ->ZJ_ASSUNTO + Space(220)
+	Private aConsultores := {}
+	Private aCodConsult  := {}
+	Private cConsultores
+	Private _RetF3SZ4
+	Private cDescricao := "CHAMADO " + SZJ->ZJ_NUMCHAM + " - " + SZJ->ZJ_ASSUNTO + Space(220)
 
-//	AADD(aConsultores, "0-Indefinido")
-//	AADD(aCodConsult , ""       )
+	AADD(aConsultores, "0-Indefinido")
+	AADD(aCodConsult , ""       )
 
-//	AADD(aConsultores, "1-Maurício")
-//	AADD(aCodConsult , "000004" )  // Mauricio
+	AADD(aConsultores, "1-Maurício")
+	AADD(aCodConsult , "000004" )  // Mauricio
 
-//	AADD(aConsultores, "2-Marco Aurélio")
-//	AADD(aCodConsult , "000007" )  // Marco
+	AADD(aConsultores, "2-Marco Aurélio")
+	AADD(aCodConsult , "000007" )  // Marco
 
-//	AADD(aConsultores, "3-Michel")
-//	AADD(aCodConsult , "000006" )  // Michel
+	AADD(aConsultores, "3-Michel")
+	AADD(aCodConsult , "000006" )  // Michel
 
-//	AADD(aConsultores, "4-João")
-//	AADD(aCodConsult , "000011" )  // João
+	AADD(aConsultores, "4-João")
+	AADD(aCodConsult , "000011" )  // João
 
-//	AADD(aConsultores, "5-Hélio")
-//	AADD(aCodConsult , "000002" )  // Helio
+	AADD(aConsultores, "5-Hélio")
+	AADD(aCodConsult , "000002" )  // Helio
 
-//	AADD(aConsultores, "6-Osmar")
-//	AADD(aCodConsult , "000021" )  //6-Sérgio // Glaydson
+	AADD(aConsultores, "6-Osmar")
+	AADD(aCodConsult , "000021" )  //6-Sérgio // Glaydson
 
-//	AADD(aConsultores, "7-Ricardo")
-//	AADD(aCodConsult , "000018" )  // Ricardo Roda
+	AADD(aConsultores, "7-Ricardo")
+	AADD(aCodConsult , "000018" )  // Ricardo Roda
 
-//	AADD(aConsultores, "8-Jonas")
-//	AADD(aCodConsult , "000015" )  // Jonas
+	AADD(aConsultores, "8-Jonas")
+	AADD(aCodConsult , "000015" )  // Jonas
 
-//	AADD(aConsultores, "9-Jackson")
-//	AADD(aCodConsult , "000012" )  // Jackson
+	AADD(aConsultores, "9-Jackson")
+	AADD(aCodConsult , "000012" )  // Jackson
 
-//	AADD(aConsultores, "A-Luis Roberto")
-//	AADD(aCodConsult , "000001" )  // Luis
+	AADD(aConsultores, "A-Luis Roberto")
+	AADD(aCodConsult , "000001" )  // Luis
 
-//	DEFINE MSDIALOG oDlg TITLE 'Criação de item de projeto Opus' FROM 000, 000  TO 150,500 COLORS 0, 16777215 PIXEL
+	DEFINE MSDIALOG oDlg TITLE 'Criação de item de projeto Opus' FROM 000, 000  TO 150,500 COLORS 0, 16777215 PIXEL
 
-//	@ 005, 005 TO 065,245 LABEL OemToAnsi("Descrição resumida da Atividade/Projeto") OF oDlg PIXEL
+	@ 005, 005 TO 065,245 LABEL OemToAnsi("Descrição resumida da Atividade/Projeto") OF oDlg PIXEL
 
-//	@ 020, 010 MSGET oGet VAR cDescricao WHEN(.T.) PICTURE "@!"  SIZE 230, 12 OF oDlg COLORS 0, 16777215 PIXEL
+	@ 020, 010 MSGET oGet VAR cDescricao WHEN(.T.) PICTURE "@!"  SIZE 230, 12 OF oDlg COLORS 0, 16777215 PIXEL
 
-//	@ 046, 011 SAY oSay1 PROMPT "Consultor: " SIZE 093, 007 OF oDlg COLORS 0, 16777215 PIXEL
+	@ 046, 011 SAY oSay1 PROMPT "Consultor: " SIZE 093, 007 OF oDlg COLORS 0, 16777215 PIXEL
 
-//	@ 044, 040 COMBOBOX oConsultores  VAR cConsultores ITEMS aConsultores    SIZE 45,10 VALID .T. PIXEL
+	@ 044, 040 COMBOBOX oConsultores  VAR cConsultores ITEMS aConsultores    SIZE 45,10 VALID .T. PIXEL
 
-//	@ 45, 148 Button "Ok"        Size 40,13 Action BotaoOK()    Pixel
-//	@ 45, 198 Button "Cancelar"  Size 40,13 Action oDlg:End() Pixel
+	@ 45, 148 Button "Ok"        Size 40,13 Action BotaoOK()    Pixel
+	@ 45, 198 Button "Cancelar"  Size 40,13 Action oDlg:End() Pixel
 
-//	ACTIVATE MSDIALOG oDlg CENTER
+	ACTIVATE MSDIALOG oDlg CENTER
 
 
-//Return
+Return
 
 
 Static Function BotaoOK()
@@ -2329,7 +2308,7 @@ Static Function BotaoOK()
 		AADD(aVetorIn,{"SZ4","Z4_ITEMCHA", cInteracao                })
 		AADD(aVetorIn,{"SZ4","Z4_RELATO" , "S"                       })
 		AADD(aVetorIn,{"SZ4","Z4_MSBLQL" , "2"                       })
-		//AADD(aVetorIn,{"SZ4","Z4_CONCLI" , SZJ->ZJ_Z4CONSU           })
+		AADD(aVetorIn,{"SZ4","Z4_CONCLI" , SZJ->ZJ_Z4CONSU           })
 		//AADD(aVetorIn,{"SZ4","Z4_SEPFAT" , "000001"                  })
 		AADD(aVetorIn,{"SZ4","Z4_LINHA"  , "ZZZZZZZZZZZZZZZ"         })
 
