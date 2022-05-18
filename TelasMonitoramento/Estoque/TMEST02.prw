@@ -56,9 +56,9 @@ RPCSetType(3)
 aAbreTab := {}
 RpcSetEnv("01","01",,,,,aAbreTab) //PREPARE ENVIRONMENT EMPRESA "01" FILIAL "01"
 
-DEFINE MSDIALOG oDlg01 TITLE OemToAnsi("Monitor de Pagamentos do Estoque ") FROM 0,0 TO 600,1200 PIXEL of oMainWnd PIXEL
+DEFINE MSDIALOG oDlg01 TITLE OemToAnsi("FILIAL MG-Monitor de Pagamentos do Estoque ") FROM 0,0 TO 600,1200 PIXEL of oMainWnd PIXEL
 
-@ 08, 10	SAY oTexto1 Var "Pendências de pagamento de material pelo estoque:"    SIZE 300,20 PIXEL
+@ 08, 10	SAY oTexto1 Var "Pendências de pagamento de material pelo estoque Filial MG:"    SIZE 300,20 PIXEL
 oTexto1:oFont := TFont():New('Arial',,25,,.F.,,,,.T.,.F.)
 oTexto1:nClrText := CLR_BLUE
 
