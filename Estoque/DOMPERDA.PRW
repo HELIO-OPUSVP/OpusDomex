@@ -436,7 +436,7 @@ User Function VLDTBPZA(cVarDigit)
 			If XD4->(DbSeek(xFilial("XD4")+cSerial))
 				If XD4->XD4_STATUS == "2"//Etiqueta Lida no Roteiro
 					//if ALLTRIM(M->PZA_OP) == IIF(LEFT(ALLTRIM(M->PZA_SERIAL),1) =="S",SUBSTR(ALLTRIM(M->PZA_SERIAL),2,11),LEFT(ALLTRIM(M->PZA_SERIAL),11)) .Or. Empty(Alltrim(M->PZA_OP))
-					if ALLTRIM(M->PZA_OP) == Alltrim(XD4->D4_OP) .Or. Empty(Alltrim(M->PZA_OP))
+					if ALLTRIM(M->PZA_OP) == Alltrim(XD4->XD4_OP) .Or. Empty(Alltrim(M->PZA_OP))
 						lRetVld := .T.
 						For nP := 1 To Len(oGetDados:Acols)
 							If !oGetDados:Acols[nP][Len(oGetDados:Acols[nP])]
