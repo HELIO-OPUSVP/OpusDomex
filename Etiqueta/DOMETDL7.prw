@@ -266,10 +266,10 @@ User Function DOMETDL7()
 	oQtdGer:oFont := TFont():New('Courier New',,25,,.T.,,,,.T.,.F.)
 	nLin += 15
 	/*
-@ nLin,    270	SAY oTexto1 Var '<F8> Entrega á Expedição'    SIZE 120,10 PIXEL
-oTexto1:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
-@ nLin+10, 270	SAY oTexto2 Var '<F6> Finaliza Embalagem'     SIZE 120,10 PIXEL
-oTexto2:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
+	@ nLin,    270	SAY oTexto1 Var '<F8> Entrega á Expedição'    SIZE 120,10 PIXEL
+	oTexto1:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
+	@ nLin+10, 270	SAY oTexto2 Var '<F6> Finaliza Embalagem'     SIZE 120,10 PIXEL
+	oTexto2:oFont := TFont():New('Arial',,20,,.T.,,,,.T.,.F.)
 	*/
 	nLin += 25
 
@@ -1282,7 +1282,7 @@ Static Function ValidaEtiq(lTeste)
 					cVerUsoGr := AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO"))
 
 					If lOkFlex
-						If Alltrim(cVerUsoGr) $ "CORD/0007/JUMP/FLEX"  // PCON retirado em 04/11/21 por Helio/Ricardo
+						If Alltrim(cVerUsoGr) $ "CORD/0007/JUMP/FLEX/CMTP"  // PCON retirado em 04/11/21 por Helio/Ricardo
 
 							cProxNiv   := "2"
 							aRetEmbala := U_RetEmbala(SC2->C2_PRODUTO,cProxNiv)
@@ -1876,7 +1876,7 @@ Static Function ValidaEtiq(lTeste)
 
 				If AllTrim(_cGrupoUso) $ "DROP/PCON" .Or. lEhFuruka  // PCON acrescentado em 04/11/21 por Helio/Ricardo
 					cProxNiv := "1"
-				ElseIf AllTrim(_cGrupoUso) $ "CORD/0007/JUMP" .Or. LEFT(AllTrim(_cGrupoUso),3) == "DIO"  // PCON retirado em 04/11/21 por Helio/Ricardo
+				ElseIf AllTrim(_cGrupoUso) $ "CORD/0007/JUMP/CMTP" .Or. LEFT(AllTrim(_cGrupoUso),3) == "DIO"  // PCON retirado em 04/11/21 por Helio/Ricardo
 
 					//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 					//³Se a quantidade de etiquetas nivel 1 for maior que a qtd.embalagem obriga encerrar
@@ -1925,7 +1925,11 @@ Static Function ValidaEtiq(lTeste)
 					nQtdGer += 1
 					oQtdGer:Refresh()
 					cEtiqueta := Space(_nTamEtiq)
+					oEmbAtu:Refresh()
+					oQEmbAtu:Refresh()
 					oEtiqueta:Refresh()
+					oProxEmb:Refresh()
+					oQProxEmb:Refresh()
 					oEtiqueta:SetFocus()
 					oUltima:Enable()
 
@@ -1958,6 +1962,8 @@ Static Function ValidaEtiq(lTeste)
 
 				cProxEmb   := Posicione("SB1",1,xFilial("SB1")+aRetEmbala[1],"B1_DESC")
 				nQProxEmb  := aRetEmbala[2]
+				nQtdGer += 1
+				oQtdGer:Refresh()
 
 			EndIf
 
@@ -1994,6 +2000,10 @@ Static Function ValidaEtiq(lTeste)
 				nQEmbAtu := Round(nQtdEmb,0)
 				oQtdBip:Refresh()
 				oQEmbAtu:Refresh()
+				oEmbAtu:Refresh()
+				oQEmbAtu:Refresh()				
+				oProxEmb:Refresh()
+				oQProxEmb:Refresh()
 				lUsaColet := .F.
 
 				If GetMv("MV_XVERKIT") 
@@ -2155,6 +2165,10 @@ Static Function ValidaEtiq(lTeste)
 					nQEmbAtu := Round(nQtdEmb,0)
 					oQtdBip:Refresh()
 					oQEmbAtu:Refresh()
+					oQtdBip:Refresh()
+					oProxEmb:Refresh()
+					oQProxEmb:Refresh()
+
 					lUsaColet := .F.
 
 					If AllTrim(_cGrupoUso) $ "DROP/PCON" .Or. lEhFuruka
@@ -2200,7 +2214,8 @@ Static Function ValidaEtiq(lTeste)
 				nQEmbAtu := Round(nQtdEmb,0)
 				oQtdBip:Refresh()
 				oQEmbAtu:Refresh()
-
+				oProxEmb:Refresh()
+				oQProxEmb:Refresh()
 			EndIf
 
 		EndIf
