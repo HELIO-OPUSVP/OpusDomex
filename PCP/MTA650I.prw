@@ -29,4 +29,7 @@ User Function MTA650I()
 	EndIf  // JOAO - COMENTADO
 */
 
+cUpdate := "UPDATE "+RetSqlName("SC2")+" SET C2_XOP = C2_NUM+C2_ITEM+C2_SEQUEN WHERE C2_FILIAL = '"+xFilial("SC2")+"' AND C2_XOP = ''"
+TCSQLEXEC(cUpdate)
+
 Return .T.
