@@ -18,7 +18,7 @@
 ъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъ
 */
 
-User Function TMEST01()
+User Function TMEST02()
 
 Local cGetOpc        := NIL // GD_UPDATE                   // GD_INSERT+GD_DELETE+GD_UPDATE
 Local cLinhaOk       := "ALLWAYSTRUE()"                                 // Funcao executada para validar o contexto da linha atual do aCols
@@ -56,9 +56,9 @@ RPCSetType(3)
 aAbreTab := {}
 RpcSetEnv("01","01",,,,,aAbreTab) //PREPARE ENVIRONMENT EMPRESA "01" FILIAL "01"
 
-DEFINE MSDIALOG oDlg01 TITLE OemToAnsi("MATRIZ-Monitor de Pagamentos do Estoque ") FROM 0,0 TO 600,1200 PIXEL of oMainWnd PIXEL
+DEFINE MSDIALOG oDlg01 TITLE OemToAnsi("FILIAL MG-Monitor de Pagamentos do Estoque ") FROM 0,0 TO 600,1200 PIXEL of oMainWnd PIXEL
 
-@ 08, 10	SAY oTexto1 Var "PendЙncias de pagamento de material pelo estoque Matriz:"    SIZE 300,20 PIXEL
+@ 08, 10	SAY oTexto1 Var "PendЙncias de pagamento de material pelo estoque Filial MG:"    SIZE 300,20 PIXEL
 oTexto1:oFont := TFont():New('Arial',,25,,.F.,,,,.T.,.F.)
 oTexto1:nClrText := CLR_BLUE
 
@@ -119,7 +119,7 @@ Static Function fAtualiza()
 aCols  := {}
 aCols2 := {} 
 
-cQuery := "SELECT * FROM "+RetSqlName("SZA")+" WHERE ZA_FILIAL = '01' AND ZA_PRODUTO <> '50010100' AND ZA_SALDO <> 0 AND D_E_L_E_T_ = '' ORDER BY ZA_DATA DESC, ZA_HORA DESC "
+cQuery := "SELECT * FROM "+RetSqlName("SZA")+" WHERE ZA_FILIAL = '02' AND ZA_PRODUTO <> '50010100' AND ZA_SALDO <> 0 AND D_E_L_E_T_ = '' ORDER BY ZA_DATA DESC, ZA_HORA DESC "
 
 If Select("QUERYSZA") <> 0
 	QUERYSZA->( dbCloseArea() )
@@ -193,7 +193,7 @@ EndIf
 //зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
 //ЁPerda de fornecedores SZE                                                                  Ё
 //юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
-cQuery := "SELECT * FROM "+RetSqlName("SZE")+" WHERE ZE_FILIAL = '01' AND ZE_SALDO <> 0 AND D_E_L_E_T_ = '' ORDER BY ZE_DATA DESC, ZE_HORA DESC "
+cQuery := "SELECT * FROM "+RetSqlName("SZE")+" WHERE ZE_FILIAL = '02' AND ZE_SALDO <> 0 AND D_E_L_E_T_ = '' ORDER BY ZE_DATA DESC, ZE_HORA DESC "
 
 If Select("QUERYSZE") <> 0
 	QUERYSZE->( dbCloseArea() )
@@ -258,7 +258,7 @@ End
 //зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
 //ЁPagamento de Materiais de Consumo SZX                                                      Ё
 //юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
-cQuery := "SELECT * FROM "+RetSqlName("SZX")+" WHERE ZX_FILIAL = '01' AND ZX_SALDO <> 0 AND D_E_L_E_T_ = '' ORDER BY ZX_DATA DESC, ZX_HORA DESC "
+cQuery := "SELECT * FROM "+RetSqlName("SZX")+" WHERE ZX_FILIAL = '02' AND ZX_SALDO <> 0 AND D_E_L_E_T_ = '' ORDER BY ZX_DATA DESC, ZX_HORA DESC "
 
 If Select("QUERYSZX") <> 0
 	QUERYSZX->( dbCloseArea() )

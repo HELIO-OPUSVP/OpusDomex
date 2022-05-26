@@ -184,6 +184,10 @@ User Function DOMPRGCORT()
 		cTpProd:= "JUMPER"
 	ElseIF nTpProd == 5
 		cTpProd:= "PRECON"
+	ElseIF nTpProd == 6 .AND. U_VALIDACAO("RODA")
+		cTpProd:= "DATACENTER"
+	ElseIF nTpProd == 7 .AND. U_VALIDACAO("RODA")
+		cTpProd:= "FTTA"
 	Endif
 
 	DEFINE MSDIALOG oDlg TITLE "Planejamento de Produção - "+ cTpProd FROM 000, 000  TO 750, 1330 COLORS 0, 16777215 PIXEL
@@ -308,7 +312,7 @@ User Function DOMPRGCORT()
 
 	oGetDados:= (MsNewGetDados():New( 160, 010 , 360 ,662,NIL ,"AlwaysTrue" ,"AlwaysTrue", /*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,/*VldCpo*/,/*superdel*/,/*delok*/,oDlg,aHeader,aCols))
 	oGetDados:oBrowse:lUseDefaultColors := .F.
-	oGetDados:oBrowse:SetBlkBackColor({|| CorGd02(oGetDados:nAt,8421376)})
+	oGetDados:oBrowse:SetBlkBackColor({|| CorGd02(oGetDados:nAt)})
 	oGetDados:oBrowse:bRClicked := { || oGetDados:EditCell(), IIf(oGetDados:aCols[oGetDados:nAt,1]== oNo,fMark(1,"D"),fMark(2,"D")) }
 	oGetDados:oBrowse:bLDblClick := { || oGetDados:EditCell(), IIf(oGetDados:aCols[oGetDados:nAt,1]== oNo,fMark(1,"E"),fMark(2,"E")) }
 
@@ -335,7 +339,7 @@ Return
 
 /*/Protheus.doc MontaMsGet
 	description
-	type function
+type function
 	version
 	author Ricardo Roda
 	since 23/07/2020
@@ -405,6 +409,7 @@ Static Function MontaMsGet()
 	cQuery+= "		AND D4_FILIAL = '"+xFilial("SD4")+"'
 	cQuery+= "		AND D_E_L_E_T_ = ''
 	cQuery+= "		AND D4_COD = '50010100')
+
 	cQuery+= "		WHEN SB1A.B1_GRUPO IN ('TRUE', 'TRUN') THEN
 	cQuery+= "		(SELECT D4_QUANT
 	cQuery+= "		FROM   "+RETSQLNAME("SD4")+" D4LIN
@@ -412,6 +417,25 @@ Static Function MontaMsGet()
 	cQuery+= "		AND D4_FILIAL = '"+xFilial("SD4")+"' "
 	cQuery+= "		AND D_E_L_E_T_ = ''
 	cQuery+= "		AND D4_COD = '50010100T')
+
+	if U_VALIDACAO("RODA")
+		cQuery+= "		WHEN SB1A.B1_GRUPO = 'CMTP' THEN
+		cQuery+= "		(SELECT D4_QUANT
+		cQuery+= "		FROM   "+RETSQLNAME("SD4")+" D4LIN
+		cQuery+= "		WHERE  D4LIN.D4_OP = SD4.D4_OP
+		cQuery+= "		AND D4_FILIAL = '"+xFilial("SD4")+"' "
+		cQuery+= "		AND D_E_L_E_T_ = ''
+		cQuery+= "		AND D4_COD = '50010100DC')
+
+		cQuery+= "		WHEN SB1A.B1_GRUPO = 'FTTA' THEN
+		cQuery+= "		(SELECT D4_QUANT
+		cQuery+= "		FROM   "+RETSQLNAME("SD4")+" D4LIN
+		cQuery+= "		WHERE  D4LIN.D4_OP = SD4.D4_OP
+		cQuery+= "		AND D4_FILIAL = '"+xFilial("SD4")+"' "
+		cQuery+= "		AND D_E_L_E_T_ = ''
+		cQuery+= "		AND D4_COD = '50010100FTTA')
+	ENDIF
+
 	cQuery+= "		WHEN SB1A.B1_GRUPO = 'DROP' THEN
 	cQuery+= "		(SELECT D4_QUANT
 	cQuery+= "		FROM   "+RETSQLNAME("SD4")+" D4LIN
@@ -419,6 +443,7 @@ Static Function MontaMsGet()
 	cQuery+= "		AND D4_FILIAL = '"+xFilial("SD4")+"' "
 	cQuery+= "		AND D_E_L_E_T_ = ''
 	cQuery+= "		AND D4_COD = '50010100DR')
+
 	cQuery+= "		WHEN SB1A.B1_GRUPO = 'JUMPER' THEN
 	cQuery+= "		(SELECT D4_QUANT
 	cQuery+= "		FROM   "+RETSQLNAME("SD4")+" D4LIN
@@ -426,6 +451,7 @@ Static Function MontaMsGet()
 	cQuery+= "		AND D4_FILIAL = '"+xFilial("SD4")+"' "
 	cQuery+= "		AND D_E_L_E_T_ = ''
 	cQuery+= "		AND D4_COD = '50010100J')
+
 	cQuery+= "		WHEN SB1A.B1_GRUPO = 'PCON' THEN
 	cQuery+= "		(SELECT D4_QUANT
 	cQuery+= "		FROM   "+RETSQLNAME("SD4")+" D4LIN
@@ -448,7 +474,7 @@ Static Function MontaMsGet()
 	cQuery+= " 	ON SB1A.B1_FILIAL = '"+xFilial("SB1")+"'"
 	cQuery+= " 	AND SB1A.B1_COD = C2_PRODUTO"
 	//	cQuery+= " 	AND NOT( SB1A.B1_COD LIKE  OR SB1A.B1_COD LIKE 'CO0%') "
-	
+
 	IF nTpProd == 1
 		cQuery+= " 	AND SB1A.B1_GRUPO = 'CORD'"
 	ElseIF nTpProd == 2
@@ -459,6 +485,10 @@ Static Function MontaMsGet()
 		cQuery+= " 	AND SB1A.B1_GRUPO = 'JUMP'"
 	ElseIF nTpProd == 5
 		cQuery+= " 	AND SB1A.B1_GRUPO = 'PCON'"
+	ElseIF nTpProd == 6 .AND. ( U_VALIDACAO("RODA"))
+		cQuery+= " 	AND SB1A.B1_GRUPO = 'CMTP'"
+	ElseIF nTpProd == 7 .AND. ( U_VALIDACAO("RODA"))
+		cQuery+= " 	AND SB1A.B1_GRUPO = 'FTTA'"
 	Endif
 
 	cQuery+= " 	AND SB1A.D_E_L_E_T_ = ''"
@@ -534,7 +564,7 @@ Static Function MontaMsGet()
 					oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'LEG1' 		})] := oLegOk
 				ElseIF QRY->D3_QUANT > 0 .and. QRY->D3_QUANT < QRY->D4_QUANT
 					oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'LEG1' 		})] := oLegIni
-				ElseIF QRY->D3_QUANT >= QRY->D4_QUANT 
+				ElseIF QRY->D3_QUANT >= QRY->D4_QUANT
 					oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'LEG1' 		})] := oLegFim
 				Endif
 			Else
@@ -564,7 +594,14 @@ Static Function MontaMsGet()
 			oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'LINHA'  		})] := QRY->LINHA
 
 			if !empty(QRY->TEMPC) .AND.  QRY->DTPRG == DtOS(dDtProg)
-				if (nTpProd == 1 .and. Alltrim(QRY->CORTE) == "CORTE 1")  .or. (nTpProd == 3 .and.  Alltrim(QRY->CORTE) == "DROP 1" )   .or. (nTpProd == 2 .and.  Alltrim(QRY->CORTE) == "TRUNK 1")	.or. (nTpProd == 4 .and.  Alltrim(QRY->CORTE) == "JUMPER 1")  .or. (nTpProd == 5 .and.  Alltrim(QRY->CORTE) == "PRECON 1")
+				if (nTpProd == 1 .and. Alltrim(QRY->CORTE) == "CORTE 1");
+						.or. (nTpProd == 3 .and.  Alltrim(QRY->CORTE) == "DROP 1" );
+						.or. (nTpProd == 2 .and.  Alltrim(QRY->CORTE) == "TRUNK 1");
+						.or. (nTpProd == 4 .and.  Alltrim(QRY->CORTE) == "JUMPER 1");
+						.or. (nTpProd == 5 .and.  Alltrim(QRY->CORTE) == "PRECON 1");
+						.or. (nTpProd == 6 .and.  Alltrim(QRY->CORTE) == "DTCENTER 1");
+						.or. (nTpProd == 7 .and.  Alltrim(QRY->CORTE) == "FTTA 1")
+
 					nTotCort1+= QRY->TEMPC
 					nLin:= 6
 					FreeObj(oBitmapC1)
@@ -623,7 +660,13 @@ Static Function MontaMsGet()
 					Endif
 
 
-				Elseif (nTpProd == 1 .and. Alltrim(QRY->CORTE) == "CORTE 2")  .or. (nTpProd == 3 .and.  Alltrim(QRY->CORTE) == "DROP 2" )   .or. (nTpProd == 2 .and.  Alltrim(QRY->CORTE) == "TRUNK 2")	.or. (nTpProd == 4 .and.  Alltrim(QRY->CORTE) == "JUMPER 2") .or. (nTpProd == 5 .and.  Alltrim(QRY->CORTE) == "PRECON 2")
+				Elseif (nTpProd == 1 .and. Alltrim(QRY->CORTE) == "CORTE 2");
+						.or. (nTpProd == 3 .and.  Alltrim(QRY->CORTE) == "DROP 2" );
+						.or. (nTpProd == 2 .and.  Alltrim(QRY->CORTE) == "TRUNK 2");
+						.or. (nTpProd == 4 .and.  Alltrim(QRY->CORTE) == "JUMPER 2");
+						.or. (nTpProd == 5 .and.  Alltrim(QRY->CORTE) == "PRECON 2");
+						.or. (nTpProd == 6 .and.  Alltrim(QRY->CORTE) == "DTCENTER 2");
+						.or. (nTpProd == 7 .and.  Alltrim(QRY->CORTE) == "FTTA 2")
 					nTotCort2+= QRY->TEMPC
 					nLin:= 24
 					FreeObj(oBitmapC2)
@@ -681,7 +724,13 @@ Static Function MontaMsGet()
 						@ nLin, 250 BITMAP oBitmapC2 SIZE 250, 030 OF oDlg FILENAME cG25 NOBORDER PIXEL
 					Endif
 
-				Elseif (nTpProd == 1 .and. Alltrim(QRY->CORTE) == "CORTE 3")  .or. (nTpProd == 3 .and.  Alltrim(QRY->CORTE) == "DROP 3" )   .or. (nTpProd == 2 .and.  Alltrim(QRY->CORTE) == "TRUNK 3")	.or. (nTpProd == 4 .and.  Alltrim(QRY->CORTE) == "JUMPER 3") .or. (nTpProd == 5 .and.  Alltrim(QRY->CORTE) == "PRECON 3")
+				Elseif (nTpProd == 1 .and. Alltrim(QRY->CORTE) == "CORTE 3");
+						.or. (nTpProd == 3 .and.  Alltrim(QRY->CORTE) == "DROP 3" );
+						.or. (nTpProd == 2 .and.  Alltrim(QRY->CORTE) == "TRUNK 3");
+						.or. (nTpProd == 4 .and.  Alltrim(QRY->CORTE) == "JUMPER 3");
+						.or. (nTpProd == 5 .and.  Alltrim(QRY->CORTE) == "PRECON 3");
+						.or. (nTpProd == 6 .and.  Alltrim(QRY->CORTE) == "DTCENTER 3");
+						.or. (nTpProd == 7 .and.  Alltrim(QRY->CORTE) == "FTTA 3")
 					nTotCort3+= QRY->TEMPC
 					nLin:=42
 					FreeObj(oBitmapC3)
@@ -739,7 +788,13 @@ Static Function MontaMsGet()
 						@ nLin, 250 BITMAP oBitmapC3 SIZE 250, 030 OF oDlg FILENAME cG25 NOBORDER PIXEL
 					Endif
 
-				Elseif (nTpProd == 1 .and. Alltrim(QRY->CORTE) == "CORTE 4")  .or. (nTpProd == 3 .and.  Alltrim(QRY->CORTE) == "DROP 4" )   .or. (nTpProd == 2 .and.  Alltrim(QRY->CORTE) == "TRUNK 4")	.or. (nTpProd == 4 .and.  Alltrim(QRY->CORTE) == "JUMPER 4") .or. (nTpProd == 5 .and.  Alltrim(QRY->CORTE) == "PRECON 4")
+				Elseif (nTpProd == 1 .and. Alltrim(QRY->CORTE) == "CORTE 4");
+						.or. (nTpProd == 3 .and.  Alltrim(QRY->CORTE) == "DROP 4" );
+						.or. (nTpProd == 2 .and.  Alltrim(QRY->CORTE) == "TRUNK 4");
+						.or. (nTpProd == 4 .and.  Alltrim(QRY->CORTE) == "JUMPER 4");
+						.or. (nTpProd == 5 .and.  Alltrim(QRY->CORTE) == "PRECON 4");
+						.or. (nTpProd == 6 .and.  Alltrim(QRY->CORTE) == "DTCENTER 4");
+						.or. (nTpProd == 7 .and.  Alltrim(QRY->CORTE) == "FTTA 4")
 					nTotCort4+= QRY->TEMPC
 					nLin:=60
 					FreeObj(oBitmapC4)
@@ -797,7 +852,13 @@ Static Function MontaMsGet()
 						@ nLin, 250 BITMAP oBitmapC4 SIZE 250, 030 OF oDlg FILENAME cG25 NOBORDER PIXEL
 					Endif
 
-				Elseif (nTpProd == 1 .and. Alltrim(QRY->CORTE) == "CORTE 5")  .or. (nTpProd == 3 .and.  Alltrim(QRY->CORTE) == "DROP 5" )   .or. (nTpProd == 2 .and.  Alltrim(QRY->CORTE) == "TRUNK 5")	.or. (nTpProd == 4 .and.  Alltrim(QRY->CORTE) == "JUMPER 5") .or. (nTpProd == 5 .and.  Alltrim(QRY->CORTE) == "PRECON 5")
+				Elseif (nTpProd == 1 .and. Alltrim(QRY->CORTE) == "CORTE 5");
+						.or. (nTpProd == 3 .and.  Alltrim(QRY->CORTE) == "DROP 5" );
+						.or. (nTpProd == 2 .and.  Alltrim(QRY->CORTE) == "TRUNK 5");
+						.or. (nTpProd == 4 .and.  Alltrim(QRY->CORTE) == "JUMPER 5");
+						.or. (nTpProd == 5 .and.  Alltrim(QRY->CORTE) == "PRECON 5");
+						.or. (nTpProd == 6 .and.  Alltrim(QRY->CORTE) == "DTCENTER 5");
+						.or. (nTpProd == 7 .and.  Alltrim(QRY->CORTE) == "FTTA 5")
 					nTotCort5+= QRY->TEMPC
 					nLin:=78
 					FreeObj(oBitmapC5)
@@ -1410,6 +1471,30 @@ Static Function fRefrButt(nOpc,cOpc,nTpProd)
 			elseif 	nOpc == 5
 				Corte_x:= "PRECON 5"
 			Endif
+		ElseIf nTpProd == 6 .AND. U_VALIDACAO("RODA")
+			If 	nOpc == 1
+				Corte_x:= "DTCENTER 1"
+			elseif 	nOpc == 2
+				Corte_x:= "DTCENTER 2"
+			elseif 	nOpc == 3
+				Corte_x:= "DTCENTER 3"
+			elseif 	nOpc == 4
+				Corte_x:= "DTCENTER 4"
+			elseif 	nOpc == 5
+				Corte_x:= "DTCENTER 5"
+			Endif
+		ElseIf nTpProd == 7 .AND. U_VALIDACAO("RODA")
+			If 	nOpc == 1
+				Corte_x:= "FTTA 1"
+			elseif 	nOpc == 2
+				Corte_x:= "FTTA 2"
+			elseif 	nOpc == 3
+				Corte_x:= "FTTA 3"
+			elseif 	nOpc == 4
+				Corte_x:= "FTTA 4"
+			elseif 	nOpc == 5
+				Corte_x:= "FTTA 5"
+			Endif
 
 		Endif
 
@@ -1737,18 +1822,31 @@ Static Function FTpProd()
 		"QPushButton:pressed {background-color: #50b4b4; color: white; font: bold 22px  Arial; }"+;
 		"QPushButton:hover {background-color: #878787 ; color: white; font: bold 22px  Arial; }"
 
+	nLin:= 033
 	DEFINE MSDIALOG oDlgFil TITLE "Escolha a célula de trabalho" FROM 000, 000  TO 600, 800 COLORS 0, 16777215 PIXEL
-	@ 033, 040 BUTTON oTpProd1 PROMPT "CORD"  SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 1,  oDlgFil:end() ) FONT oFont1 PIXEL
+	@ nLin, 040 BUTTON oTpProd1 PROMPT "CORD"  SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 1,  oDlgFil:end() ) FONT oFont1 PIXEL
 	oTpProd1:setCSS(cCSSBtN1)
-	@ 033, 212 BUTTON oTpProd2 PROMPT "TRUNK" SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 2, oDlgFil:end()) FONT oFont1 PIXEL
+	@ nLin, 212 BUTTON oTpProd2 PROMPT "TRUNK" SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 2, oDlgFil:end()) FONT oFont1 PIXEL
 	oTpProd2:setCSS(cCSSBtN1)
-	@ 110, 040 BUTTON oTpProd3 PROMPT "DROP"  SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 3,   oDlgFil:end()) FONT oFont1 PIXEL
+	
+	nLin:= nLin+55
+	@ nLin, 040 BUTTON oTpProd3 PROMPT "DROP"  SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 3,   oDlgFil:end()) FONT oFont1 PIXEL
 	oTpProd3:setCSS(cCSSBtN1)
-	@ 110, 212 BUTTON oTpProd4 PROMPT "JUMPER" SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 4,  oDlgFil:end()) FONT oFont1 PIXEL
+	@ nLin, 212 BUTTON oTpProd4 PROMPT "JUMPER" SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 4,  oDlgFil:end()) FONT oFont1 PIXEL
 	oTpProd4:setCSS(cCSSBtN1)
-	@ 187, 040 BUTTON oTpProd5 PROMPT "PRECON" SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 5,  oDlgFil:end()) FONT oFont1 PIXEL
+	
+	nLin:= nLin+55
+	@ nLin, 040 BUTTON oTpProd5 PROMPT "PRECON" SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 5,  oDlgFil:end()) FONT oFont1 PIXEL
 	oTpProd5:setCSS(cCSSBtN1)
-
+	if U_VALIDACAO("RODA")
+		@ nLin, 212 BUTTON oTpProd6 PROMPT "DATACENTER" SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 6,  oDlgFil:end()) FONT oFont1 PIXEL
+		oTpProd6:setCSS(cCSSBtN1)
+		
+		nLin:= nLin+55
+		@ nLin, 040 BUTTON oTpProd6 PROMPT "FTTA" SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 7,  oDlgFil:end()) FONT oFont1 PIXEL
+		oTpProd6:setCSS(cCSSBtN1)
+		
+	ENDIF
 
 	ACTIVATE MSDIALOG oDlgFil CENTERED
 Return nTpProd

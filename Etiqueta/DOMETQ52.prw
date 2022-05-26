@@ -24,8 +24,8 @@ User Function DOMETQ52(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	Private lAchou    := .T.
 	Private aPar:={}
 	Private aRetPar:={}
-	
-	
+
+
 	Default cNumOP    := ""
 	Default cNumSenf  := ""
 	Default nQtdEmb   := 0
@@ -159,21 +159,31 @@ User Function DOMETQ52(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		cLocImp := ALLTRIM(aRetPar[1])
 	Endif
 
+	cDesc1 := ""
+	cDesc2 := ""
 	For x := 1 to nChoice
 
 		lUnico := .F.
 		ETQ->(dbGoTop())
 		Do While ETQ->(!Eof())
 
-			// aTemp := U_QuebraString(SB1->B1_DESC,22)
+			aTemp := U_QuebraString(SB1->B1_DESC,22)
+			cDesc1 := aTemp[1]
+
+			if len(aTemp) > 1
+				cDesc2 := aTemp[2]
+			Endif
+
 
 			If ETQ->G1_XXQTET1 > 0 .And. ETQ->G1_XXQTET2 > 0
 
 				// Monta os dois lados por serial
 				// Monta o LADO A
 
-				cPar1 := substring(alltrim(SB1->B1_DESC),1,25)
-				cPar2 := substring(alltrim(SB1->B1_DESC),26,len(alltrim(SB1->B1_DESC)))
+				//cPar1 := substring(alltrim(SB1->B1_DESC),1,25)
+				//cPar2 := substring(alltrim(SB1->B1_DESC),26,len(alltrim(SB1->B1_DESC)))
+				cPar1 := cDesc1
+				cPar2 := cDesc2
 				cPar3 := "RDT FAN: "+AllTrim(SB1->B1_XFANA)
 				cPar4 := "SN:"+nSomaSer
 				cPar5 := "L: A"
@@ -181,8 +191,8 @@ User Function DOMETQ52(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 				AADD(aEtqs,{ cPar1, cPar2, cPar3, cPar4, cPar5, cPar6 } )
 
 				// Monta o LADO B
-				cPar1 := substring(alltrim(SB1->B1_DESC),1,25)
-				cPar2 := substring(alltrim(SB1->B1_DESC),26,len(alltrim(SB1->B1_DESC)))
+				cPar1 := cDesc1
+				cPar2 := cDesc2
 				cPar3 := "RDT FAN: "+AllTrim(SB1->B1_XFANB)
 				cPar4 := "SN:"+nSomaSer
 				cPar5 := "L: B"
@@ -197,8 +207,8 @@ User Function DOMETQ52(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			ElseIf ETQ->G1_XXQTET1 > 0 .And. ETQ->G1_XXQTET2 <= 0
 
 				// Monta somente o LADO A
-				cPar1 := substring(alltrim(SB1->B1_DESC),1,25)
-				cPar2 := substring(alltrim(SB1->B1_DESC),26,len(alltrim(SB1->B1_DESC)))
+				cPar1 := cDesc1
+				cPar2 := cDesc2
 				cPar3 := "RDT FAN: "+AllTrim(SB1->B1_XFANA)
 				cPar4 := "SN:"+nSomaSer
 				cPar5 := "L: A"
@@ -209,8 +219,8 @@ User Function DOMETQ52(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			ElseIf ETQ->G1_XXQTET1 <= 0 .And. ETQ->G1_XXQTET2 > 0
 
 				// Monta somente o LADO B
-				cPar1 := substring(alltrim(SB1->B1_DESC),1,25)
-				cPar2 := substring(alltrim(SB1->B1_DESC),26,len(alltrim(SB1->B1_DESC)))
+				cPar1 := cDesc1
+				cPar2 := cDesc2
 				cPar3 := "RDT FAN: "+AllTrim(SB1->B1_XFANB)
 				cPar4 := "SN:"+nSomaSer
 				cPar5 := "L: B"
@@ -236,7 +246,7 @@ User Function DOMETQ52(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	nCol := 0
 	avar:={}
 	For nQ := 1 To Len( aEtqs )
-		
+
 		nCol := nCol + 1
 		If nCol == 1
 			AADD(aVar,aEtqs[nQ,1])
@@ -263,17 +273,17 @@ User Function DOMETQ52(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			AADD(aVar,aEtqs[nQ,4])
 			AADD(aVar,aEtqs[nQ,5])
 			AADD(aVar,aEtqs[nQ,6])
-			
+
 		EndIf
 
 		IF nCol == 3 .OR. nQ == Len( aEtqs )
-		
+
 			if nCol == 1
-				For _y:= 1 to 12   
+				For _y:= 1 to 12
 					AADD(aVar,"")
 				Next _y
 			Elseif nCol == 2
-				For _y:= 1 to 6  
+				For _y:= 1 to 6
 					AADD(aVar,"")
 				Next _y
 			Endif
@@ -294,7 +304,7 @@ User Function DOMETQ52(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	Next nQ
 
 
-	
+
 
 // //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄxÔ[¿
 // //³Impressão das última coluna de etiqueta   		 ³

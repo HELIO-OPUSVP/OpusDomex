@@ -358,7 +358,7 @@ oEtiqueta:Refresh()
 
 XD1->( dbSetOrder(1) )
 If XD1->( dbSeek( xFilial("XD1") + cEtiqueta ) )		
-	cQrySD3 := " SELECT D3_COD,D3_XXOP,SUM(D3_QUANT) D3_QUANT,B1_DESC "
+	cQrySD3 := " SELECT D3_COD,D3_XXOP,SUM(D3_QUANT) D3_QUANT,B1_DESC"
 	cQrySD3 += ENTER + " FROM " + RetSqlName("SD3") + " SD3 (NOLOCK) "
 	cQrySD3 += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 (NOLOCK) ON SB1.D_E_L_E_T_ ='' AND SB1.B1_FILIAL = '" + xFilial("SB1") + "' AND SB1.B1_COD = SD3.D3_COD "
 	cQrySD3 += ENTER + " JOIN " + RetSqlName("SC2") + " SC2 (NOLOCK) ON SC2.D_E_L_E_T_ ='' AND SC2.C2_FILIAL = SD3.D3_FILIAL AND SC2.C2_NUM + SC2.C2_ITEM + SC2.C2_SEQUEN = D3_XXOP AND C2_XXDTPRO = '" + DTOS(dData) + "' " 
@@ -367,7 +367,7 @@ If XD1->( dbSeek( xFilial("XD1") + cEtiqueta ) )
 	cQrySD3 += ENTER + " AND D3_ESTORNO = '' "  
 	cQrySD3 += ENTER + " AND D3_LOCAL= '" + Alltrim(cLocProcDom) + "' "
 	cQrySD3 += ENTER + " AND D3_COD = '" + Alltrim(XD1->XD1_COD) + "' "
-	cQrySD3 += ENTER + " GROUP BY  D3_COD,D3_XXOP,B1_DESC "
+	cQrySD3 += ENTER + " GROUP BY  D3_COD,D3_XXOP,B1_DESC
 	//cQrySD3 += ENTER + " AND D3_EMISSAO = '" +  DTOS(DDATABASE) + "' "
 
 	If Select("TMPD3") >0 
@@ -388,9 +388,42 @@ If XD1->( dbSeek( xFilial("XD1") + cEtiqueta ) )
 
 		While TMPD3->(!EOF())
 			nCont ++
-			IncProc("Reimprimindo Etiqueta do Produto")
+			IncProc("Reimprimindo Etiqueta do Produto")	
+			
 			IF lImprime 
-				U_EtPgOP39(TMPD3->D3_XXOP,TMPD3->D3_COD,TMPD3->B1_DESC,TMPD3->D3_QUANT,.F.,nCont,nTotReg,xFilial("SC2"))
+				cEtqGerada:= U_EtPgOP39(TMPD3->D3_XXOP,TMPD3->D3_COD,TMPD3->B1_DESC,TMPD3->D3_QUANT,.F.,nCont,nTotReg,xFilial("SC2"),.T.)
+				If !Empty(Alltrim(cEtqGerada))
+					//Ajustar a etiqueta do Movimento e cancelar a eiqueta anterior
+					cQryXD1 := " SELECT XD1_XXPECA  "
+					cQryXD1 += " FROM XD1010 XD1 "
+					cQryXD1 += " WHERE XD1.D_E_L_E_T_ ='' AND XD1_FILIAL = '" + xFilial("XD1") + "' "
+					cQryXD1 += " AND XD1_COD ='" + TMPD3->D3_COD  + "' "
+					cQryXD1 += " AND XD1_OP = '" + TMPD3->D3_XXOP + "' "
+					cQryXD1 += " AND XD1_QTDATU =" + Alltrim(Str(TMPD3->D3_QUANT)) + " AND XD1_LOCAL = '97' "
+					cQryXD1 += " AND XD1_XXPECA <'" + Alltrim(cEtqGerada) + "' AND XD1_OCORRE <> '5' AND XD1_OCORRE = '8' "							
+					If Select("TBXD1") > 0
+						TBXD1->(DbCloseArea())
+					EndIf
+					TCQUERY cQryXD1 NEW ALIAS "TBXD1"					
+					IF TBXD1->(!EOF())
+						XD1->(DbGoTop())
+						If XD1->( dbSeek( xFilial("XD1") + TBXD1->XD1_XXPECA  ) )	
+							RecLock("XD1",.F.)
+								XD1->XD1_OCORRE := "5" // Cancela a Etiqueta
+							XD1->(MsUnlock())
+						Endif				
+					EndIf
+					If Select("TBXD1") > 0
+						TBXD1->(DbCloseArea())
+					EndIf
+ 					/*
+					 TMPD3->(DbGoTo(TMPD3->RECSD3))
+					If Alltrim(TMPD3->D3_XXOP) == Alltrim(SD3->D3_XXOP)
+						RecLock("SD3",.F.)
+							SD3->D3_XXPECA := cEtqGerada
+						SD3->(MsUnLock())
+					EndIf*/
+				EndIf
 			Endif
 			TMPD3->(DbSkip())
 		EndDo

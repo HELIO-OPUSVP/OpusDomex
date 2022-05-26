@@ -1215,7 +1215,7 @@ Static Function ValidQtd(aOpsApagar,_nQtd)
 													//Zerar quantidade no Array para não imprimir etiqueta em branco ou pagar novamente com valor zerado
 													lImprime := .T.
 													If aOpsApagar[nR][2] > 0 .And. lImprime
-														U_EtPgOP39(_cNumOP,XD1->XD1_COD,SB1->B1_DESC,nQTransfOk,.f./*lparcial*/,nR,Len(aOpsApagar),_cFilialOP)
+														U_EtPgOP39(_cNumOP,XD1->XD1_COD,SB1->B1_DESC,nQTransfOk,.f./*lparcial*/,nR,Len(aOpsApagar),_cFilialOP,.f.)
 														lSilk	  := (SB1->B1_XSILK=="S") //Verfica se é Silk
 
 
@@ -1510,7 +1510,7 @@ User Function RetQry39(cTipoCon,cGrupoProd,dData,cCodProdut,cNumOpCon,__cFilial)
 Return cRet
 
 // Impressão etiqueta Produto
-User Function EtPgOP39(cNumOp,cCodProd,cDescProd,nQtdProd,lParcial,nSeqEtq,nQtdTotEtq,cFilialOP)
+User Function EtPgOP39(cNumOp,cCodProd,cDescProd,nQtdProd,lParcial,nSeqEtq,nQtdTotEtq,cFilialOP,lReimpres)
 	Local _cPorta    := "LPT1"
 	Local _aAreaGER  := GetArea()
     /* Gravação do XD1 comenantada até finalizar os testes*/
@@ -1573,7 +1573,7 @@ User Function EtPgOP39(cNumOp,cCodProd,cDescProd,nQtdProd,lParcial,nSeqEtq,nQtdT
 	MSCBClosePrinter()
 	RestArea(_aAreaGER)
 
-Return
+Return _cProxPeca
 
 
 
