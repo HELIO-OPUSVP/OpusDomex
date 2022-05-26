@@ -122,7 +122,8 @@ User Function RFATA04()
 	cGrupo3 += "000355 - MARGARETE SANTOS"
 	cGrupo3 += "000753 - JULIA NABA"  	         // Adicionado em 26/10/2020  - Chamado 021660
 	cGrupo3 += "000418 - MARILIA GABRIELA"
-	cGrupo3 += "000589 - NATASHA SILVA"
+//	cGrupo3 += "000589 - NATASHA SILVA"
+	cGrupo3 += "001115 - NATASHA DOMINGOS"      // Adiciona em 23/05/2022 - Chamado 033616
 	cGrupo3 += "000271 - SERGIO UCHIMURA"
 	cGrupo3 += "000651 - WILLIANS PEREIRA"
 //	cGrupo3 += "000931 - LIVIA RUFINO"	         // Adicionado em 16/06/2021  - Chamado 025037

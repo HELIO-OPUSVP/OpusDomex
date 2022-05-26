@@ -5,10 +5,24 @@
 #Include "protheus.ch"
 #Include "colors.ch"
 
-User Function MBOLPDF()
+
+/*
+
+BOLETO SANTANDER RDT - Compilar sempre os seguintes fontes
+
+MBOLPDF033.prw ==>  Este Fonte MBOLPDF033.prw contempla os seguintes itens:
+        Function BOL033 --> Imprime Boleto Avulso Santander
+        Function BOL033B --> Imprime Boletos em Bordero Santander
+xBol033.prw  ==>  Classe auxiliar que faz a impressão do Boleto Santander
+Nosso033.prw  ==> Calcula o nosso numero para o Banco Santander
+
+*/
+
+
+User Function BOL033()
 
 //Instancia a classe
-oBol := xBolPDF():New()	
+oBol := xBol033():New()	
 
 /* Seleciona os títulos, apenas os 3 primeiros parametros são obrigatórios.
 	Não é necessário posicionar nos títulos, basta informar os parametros.
@@ -61,7 +75,24 @@ oBol:SetTitulos(cPref, cNum, cTipo, cPrcDe, cPrcAte/*, cCliDe, cCliAte, cLjDe, c
 		7. Fórmula do campo EE_FOREXT2
 */
 
-nRecSEE := 7  //    CARREGAR O RECNO DO BANCO NA TABELA SEE  *****************
+// CARREGA DADOS DO BANCO
+if cFilAnt == "01"  //  Santander - Matriz
+    _cxBco  := "033"
+    _cxAge  := "3072 "
+    _cxConta:= "01051781  "
+    _cxSub  := "001"
+
+ElseIf cFilAnt == '02'  // Santander - Filial
+    _cxBco  := "033"
+    _cxAge  := "3078 "
+    _cxConta:= "13002050  "
+    _cxSub  := "001"
+Endif
+                                                                                                              
+SEE->(DbSetOrder(1))
+SEE->( dbSeek( xFilial("SEE") + _cxBco + _cxAge + _cxConta+_cxSub  ) )
+nRecSEE :=  SEE->( Recno())      //nRecSEE := 7  //    CARREGAR O RECNO DO BANCO NA TABELA SEE  ******
+        
 oBol:SetBanco(nRecSEE)
 
 /*
@@ -144,11 +175,29 @@ Return
 
 
 
-User Function MBOLPDF2()
+User Function BOL033B()
 
-Private _cPerg  := Padr("MBOLPDF2",10)
+Private _cPerg  := Padr("BOL033B",10)
 fCriaPerg(_cPerg)
 
+
+// CARREGA DADOS DO BANCO
+if cFilAnt == "01"  //  Santander - Matriz
+    _cxBco  := "033"
+    _cxAge  := "3072 "
+    _cxConta:= "01051781  "
+    _cxSub  := "001"
+
+ElseIf cFilAnt == '02'  // Santander - Filial
+    _cxBco  := "033"
+    _cxAge  := "3078 "
+    _cxConta:= "13002050  "
+    _cxSub  := "001"
+Endif
+
+SEE->(DbSetOrder(1))
+SEE->( dbSeek( xFilial("SEE") + _cxBco + _cxAge + _cxConta+_cxSub  ) )
+nRecSEE :=  SEE->( Recno())      //nRecSEE := 7  //    CARREGAR O RECNO DO BANCO NA TABELA SEE  ******
 
 	If Pergunte(_cPerg,.T.)
 
@@ -164,7 +213,7 @@ fCriaPerg(_cPerg)
 		cQuery += " LEFT JOIN "+ RetSqlName("SA1") + " SA1 ON E1_CLIENTE+E1_LOJA = A1_COD+A1_LOJA "	
 		cQuery += " WHERE EA_NUMBOR = '"+alltrim(MV_PAR01)+"' " 
 		cQuery += " AND EA_CART = 'R'  "
-		cQuery += " AND EA_PORTADO='341' AND EA_AGEDEP='1529' AND EA_NUMCON='01594-1' "
+		cQuery += " AND EA_PORTADO='"+_cxBco+"' AND EA_AGEDEP='"+_cxAge+"' AND EA_NUMCON='"+_cxConta+"' "
 		cQuery += " AND SEA.D_E_L_E_T_ = '' "
 		cQuery += " AND E1_SALDO > 0"
 		TcQuery cQuery Alias "TRB" New
@@ -177,7 +226,7 @@ fCriaPerg(_cPerg)
 			// PROCESSA O ENVIO DOS EMAILS
 
 				//Instancia a classe
-					oBol := xBolPDF():New()	
+					oBol := xBol033():New()	
 
 					cPref := TRB->E1_PREFIXO
 					cNum  := TRB->E1_NUM
@@ -188,7 +237,7 @@ fCriaPerg(_cPerg)
 //					oBol:SetTitulos(cPref, cNum, cTipo/*, cPrcDe, cPrcAte, cCliDe, cCliAte, cLjDe, cLjAte*/)
 					oBol:SetTitulos(cPref, cNum, cTipo, cPrcDe, cPrcAte/*, cCliDe, cCliAte, cLjDe, cLjAte*/)
 
-					nRecSEE := 7  //    CARREGAR O RECNO DO BANCO NA TABELA SEE  *****************
+					//nRecSEE := 7  //    CARREGAR O RECNO DO BANCO NA TABELA SEE  *****************
 					oBol:SetBanco(nRecSEE)
 
 					//Geração dos boletos bancários em PDF
