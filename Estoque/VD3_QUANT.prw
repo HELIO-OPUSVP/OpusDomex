@@ -201,7 +201,7 @@ Static Function ProcRun()
 			lSilk := .F. // fVerSilk(cD3_COD)
 
 			If !(Posicione("SB1",1,xFilial("SB1")+cD3_COD,"B1_TIPO") $ 'PA,BN') .and. !lSilk
-				If ((cFilAnt == "01" .and.  cD3_LOCAL <> '97') .Or. (cFilAnt=="02" .And. cD3_LOCAL <> "95"))
+				If ((cFilAnt == "01" .and.  cD3_LOCAL <> '97') .Or. (cFilAnt=="02" .And. !Alltrim(cD3_LOCAL) $ "95/97"))
 					U_UMsgStop("Produtos diferentes de 'PA' devem ter suas produções apontadas no almoxarifado de produção 97.")
 					_Retorno := .F.
 				EndIf
