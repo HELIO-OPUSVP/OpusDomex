@@ -25,7 +25,8 @@ User Function MTA130C8()
 dbSelectArea("SC8")
 	
 	RecLock("SC8",.F.)
-		SC8->C8_PRAZO := ( SC8->C8_DATPRF - DDATABASE ) 
+		SC8->C8_PRAZO  := ( SC8->C8_DATPRF - DDATABASE ) 
+		SC8->C8_XXOBSC := SC1->C1_OBS
 	MsUnlock()
 	
 Return

@@ -49,7 +49,9 @@ Static Function DOMGeraPC(nOpc)
 	Private oFont15N	:= TFont():New('Verdana',,-15,.T.,.T.)
 	Private oFont20N	:= TFont():New('Verdana',,-20,.T.,.T.)
 	Private oFont30N	:= TFont():New('Verdana',,-30,.T.,.T.)
-
+	Private nMoedaPed   := SC7->C7_MOEDA
+	Private cDescMoed   := SuperGetMv("MV_MOEDA"+AllTrim(Str(nMoedaPed,2)))
+	Private cSimbMoeda  := Space(3)
 	Default nOpc := 1
 
 	/*
@@ -101,7 +103,15 @@ Static Function DOMGeraPC(nOpc)
 			SC7->(DbSkip())
 		EndDo
 	EndIf
-
+	DbSelectArea("CTO")
+	CTO->(DbSetOrder(1))
+	If (CTO->(DbSeek(xFilial("CTO") + StrZero(nMoedaPed, TamSX3("CTO_MOEDA")[1]))))
+		cDescMoed := Alltrim(CTO->CTO_DESC)
+		cSimbMoeda := Alltrim(CTO->CTO_SIMB)
+	else
+		cSimbMoeda := "R$"
+	Endif
+	
 	If nProdutos % 14 > 10
 		nTotPaginas := Int(nProdutos / 14) + 2
 	Else
@@ -128,9 +138,13 @@ Static Function DOMGeraPC(nOpc)
 			DbSelectArea("SB1")
 			SB1->(DbSetOrder(1))
 			SB1->(DbSeek(xFilial()+SC7->C7_PRODUTO))
-
-			cDescProd := AllTrim(SB1->B1_DESCR1) + " " + AllTrim(SB1->B1_DESCR2) + " " + AllTrim(SB1->B1_DESCR3) + " " + AllTrim(SB1->B1_DESCR4)
-
+			If SB1->B1_XXPROIN == "S"
+				cDescProd := "INCENTIVADO - " + AllTrim(SB1->B1_DESCR1) + " " + AllTrim(SB1->B1_DESCR2) + " " + AllTrim(SB1->B1_DESCR3) + " " + AllTrim(SB1->B1_DESCR4)
+				cDescProd += " - Finalidade: " + SC7->C7_XOPER + "-"  + Alltrim(Posicione("SX5",1,xFilial("SX5")+"ZD"+SC7->C7_XOPER ,"X5_DESCRI"))
+			Else
+				cDescProd := AllTrim(SB1->B1_DESCR1) + " " + AllTrim(SB1->B1_DESCR2) + " " + AllTrim(SB1->B1_DESCR3) + " " + AllTrim(SB1->B1_DESCR4)
+				cDescProd += " - Finalidade: " + SC7->C7_XOPER + "-" +Alltrim(Posicione("SX5",1,xFilial("SX5")+"ZD"+SC7->C7_XOPER ,"X5_DESCRI"))
+			EndIf
 			//		MaFisAdd(SC6->C6_PRODUTO, SC6->C6_TES, SC6->C6_QTDVEN, SC6->C6_PRCVEN, 0, "", "",, 0, 0, 0, 0, SC6->C6_VALOR, 0)
 
 			oPrinter:Say(nLin,11,AllTrim(SC7->C7_ITEM),oFont9)
@@ -141,9 +155,9 @@ Static Function DOMGeraPC(nOpc)
 			oPrinter:Say(nLin + 30,101,SubStr(cDescProd,135,45),oFont9)
 			oPrinter:Say(nLin,302,AllTrim(SC7->C7_UM),oFont9)
 			oPrinter:Say(nLin,316,AllTrim(Transform(SC7->C7_QUANT,"@E 999,999,999.99")),oFont9)
-			oPrinter:Say(nLin,371,"R$ " + AllTrim(Transform(SC7->C7_PRECO,"@E 999,999,999.9999")),oFont9)
+			oPrinter:Say(nLin,371,cSimbMoeda + " "+ AllTrim(Transform(SC7->C7_PRECO,"@E 999,999,999.9999")),oFont9)
 			oPrinter:Say(nLin,441,AllTrim(Str(SC7->C7_IPI)) + "%",oFont9)
-			oPrinter:Say(nLin,461,"R$ " + AllTrim(Transform(SC7->C7_TOTAL,PesqPict("SC6","C6_VALOR"))),oFont9)
+			oPrinter:Say(nLin,461,cSimbMoeda + " " + AllTrim(Transform(SC7->C7_TOTAL,PesqPict("SC6","C6_VALOR"))),oFont9)
 			oPrinter:Say(nLin,541,DtoC(SC7->C7_DATPRF),oFont9)
 			If nContador <> 7
 				oPrinter:Line(nLin+40,10,nLin+40,585,,"-1")
@@ -216,20 +230,20 @@ Static Function RodapePC(nOpc)
 		oPrinter:Say(650,182,"Data de Emissao",oFont12)
 		oPrinter:Say(660,182,Alltrim(DtoC(SC7->C7_EMISSAO)),oFont12)
 		oPrinter:Line(640,280,665,280)
-		oPrinter:Say(650,282,"Total de Mercadorias: R$ " + AllTrim(TransForm(nValorTotal,PesqPict("SC7","C7_TOTAL"))),oFont12)
-		oPrinter:Say(660,282,"Total com Impostos: R$ " + AllTrim(TransForm(nValImpostos+nValorTotal,PesqPict("SC7","C7_TOTAL"))),oFont12)
+		oPrinter:Say(650,282,"Total de Mercadorias: " + cSimbMoeda + " " + AllTrim(TransForm(nValorTotal,PesqPict("SC7","C7_TOTAL"))),oFont12)
+		oPrinter:Say(660,282,"Total com Impostos: " + cSimbMoeda + " " + AllTrim(TransForm(nValImpostos+nValorTotal,PesqPict("SC7","C7_TOTAL"))),oFont12)
 		oPrinter:Line(665,10,665,585)
 		oPrinter:Say(675,12,"Reajuste:",oFont12)
-		oPrinter:Say(675,282,"IPI: R$ "  + AllTrim(TransForm(SC7->C7_VALIPI,PesqPict("SC7","C7_VALIPI"))),oFont12) //AllTrim(TransForm(SC7->C7_VALIPI,PesqPict("SC7","C7_VALIPI"))),oFont12)
-		oPrinter:Say(685,282,"Frete: R$ "+ AllTrim(TransForm(SC7->C7_VALFRE,"@E 999,999.99")),oFont12)//AllTrim(TransForm(SC7->C7_VALFRE,PesqPict("SC7","C7_VALFRE"))),oFont12)
-		oPrinter:Say(675,402,"ICMS: R$ " + AllTrim(TransForm(SC7->C7_VALICM,"@E 999,999.99")),oFont12)//AllTrim(TransForm(SC7->C7_VALICM,PesqPict("SC7","C7_VALICM"))),oFont12)
-		oPrinter:Say(685,402,"Despesas: R$ "+ AllTrim(TransForm(nValDespesas,"@E 999,999.99")),oFont12)
+		oPrinter:Say(675,282,"IPI: " + cSimbMoeda + " "  + AllTrim(TransForm(SC7->C7_VALIPI,PesqPict("SC7","C7_VALIPI"))),oFont12) //AllTrim(TransForm(SC7->C7_VALIPI,PesqPict("SC7","C7_VALIPI"))),oFont12)
+		oPrinter:Say(685,282,"Frete: " + cSimbMoeda + " "+ AllTrim(TransForm(SC7->C7_VALFRE,"@E 999,999.99")),oFont12)//AllTrim(TransForm(SC7->C7_VALFRE,PesqPict("SC7","C7_VALFRE"))),oFont12)
+		oPrinter:Say(675,402,"ICMS: " + cSimbMoeda + " " + AllTrim(TransForm(SC7->C7_VALICM,"@E 999,999.99")),oFont12)//AllTrim(TransForm(SC7->C7_VALICM,PesqPict("SC7","C7_VALICM"))),oFont12)
+		oPrinter:Say(685,402,"Despesas:" + cSimbMoeda + " "+ AllTrim(TransForm(nValDespesas,"@E 999,999.99")),oFont12)
 		oPrinter:Line(665,280,765,280)
 		oPrinter:Line(690,10,690,585)
 		oPrinter:Say(700,12,"Observacoes",oFont12)
 		oPrinter:Say(710,12,AllTrim(SC7->C7_OBS),oFont12)
 		oPrinter:Line(745,10,745,280)
-		oPrinter:Say(700,282,"Total Geral: R$ "+ AllTrim(TransForm(nValorTotal ,PesqPict("SC7","C7_TOTAL"))),oFont12)
+		oPrinter:Say(700,282,"Total Geral:" + cSimbMoeda + " "+ AllTrim(TransForm(nValorTotal ,PesqPict("SC7","C7_TOTAL"))),oFont12)
 		oPrinter:Line(705,280,705,585)
 		//Ajustador por Jackson Santos - Conforme solicitação do usuário para atender o chamado 013001
 		//Indicando que deve ser coloca do nome do comprador.
@@ -239,7 +253,23 @@ Static Function RodapePC(nOpc)
 		oPrinter:Say(715,282,"     Aceite do Fornecedor    ",oFont12)
 		oPrinter:Say(745,282,"  ___________________________",oFont12)
 		oPrinter:Line(705,450,765,450)
-		oPrinter:Say(715,452,"Obs do Frete: " + Iif(SC7->C7_TPFRETE == "C","CIF","FOB"),oFont12)
+		cDescTpFrete := SPACE(10)
+
+		iF SC7->C7_TPFRETE == "C" //CIF
+			cDescTpFrete := "CIF"
+		ElseIf SC7->C7_TPFRETE == "F"
+			cDescTpFrete := "FOB"
+		ElseIf SC7->C7_TPFRETE == "T"
+			cDescTpFrete := "TERCEIROS"
+		ElseIf SC7->C7_TPFRETE == "R"
+			cDescTpFrete := "REMETENTE"
+		ElseIf SC7->C7_TPFRETE == "D"
+			cDescTpFrete := "DESTINATÁRIO"
+		Else //S - Sem Frete
+			cDescTpFrete := "SEM FRETE"
+		EndIf
+
+		oPrinter:Say(715,452,"Obs do Frete: " + cDescTpFrete ,oFont12)
 		//oPrinter:Say(725,452,"Transportadora",oFont12)
 		//oPrinter:Say(735,452,SubStr(SA4->A4_NOME,1,23),oFont12)
 		//oPrinter:Say(745,452,SubStr(SA4->A4_NOME,24,23),oFont12)
@@ -268,6 +298,7 @@ Return
 Static Function CabecPC(nOpc)
 
 	Local nColuna := 0
+	
 
 	If nOpc == 1
 		nColuna := 600
@@ -286,11 +317,14 @@ Static Function CabecPC(nOpc)
 	SA2->(DbSeek(xFilial("SA2")+SC7->C7_FORNECE+SC7->C7_LOJA))
 
 	oPrinter:Say(20,540,"Pag.: " + AllTrim(Str(nPagina)) + "/" + AllTrim(Str(nTotPaginas)) ,oFont8)
-	oPrinter:Say(30,220,"PEDIDO DE COMPRA: " + SC7->C7_NUM,oFont15N)
+	IF Alltrim(SC7->C7_XTPPC) == "RP" // REPOSICAO
+		oPrinter:Say(30,220,"PEDIDO DE REPOSIÇÃO: " + SC7->C7_NUM + "    -   MOEDA: " + Alltrim(STR(SC7->C7_MOEDA)) + "-" +cDescMoed  ,oFont15N) 
+	Else
+		oPrinter:Say(30,220,"PEDIDO DE COMPRA: " + SC7->C7_NUM + "    -   MOEDA: " + Alltrim(STR(SC7->C7_MOEDA)) + "-" +cDescMoed ,oFont15N)
+	EndIf
 	oPrinter:Say(40,220,AllTrim(SA2->A2_NOME) + " - I.E.: " + AllTrim(SA2->A2_INSCR),oFont12)
 	oPrinter:Say(50,220,AllTrim(SA2->A2_END) + " - " + AllTrim(SA2->A2_BAIRRO) + " - " + AllTrim(SA2->A2_MUN) + "/" + AllTrim(SA2->A2_EST) + " - CGC/CPF: " + AllTrim(SA2->A2_CGC) ,oFont9)
 	oPrinter:Say(60,220,"CEP: " + AllTrim(SA2->A2_CEP) + " - Telefone: " + AllTrim("("+Substr(SA2->A2_DDD,1,3)+") "+Substr(SA2->A2_TEL,1,15)) + " - Cel: " + AllTrim("("+Substr(SA2->A2_DDD,1,3)+") "+Substr(SA2->A2_TEL,1,15)),oFont9)
-
 
 	oPrinter:Say(70,220,"Contato: " + AllTrim(SA2->A2_CONTATO),oFont9)
 	//oPrinter:Say(78,460,"Data de Emissao: " + DtoC(SC7->C7_EMISSAO))
