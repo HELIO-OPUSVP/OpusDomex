@@ -81,7 +81,7 @@ Static Function fMenu()
 	AAdd( aRotina, { OemToAnsi("Visualizar")     ,"U_XMtCadP12"   ,  0 , 2})
 	AAdd( aRotina, { OemToAnsi("Incluir")        ,"U_XMtCadP12"   ,  0 , 3})
 	AAdd( aRotina, { OemToAnsi("Alterar")        ,"U_XMtCadP12"   ,  0 , 4})
-//	AAdd( aRotina, { OemToAnsi("Excluir")        ,"U_XMtCadP12"   ,  0 , 5})
+	AAdd( aRotina, { OemToAnsi("Excluir")        ,"U_XMtCadP12"   ,  0 , 5})
 	AAdd( aRotina, { OemToAnsi("Legenda")        ,"U_XMtLegP12"   ,  0 , 3})
 
 
@@ -423,9 +423,9 @@ User Function fTempo()
 			nMM := nHH - Int(nHH)
 			nHH := Int(nHH) + (nMM * 60 / 100)
 		EndIf
-	
+
 	EndIf
-	
+
 Return(nHH)
 
 
@@ -523,6 +523,21 @@ User Function XMtCadP12(cAlias,nReg,nOpc)
 	nPVertot   := aPosObj[2,3]-(aPosObj[2,1]+21)
 
 	cVarCampo := ""
+
+
+	If nOpc == 4  //Alteração
+		If P12->P12_STATUS == "2" .And. !(__CUSERID $ GetMV("MV_XREGREC"))
+			MsgInfo("Este Registro de Reclamação / Ocorrência esta encerrado e não pode ser alterado!")
+			Return
+		EndIf
+	EndIf
+
+	If  nOpc == 5  //Exclusão
+		If !(__CUSERID $ GetMV("MV_XREGREC"))
+			MsgInfo("Você não tem permissão para excluir um Registro de Reclamação / Ocorrência.")
+			Return
+		EndIf
+	EndIf
 
 // Verifica o tipo de chamada e trata a situação
 	Do Case
@@ -701,7 +716,7 @@ Static Function fGDInter(hcOpc,nPosFolder,oGdInter)
 
 //	oMmInter := TMultiGet():New( nMemoSuperior,nMemoEsquerda,{|u|if(Pcount()>0,cTxInter:=u,cTxInter)},oFolder:aDialogs[nPosFolder], nMemoDireita, nMemoInferior,/*oFont*/,.F., NIL, NIL, NIL,.T., NIL,.F.,{||.T.}, .F.,.F., NIL, NIL,{|| fMudaLinha(3)}, .F., NIL, NIL)
 
-//	@ nSuperior,nMemoEsquerda MsGet oOrigDesc Var cOrigDesc Picture "@!" Size nMemoDireita,10 Of oFolder:aDialogs[nPosFolder] When .F. Pixel
+//	@ nSuperior,nMemoEsquerda MsGet oOrigDesc Var cOrigDesc Picture "@!" Size nMemoDireita,10 Of oFolder:aDialogs[nPosFolº±±CADP14LOkder] When .F. Pixel
 
 //oBtnSvMm := tButton():New(nSuperior,nMemoEsquerda,"Salvar Texto",oFolder:aDialogs[nPosFolder],{|| fSalvaMemo() },55,12,,,,.T.)
 //@ nSuperior,nMemoEsquerda+60 MsGet oOrigDesc Var cOrigDesc Picture "@!" Size nMemoDireita-60,10 Of oFolder:aDialogs[nPosFolder] When .F. Pixel
@@ -729,9 +744,9 @@ Static Function fGDAnexo(hcOpc,nPosFolder,oGdAnexo)
 
 	Local cGetOpc        := IIf(hcOpc==2,Nil,GD_INSERT+GD_DELETE+GD_UPDATE)           // GD_INSERT+GD_DELETE+GD_UPDATE
 
-	Local cLinhaOk       := "U_CADP14LOk"    //Nil//"U_CADP14LOk"                               // Funcao executada para validar o contexto da linha atual do aCols
-	Local cTudoOk        := Nil//"U_CADZKTOk"                               // Funcao executada para validar o contexto geral da MsNewGetDados (todo aCols)
-	Local cIniCpos       := "+P14_ITEM"                                   // Nome dos campos do tipo caracter que utilizarao incremento automatico.
+	Local cLinhaOk       := "U_CADP14LOK"    //Nil//"U_CADP14LOk"           // Funcao executada para validar o contexto da linha atual do aCols
+	Local cTudoOk        := "U_CADP14TOK"	// Nil//"U_CADZKTOk"           // Funcao executada para validar o contexto geral da MsNewGetDados (todo aCols)
+	Local cIniCpos       := "+P14_ITEM"                                     // Nome dos campos do tipo caracter que utilizarao incremento automatico.
 	Local nFreeze        := Nil                                             // Campos estaticos na GetDados.
 	Local nMax           := 999                                             // Numero maximo de linhas permitidas. Valor padrao 99
 	Local cCampoOk       := Nil//"U_CADZKCPO"                               // Funcao executada na validacao do campo
@@ -1105,7 +1120,7 @@ Return
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
-User Function CADP14LOk()
+User Function CADP14LOK()
 
 	Local lRet := .T.
 	Local nLinAlter   := oGdAnexo:oBrowse:nat
@@ -1124,6 +1139,43 @@ User Function CADP14LOk()
 		lRet := .F.
 	EndIf
 
+
+Return(lRet)
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ºÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍº±±
+±±ºPrograma  º CAD14TOK ºAutor  ºFelipe Aurélio de Melo º Data º 14/07/13 º±±
+±±ºÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍº±±
+±±ºDesc.     º                                                            º±±
+±±º          º                                                            º±±
+±±ºÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍº±±
+±±ºUso       º P14                                                        º±±
+±±ºÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍº±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+User Function CADP14TOK()
+
+	Local lRet := .T.
+	Local nLinAlter   := oGdAnexo:oBrowse:nat
+	Local nPosQtdeNCF := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("P14_QTDNCF")})
+	Local nPosJustif  := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("P14_OCORRE")})
+	Local nPosProcede := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("P14_PROCED")})
+
+    //Alert("TUDO OK.....")
+	//lRet := .F.
+
+	//If (oGdAnexo:aCols[nLinAlter,nPosQtdeNCF] > 0) .And. (Empty(oGdAnexo:aCols[nLinAlter,nPosProcede]))
+	//	MsgInfo("O campo procede (Sim / Não) deve ser preenchido.....","Atenção!!")
+	//	lRet := .F.
+	//EndIf
+
+	//If (oGdAnexo:aCols[nLinAlter,nPosQtdeNCF] > 0) .And. (oGdAnexo:aCols[nLinAlter,nPosProcede] == 'N') .And. Empty(oGdAnexo:aCols[nLinAlter,nPosJustif])
+	//	MsgInfo("Se a reclamação não procede, deve-se preencher o campo justificativa.....","Atenção!!")
+	//	lRet := .F.
+	//EndIf
 
 Return(lRet)
 
@@ -1529,37 +1581,36 @@ Return
 */
 Static Function fExcluiTudo()
 
-//Verifica se houve interações
-	//If SZJ->ZJ_QTDINTE >= "001" //.And. !TECNICO
-	//	Alert("O chamado "+SZJ->ZJ_NUMCHAM+" já teve interações e por isso não pode ser excluido!")
-	//	Return
-	//EndIf
+// Somente o Valdecir pode excluir registro
+	If __CUSERID $ GetMV("MV_XREGREC")
+		If SimNao("Confirma exclusão do registro '"+P12->P12_NUM+"' ?") == "S"
+			//Deleta Itens da nota
+			P14->(DbSetOrder(1))
+			P14->(DbSeek(P12->P12_FILIAL+P12->P12_NUM))
+			Do While P14->(!Eof()) .And. P14->P14_FILIAL+P14->P14_NUM == P12->P12_FILIAL+P12->P12_NUM
+				RecLock("P14",.F.)
+				P14->(dbDelete())
+				P14->(MsUnLock())
+				P14->(DbSkip())
+			EndDo
 
-	If SimNao("Confirma exclusão do registro '"+P12->P12_NUM+"' ?") == "S"
-		//Deleta Itens da nota
-		P14->(DbSetOrder(1))
-		P14->(DbSeek(P12->P12_FILIAL+P12->P12_NUM))
-		Do While P14->(!Eof()) .And. P14->P14_FILIAL+P14->P14_NUM == P12->P12_FILIAL+P12->P12_NUM
-			RecLock("P14",.F.)
-			P14->(dbDelete())
-			P14->(MsUnLock())
-			P14->(DbSkip())
-		EndDo
+			//Deleta notas
+			P13->(DbSetOrder(1))
+			P13->(DbSeek(P12->P12_FILIAL+P12->P12_NUM))
+			Do While P13->(!Eof()) .And. P13->P13_FILIAL+P13->P13_NUM == P12->P12_FILIAL+P12->P12_NUM
+				RecLock("P13",.F.)
+				P13->(dbDelete())
+				P13->(MsUnLock())
+				P13->(DbSkip())
+			EndDo
 
-		//Deleta notas
-		P13->(DbSetOrder(1))
-		P13->(DbSeek(P12->P12_FILIAL+P12->P12_NUM))
-		Do While P13->(!Eof()) .And. P13->P13_FILIAL+P13->P13_NUM == P12->P12_FILIAL+P12->P12_NUM
-			RecLock("P13",.F.)
-			P13->(dbDelete())
-			P13->(MsUnLock())
-			P13->(DbSkip())
-		EndDo
-
-		//Deleta Cabeçalho
-		RecLock("P12",.F.)
-		P12->(dbDelete())
-		P12->(MsUnLock())
+			//Deleta Cabeçalho
+			RecLock("P12",.F.)
+			P12->(dbDelete())
+			P12->(MsUnLock())
+		EndIf
+	Else
+		MsgInfo("Você não tem permissão para excluir um Registro de Reclamação / Ocorrência.")
 	EndIf
 
 Return
