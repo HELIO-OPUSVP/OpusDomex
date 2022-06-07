@@ -18,6 +18,7 @@
 
 User Function MT415CPY
 
+Alert("Copia...")
 //If SCJ->( FieldPos("CJ_SUPORTE") ) <> 0  
 	M->CJ_SUPORTE := __cUserID
 //Endif
