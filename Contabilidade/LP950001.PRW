@@ -319,7 +319,7 @@ EndIf
 
 
 
-If cTipo = "980012" // Despachante
+If cTipo = "980012" // FRETE NACIONAL
     If !Empty(SF1->F1_HAWB)
 	    If SWD->(dbseek(xFilial("SW6")+SF1->F1_HAWB+"406"))
             If Empty(SWD->WD_XDTLAN)

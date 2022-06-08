@@ -17,11 +17,19 @@
 
 User Function CTBEIC01()
 
-	Private _cPerg   := "CTBEIC01"+Space(02)
+	Local dEmiIni  := CTOD('  /  /  ')
+	Local dEmiFim  := CTOD('  /  /  ')
+	Local cProce   := ""
+	Private _cPerg := "CTBEIC01"+Space(02)
+	
 
 	fCriaPerg(_cPerg)
 
 	Pergunte(_cPerg,.F.)
+
+	dEmiIni := mv_par01
+	dEmiFim := mv_par02
+	cProce  := mv_par03
 
 	cTexto := "Este programa tem o objetivo contabilizar os movimentos do modulo de importação - Easy Import Control "
 	cTexto += "Os movimentos serão contabilizados separadamente em três fontes de dados: Estoque em Transito, sem  "
@@ -29,21 +37,22 @@ User Function CTBEIC01()
 	cTexto += "irá apresentar em tela os lancamentos para que sejam gravados na tabela CT2 "
 	
 
-	BatchProcess("Contabilização dos Processos de Importação (CT2)",cTexto,_cPerg,{ || Processa({|lEnd| ProcRun() },OemToAnsi("Contabilização dos Processos de Importação (CT2)"),OemToAnsi("Contabilização dos Processos de Importação (CT2)"),.F.)})
+	BatchProcess("Contabilização dos Processos de Importação (CT2)",cTexto,_cPerg,{ || Processa({|lEnd| U_ProcTB01(dEmiIni, dEmiFim, cProce ) },OemToAnsi("Contabilização dos Processos de Importação (CT2)"),OemToAnsi("Contabilização dos Processos de Importação (CT2)"),.F.)})
 
 Return
 
-Static Function ProcRun()
+User Function ProcTB01(dIni, dFim, cPr)
 
-	FWMsgRun(, {|oSay| fprocNF() }, "Processando", "Processando Notas Fiscais...")
-	FWMsgRun(, {|oSay| fprocET() }, "Processando", "Processos de Estoque em Transito...")
-	FWMsgRun(, {|oSay| fprocSC() }, "Processando", "Processos sem cobertura...")
+	FWMsgRun(, {|oSay| fprocNF(dIni, dFim, cPr) }, "Processando", "Processando Notas Fiscais...")
+	FWMsgRun(, {|oSay| fprocET(dIni, dFim, cPr) }, "Processando", "Processos de Estoque em Transito...")
+	FWMsgRun(, {|oSay| fprocSC(dIni, dFim, cPr) }, "Processando", "Processos sem cobertura...")
 
 Return .T.
 
 
-Static function fprocNF()
+Static function fprocNF(dDTINI, dDTFIM, cPROCESSO)
 	local cQuery := " "
+	local Ny
 
 //Contabilizacao
 	local aRotina := {}
@@ -61,10 +70,10 @@ Static function fprocNF()
 	cQuery += " WHERE "
 	cQuery += " D_E_L_E_T_='' "
 	cQuery += " AND F1_HAWB<>'' "
-	cQuery += " AND F1_EMISSAO BETWEEN '"+dtos(Mv_Par01)+"' AND '"+dtos(Mv_Par02)+"' "
-	//cQuery += " AND F1_XDTLAN='' "
-	If !Empty(mv_Par03)
-		cQuery += " AND F1_HAWB='"+alltrim(mv_Par03)+"' "
+	cQuery += " AND F1_EMISSAO BETWEEN '"+dtos(dDTINI)+"' AND '"+dtos(dDTFIM)+"' "
+	//cQuery += " AND F1_XDTLAN='' " dDTINI, dDTFIM, cPROCESSO
+	If !Empty(cPROCESSO)
+		cQuery += " AND F1_HAWB='"+alltrim(cPROCESSO)+"' "
 	EndIF
 	cQuery += "  GROUP BY F1_FORNECE, F1_LOJA "
 //cQuery += " AND F1_HAWB='IMP 4389/21' "
@@ -109,7 +118,7 @@ Static function fprocNF()
 Return
 
 
-Static function fprocET()
+Static function fprocET(dDTINI, dDTFIM, cPROCESSO)
 	local cQuery := " "
 
 //Contabilizacao
@@ -151,9 +160,9 @@ Static function fprocET()
 	cQuery += " W9_MOE_FOB, W9_FOB_TOT, W6_TX_FOB, W9_NOM_FOR, W9_FORN, W9_FORLOJ, "
 	cQuery += " (SELECT MIN(F1_EMISSAO) FROM SF1010 (NOLOCK) WHERE D_E_L_E_T_='' AND F1_HAWB=W6_HAWB) AS DTNF "
 	cQuery += " FROM SW6010 (NOLOCK) AS SW6 INNER JOIN SW9010 (NOLOCK) AS SW9 ON W9_HAWB=W6_HAWB "
-	cQuery += " WHERE SW6.D_E_L_E_T_='' AND W9_DT_EMIS BETWEEN '"+dtos(Mv_Par01)+"' AND '"+dtos(Mv_Par02)+"' "
-	If !Empty(mv_Par03)
-		cQuery += " AND W6_HAWB='"+alltrim(mv_Par03)+"' "
+	cQuery += " WHERE SW6.D_E_L_E_T_='' AND W9_DT_EMIS BETWEEN '"+dtos(dDTINI)+"' AND '"+dtos(dDTFIM)+"' " //dDTINI, dDTFIM, cPROCESSO
+	If !Empty(cPROCESSO)
+		cQuery += " AND W6_HAWB='"+alltrim(cPROCESSO)+"' "
 	EndIF
 	cQuery += " ) AS SUB "
 	cQuery += " LEFT JOIN SYE010 (NOLOCK) AS SYEA ON SYEA.YE_DATA=W9_DT_EMIS AND SYEA.YE_MOEDA=W9_MOE_FOB  "
@@ -226,7 +235,7 @@ Static function fprocET()
 Return
 
 //SEM COBERTURA CAMBIAL
-Static function fprocSC()
+Static function fprocSC(dDTINI, dDTFIM, cPROCESSO)
 	local cQuery := " "
 
     //Contabilizacao
@@ -249,9 +258,9 @@ Static function fprocSC()
 	cQuery := " "
 	cQuery += " SELECT W9_FOB_TOT * W9_TX_FOB AS VALOR, W9_HAWB, W9_FORN, W9_FORLOJ FROM SW9010 (NOLOCK)
 	cQuery += " WHERE W9_HAWB<>'' AND D_E_L_E_T_='' AND W9_FILIAL='01' AND W9_DIAS_PA=0
-	cQuery += " AND W9_DT_EMIS BETWEEN '"+dtos(Mv_Par01)+"' AND '"+dtos(Mv_Par02)+"' "
-	If !Empty(mv_Par03)
-		cQuery += " AND W9_HAWB='"+alltrim(mv_Par03)+"' "
+	cQuery += " AND W9_DT_EMIS BETWEEN '"+dtos(dDTINI)+"' AND '"+dtos(dDTFIM)+"' "
+	If !Empty(cPROCESSO)
+		cQuery += " AND W9_HAWB='"+alltrim(cPROCESSO)+"' "
 	EndIF
 	cQuery += " AND W9_XDTLAN = '' "
 
