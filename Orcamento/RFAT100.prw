@@ -117,17 +117,10 @@ User Function RFAT100()
 		Alert("Orcamento não encontrato")
 		Return()
 	else
-		If U_VALIDACAO("OSMAR")
-			If SCJ->CJ_NUM < "053150" .And. xFilial("SCJ") == "01"
-				Alert("Só é possivel imprimir a partir do orçamento Número : " + "053150" )
-				Return()
-			Endif
-		Else
-			If SCJ->CJ_NUM < "053150"
-				Alert("Só é possivel imprimir a partir do orçamento Número : " + "053150" )
-				Return()
-			Endif
-		EndIf
+		If SCJ->CJ_NUM < "053150" .And. xFilial("SCJ") == "01"
+			Alert("Só é possivel imprimir a partir do orçamento Número : " + "053150" )
+			Return()
+		Endif
 	EndIf
 
 	lEmail := .f.

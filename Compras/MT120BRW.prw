@@ -20,6 +20,7 @@ AADD( aRotina, { 'Data de Entrega', 'U_DOMALTC7()', 6, 0 })
 AADD( aRotina, { 'Imprimir Domex' , 'U_DOMIMPPC(1)', 6, 0})
 AADD( aRotina, { 'Env.E-mail Forn.','U_DMXCPR01()', 6, 0})
 AADD( aRotina, { 'Env.E-mail Dese.','U_DMXCPR02()', 6, 0})
+AADD( aRotina, { 'Imp.PC Domex Novo' , 'U_DMXIMPPC(1)', 6, 0})
 return
 
 User Function DOMALTC7()

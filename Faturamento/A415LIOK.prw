@@ -36,12 +36,12 @@ User Function A415LIOK
 		EndIf
 	EndIf
 
-	If lRetorno
-		If TMP1->CK_XMARGEM > 0 .And. TMP1->CK_XMARGEM < nMargem
-			MsgInfo("A Margem de Contribuição deste item esta em "+Alltrim(Str(TMP1->CK_XMARGEM))+"%"+Chr(13)+"e esta abaixo de "+Alltrim(Str(nMargem))+"% ","A T E N Ç Ã O")
-			lRetorno := .T.
-		EndIf
-	EndIf
+	//If lRetorno
+	//	If TMP1->CK_XMARGEM > 0 .And. TMP1->CK_XMARGEM < nMargem
+	//		MsgInfo("A Margem de Contribuição deste item esta em "+Alltrim(Str(TMP1->CK_XMARGEM))+"%"+Chr(13)+"e esta abaixo de "+Alltrim(Str(nMargem))+"% ","A T E N Ç Ã O")
+	//		lRetorno := .T.
+	//	EndIf
+	//EndIf
 
 	RestArea(aAreaSA1)
 	RestArea(aAreaSCL)

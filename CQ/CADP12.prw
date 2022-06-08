@@ -81,7 +81,7 @@ Static Function fMenu()
 	AAdd( aRotina, { OemToAnsi("Visualizar")     ,"U_XMtCadP12"   ,  0 , 2})
 	AAdd( aRotina, { OemToAnsi("Incluir")        ,"U_XMtCadP12"   ,  0 , 3})
 	AAdd( aRotina, { OemToAnsi("Alterar")        ,"U_XMtCadP12"   ,  0 , 4})
-//	AAdd( aRotina, { OemToAnsi("Excluir")        ,"U_XMtCadP12"   ,  0 , 5})
+	AAdd( aRotina, { OemToAnsi("Excluir")        ,"U_XMtCadP12"   ,  0 , 5})
 	AAdd( aRotina, { OemToAnsi("Legenda")        ,"U_XMtLegP12"   ,  0 , 3})
 
 
@@ -383,28 +383,50 @@ User Function XMtVldP12(cCpoVld)
 
 	Do Case
 	Case cCpoVld == "CABEC"
-	
+
 		If M->P12_STATUS == "2" .And. (Empty(M->P12_DTRET) .Or. Empty(M->P12_HRRET))
 			MsgInfo("Favor informar a Data / Horário de retorno ao cliente antes de encerrar a reclamação.","Atenção!!")
 			lRet := .F.
 			M->P12_STATUS := "1"
-		EndIf	
-	
-		If lRet .And. Empty(M->P12_CLIENT) 
+		EndIf
+
+		If lRet .And. Empty(M->P12_CLIENT)
 			MsgInfo("Favor informar o cliente.","Atenção!!")
 			lRet := .F.
-		EndIf	
+		EndIf
 
 		If lRet .And. Empty(M->P12_CODOCO)
 			MsgInfo("Favor informar o código da ocorrência.","Atenção!!")
 			lRet := .F.
-		EndIf	
+		EndIf
+
+		M->P12_TEMRET := U_fTempo()
 
 	EndCase
 
 Return(lRet)
 
 
+//Grava o tempo entre a data de emissão e a data de retorno ao cliente
+User Function fTempo()
+	Local nHH, nMM := 0
+	If (!Empty(M->P12_DTRET)) .And. (!Empty(M->P12_HRRET))
+		nHH := ((M->P12_DTRET - M->P12_DATA) * 24) + (Val(SubStr(M->P12_HRRET,1,2)) - Val(SubStr(M->P12_HORA,1,2)))
+		nMM := Val(SubStr(M->P12_HRRET,4,2)) - Val(SubStr(M->P12_HORA,4,2))
+
+		If nMM >= 0
+			nMM := nMM / 100
+			nHH := nHH + nMM
+		Else
+			nMM := nMM * (-1)
+			nHH := nHH - (nMM / 60)
+			nMM := nHH - Int(nHH)
+			nHH := Int(nHH) + (nMM * 60 / 100)
+		EndIf
+
+	EndIf
+
+Return(nHH)
 
 
 /*
@@ -502,6 +524,21 @@ User Function XMtCadP12(cAlias,nReg,nOpc)
 
 	cVarCampo := ""
 
+
+	If nOpc == 4  //Alteração
+		If P12->P12_STATUS == "2" .And. !(__CUSERID $ GetMV("MV_XREGREC"))
+			MsgInfo("Este Registro de Reclamação / Ocorrência esta encerrado e não pode ser alterado!")
+			Return
+		EndIf
+	EndIf
+
+	If  nOpc == 5  //Exclusão
+		If !(__CUSERID $ GetMV("MV_XREGREC"))
+			MsgInfo("Você não tem permissão para excluir um Registro de Reclamação / Ocorrência.")
+			Return
+		EndIf
+	EndIf
+
 // Verifica o tipo de chamada e trata a situação
 	Do Case
 	Case nOpc == 2	//Visualização
@@ -517,8 +554,8 @@ User Function XMtCadP12(cAlias,nReg,nOpc)
 		INCLUI := .T.
 		ALTERA := .F.
 		EXCLUI := .F.
-	//	aAdd(aButtons,{"Documento",{||U_fItensNFS(cAlias, nReg, nOpc,,4,@aRetDoc)}, "Carregar Itens da Nota", "Carregar Itens da Nota"})
-	//	aAdd(aButtons,{"Documento",{||U_fItensNFS(nOpc)}, "Carregar Itens da Nota", "Carregar Itens da Nota"})
+		//	aAdd(aButtons,{"Documento",{||U_fItensNFS(cAlias, nReg, nOpc,,4,@aRetDoc)}, "Carregar Itens da Nota", "Carregar Itens da Nota"})
+		//	aAdd(aButtons,{"Documento",{||U_fItensNFS(nOpc)}, "Carregar Itens da Nota", "Carregar Itens da Nota"})
 
 		//M->ZJ_TIPO := cTipoHlp
 		//aAdd(aButtons,{"Documento",{||MsDocument(cAlias, nReg, nOpc,,4,@aRetDoc)}, "Banco de Conhecimento", "Banco de Conhecimento"})
@@ -587,12 +624,12 @@ User Function XMtCadP12(cAlias,nReg,nOpc)
 
 		//Se for inclusao e foi confirmado
 	Case nOpc == 3 .And. nOpcao == 1
-		fSalvaTudo(nOpc,cAlias)
+		fSalvaTudo(nOpc,cAlias,"N")
 		//	U_XfEnviaWf(P12->P12_NUM,nOpc)
 
 		//Se for alteracao e foi confirmado
 	Case nOpc == 4 .And. nOpcao == 1
-		fSalvaTudo(nOpc,cAlias)
+		fSalvaTudo(nOpc,cAlias,"S")
 		//	U_XfEnviaWf(P12->P12_NUM,nOpc)
 
 		//Se for exclusao e foi confirmado
@@ -679,7 +716,7 @@ Static Function fGDInter(hcOpc,nPosFolder,oGdInter)
 
 //	oMmInter := TMultiGet():New( nMemoSuperior,nMemoEsquerda,{|u|if(Pcount()>0,cTxInter:=u,cTxInter)},oFolder:aDialogs[nPosFolder], nMemoDireita, nMemoInferior,/*oFont*/,.F., NIL, NIL, NIL,.T., NIL,.F.,{||.T.}, .F.,.F., NIL, NIL,{|| fMudaLinha(3)}, .F., NIL, NIL)
 
-//	@ nSuperior,nMemoEsquerda MsGet oOrigDesc Var cOrigDesc Picture "@!" Size nMemoDireita,10 Of oFolder:aDialogs[nPosFolder] When .F. Pixel
+//	@ nSuperior,nMemoEsquerda MsGet oOrigDesc Var cOrigDesc Picture "@!" Size nMemoDireita,10 Of oFolder:aDialogs[nPosFolº±±CADP14LOkder] When .F. Pixel
 
 //oBtnSvMm := tButton():New(nSuperior,nMemoEsquerda,"Salvar Texto",oFolder:aDialogs[nPosFolder],{|| fSalvaMemo() },55,12,,,,.T.)
 //@ nSuperior,nMemoEsquerda+60 MsGet oOrigDesc Var cOrigDesc Picture "@!" Size nMemoDireita-60,10 Of oFolder:aDialogs[nPosFolder] When .F. Pixel
@@ -707,9 +744,9 @@ Static Function fGDAnexo(hcOpc,nPosFolder,oGdAnexo)
 
 	Local cGetOpc        := IIf(hcOpc==2,Nil,GD_INSERT+GD_DELETE+GD_UPDATE)           // GD_INSERT+GD_DELETE+GD_UPDATE
 
-	Local cLinhaOk       := "U_CADP14LOk"    //Nil//"U_CADP14LOk"                               // Funcao executada para validar o contexto da linha atual do aCols
-	Local cTudoOk        := Nil//"U_CADZKTOk"                               // Funcao executada para validar o contexto geral da MsNewGetDados (todo aCols)
-	Local cIniCpos       := "+P14_ITEM"                                   // Nome dos campos do tipo caracter que utilizarao incremento automatico.
+	Local cLinhaOk       := "U_CADP14LOK"    //Nil//"U_CADP14LOk"           // Funcao executada para validar o contexto da linha atual do aCols
+	Local cTudoOk        := "U_CADP14TOK"	// Nil//"U_CADZKTOk"           // Funcao executada para validar o contexto geral da MsNewGetDados (todo aCols)
+	Local cIniCpos       := "+P14_ITEM"                                     // Nome dos campos do tipo caracter que utilizarao incremento automatico.
 	Local nFreeze        := Nil                                             // Campos estaticos na GetDados.
 	Local nMax           := 999                                             // Numero maximo de linhas permitidas. Valor padrao 99
 	Local cCampoOk       := Nil//"U_CADZKCPO"                               // Funcao executada na validacao do campo
@@ -726,7 +763,7 @@ Static Function fGDAnexo(hcOpc,nPosFolder,oGdAnexo)
 	cOpcaoUt := hcOpc
 	cOrdSeek := 1
 	//cCndSeek := "xFilial('SZJ')+M->ZJ_NUMCHAM"
-	
+
 	//cCndSeek := "xFilial('P12')+M->P12_NUM+P14->P14_NFORI+P14->P14_ITEM"
 	//cCpoSeek := "P14->P14_FILIAL+P14->P14_NUM+P14->P14_NFORI+P14->P14_ITEM"
 
@@ -734,7 +771,7 @@ Static Function fGDAnexo(hcOpc,nPosFolder,oGdAnexo)
 	cCpoSeek := "P14->P14_FILIAL+P14->P14_NUM"
 
 	//nQtdLnhs := 1
-	nQtdLnhs := 1
+	nQtdLnhs := 0
 	cVCampos := ""
 
 //Cria varias linhas em branco caso necessario
@@ -1083,7 +1120,7 @@ Return
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
-User Function CADP14LOk()
+User Function CADP14LOK()
 
 	Local lRet := .T.
 	Local nLinAlter   := oGdAnexo:oBrowse:nat
@@ -1092,17 +1129,54 @@ User Function CADP14LOk()
 	Local nPosProcede := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("P14_PROCED")})
 
 	If (oGdAnexo:aCols[nLinAlter,nPosQtdeNCF] > 0) .And. (Empty(oGdAnexo:aCols[nLinAlter,nPosProcede]))
-		MsgInfo("O campo procede (Sim / Não) deve ser preenchido.....","Atenção!!")	
+		MsgInfo("O campo procede (Sim / Não) deve ser preenchido.....","Atenção!!")
 		lRet := .F.
-	EndIf	
+	EndIf
 
 
 	If (oGdAnexo:aCols[nLinAlter,nPosQtdeNCF] > 0) .And. (oGdAnexo:aCols[nLinAlter,nPosProcede] == 'N') .And. Empty(oGdAnexo:aCols[nLinAlter,nPosJustif])
-		MsgInfo("Se a reclamação não procede, deve-se preencher o campo justificativa.....","Atenção!!")	
+		MsgInfo("Se a reclamação não procede, deve-se preencher o campo justificativa.....","Atenção!!")
 		lRet := .F.
-	EndIf	
+	EndIf
 
-	
+
+Return(lRet)
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ºÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍº±±
+±±ºPrograma  º CAD14TOK ºAutor  ºFelipe Aurélio de Melo º Data º 14/07/13 º±±
+±±ºÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍº±±
+±±ºDesc.     º                                                            º±±
+±±º          º                                                            º±±
+±±ºÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍº±±
+±±ºUso       º P14                                                        º±±
+±±ºÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍº±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+User Function CADP14TOK()
+
+	Local lRet := .T.
+	Local nLinAlter   := oGdAnexo:oBrowse:nat
+	Local nPosQtdeNCF := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("P14_QTDNCF")})
+	Local nPosJustif  := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("P14_OCORRE")})
+	Local nPosProcede := aScan(oGdAnexo:aHeader,{|x|Alltrim(x[2])==AllTrim("P14_PROCED")})
+
+    //Alert("TUDO OK.....")
+	//lRet := .F.
+
+	//If (oGdAnexo:aCols[nLinAlter,nPosQtdeNCF] > 0) .And. (Empty(oGdAnexo:aCols[nLinAlter,nPosProcede]))
+	//	MsgInfo("O campo procede (Sim / Não) deve ser preenchido.....","Atenção!!")
+	//	lRet := .F.
+	//EndIf
+
+	//If (oGdAnexo:aCols[nLinAlter,nPosQtdeNCF] > 0) .And. (oGdAnexo:aCols[nLinAlter,nPosProcede] == 'N') .And. Empty(oGdAnexo:aCols[nLinAlter,nPosJustif])
+	//	MsgInfo("Se a reclamação não procede, deve-se preencher o campo justificativa.....","Atenção!!")
+	//	lRet := .F.
+	//EndIf
+
 Return(lRet)
 
 /*
@@ -1245,7 +1319,6 @@ Static Function faCols(haHead,hcAlias,haCampo,hnQtdLin,hcOpc,hcOrdSeek,hcCndSeek
 	If hcOpc == 3
 		// Montagem do aCols em Branco
 		For y := 1 To hnQtdLin
-
 			AADD(haCol,Array(Len(haHead)+1))
 			nLin	:= Len(haCol)
 			x	:= 1
@@ -1366,7 +1439,7 @@ Return(haCol)
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
-Static Function fSalvaTudo(cTpOper,cTpAlias)
+Static Function fSalvaTudo(cTpOper,cTpAlias,cGeral)
 
 	Local aAreaP12 := P12->(GetArea())
 	Local cCpoAlias:= ""
@@ -1459,21 +1532,23 @@ Static Function fSalvaTudo(cTpOper,cTpAlias)
 
 
 // Grava Itens da nota
-	aGrvCps := {}
-	aAdd(aGrvCps,{"P14_FILIAL" ,"xFilial('P14')" })
-	aAdd(aGrvCps,{"P14_NUM" ,"M->P12_NUM" })
-	//aAdd(aGrvCps,{"P14_ITEM" ,"cCodItem"      })
-	cOrdSeek := 1
-	//cCpoItem := "P14_ITEM"
-	//cCndSeek := "xFilial('P14')+M->P12_NUM"
-	////cCndSeek := "xFilial('P14')+M->P12_NUM+P14->P14_NFORI+P14->P14_ITEM"
-	////cCpoSeek := "P14->P14_FILIAL+P14->P14_NUM+P14->P14_NFORI+P14->P14_ITEM"
-	cItemNF  := "P14_ITEM"
-	cCpoItem := "P14_NFORI"
-	cCndSeek := "xFilial('P14')+M->P12_NUM"
-	cCpoSeek := "P14->P14_FILIAL+P14->P14_NUM+P14->P14_NFORI+P14_ITEM"
-	//fGravaGD(oGdAnexo,"P14",aGrvCps,cTpOper,cOrdSeek,cCndSeek,cCpoSeek,cCpoItem)
-	fGrvGDItensNF(oGdAnexo,"P14",aGrvCps,cTpOper,cOrdSeek,cCndSeek,cCpoSeek,cCpoItem,cItemNF)
+	If cGeral == "S"
+		aGrvCps := {}
+		aAdd(aGrvCps,{"P14_FILIAL" ,"xFilial('P14')" })
+		aAdd(aGrvCps,{"P14_NUM" ,"M->P12_NUM" })
+		//aAdd(aGrvCps,{"P14_ITEM" ,"cCodItem"      })
+		cOrdSeek := 1
+		//cCpoItem := "P14_ITEM"
+		//cCndSeek := "xFilial('P14')+M->P12_NUM"
+		////cCndSeek := "xFilial('P14')+M->P12_NUM+P14->P14_NFORI+P14->P14_ITEM"
+		////cCpoSeek := "P14->P14_FILIAL+P14->P14_NUM+P14->P14_NFORI+P14->P14_ITEM"
+		cItemNF  := "P14_ITEM"
+		cCpoItem := "P14_NFORI"
+		cCndSeek := "xFilial('P14')+M->P12_NUM"
+		cCpoSeek := "P14->P14_FILIAL+P14->P14_NUM+P14->P14_NFORI+P14_ITEM"
+		//fGravaGD(oGdAnexo,"P14",aGrvCps,cTpOper,cOrdSeek,cCndSeek,cCpoSeek,cCpoItem)
+		fGrvGDItensNF(oGdAnexo,"P14",aGrvCps,cTpOper,cOrdSeek,cCndSeek,cCpoSeek,cCpoItem,cItemNF)
+	EndIf
 
 //Confirma operação quando inclusão
 	If cTpOper == 3
@@ -1481,7 +1556,7 @@ Static Function fSalvaTudo(cTpOper,cTpAlias)
 			(cTpAlias)->(ConfirmSX8())
 		End
 
-		//Envia_Email 
+		//Envia_Email
 		U_fEmail_CQ()
 
 	Else
@@ -1506,37 +1581,36 @@ Return
 */
 Static Function fExcluiTudo()
 
-//Verifica se houve interações
-	//If SZJ->ZJ_QTDINTE >= "001" //.And. !TECNICO
-	//	Alert("O chamado "+SZJ->ZJ_NUMCHAM+" já teve interações e por isso não pode ser excluido!")
-	//	Return
-	//EndIf
+// Somente o Valdecir pode excluir registro
+	If __CUSERID $ GetMV("MV_XREGREC")
+		If SimNao("Confirma exclusão do registro '"+P12->P12_NUM+"' ?") == "S"
+			//Deleta Itens da nota
+			P14->(DbSetOrder(1))
+			P14->(DbSeek(P12->P12_FILIAL+P12->P12_NUM))
+			Do While P14->(!Eof()) .And. P14->P14_FILIAL+P14->P14_NUM == P12->P12_FILIAL+P12->P12_NUM
+				RecLock("P14",.F.)
+				P14->(dbDelete())
+				P14->(MsUnLock())
+				P14->(DbSkip())
+			EndDo
 
-	If SimNao("Confirma exclusão do registro '"+P12->P12_NUM+"' ?") == "S"
-		//Deleta Itens da nota
-		P14->(DbSetOrder(1))
-		P14->(DbSeek(P12->P12_FILIAL+P12->P12_NUM))
-		Do While P14->(!Eof()) .And. P14->P14_FILIAL+P14->P14_NUM == P12->P12_FILIAL+P12->P12_NUM
-			RecLock("P14",.F.)
-			P14->(dbDelete())
-			P14->(MsUnLock())
-			P14->(DbSkip())
-		EndDo
+			//Deleta notas
+			P13->(DbSetOrder(1))
+			P13->(DbSeek(P12->P12_FILIAL+P12->P12_NUM))
+			Do While P13->(!Eof()) .And. P13->P13_FILIAL+P13->P13_NUM == P12->P12_FILIAL+P12->P12_NUM
+				RecLock("P13",.F.)
+				P13->(dbDelete())
+				P13->(MsUnLock())
+				P13->(DbSkip())
+			EndDo
 
-		//Deleta notas
-		P13->(DbSetOrder(1))
-		P13->(DbSeek(P12->P12_FILIAL+P12->P12_NUM))
-		Do While P13->(!Eof()) .And. P13->P13_FILIAL+P13->P13_NUM == P12->P12_FILIAL+P12->P12_NUM
-			RecLock("P13",.F.)
-			P13->(dbDelete())
-			P13->(MsUnLock())
-			P13->(DbSkip())
-		EndDo
-
-		//Deleta Cabeçalho
-		RecLock("P12",.F.)
-		P12->(dbDelete())
-		P12->(MsUnLock())
+			//Deleta Cabeçalho
+			RecLock("P12",.F.)
+			P12->(dbDelete())
+			P12->(MsUnLock())
+		EndIf
+	Else
+		MsgInfo("Você não tem permissão para excluir um Registro de Reclamação / Ocorrência.")
 	EndIf
 
 Return
@@ -1580,17 +1654,17 @@ Static Function fGrvGDItensNF(hoObj,hcAlias,haCposAdd,hcTpOper,hcOrdSeek,hcCndSe
 					If DbSeek(&(hcCndSeek)+hoObj:aCols[x][aScan(hoObj:aHeader,{|x|Alltrim(x[2])==hcCpoItm})])
 						RecLock(hcAlias,.F.)
 					Else
-						RecLock(hcAlias,.T.)	
-					EndIf			
+						RecLock(hcAlias,.T.)
+					EndIf
 				Else
 					If DbSeek(&(hcCndSeek)+hoObj:aCols[x][aScan(hoObj:aHeader,{|x|Alltrim(x[2])==hcCpoItm})]+;
-						hoObj:aCols[x][aScan(hoObj:aHeader,{|x|Alltrim(x[2])==hcItemNF})])
+							hoObj:aCols[x][aScan(hoObj:aHeader,{|x|Alltrim(x[2])==hcItemNF})])
 						RecLock(hcAlias,.F.)
 					Else
-						RecLock(hcAlias,.T.)	
+						RecLock(hcAlias,.T.)
 					EndIf
-				//Else
-				//	RecLock(hcAlias,.T.)
+					//Else
+					//	RecLock(hcAlias,.T.)
 				EndIf
 
 				For y:=1 To Len(hoObj:aHeader)
@@ -1616,12 +1690,12 @@ Static Function fGrvGDItensNF(hoObj,hcAlias,haCposAdd,hcTpOper,hcOrdSeek,hcCndSe
 					EndIf
 				Else
 					If DbSeek(&(hcCndSeek)+hoObj:aCols[x][aScan(hoObj:aHeader,{|x|Alltrim(x[2])==hcCpoItm})]+;
-						hoObj:aCols[x][aScan(hoObj:aHeader,{|x|Alltrim(x[2])==hcItemNF})])
+							hoObj:aCols[x][aScan(hoObj:aHeader,{|x|Alltrim(x[2])==hcItemNF})])
 						RecLock(hcAlias,.F.)
 						dbDelete()
 						MsUnLock()
 					EndIf
-				EndIf		
+				EndIf
 			EndIf
 		EndIf
 	Next x
@@ -2043,9 +2117,9 @@ User Function fItensNFS()
 	Local cOcorr := M->P12_NUM
 
 	//Chama a função salva tudo para gravar o array de NF na base
-	fSalvaTudo(4,"P12")
-	
-    oGDAnexo:aCols := {}
+	fSalvaTudo(4,"P12","N")
+
+	oGDAnexo:aCols := {}
 
 	cQry := ''
 	cQry += " Select F2_DOC As NOTA, D2_ITEM As ITEM, D2_COD As CODIGO, D2_QUANT As QTDE, C6_NUM As PV"
@@ -2062,7 +2136,7 @@ User Function fItensNFS()
 		NFS->(dbCloseArea())
 	EndIf
 	TcQuery cQry Alias "NFS" New
-	
+
 	NFS->(DbGoTop())
 	While NFS->(!Eof())
 		If !Empty(NFS->NOTA)
@@ -2081,11 +2155,12 @@ User Function fItensNFS()
 			P14->P14_OFORIG := NFS->PV
 			MsUnLock("P14")
 
-		//	aAdd(oGdAnexo:aCols,{NFS->NOTA,NFS->ITEM,NFS->OP,NFS->CODIGO,NFS->QTDE,0,'',.F.})
-	
+			//	aAdd(oGdAnexo:aCols,{NFS->NOTA,NFS->ITEM,NFS->OP,NFS->CODIGO,NFS->QTDE,0,'',.F.})
+
 		EndIf
 		NFS->(dbSkip())
 	EndDo
+
 	//P13->(dbSkip())
 	//	EndDo
 	//EndIf
@@ -2101,30 +2176,30 @@ User Function fEmail_CQ()
 	Local aAreaSA1 := SA1->( GetArea() )
 	Local aAreaP15 := P15->( GetArea() )
 
-		SA1->( dbSetOrder(01) )
-		SA1->(dbSeek(xFilial()+M->P12_CLIENT + M->P12_LOJA))
-		P15->( dbSetOrder(01) )
-		P15->(dbSeek(xFilial()+M->P12_CODOCO))
+	SA1->( dbSetOrder(01) )
+	SA1->(dbSeek(xFilial()+M->P12_CLIENT + M->P12_LOJA))
+	P15->( dbSetOrder(01) )
+	P15->(dbSeek(xFilial()+M->P12_CODOCO))
 
-		cMsg := "Registro de Reclamação / Ocorrência número: "+ M->P12_NUM +'<br>'
-		cMsg += "Cliente: "+M->P12_CLIENT +" / "+M->P12_LOJA +"  -  "+ SA1->A1_NOME +'<br>'
-		cMsg += "Reclamação: "+P15->P15_DESCRI +'<br>'
-		cMsg += "<br>"
-		cMsg += "Inclusão feita em "+Dtoc(Date())+" - "+Time()+'<br>'
-		cMsg += "Por: "+ SubString(cUsuario,7,15)+'<br>'
-		cMsg += "<br>"
+	cMsg := "Registro de Reclamação / Ocorrência número: "+ M->P12_NUM +'<br>'
+	cMsg += "Cliente: "+M->P12_CLIENT +" / "+M->P12_LOJA +"  -  "+ SA1->A1_NOME +'<br>'
+	cMsg += "Reclamação: "+P15->P15_DESCRI +'<br>'
+	cMsg += "<br>"
+	cMsg += "Inclusão feita em "+Dtoc(Date())+" - "+Time()+'<br>'
+	cMsg += "Por: "+ SubString(cUsuario,7,15)+'<br>'
+	cMsg += "<br>"
 
-		Sleep(4000)
-		U_EnvMailto("Registro de reclamação " ,cMsg,cEmail,"",)
+	Sleep(4000)
+	U_EnvMailto("Registro de reclamação " ,cMsg,cEmail,"",)
 
 
-	RestArea(aAreaSA1)	
+	RestArea(aAreaSA1)
 	RestArea(aAreaP15)
 
 Return
 
 
-Return 
+Return
 
 
 

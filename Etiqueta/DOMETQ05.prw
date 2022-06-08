@@ -36,7 +36,7 @@ Local aRetAnat    := {}        //Codigos Anatel, Array
 Local aCodAnat    := {}        //Codigos Anatel, Array
 Local cCdAnat1    := ""        //Codigo Anatel 1
 Local cCdAnat2    := ""        //Codigo Anatel 2
-
+Local x,_nX		  
 Private lAchou    := .T.
 Private aGrpAnat  := {}     //Codigos Anatel Agrupados
 
@@ -270,7 +270,11 @@ If lImpressao
 		Reclock("XD2",.T.)
 		XD2->XD2_FILIAL := xFilial("XD2")
 		XD2->XD2_XXPECA := _cProxPeca
-		XD2->XD2_PCFILH := aFilhas[_nX]
+		If ValType(aFilhas[_nX])  == "A"
+			XD2->XD2_PCFILH := aFilhas[_nX][1]      
+      	Else
+			XD2->XD2_PCFILH := aFilhas[_nX]
+		EndIf
 		XD2->( msUnlock() )
 	Next _nX
 	

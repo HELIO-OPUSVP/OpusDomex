@@ -1,32 +1,27 @@
-#include "rwmake.ch"
-#include "protheus.ch"
-
+#include "totvs.ch"
+#include "topconn.ch"
 
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
-±±ºPrograma  ³MTA130C8  ºAutor  ³Marco Aurelio-OPUS  º Data ³  01/17/17   º±±
+±±ºPrograma  ³ MT415CPY  ºAutor  ³ Osmar Ferreira   º Data ³  06/06/22   º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
-±±ºDesc.     ³ PE no final da Gravacao da Cotacao  - Grava SC1 no SC8     º±±
+±±ºDesc.     ³ Ponto de entrada na cópia do orçamento de venda            º±±
 ±±º          ³                                                            º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
-±±ºUso       ³ AP                                                        º±±
+±±ºUso       ³ Domex                                                      º±±
 ±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
-mauresi
-
 */
 
+User Function MT415CPY
 
-User Function MTA130C8()
+	M->CJ_SUPORTE := AllTrim(__cUserID)
+	M->CJ_ELABORA := AllTrim(SubString(cUsuario,7,14))
 
-dbSelectArea("SC8")
-	
-	RecLock("SC8",.F.)
-		SC8->C8_PRAZO  := ( SC8->C8_DATPRF - DDATABASE ) 
-		SC8->C8_XXOBSC := SC1->C1_OBS
-	MsUnlock()
-	
-Return
+Return() 
+
+
+
