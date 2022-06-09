@@ -1184,6 +1184,7 @@ Static Function ValidaEtiq(lTeste)
 					
 					cQryPkl := 	" SELECT  COUNT(*) QTDETIQ, COUNT(*)  QTDFIBRA  "
 					cQryPkl += ENTER + " FROM " + RetSqlName("XD4") + " XD4 (NOLOCK) "
+					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD4.XD4_PRODUT AND SB1.B1_GRUPO NOT IN ('FOFS') "
 					cQryPkl += ENTER + " WHERE  XD4.XD4_FILIAL = '"+xFilial("XD4")+"' "
 					cQryPkl += ENTER + " AND XD4_OP= '" + SC2->C2_NUM + SC2->C2_ITEM  + SC2->C2_SEQUEN + "' AND XD4_STATUS ='2' AND XD4.D_E_L_E_T_ ='' "
 
@@ -1224,6 +1225,53 @@ Static Function ValidaEtiq(lTeste)
 						Return (.f.)
 					EndIf
 
+					//Vaidação Faibra Falsa
+					IF U_Validacao("JACKSON") .And. AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "TRUN/TRUE/PCON" 
+						nQTotFibra := 0
+						
+						cQryPkl := 	" SELECT  COUNT(*) QTDETIQ, COUNT(*)  QTDFIBRA  "
+						cQryPkl += ENTER + " FROM " + RetSqlName("XD4") + " XD4 (NOLOCK) "
+						cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD4.XD4_PRODUT AND SB1.B1_GRUPO IN ('FOFS') "
+						cQryPkl += ENTER + " WHERE  XD4.XD4_FILIAL = '"+xFilial("XD4")+"' "
+						cQryPkl += ENTER + " AND XD4_OP= '" + SC2->C2_NUM + SC2->C2_ITEM  + SC2->C2_SEQUEN + "' AND XD4_STATUS ='2' AND XD4.D_E_L_E_T_ ='' "
+
+						TCQUERY cQryPkl NEW ALIAS "TPKL"
+						If TPKL->(!EOF())
+							nQTotFibra  := TPKL->QTDFIBRA
+						EndIf
+						If Select("TPKL") > 0
+							TPKL->(DBCloseArea())
+						EndIf
+						
+						nQtTotN1 := 0
+						cQryCont := " SELECT SUM(XD1_QTDATU) QTDPECA "
+						cQryCont += " FROM " + RetSqlName("XD1") + " (NOLOCK) WHERE XD1_FILIAL = '" + xFilial("XD1") + "' "
+						cQryCont += " AND XD1_OP ='" +cNumOpBip + "' AND XD1_OCORRE <> '5' "
+						cQryCont += " AND XD1_NIVEMB = '1' AND D_E_L_E_T_ ='' "
+						If Select("TMPN1") > 0 
+							TMPN1->(DbCloseArea())
+						Endif
+						TCQUERY cQryCont NEW ALIAS "TMPN1"
+						If TMPN1->(!EOF())									
+							nQtTotN1 := TMPN1->QTDPECA								
+						EndIf
+						TMPN1->(dbCloseArea())
+
+						lFimOp := ((nQtTotN1 + (SC2->C2_QUANT - SC2->C2_QUJE)) == nQTotFibra )
+
+						If !lFimOp .And. ((nQtdEmbNv1 > nQTotFibra) .Or.  ((nQtdEmbNv1 + nQtTotN1)  > nQTotFibra))
+							While !MsgNoYes("."+CHR(13)+"A quantidade de Fibra bipada na entrada da linha é insuficiente para " + ENTER +;
+									"dar continuidade no Processo!")
+							End
+							oImprime:Disable()
+							cNumOpBip := SPACE(11)
+							oNumOpBip:Refresh()
+							cEtiqueta := Space(_nTamEtiq)
+							oEtiqueta:Refresh()
+							oEtiqueta:SetFocus()
+							Return (.f.)
+						EndIf
+					EndIf
 					RestArea(aPklAreaSc2)
 					RestArea(aPklAreaAtu)
 				EndIf
@@ -1711,6 +1759,7 @@ Static Function ValidaEtiq(lTeste)
 					
 					cQryPkl := 	" SELECT  COUNT(*) QTDETIQ, COUNT(*)  QTDFIBRA  "
 					cQryPkl += ENTER + " FROM " + RetSqlName("XD4") + " XD4 "
+					cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD4.XD4_PRODUT AND SB1.B1_GRUPO NOT IN ('FOFS') "
 					cQryPkl += ENTER + " WHERE XD4_FILIAL = '"+xFilial("XD4")+"' "
 					cQryPkl += ENTER + " AND XD4_OP= '" + SC2->C2_NUM + SC2->C2_ITEM  + SC2->C2_SEQUEN + "' AND XD4_STATUS ='2' AND XD4.D_E_L_E_T_ ='' "
 
@@ -1749,6 +1798,54 @@ Static Function ValidaEtiq(lTeste)
 						oEtiqueta:Refresh()
 						oEtiqueta:SetFocus()
 						Return (.f.)
+					EndIf
+
+					//Trtamento Fibra Falsa
+					IF U_Validacao("JACKSON") .And. AllTrim(Posicione("SB1",1,xFilial("SB1")+SC2->C2_PRODUTO,"B1_GRUPO")) $ "TRUN/TRUE/PCON" 					
+						nQTotFibra := 0
+						
+						cQryPkl := 	" SELECT  COUNT(*) QTDETIQ, COUNT(*)  QTDFIBRA  "
+						cQryPkl += ENTER + " FROM " + RetSqlName("XD4") + " XD4 "
+						cQryPkl += ENTER + " JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ = '' AND SB1.B1_FILIAL = '' AND SB1.B1_COD = XD4.XD4_PRODUT AND SB1.B1_GRUPO IN ('FOFS') "
+						cQryPkl += ENTER + " WHERE XD4_FILIAL = '"+xFilial("XD4")+"' "
+						cQryPkl += ENTER + " AND XD4_OP= '" + SC2->C2_NUM + SC2->C2_ITEM  + SC2->C2_SEQUEN + "' AND XD4_STATUS ='2' AND XD4.D_E_L_E_T_ ='' "
+
+						TCQUERY cQryPkl NEW ALIAS "TPKL"
+						If TPKL->(!EOF())
+							nQTotFibra  := TPKL->QTDFIBRA
+						EndIf
+						If Select("TPKL") > 0
+							TPKL->(DBCloseArea())
+						EndIf
+						
+						nQtTotN1 := 0
+						cQryCont := " SELECT SUM(XD1_QTDATU) QTDPECA "
+						cQryCont += " FROM " + RetSqlName("XD1") + " WHERE XD1_FILIAL = '" + xFilial("XD1") + "' "
+						cQryCont += " AND XD1_OP ='" +cNumOpBip + "' AND XD1_OCORRE <> '5'  "
+						cQryCont += " AND XD1_NIVEMB = '1' AND D_E_L_E_T_ ='' "
+						If Select("TMPN1") > 0 
+							TMPN1->(DbCloseArea())
+						Endif
+						TCQUERY cQryCont NEW ALIAS "TMPN1"
+						If TMPN1->(!EOF())									
+							nQtTotN1 := TMPN1->QTDPECA								
+						EndIf
+						TMPN1->(dbCloseArea())
+
+						lFimOp := ((nQtTotN1 + (SC2->C2_QUANT - SC2->C2_QUJE)) == nQTotFibra )
+
+						If !lFimOp .And. ((nQtdEmbNv1 > nQTotFibra) .Or.  ((nQtdEmbNv1 + nQtTotN1)  > nQTotFibra))
+							While !MsgNoYes("."+CHR(13)+"A quantidade de Fibra bipada na entrada da linha é insuficiente para " + ENTER +;
+									"dar continuidade no Processo!")
+							End
+							oImprime:Disable()
+							cNumOpBip := SPACE(11)
+							oNumOpBip:Refresh()
+							cEtiqueta := Space(_nTamEtiq)
+							oEtiqueta:Refresh()
+							oEtiqueta:SetFocus()
+							Return (.f.)
+						EndIf
 					EndIf
 
 					RestArea(aPklAreaSc2)
