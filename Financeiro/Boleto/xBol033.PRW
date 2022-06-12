@@ -146,37 +146,22 @@ Method SetBanco(nRecSEE) Class xBol033
 	If !Empty(nRecSEE)
 		DbSelectArea("SEE")
 		DbGoTo(nRecSEE)
-/*	
-		::cPortador := SEE->EE_CODIGO
-		::cAgencia  := Alltrim(SEE->EE_AGENCIA)
-		::cDVAg		:= SEE->EE_DVAGE
-		::cConta	:= Alltrim(SEE->EE_CONTA)
-		::cDVConta	:= SEE->EE_DVCTA
-		::cCarteira := Alltrim(SEE->EE_CODCART)
-*/
-/*
-		::cPortador := "341"
-		::cAgencia  := "1529"
-		::cDVAg		:= ""
-		::cConta	:= "01594"
-		::cDVConta	:= "1"
-		::cCarteira :=  "109" //"112"
-*/
+
 		if cFilAnt == "01"  //  Santander - Matriz
 			::cPortador := "033"
-			::cAgencia  := "3072 "
+			::cAgencia  := "3072"
 			::cDVAg		:= ""
-			::cConta	:= "01051781  "
+			::cConta	:= "01051781"
 			::cDVConta	:= "1"
 			::cCarteira := "101"
 
 		ElseIf cFilAnt == '02'  // Santander - Filial
 			::cPortador := "033"
-			::cAgencia  := "3078 "
+			::cAgencia  := "3078"
 			::cDVAg		:= ""
-			::cConta	:= "13002050  "
-			::cDVConta	:= "1"
-			::cCarteira := "101"
+			::cConta	:= "02050"  //"13002050"
+			::cDVConta	:= "7"   //"1"
+  			::cCarteira := "101"
 		Endif
 
 
@@ -306,7 +291,7 @@ Method GerarBoletos() Class xBol033
 		::cValor := AllTrim(Transform(::nValor, "@E 999,999,999.99"))
 		
 		// Realiza o tratamento do nosso número, se não existe, o cria
-		If Empty(SE1->E1_NUMBCO)
+		If Empty(SE1->E1_NUMBCO) .OR. Empty(SE1->E1_IDCNAB)
 		                            
 			// Atualiza o titulo com o Nosso Número
 			DbSelectArea("SE1")
@@ -314,24 +299,14 @@ Method GerarBoletos() Class xBol033
 			//Verifica se o IDCNAB está preenchido			
 			If Empty(SE1->E1_IDCNAB)
 			
-			/*
-				cIdCnab := StrZero(Val(GetSx8Num("SEE","EE_FAXATU")),::nTamNNum)
-
-			
-				SEE->(ConfirmSx8())
-				
-				Reclock("SEE",.F.)
-					Replace EE_FAXATU With cIdCnab
-				SEE->(MsUnlock())
-			*/
 				cIdCnab := U_NOSSO033()
 			Else
 				cIdCnab := SE1->E1_IDCNAB
 			EndIf
 							
 			RecLock("SE1", .F.)							
-				Replace E1_NUMBCO With cIdCnab,;
-						E1_IDCNAB With cIdCnab
+				SE1->E1_NUMBCO := cIdCnab
+				SE1->E1_IDCNAB := cIdCnab
 			SE1->(MsUnlock())
 			
 		EndIf

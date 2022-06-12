@@ -99,16 +99,18 @@ oBol:Gerar()
 */
 
 
-cTitulo := 'Boleto Bancário - '
 cTO 	:= Posicione("SA1",1,xFilial("SA1")+SE1->E1_CLIENTE+SE1->E1_LOJA ,"A1_EMAIL" )
-cTO		+= ';juliane.jordao@rosenbergerdomex.com.br'
-//cTO		:= 'jonas@opusvp.com.br'
-cCC		:= ''
-cBCC	:= ''
 
-	if !MsgYesNo("Confirma o envio para o cliente no email: " + chr(13) + Alltrim(cTO))
+	if MsgYesNo("Confirma o envio para o cliente no email: " + chr(13) + Alltrim(cTO))
+		cTitulo := 'Boleto Bancário - '
+		cTO 	:= Posicione("SA1",1,xFilial("SA1")+SE1->E1_CLIENTE+SE1->E1_LOJA ,"A1_EMAIL" )
+		cTO		+= ';juliane.jordao@rosenbergerdomex.com.br;patricia.vieira@rosenbergerdomex.com.br;adriana.souza@rosenbergerdomex.com.br'  
+		cCC		:= ''
+		cBCC	:= ''
+	Else
 		cTitulo := 'Boleto Bancário - RDT - '
-		cTO		:= 'juliane.jordao@rosenbergerdomex.com.br;patricia.vieira@rosenbergerdomex.com.br;adriana.souza@rosenbergerdomex.com.br'  
+		cTO 	:= ""
+		cTO		+= 'juliane.jordao@rosenbergerdomex.com.br;patricia.vieira@rosenbergerdomex.com.br;adriana.souza@rosenbergerdomex.com.br'  
 		cCC		:= ''
 		cBCC	:= ''
 	Endif
