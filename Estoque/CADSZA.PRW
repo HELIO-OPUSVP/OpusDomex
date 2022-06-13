@@ -1,6 +1,6 @@
 #include "rwmake.ch"
-#include "protheus.ch"         
-#INCLUDE "TOPCONN.CH"   
+#include "protheus.ch"
+#INCLUDE "TOPCONN.CH"
 #include "tbiconn.ch"
 
 
@@ -17,65 +17,69 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function CADSZA()         
+User Function CADSZA()
 
-Local aIndex := {} 
-Local lFiltro:= .F.
-Local cFiltro := "ZA_SALDO <> 0  .AND. ZA_TIPO =='S'"
-Local cQuery:= ""
+	Local aIndex := {}
+	Local lFiltro:= .F.
+	Local cFiltro := "ZA_SALDO <> 0  .AND. ZA_TIPO =='S'"
+	Local cQuery:= ""
 
-Local aCores := {;
-{"ZA_SALDO==0 .AND. ZA_TIPO = 'N'" , "DISABLE"     },;
-{"ZA_SALDO<>0 .AND. ZA_TIPO = 'N'" , "BR_VERDE"    },;
-{"ZA_SALDO==0 .AND. ZA_TIPO = 'S'" , "BR_CINZA"    },;
-{"ZA_SALDO<>0 .AND. ZA_TIPO = 'S'" , "BR_AZUL"     }}
+	Local aCores := {;
+		{"ZA_SALDO==0 .AND. ZA_TIPO = 'N'" , "DISABLE"     },;
+		{"ZA_SALDO<>0 .AND. ZA_TIPO = 'N'" , "BR_VERDE"    },;
+		{"ZA_SALDO==0 .AND. ZA_TIPO = 'S'" , "BR_CINZA"    },;
+		{"ZA_SALDO<>0 .AND. ZA_TIPO = 'S'" , "BR_AZUL"     }}
 
-Private bFiltraBrw := { || FilBrowse( "SZA" , @aIndex , @cFiltro ) } //Determina a Expressao do Filtro 
-Private cCelula:= 0
-Private cArm:= '96'
+	apMsgInfo("Favor solicitar acesso a nova rotina de Lançamento de Perdas.")
+
+Return
+
+	Private bFiltraBrw := { || FilBrowse( "SZA" , @aIndex , @cFiltro ) } //Determina a Expressao do Filtro
+	Private cCelula:= 0
+	Private cArm:= '96'
 
 //PREPARE ENVIRONMENT EMPRESA '01' FILIAL '01'
 
-DbSelectArea("SZA")
-aRotina := {}
+	DbSelectArea("SZA")
+	aRotina := {}
 
-AADD(aRotina,{ "Pesquisar       ",'AxPesqui'     , 0, 1 } )
-AADD(aRotina,{ "Visualizar      ",'AxVisual'     , 0, 2 } )
-AADD(aRotina,{ "Incluir         ",'U_SZAINCLUI'  , 0, 3 } )
-AADD(aRotina,{ "Máquina Corte   ",'U_fButtCel'   , 0, 4 } )
-AADD(aRotina,{ "Excluir         ",'U_SZADELETA'  , 0, 5 } )
-AADD(aRotina,{ "Alterar         ",'U_SZAALTERA'  , 0, 6 } )
-AADD(aRotina,{ "Reimprimir      ",'U_SZAREIMP'   , 0, 7 } )
-AADD(aRotina,{ "Legenda         ",'U_fLegPerda'  , 0, 8 } )
-AADD(aRotina,{ "Cad.Operador    ",'U_CADZZM'  	 , 0, 9 } )
+	AADD(aRotina,{ "Pesquisar       ",'AxPesqui'     , 0, 1 } )
+	AADD(aRotina,{ "Visualizar      ",'AxVisual'     , 0, 2 } )
+	AADD(aRotina,{ "Incluir         ",'U_SZAINCLUI'  , 0, 3 } )
+	AADD(aRotina,{ "Máquina Corte   ",'U_fButtCel'   , 0, 4 } )
+	AADD(aRotina,{ "Excluir         ",'U_SZADELETA'  , 0, 5 } )
+	AADD(aRotina,{ "Alterar         ",'U_SZAALTERA'  , 0, 6 } )
+	AADD(aRotina,{ "Reimprimir      ",'U_SZAREIMP'   , 0, 7 } )
+	AADD(aRotina,{ "Legenda         ",'U_fLegPerda'  , 0, 8 } )
+	AADD(aRotina,{ "Cad.Operador    ",'U_CADZZM'  	 , 0, 9 } )
 
 
-cCadastro := "CADSZA - Perdas da Produção"
+	cCadastro := "CADSZA - Perdas da Produção"
 //SetKey(VK_F10, { || U_fReImp() } )
 
-IF MsgYesNo ("Filtrar somente fibras à pagar?")
+	IF MsgYesNo ("Filtrar somente fibras à pagar?")
 
-	cQuery:= " UPDATE SZA010 SET ZA_TIPO = 'N'  "
-	cQuery+= " FROM "+RetSqlTab("SZA")
-	cQuery+= " INNER JOIN "+RetSqlTab("SB1")+" ON B1_COD = ZA_PRODUTO  AND B1_GRUPO NOT IN ('FO','FOFS') AND SB1.D_E_L_E_T_ = '' "
-	cQuery+= " WHERE SZA.D_E_L_E_T_ = ''  "
-	TCSQLEXEC(cQuery)
+		cQuery:= " UPDATE SZA010 SET ZA_TIPO = 'N'  "
+		cQuery+= " FROM "+RetSqlTab("SZA")
+		cQuery+= " INNER JOIN "+RetSqlTab("SB1")+" ON B1_COD = ZA_PRODUTO  AND B1_GRUPO NOT IN ('FO','FOFS') AND SB1.D_E_L_E_T_ = '' "
+		cQuery+= " WHERE SZA.D_E_L_E_T_ = ''  "
+		TCSQLEXEC(cQuery)
 
-	cQuery:= " UPDATE SZA010 SET ZA_TIPO = 'S'  "
-	cQuery+= " FROM "+RetSqlTab("SZA") 
-	cQuery+= " INNER JOIN "+RetSqlTab("SB1")+" ON B1_COD = ZA_PRODUTO  AND B1_GRUPO IN ('FO','FOFS') AND SB1.D_E_L_E_T_ = '' "
-	cQuery+= " WHERE SZA.D_E_L_E_T_ = '' "
-	TCSQLEXEC(cQuery)
+		cQuery:= " UPDATE SZA010 SET ZA_TIPO = 'S'  "
+		cQuery+= " FROM "+RetSqlTab("SZA")
+		cQuery+= " INNER JOIN "+RetSqlTab("SB1")+" ON B1_COD = ZA_PRODUTO  AND B1_GRUPO IN ('FO','FOFS') AND SB1.D_E_L_E_T_ = '' "
+		cQuery+= " WHERE SZA.D_E_L_E_T_ = '' "
+		TCSQLEXEC(cQuery)
 
-	Eval( bFiltraBrw ) //Efetiva o Filtro antes da Chamada a mBrowse 
-	lFiltro:= .T.
-Endif
+		Eval( bFiltraBrw ) //Efetiva o Filtro antes da Chamada a mBrowse
+		lFiltro:= .T.
+	Endif
 
-mBrowse( 6, 1,22,75,"SZA",,,,,,aCores              ,,,,,,,,)  // "U_CADSZATOK()" )
+	mBrowse( 6, 1,22,75,"SZA",,,,,,aCores              ,,,,,,,,)  // "U_CADSZATOK()" )
 
-IF lFiltro
-	EndFilBrw( "SZA" , @aIndex ) //Finaliza o Filtro 
-Endif
+	IF lFiltro
+		EndFilBrw( "SZA" , @aIndex ) //Finaliza o Filtro
+	Endif
 //mBrowse( 6, 1,22,75,"SE2",,,,,, Fa040Legenda("SE2"),,,,,,,,IIF(ExistBlock("F080FILB"),ExecBlock("F080FILB",.f.,.f.),NIL))
 
 //SetKey(VK_F10,Nil)
@@ -91,38 +95,38 @@ Return
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 User Function SZAINCLUI()
-Local nOK
+	Local nOK
 //     AxInclui( <cAlias>, <nReg>, <nOpc>, <aAcho>, <cFunc>, <aCpos>, <cTudoOk>, <lF3>, <cTransact>, <aButtons>, <aParam>, <aAuto>, <lVirtual>, <lMaximized>)
-nOK := AxInclui("SZA"    , 0     , 3     ,        ,        ,        , "U_CADSZATOK()" )
+	nOK := AxInclui("SZA"    , 0     , 3     ,        ,        ,        , "U_CADSZATOK()" )
 
-If nOk == 1
-	Reclock("SZA",.F.)
-	SZA->ZA_DATA := DATE()
-	SZA->ZA_HORA := Time()
-	SZA->( msUnlock() )
-	
-	If SB1->B1_APROPRI == 'I' .or. Subs(SB1->B1_COD,1,8) == '50010100'
-		_nQtdTot    := SZA->ZA_SALDO
+	If nOk == 1
+		Reclock("SZA",.F.)
+		SZA->ZA_DATA := DATE()
+		SZA->ZA_HORA := Time()
+		SZA->( msUnlock() )
 
-	  	Reclock("SZA",.F.)
-		SZA->ZA_SALDO := 0
-	  	SZA->( msUnlock() )
-	
-    Else    
-    	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-		//³ GERA EMPENHO NA CRIACAO DA PERDA³
-	   //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-  		SD4PERDA(SZA->ZA_PRODUTO, cArm, SZA->ZA_OP, SZA->ZA_QTDORI,.F. ) 
-  		U_CRIAP07(SZA->ZA_PRODUTO, cArm)	
-		//FIM
-		
-		 if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
-			If MsgYesNo("Deseja imprimir a etiqueta?")
-				Etiqueta()
-			EndIf
-		ENdif	
-	 EndIf  
-EndIf
+		If SB1->B1_APROPRI == 'I' .or. Subs(SB1->B1_COD,1,8) == '50010100'
+			_nQtdTot    := SZA->ZA_SALDO
+
+			Reclock("SZA",.F.)
+			SZA->ZA_SALDO := 0
+			SZA->( msUnlock() )
+
+		Else
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³ GERA EMPENHO NA CRIACAO DA PERDA³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			SD4PERDA(SZA->ZA_PRODUTO, cArm, SZA->ZA_OP, SZA->ZA_QTDORI,.F. )
+			U_CRIAP07(SZA->ZA_PRODUTO, cArm)
+			//FIM
+
+			if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
+				If MsgYesNo("Deseja imprimir a etiqueta?")
+					Etiqueta()
+				EndIf
+			ENdif
+		EndIf
+	EndIf
 
 Return
 //----------------------------------------------------------
@@ -136,11 +140,11 @@ Return
 
 User Function fLegPerda()
 
-BrwLegenda("","Legenda",{;
-{"BR_CINZA"   ,"Perda Fibras - Pagas" 		},;  
-{"BR_AZUL"    ,"Perda Fibras - à Pagar"		},; 
-{"DISABLE"    ,"Perdas Outros - Pagas"		},; 
-{"BR_VERDE"   ,"Perdas Outros - à Pagar"	}}) 
+	BrwLegenda("","Legenda",{;
+		{"BR_CINZA"   ,"Perda Fibras - Pagas" 		},;
+		{"BR_AZUL"    ,"Perda Fibras - à Pagar"		},;
+		{"DISABLE"    ,"Perdas Outros - Pagas"		},;
+		{"BR_VERDE"   ,"Perdas Outros - à Pagar"	}})
 
 Return
 
@@ -149,38 +153,38 @@ User Function INIZA_DOC()
 Return "000001"
 
 Static Function Etiqueta()
-Local _cPorta    := "LPT1"
-Local _aAreaGER  := GetArea()
+	Local _cPorta    := "LPT1"
+	Local _aAreaGER  := GetArea()
 
-Reclock("SZA",.F.)
-SZA->ZA_DATA := DATE()
-SZA->ZA_HORA := Time()
-SZA->( msUnlock() )
+	Reclock("SZA",.F.)
+	SZA->ZA_DATA := DATE()
+	SZA->ZA_HORA := Time()
+	SZA->( msUnlock() )
 
-MSCBPrinter("TLP 2844",_cPorta,,,.F.)
-MSCBBegin(1,6)
-MSCBSay(28,01,"PAGAMENTO: PERDA PRODUÇÃO","N","3","1,1")
+	MSCBPrinter("TLP 2844",_cPorta,,,.F.)
+	MSCBBegin(1,6)
+	MSCBSay(28,01,"PAGAMENTO: PERDA PRODUÇÃO","N","3","1,1")
 
 
-n := 3
+	n := 3
 // 01
-MSCBSay(28,01+n,"DATA:"+DtoC(SZA->ZA_DATA)+" HORA:"+SZA->ZA_HORA+Space(10)+Transform(SZA->ZA_SALDO,"@E 999,999.99"),"N","2","1,1")
+	MSCBSay(28,01+n,"DATA:"+DtoC(SZA->ZA_DATA)+" HORA:"+SZA->ZA_HORA+Space(10)+Transform(SZA->ZA_SALDO,"@E 999,999.99"),"N","2","1,1")
 //03
-MSCBSay(28,03+n,"OPERA.:"+SZA->ZA_OPERADO+" QTD:"+Transform(SZA->ZA_SALDO,"@E 999,999.99"),"N","2","1,1")
+	MSCBSay(28,03+n,"OPERA.:"+SZA->ZA_OPERADO+" QTD:"+Transform(SZA->ZA_SALDO,"@E 999,999.99"),"N","2","1,1")
 //05
-MSCBSay(28,05+n,"PRODUTO: "+Alltrim(SZA->ZA_PRODUTO)+" "+Alltrim(SZA->ZA_DESC),"N","2","1,1")
+	MSCBSay(28,05+n,"PRODUTO: "+Alltrim(SZA->ZA_PRODUTO)+" "+Alltrim(SZA->ZA_DESC),"N","2","1,1")
 
 //MSCBSayBar - Imprime código de barras ( nXmm nYmm cConteudo cRotação cTypePrt [ nAltura ] [ *lDigver ] [ lLinha ] [ *lLinBaixo ] [ cSubSetIni ]      [ nLargura ] [ nRelacao ] [ lCompacta ] [ lSerial ] [ cIncr ] [ lZerosL ] )
 //07
-MSCBSayBar(31,07+n,SZA->ZA_DOCUMEN,"N","MB07",10 ,.F.,.T.,.F.,,3,1  ,Nil,Nil,Nil,Nil)
+	MSCBSayBar(31,07+n,SZA->ZA_DOCUMEN,"N","MB07",10 ,.F.,.T.,.F.,,3,1  ,Nil,Nil,Nil,Nil)
 //18
-MSCBSay(46,18+n,"OP: "+SZA->ZA_OP,"N","2","1,1")
+	MSCBSay(46,18+n,"OP: "+SZA->ZA_OP,"N","2","1,1")
 
-MSCBEnd()
+	MSCBEnd()
 
-MSCBClosePrinter()
+	MSCBClosePrinter()
 
-RestArea(_aAreaGER)
+	RestArea(_aAreaGER)
 
 
 /*
@@ -200,78 +204,78 @@ Return
 
 User Function SZAALTERA()
 
-If SZA->ZA_QTDORI == SZA->ZA_SALDO
-	nOK := AxAltera("SZA",0,4)
-	
-	If nOk == 1 
-		
-		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-		//³ GERA EMPENHO NA ALTERACAO DA PERDA³
-		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-		//SD4PERDA(SZA->ZA_PRODUTO, '96', SZA->ZA_OP, SZA->ZA_QTDORI,.F. ) 
-		//FIM
-		
-		Reclock("SZA",.F.)
-		SZA->ZA_DATA := DATE()
-		SZA->ZA_HORA := Time()
-		SZA->( msUnlock() )  
-		
-		
-		if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
-			If MsgYesNo("Deseja imprimir a etiqueta?")
-				Etiqueta()
-			EndIf
-		ENdif	
+	If SZA->ZA_QTDORI == SZA->ZA_SALDO
+		nOK := AxAltera("SZA",0,4)
+
+		If nOk == 1
+
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³ GERA EMPENHO NA ALTERACAO DA PERDA³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			//SD4PERDA(SZA->ZA_PRODUTO, '96', SZA->ZA_OP, SZA->ZA_QTDORI,.F. )
+			//FIM
+
+			Reclock("SZA",.F.)
+			SZA->ZA_DATA := DATE()
+			SZA->ZA_HORA := Time()
+			SZA->( msUnlock() )
+
+
+			if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
+				If MsgYesNo("Deseja imprimir a etiqueta?")
+					Etiqueta()
+				EndIf
+			ENdif
+		EndIf
+	Else
+		MsgStop("Alteração não permitida. Perda já atendida.")
 	EndIf
-Else
-	MsgStop("Alteração não permitida. Perda já atendida.")
-EndIf
 
 Return
 
 
 User Function SZAREIMP()
 
-if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
-	If SZA->ZA_QTDORI == SZA->ZA_SALDO
-		If MsgYesNo("Deseja imprimir a etiqueta?")
-			Etiqueta()
+	if !(Posicione("SB1",1,xFilial("SB1")+SZA->ZA_PRODUTO,"B1_GRUPO") $ "FO|FOFS")
+		If SZA->ZA_QTDORI == SZA->ZA_SALDO
+			If MsgYesNo("Deseja imprimir a etiqueta?")
+				Etiqueta()
+			EndIf
+		Else
+			MsgStop("Reimpressão não permitida. Perda já atendida.")
 		EndIf
-	Else
-		MsgStop("Reimpressão não permitida. Perda já atendida.")
-	EndIf
-Endif
+	Endif
 Return
 
 User Function SZADELETA()
 
-If SZA->ZA_SALDO == 0
-	MsgStop("Perda com pagamento já efetuado. Não será possível excluir este apontamento.")
-Else
-	If SZA->ZA_QTDORI <> SZA->ZA_SALDO
-		MsgStop("Perda com pagamento parcial já efetuado. Não será possível excluir este apontamento.")
-	Else        
-		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-		//³ EXCLUI EMPENHO³
-		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-		SD4PERDA(SZA->ZA_PRODUTO, '96', SZA->ZA_OP, SZA->ZA_QTDORI, .T. ) 
-		//FIM  	
-		RegToMemory("SZA",.F.)
-		AxDeleta("SZA"  , SZA->( Recno() )     , 5    )
+	If SZA->ZA_SALDO == 0
+		MsgStop("Perda com pagamento já efetuado. Não será possível excluir este apontamento.")
+	Else
+		If SZA->ZA_QTDORI <> SZA->ZA_SALDO
+			MsgStop("Perda com pagamento parcial já efetuado. Não será possível excluir este apontamento.")
+		Else
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³ EXCLUI EMPENHO³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			SD4PERDA(SZA->ZA_PRODUTO, '96', SZA->ZA_OP, SZA->ZA_QTDORI, .T. )
+			//FIM
+			RegToMemory("SZA",.F.)
+			AxDeleta("SZA"  , SZA->( Recno() )     , 5    )
+		EndIf
 	EndIf
-EndIf
 
 Return
 
 User Function CADSZATOK()
-Local _Retorno := .F.
+	Local _Retorno := .F.
 
-If !Empty(M->ZA_OP)
-	_Retorno := .T.
-Else
-	MsgStop("Para apontamentos do tipo Perdas da Produção, é obrigatório informar a Ordem de Produção.")
-	_Retorno := .F.
-EndIf
+	If !Empty(M->ZA_OP)
+		_Retorno := .T.
+	Else
+		MsgStop("Para apontamentos do tipo Perdas da Produção, é obrigatório informar a Ordem de Produção.")
+		_Retorno := .F.
+	EndIf
 //EndIf
 
 
@@ -293,132 +297,132 @@ Return _Retorno
 ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
-Static Function SD4PERDA(cProduto, cLocal, cOP, nQtd, lExclui )                 
+Static Function SD4PERDA(cProduto, cLocal, cOP, nQtd, lExclui )
 
-Local lReturn  := .t.
-Local aArea    := GetArea()
+	Local lReturn  := .t.
+	Local aArea    := GetArea()
 //Local lFibra   := Posicione("SB1",1,xFilial("SB1")+cProduto,"B1_GRUPO") $ "FO|FOFS"
 
 //cLocal := IIF(lFibra,'97','96')
-cLocal:= "96"
+	cLocal:= "96"
 
 //Verifica se tem armazem criado para o produto
 
 
-dbSelectArea("SB2")
-MsSeek(xFilial("SB2")+cProduto+cLocal)
-If EOF()
-	CriaSB2(cProduto,cLocal)
-EndIf
-                       
+	dbSelectArea("SB2")
+	MsSeek(xFilial("SB2")+cProduto+cLocal)
+	If EOF()
+		CriaSB2(cProduto,cLocal)
+	EndIf
+
 
 //Verifica se a OP continua em aberto
-DBSelectArea("SC2")                       
-If SC2->(DBSeek(xFilial()+cOP))
-	If !Empty(SC2->C2_DATRF)    
-		U_MSGCOLETOR("OP JÁ FOI ENCERRADA")
+	DBSelectArea("SC2")
+	If SC2->(DBSeek(xFilial()+cOP))
+		If !Empty(SC2->C2_DATRF)
+			U_MSGCOLETOR("OP JÁ FOI ENCERRADA")
+			lReturn := .f.
+		EndIf
+	Else
+		U_MSGCOLETOR("OP NAO ENCONTRADA")
 		lReturn := .f.
 	EndIf
-Else
-	U_MSGCOLETOR("OP NAO ENCONTRADA")
-	lReturn := .f.
-EndIf
 
 
-If lReturn .and. !lExclui      
-	DBSelectArea("SD4")
-	DBSetOrder(2)
-	If SD4->(DBSeek(xFilial()+cOP+(SPACE(14-LEN(cOP)))+cProduto+(SPACE(15-LEN(cProduto)))+cLocal))
-		RecLock("SD4",.F.)
-		SD4->D4_QUANT	  := SD4->D4_QUANT+nQTD
-		SD4->D4_QTDEORI  := SD4->D4_QTDEORI+nQTD
-		SD4->( msUnlock() ) 
-	Else
-		Reclock("SD4",.T.)
-		SD4->D4_FILIAL   := xFilial()
-		SD4->D4_COD      := cProduto
-		SD4->D4_LOCAL    := cLocal
-		SD4->D4_OP       := SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
-		SD4->D4_DATA     := DATE()
-		SD4->D4_QTDEORI  := nQTD
-		SD4->D4_QUANT    := nQTD
-		SD4->D4_LOTECTL  := ''
-		SD4->D4_DTVALID  := StoD('20491231')
-		SD4->D4_PRODUTO := SC2->C2_PRODUTO
-		SD4->( msUnlock() ) 
-	EndIF
-	//Ajusta B2_QEMP
-   //	cEMPSB2(cProduto, cLocal, nQTD, lExclui)
-EndIf             
-           
+	If lReturn .and. !lExclui
+		DBSelectArea("SD4")
+		DBSetOrder(2)
+		If SD4->(DBSeek(xFilial()+cOP+(SPACE(14-LEN(cOP)))+cProduto+(SPACE(15-LEN(cProduto)))+cLocal))
+			RecLock("SD4",.F.)
+			SD4->D4_QUANT	  := SD4->D4_QUANT+nQTD
+			SD4->D4_QTDEORI  := SD4->D4_QTDEORI+nQTD
+			SD4->( msUnlock() )
+		Else
+			Reclock("SD4",.T.)
+			SD4->D4_FILIAL   := xFilial()
+			SD4->D4_COD      := cProduto
+			SD4->D4_LOCAL    := cLocal
+			SD4->D4_OP       := SC2->C2_NUM+SC2->C2_ITEM+SC2->C2_SEQUEN
+			SD4->D4_DATA     := DATE()
+			SD4->D4_QTDEORI  := nQTD
+			SD4->D4_QUANT    := nQTD
+			SD4->D4_LOTECTL  := ''
+			SD4->D4_DTVALID  := StoD('20491231')
+			SD4->D4_PRODUTO := SC2->C2_PRODUTO
+			SD4->( msUnlock() )
+		EndIF
+		//Ajusta B2_QEMP
+		//	cEMPSB2(cProduto, cLocal, nQTD, lExclui)
+	EndIf
+
 //Exclui empenho
-If lExclui
-	DBSelectArea("SD4")
-	DBSetOrder(2)
-	If SD4->(DBSeek(xFilial()+cOP+(SPACE(14-LEN(cOP)))+cProduto+(SPACE(15-LEN(cProduto)))+cLocal))	       
+	If lExclui
+		DBSelectArea("SD4")
+		DBSetOrder(2)
+		If SD4->(DBSeek(xFilial()+cOP+(SPACE(14-LEN(cOP)))+cProduto+(SPACE(15-LEN(cProduto)))+cLocal))
 			If SD4->D4_QUANT==nQTD
 				RecLock("SD4",.F.)
 				SD4->(DbDelete())
 				SD4->(MsUnLock())
 				//Ajusta B2_QEMP
-	  			//	cEMPSB2(cProduto, cLocal, nQTD, lExclui) 		  	
-	  	    ElseIF SD4->D4_QUANT>nQTD
-	  	    	RecLock("SD4",.F.)  
-	  	    	SD4->D4_QTDEORI := SD4->D4_QTDEORI - nQTD 
-				SD4->D4_QUANT   := SD4->D4_QUANT   - nQTD 
-				SD4->(MsUnLock())				
-		  	EndIf
-	EndIf           
-Endif
+				//	cEMPSB2(cProduto, cLocal, nQTD, lExclui)
+			ElseIF SD4->D4_QUANT>nQTD
+				RecLock("SD4",.F.)
+				SD4->D4_QTDEORI := SD4->D4_QTDEORI - nQTD
+				SD4->D4_QUANT   := SD4->D4_QUANT   - nQTD
+				SD4->(MsUnLock())
+			EndIf
+		EndIf
+	Endif
 
-RestArea(aArea)                                     
+	RestArea(aArea)
 
-Return lReturn 
+Return lReturn
 
 //Static function cEMPSB2(cProduto, cLocal, nQTD, lExclui)
 
 //Local nVal                                             
 
-If lExclui    
-	nVal := Alltrim(Str(nQTD*(-1)))
-Else                               
-	nVal := Alltrim(Str(nQTD))
-EndIf
+	If lExclui
+		nVal := Alltrim(Str(nQTD*(-1)))
+	Else
+		nVal := Alltrim(Str(nQTD))
+	EndIf
 
 //AjustaEmpenho
-Reclock("P05",.T.)
-P05->P05_FILIAL := "01"
-P05->P05_ALIAS  := "SB2"
-P05->P05_INDICE := "1"
-P05->P05_CHAVE  := "01" + cProduto + cLocal
-P05->P05_CAMPO  := "B2_QEMP"
-P05->P05_TIPO   := "N"
-P05->P05_SOMA   := nVal
-P05->P05_DTINC  := dDataBase
-P05->P05_HRINC  := Time()
-P05->P05_PRODUT := cProduto
-P05->P05_LOCAL  := cLocal
-P05->( msUnlock() )
+	Reclock("P05",.T.)
+	P05->P05_FILIAL := "01"
+	P05->P05_ALIAS  := "SB2"
+	P05->P05_INDICE := "1"
+	P05->P05_CHAVE  := "01" + cProduto + cLocal
+	P05->P05_CAMPO  := "B2_QEMP"
+	P05->P05_TIPO   := "N"
+	P05->P05_SOMA   := nVal
+	P05->P05_DTINC  := dDataBase
+	P05->P05_HRINC  := Time()
+	P05->P05_PRODUT := cProduto
+	P05->P05_LOCAL  := cLocal
+	P05->( msUnlock() )
 
 Return
 
 
 User Function fButtCel()
-Local oCelCort1
-Local oCelCort2
-Local oCelCort3
-Local oCelCort4
-Local oCelCort5
-Local oCelCort6
+	Local oCelCort1
+	Local oCelCort2
+	Local oCelCort3
+	Local oCelCort4
+	Local oCelCort5
+	Local oCelCort6
 
-Local oFont1 := TFont():New("Arial",,050,,.T.,,,,,.F.,.F.)
-Static oDlgBtC
+	Local oFont1 := TFont():New("Arial",,050,,.T.,,,,,.F.,.F.)
+	Static oDlgBtC
 
-Local cCSSBtN1 :="QPushButton{background-color: #f6f7fa; color: #707070; font: bold 22px Arial; }"+;
+	Local cCSSBtN1 :="QPushButton{background-color: #f6f7fa; color: #707070; font: bold 22px Arial; }"+;
 		"QPushButton:pressed {background-color: #50b4b4; color: white; font: bold 22px  Arial; }"+;
 		"QPushButton:hover {background-color: #878787 ; color: white; font: bold 22px  Arial; }"
 
-  DEFINE MSDIALOG oDlgBtC TITLE "Escolha a célula de trabalho" FROM 000, 000  TO 550, 800 COLORS 0, 16777215 PIXEL
+	DEFINE MSDIALOG oDlgBtC TITLE "Escolha a célula de trabalho" FROM 000, 000  TO 550, 800 COLORS 0, 16777215 PIXEL
 	@ 033, 040 BUTTON oCelCort1 PROMPT "CORTE 1" SIZE 150, 053 OF oDlgBtC ACTION (cCelula := "CORTE 1", oDlgBtc:end() ) FONT oFont1 PIXEL
 	oCelCort1:setCSS(cCSSBtN1)
 	@ 033, 212 BUTTON oCelCort2 PROMPT "CORTE 2" SIZE 150, 053 OF oDlgBtC ACTION (cCelula := "CORTE 2", oDlgBtc:end()) FONT oFont1 PIXEL
@@ -431,56 +435,56 @@ Local cCSSBtN1 :="QPushButton{background-color: #f6f7fa; color: #707070; font: b
 	oCelCort5:setCSS(cCSSBtN1)
 	@ 187, 212 BUTTON oCelCort6 PROMPT "DROP 1" SIZE 150, 053 OF oDlgBtC ACTION (cCelula := "DROP 1", oDlgBtc:end() ) FONT oFont1 PIXEL
 	oCelCort6:setCSS(cCSSBtN1)
-	
+
 	ACTIVATE MSDIALOG oDlgBtC CENTERED
 
 	Reclock("SZA",.F.)
 	SZA->ZA_MAQUINA := (cCelula)
 	SZA->( msUnlock() )
 
-				
-		P10->(DbSetOrder(1))//P10_FILIAL, P10_OP, P10_FIBRA
-		RecLock("P10",.T.)
-		P10->P10_FILIAL	:= xFilial("P10")
-		P10->P10_OP       := SZA->ZA_OP
-		P10->P10_DTPROG	  := SZA->ZA_DATA
-		P10->P10_FIBRA    := SZA->ZA_PRODUTO
-		P10->P10_SQCORT	  := '000'
-		P10->P10_MAQUIN    := cCelula
-		P10->(MsUnLock())
-	
-Return 
+
+	P10->(DbSetOrder(1))//P10_FILIAL, P10_OP, P10_FIBRA
+	RecLock("P10",.T.)
+	P10->P10_FILIAL	:= xFilial("P10")
+	P10->P10_OP       := SZA->ZA_OP
+	P10->P10_DTPROG	  := SZA->ZA_DATA
+	P10->P10_FIBRA    := SZA->ZA_PRODUTO
+	P10->P10_SQCORT	  := '000'
+	P10->P10_MAQUIN    := cCelula
+	P10->(MsUnLock())
+
+Return
 
 
 User Function IZAZEDOC()
-Local _Retorno := ""
-Local nLoop    := 0
-Local lLoop    := .T.
-Local aAreaGER := GetArea()
-Local aAreaSX6 := SX6->( GetArea() )
+	Local _Retorno := ""
+	Local nLoop    := 0
+	Local lLoop    := .T.
+	Local aAreaGER := GetArea()
+	Local aAreaSX6 := SX6->( GetArea() )
 
-SX6->( Dbsetorder(1) )
+	SX6->( Dbsetorder(1) )
 
-If SX6->( dbSeek(xFilial("SD3")+"MV_XZAZEDO") )
-	While lLoop .and. nLoop < 1000
-		If RecLock("SX6",.F.) .And. lLoop
-			_NextDoc        := Alltrim(SX6->X6_CONTEUD)
-			SX6->X6_CONTEUD := SOMA1(_NextDoc)
-			SX6->( Msunlock() )
-			
-			lLoop    := .F.
-			_Retorno := _NextDoc
-		EndIf
-		nLoop ++
-	End
-EndIf
+	If SX6->( dbSeek(xFilial("SD3")+"MV_XZAZEDO") )
+		While lLoop .and. nLoop < 1000
+			If RecLock("SX6",.F.) .And. lLoop
+				_NextDoc        := Alltrim(SX6->X6_CONTEUD)
+				SX6->X6_CONTEUD := SOMA1(_NextDoc)
+				SX6->( Msunlock() )
 
-RestArea(aAreaSX6)
-RestArea(aAreaGER)
-                     
-If Empty(_Retorno)
-   MsgYesNo('Parametro MV_XXNEXTD não criado!')
-   _Retorno := ''
-EndIf
+				lLoop    := .F.
+				_Retorno := _NextDoc
+			EndIf
+			nLoop ++
+		End
+	EndIf
+
+	RestArea(aAreaSX6)
+	RestArea(aAreaGER)
+
+	If Empty(_Retorno)
+		MsgYesNo('Parametro MV_XXNEXTD não criado!')
+		_Retorno := ''
+	EndIf
 
 Return _Retorno

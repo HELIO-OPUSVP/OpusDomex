@@ -77,20 +77,22 @@ oBol:SetTitulos(cPref, cNum, cTipo, cPrcDe, cPrcAte/*, cCliDe, cCliAte, cLjDe, c
 
 // CARREGA DADOS DO BANCO
 if cFilAnt == "01"  //  Santander - Matriz
-    _cxBco  := "033"
-    _cxAge  := "3072 "
-    _cxConta:= "01051781  "
-    _cxSub  := "001"
+    cPortador   := Padr("033",3)
+    cAgencia    := Padr("3072",5)
+    cConta      := Padr("01051781",10)
+    cSbConta	:= Padr("001",3)
+    cCarteira  :=  "101" 
 
 ElseIf cFilAnt == '02'  // Santander - Filial
-    _cxBco  := "033"
-    _cxAge  := "3078 "
-    _cxConta:= "13002050  "
-    _cxSub  := "001"
+    cPortador   := Padr("033",3)
+    cAgencia    := Padr("3078",5)
+    cConta      := Padr("13002050",10)
+    cSbConta	:= Padr("001",3)
+    cCarteira  :=  "101" 
 Endif
                                                                                                               
 SEE->(DbSetOrder(1))
-SEE->( dbSeek( xFilial("SEE") + _cxBco + _cxAge + _cxConta+_cxSub  ) )
+SEE->( dbSeek( xFilial("SEE") +cPortador+cAgencia+cConta+cSbConta  ) )
 nRecSEE :=  SEE->( Recno())      //nRecSEE := 7  //    CARREGAR O RECNO DO BANCO NA TABELA SEE  ******
         
 oBol:SetBanco(nRecSEE)
@@ -132,18 +134,21 @@ oBol:Gerar()
 
 cTitulo := 'Boleto Bancário - '
 cTO 	:= Posicione("SA1",1,xFilial("SA1")+SE1->E1_CLIENTE+SE1->E1_LOJA ,"A1_EMAIL" )
-cTO		+= ';juliane.jordao@rosenbergerdomex.com.br'
-//cTO		:= 'jonas@opusvp.com.br'
-cCC		:= ''
-cBCC	:= ''
 
-	if !MsgYesNo("Confirma o envio para o cliente no email: " + chr(13) + Alltrim(cTO))
+	if MsgYesNo("Santander - Confirma o envio para o cliente no email: " + chr(13) + Alltrim(cTO))
+		cTO 	:= Posicione("SA1",1,xFilial("SA1")+SE1->E1_CLIENTE+SE1->E1_LOJA ,"A1_EMAIL" )
+		cTO		+= ';juliane.jordao@rosenbergerdomex.com.br;patricia.vieira@rosenbergerdomex.com.br;adriana.souza@rosenbergerdomex.com.br'                     
+		cCC		:= ''
+		cBCC	:= ''
+	else		
 		cTitulo := 'Boleto Bancário - RDT - '
-		cTO		:= 'juliane.jordao@rosenbergerdomex.com.br;patricia.vieira@rosenbergerdomex.com.br;adriana.souza@rosenbergerdomex.com.br'  
+		cTO 	:= ""
+		cTO		+= 'juliane.jordao@rosenbergerdomex.com.br;patricia.vieira@rosenbergerdomex.com.br;adriana.souza@rosenbergerdomex.com.br'                     
 		cCC		:= ''
 		cBCC	:= ''
 	Endif
 
+cTO		+=  ";mauresi@gmail.com"    // RETIRAR ESTA LINHA - MAURESI 
 oBol:EnviarEmail(cTitulo, cTO, cCC, cBCC)
 
 
@@ -183,20 +188,22 @@ fCriaPerg(_cPerg)
 
 // CARREGA DADOS DO BANCO
 if cFilAnt == "01"  //  Santander - Matriz
-    _cxBco  := "033"
-    _cxAge  := "3072 "
-    _cxConta:= "01051781  "
-    _cxSub  := "001"
+    cPortador   := Padr("033",3)
+    cAgencia    := Padr("3072",5)
+    cConta      := Padr("01051781",10)
+    cSbConta	:= Padr("001",3)
+    cCarteira  :=  "101" 
 
 ElseIf cFilAnt == '02'  // Santander - Filial
-    _cxBco  := "033"
-    _cxAge  := "3078 "
-    _cxConta:= "13002050  "
-    _cxSub  := "001"
+    cPortador   := Padr("033",3)
+    cAgencia    := Padr("3078",5)
+    cConta      := Padr("13002050",10)
+    cSbConta	:= Padr("001",3)
+    cCarteira  :=  "101" 
 Endif
 
 SEE->(DbSetOrder(1))
-SEE->( dbSeek( xFilial("SEE") + _cxBco + _cxAge + _cxConta+_cxSub  ) )
+SEE->( dbSeek( xFilial("SEE") +cPortador+cAgencia+cConta+cSbConta  ) )
 nRecSEE :=  SEE->( Recno())      //nRecSEE := 7  //    CARREGAR O RECNO DO BANCO NA TABELA SEE  ******
 
 	If Pergunte(_cPerg,.T.)
@@ -213,7 +220,7 @@ nRecSEE :=  SEE->( Recno())      //nRecSEE := 7  //    CARREGAR O RECNO DO BANCO
 		cQuery += " LEFT JOIN "+ RetSqlName("SA1") + " SA1 ON E1_CLIENTE+E1_LOJA = A1_COD+A1_LOJA "	
 		cQuery += " WHERE EA_NUMBOR = '"+alltrim(MV_PAR01)+"' " 
 		cQuery += " AND EA_CART = 'R'  "
-		cQuery += " AND EA_PORTADO='"+_cxBco+"' AND EA_AGEDEP='"+_cxAge+"' AND EA_NUMCON='"+_cxConta+"' "
+		cQuery += " AND EA_PORTADO='"+cPortador+"' AND EA_AGEDEP='"+cAgencia+"' AND EA_NUMCON='"+cConta+"' "
 		cQuery += " AND SEA.D_E_L_E_T_ = '' "
 		cQuery += " AND E1_SALDO > 0"
 		TcQuery cQuery Alias "TRB" New
@@ -255,8 +262,8 @@ nRecSEE :=  SEE->( Recno())      //nRecSEE := 7  //    CARREGAR O RECNO DO BANCO
 
 					if MV_PAR02 == 1	// ENVIA PARA CLIENTE
 						cTitulo := 'Boleto Bancário - '
-						cTO		:=  Alltrim(TRB->A1_EMAIL)
-						cTO		+=  ';juliane.jordao@rosenbergerdomex.com.br;'
+						cTO		:=  Alltrim(TRB->A1_EMAIL)                  
+						cTO		:= 'juliane.jordao@rosenbergerdomex.com.br;patricia.vieira@rosenbergerdomex.com.br;adriana.souza@rosenbergerdomex.com.br' 
 						cCC		:= ''
 						cBCC	:= '' 
 				
@@ -266,6 +273,9 @@ nRecSEE :=  SEE->( Recno())      //nRecSEE := 7  //    CARREGAR O RECNO DO BANCO
 						cCC		:= ''
 						cBCC	:= ''
 					Endif
+
+					cTO		+=  "mauresi@gmail.com"    // RETIRAR ESTA LINHA - MAURESI   
+
 
 					oBol:EnviarEmail(cTitulo, cTO, cCC, cBCC)
 
