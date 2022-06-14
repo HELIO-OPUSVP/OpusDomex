@@ -539,11 +539,7 @@ User Function XMtCadP12(cAlias,nReg,nOpc)
 		EndIf
 	EndIf
 
-	If  nOpc == 3  //Inclusão
-		M->P12_NUM := '000012'
-	EndIf
-
-
+	
 // Verifica o tipo de chamada e trata a situação
 	Do Case
 	Case nOpc == 2	//Visualização
