@@ -539,6 +539,11 @@ User Function XMtCadP12(cAlias,nReg,nOpc)
 		EndIf
 	EndIf
 
+	If  nOpc == 3  //Inclusão
+		M->P12_NUM := '000012'
+	EndIf
+
+
 // Verifica o tipo de chamada e trata a situação
 	Do Case
 	Case nOpc == 2	//Visualização
@@ -554,6 +559,8 @@ User Function XMtCadP12(cAlias,nReg,nOpc)
 		INCLUI := .T.
 		ALTERA := .F.
 		EXCLUI := .F.
+		M->P12_NUM := U_fGeraNumero()
+
 		//	aAdd(aButtons,{"Documento",{||U_fItensNFS(cAlias, nReg, nOpc,,4,@aRetDoc)}, "Carregar Itens da Nota", "Carregar Itens da Nota"})
 		//	aAdd(aButtons,{"Documento",{||U_fItensNFS(nOpc)}, "Carregar Itens da Nota", "Carregar Itens da Nota"})
 
@@ -639,6 +646,26 @@ User Function XMtCadP12(cAlias,nReg,nOpc)
 	EndCase
 
 Return
+
+//Gera numeração do registro
+User Function fGeraNumero()
+Local nNumero := Space(6)
+Local cQry := ""
+
+cQry += "Select IsNull(MAX(P12_NUM),0)+1 As PRXNUMERO "
+cQry += "From "+ RetSqlName("P12") + " P12 With(Nolock) "
+cQry += "Where P12_FILIAL = '"+xFilial("P12")+"' And D_E_L_E_T_ = '' "
+
+If Select("QRYP12") <> 0
+		QRYP12->( dbCloseArea() )
+EndIf
+
+TCQUERY cQry NEW ALIAS "QRYP12"
+
+nNumero := StrZero(QRYP12->PRXNUMERO,6)
+
+Return(nNumero)
+
 
 
 /*
@@ -2423,6 +2450,7 @@ Static Function BotaoOK()
 	oDlg:End()
 
 Return
+
 
 User Function XfZKITEM(cChamado)
 	Local _Retorno := "01"

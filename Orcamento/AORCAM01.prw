@@ -418,7 +418,10 @@ Static Function LeArq()
 	oGetDad:ForceRefresh()
 	
 	IF lAux==.F.
-	       TMP1-&gt;(DBGOTOP())
+	    TMP1-&gt;(DBGOTOP())
+		//TMP1-&gt;(DBGOBOTTOM())
+		//oGetDad:Refresh()
+		//oGetDad:ForceRefresh()
 	ENDIF	
 
 	Restore(aAreaTMP1)
