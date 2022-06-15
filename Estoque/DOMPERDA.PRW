@@ -351,7 +351,7 @@ User Function VLDTBPZA(cVarDigit)
 								cQrySZA+= ENTER + "  ,B1_DESC ZA_DESC "
 								cQrySZA+= ENTER + "  ,'' ZA_MOTIVO "
 								cQrySZA+= ENTER + "  ,'' ZA_DESCPER "
-								cQrySZA+= ENTER + "  ,G1_QUANT ZA_QTDREF "
+								cQrySZA+= ENTER + "  ,CASE WHEN ISNULL(G1_QUANT,0) = 0 THEN  ROUND(SD4.D4_QTDEORI / C2_QUANT,4)ELSE G1_QUANT  END ZA_QTDREF "
 								cQrySZA+= ENTER + "  ,0 ZA_QTDORI "
 								cQrySZA+= ENTER + "  ,0 ZA_SALDO "
 								cQrySZA+= ENTER + "  ,'' ZA_OPERADO "
@@ -366,6 +366,7 @@ User Function VLDTBPZA(cVarDigit)
 								cQrySZA+= ENTER + "  FROM " + RetSqlName("SD4") + " SD4 "
 								cQrySZA+= ENTER + "  JOIN " + RetSqlName("SB1") + " SB1 ON SB1.D_E_L_E_T_ ='' AND SB1.B1_FILIAL = '" + xFilial("SB1") + "' AND SB1.B1_COD =SD4.D4_COD "
 								cQrySZA+= ENTER + "  LEFT JOIN " + RetSqlName("SG1") + " SG1 ON SG1.D_E_L_E_T_ ='' AND SG1.G1_FILIAL = '" + xFilial("SG1") + "' AND SG1.G1_COD =SD4.D4_PRODUTO AND SG1.G1_COMP = SD4.D4_COD "
+								cQrySZA+= ENTER + "  JOIN " + RetSqlName("SC2") + " SC2 ON SC2.D_E_L_E_T_ ='' AND SC2.C2_FILIAL =SD4.D4_FILIAL  AND SC2.C2_NUM + C2_ITEM +  C2_SEQUEN = SD4.D4_OP "
 								cQrySZA+= ENTER + "  WHERE SD4.D_E_L_E_T_ ='' AND SD4.D4_FILIAL  ='" + xFilial("SD4") + "' AND LEFT(SD4.D4_OP,8) = '" + SUBSTR(ALLTRIM(M->PZA_OP),1,8) + "' AND SD4.D4_LOCAL NOT IN ('99','08','96') "
 
 								If Select("TBSZA") > 0
