@@ -97,23 +97,24 @@ User Function DOMROTTRK(cTipo,nMaxLinhas)
 	cPerc99			    := cStartPath + 'PERC99.png'
 	cLogoHu				:= cStartPath + 'huawei_lg.png'
 
-	IF U_VALIDACAO("RODA") .OR. .T.
-		IF cTipo == "TRUNK"
-			cTpProd  := "'TRUE', 'TRUN'"
-			cNotTps  := "'PA','ME'"
-			_cTitulo := "ROTEIRO DE PRODU플O TRUNK - LINHA "+cValToChar(nCelula)
-			lFibraFs := .T.
-		ElseIF cTipo == "DIO"
-			cTpProd := "'DIO'"
-			cNotTps := "'PA','ME'"
-			cNotGrp := "'FO','CON'" // grupo
-			_cTitulo := "ROTEIRO DE PRODU플O DIO - LINHA " + cValToChar(nCelula)
-		Endif
-	ELSE
+	IF cTipo == "TRUNK"
 		cTpProd  := "'TRUE', 'TRUN'"
-		cNotTps := "'PA','ME'"
+		cNotTps  := "'PA','ME'"
 		_cTitulo := "ROTEIRO DE PRODU플O TRUNK - LINHA "+cValToChar(nCelula)
-	ENDIF
+		lFibraFs := .T.
+	ElseIF cTipo == "DIO"
+		cTpProd := "'DIO'"
+		cNotTps := "'PA','ME'"
+		cNotGrp := "'FO','CON'" // grupo
+		_cTitulo := "ROTEIRO DE PRODU플O DIO - LINHA " + cValToChar(nCelula)
+	ElseIF cTipo == "CMTP" 
+		cTpProd := "'CMTP'"
+		cNotTps := "'PA','ME'"
+		cNotGrp := "'FO','CON'" // grupo
+		lFibraFs := .T.
+		_cTitulo := "ROTEIRO DE PRODU플O CMTP - LINHA " + cValToChar(nCelula)
+	Endif
+
 
 	DEFINE MSDIALOG oDlg TITLE "" FROM 000, 000  TO 800, 1366 COLORS 0, 16777215 PIXEL
 	oDlg:lMaximized := .T.

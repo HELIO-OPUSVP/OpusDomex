@@ -43,15 +43,18 @@ Return
 
 User Function DOMROT06()  // TRUNK
 	If U_VALIDACAO() .OR. .T.//Roda 30/07/2021
-		U_DOMROTTRK("TRUNK",1) 
+		U_DOMROTTRK("TRUNK",1)
 	else
 		U_DOMROT("TRUNK",1)
 	Endif
 Return
 
-
 User Function DOMROT07()  // PIG
 	U_DOMROTPIG("PIG",1)
+Return
+
+User Function DOMROT08()  // CMTP
+	U_DOMROTTRK("CMTP",1)
 Return
 
 User Function DOMROT(cTipo,nMaxLinhas)
@@ -104,7 +107,7 @@ User Function DOMROT(cTipo,nMaxLinhas)
 	Private oNo      	:= LoadBitmap( GetResources(), "VERMELHO" )
 	Private oIn      	:= LoadBitmap( GetResources(), "AMARELO" )
 	Private oErro      	:= LoadBitmap( GetResources(), "NGBIOALERTA_01" )
-	
+
 	Private c2Leg1      := "1"
 	Private n2Leg1      := RGB(176,224,230)
 	Private c2Leg2      := "2"
@@ -331,9 +334,9 @@ Static Function fVldEti(cEtiqOfc)
 			fVldXd1St(cCodOp)
 			fStatus()
 
-			IF lContinua				
+			IF lContinua
 				nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
-				If nPos > 0 
+				If nPos > 0
 					oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 					For _x := 1 to len(oGetDados:aCols)
@@ -393,7 +396,7 @@ Static Function fVldEti(cEtiqOfc)
 							oGetDados:aCols[_x,nPosFlag] := oIn
 						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
 							oGetDados:aCols[_x,nPosFlag] := oErro
-						
+
 						Endif
 					Next _x
 				Endif
@@ -427,7 +430,7 @@ Static Function fVldEti(cEtiqOfc)
 					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
 						oGetDados:aCols[_x,nPosFlag] := oIn
 					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
-							oGetDados:aCols[_x,nPosFlag] := oErro
+						oGetDados:aCols[_x,nPosFlag] := oErro
 					Endif
 				Next _x
 			Endif
@@ -472,7 +475,7 @@ Static Function fVldEti(cEtiqOfc)
 					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
 						oGetDados:aCols[_x,nPosFlag] := oIn
 					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
-							oGetDados:aCols[_x,nPosFlag] := oErro
+						oGetDados:aCols[_x,nPosFlag] := oErro
 					Endif
 				Next _x
 			Endif
@@ -666,8 +669,8 @@ Static Function fVldEti(cEtiqOfc)
 					Elseif oGetDados:aCols[nPos,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
 						oGetDados:aCols[nPos,nPosFlag] := oIn
 					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
-							oGetDados:aCols[_x,nPosFlag] := oErro
-						
+						oGetDados:aCols[_x,nPosFlag] := oErro
+
 					Endif
 
 				Endif
@@ -760,17 +763,17 @@ Static Function MontaTela()
 //	IF cTipo == "DIO" .and. U_VALIDACAO() // Roda 05/11/2021
 //		cQuery:= " SELECT D4_PRODUTO, B1_GRUPO, D4_COD,B1_DESC,SUM(D4_QTDEORI) D4_QTDEORI  "
 //	Else
-		cQuery:= " SELECT * "
+	cQuery:= " SELECT * "
 //	Endif
 	cQuery+= " FROM "+RETSQLNAME("SD4")+" SD4 "
 	cQuery+= " INNER JOIN "+RETSQLNAME("SB1")+" SB1 ON B1_COD = D4_COD  "
-	
+
 //	IF cTipo == "DIO" .and. U_VALIDACAO() // Roda 05/11/2021
 //		cQuery+= " AND SB1.D_E_L_E_T_ = '' AND B1_TIPO NOT IN ('PA','ME','PI')  AND B1_APROPRI <> 'I'  "
 //	ELSE
-		cQuery+= " AND SB1.D_E_L_E_T_ = '' AND B1_TIPO NOT IN ('PA','ME')  AND B1_APROPRI <> 'I'  "
+	cQuery+= " AND SB1.D_E_L_E_T_ = '' AND B1_TIPO NOT IN ('PA','ME')  AND B1_APROPRI <> 'I'  "
 //	ENDIF
-	
+
 	cQuery+= " WHERE D4_OP ='"+cCodOP+"' "
 	cQuery+= " AND D4_QTDEORI > 0 "
 	cQuery+= " AND D4_LOCAL = '97'  "
