@@ -26,6 +26,7 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 	private aRetPar   := {}
 	Private cfila
 	Private aPar:= {}
+	Private lChrEsp:= SuperGetMV("MV_XCHRESP",.T.,.T.)
 	//MVPAR02:= nQtdEmb   //Qtd Embalagem
 	//MVPAR03:= nQtdEtq   //Qtd Etiquetas /*revisar*/
 
@@ -164,13 +165,48 @@ User Function DOMET112(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 		AADD(_aArq,'^PW400'+ CRLF)
 		AADD(_aArq,'^LL400'+ CRLF)
 		AADD(_aArq,'^LS0'+ CRLF)
-		AADD(_aArq,'^FT15,33^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL1)+'^FS^CI27'+ CRLF)
-		AADD(_aArq,'^FT15,56^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL2)+'^FS^CI27'+ CRLF)
-		AADD(_aArq,'^FT15,79^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL3)+'^FS^CI27'+ CRLF)
-		AADD(_aArq,'^FT15,102^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL4)+'^FS^CI27'+ CRLF)
-		AADD(_aArq,'^FT15,125^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL5)+'^FS^CI27'+ CRLF)
-		AADD(_aArq,'^FT15,149^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL6)+'^FS^CI27'+ CRLF)
+		nLinX:= 33
+
+		_cLabel1:= alltrim(ZZU->ZZU_LABEL1)
+
+		if  len(alltrim(_cLabel1)) <= 36
+			AADD(_aArq,'^FT15,'+cValtochar(nLinX)+'^A0N,17,18^FH\^CI28^FD' +_cLabel1+'^FS^CI27'+ CRLF)
+		else
+
+			// IF lChrEsp
+			// 	_cLabel1:= substring(ZZU->ZZU_LABEL1,1,16)
+			// 	_cLabel1+= substring(StrTran(ZZU->ZZU_LABEL1, "-", ""),17,5)+" "
+			// 	_cLabel1+= substring(StrTran(ZZU->ZZU_LABEL1, "-", ""),22,len(ZZU->ZZU_LABEL1))		
+			// Endif
+			
+			_cLabel1:= StrTran(ZZU->ZZU_LABEL1, "-", ".")
+			AADD(_aArq,'^FT15,'+cValtochar(nLinX)+'^A0N,17,18^FH\^CI28^FD' +_cLabel1+'^FS^CI27'+ CRLF)
+
+			// AADD(_aArq,'^FT15,'+cValtochar(nLinX)+'^A0N,17,18^FH\^CI28^FD' +substring(_cLabel1,1,36)+'^FS^CI27'+ CRLF)
+
+			// if  len(alltrim(_cLabel1)) > 36
+			// 	nLinX+= 23
+			// 	AADD(_aArq,'^FT15,'+cValtochar(nLinX)+'^A0N,17,18^FH\^CI28^FD' +substring(_cLabel1,37,len(_cLabel1))+'^FS^CI27'+ CRLF)
+			// Endif
+		Endif
+
+		nLinX+= 23
+		AADD(_aArq,'^FT15,'+cValtochar(nLinX)+'^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL2)+'^FS^CI27'+ CRLF)
+
+		nLinX+= 23
+		AADD(_aArq,'^FT15,'+cValtochar(nLinX)+'^A0N,17,18^FH\^CI28^FD' +alltrim(ZZU->ZZU_LABEL3)+'^FS^CI27'+ CRLF)
+
+		nLinX+= 23
+		AADD(_aArq,'^FT15,'+cValtochar(nLinX)+'^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL4)+'^FS^CI27'+ CRLF)
+
+		nLinX+= 23
+		AADD(_aArq,'^FT15,'+cValtochar(nLinX)+'^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL5)+'^FS^CI27'+ CRLF)
+
+		nLinX+= 23
+		AADD(_aArq,'^FT15,'+cValtochar(nLinX)+'^A0N,17,18^FH\^CI28^FD'+alltrim(ZZU->ZZU_LABEL6)+'^FS^CI27'+ CRLF)
+
 		AADD(_aArq,'^PQ2,0,1,Y'+ CRLF)
+
 		AADD(_aArq,'^XZ'+ CRLF)
 
 
