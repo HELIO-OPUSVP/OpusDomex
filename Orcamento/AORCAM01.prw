@@ -19,7 +19,8 @@
 
 User Function AORCAM01()
 	Private lOK := .F.
-
+	aAreaSCK := SCK->(GetArea())
+	aAreaSCJ := SCJ->(GetArea())
 
 
 
@@ -89,6 +90,9 @@ User Function AORCAM01()
 			FClose(nHandle)
 		EndIF
 	EndIf
+
+RestArea(aAreaSCK)
+RestArea(aAreaSCJ)
 
 Return
 
@@ -419,11 +423,9 @@ Static Function LeArq()
 	
 	IF lAux==.F.
 	    TMP1-&gt;(DBGOTOP())
-		//TMP1-&gt;(DBGOBOTTOM())
-		//oGetDad:Refresh()
-		//oGetDad:ForceRefresh()
 	ENDIF	
 
+	
 	Restore(aAreaTMP1)
 
 //-----------------------------------------------
@@ -593,14 +595,7 @@ Static Function LeArq()
 
 		Next nx
 		*/
-	//	M->C5_XMSGTES	:= ""
-	//	For nX := 1 to Len(aCols)
-	//		_cMsg := U_ReMsgInt(aCols[nX,nPC6_XOPER	 ],M->C5_CLIENTE,M->C5_LOJACLI,aCols[nX,nPC6_PRODUTO],M->C5_TIPOCLI )
-	//		if !(_cMsg $ M->C5_XMSGTES)
-	//			M->C5_XMSGTES	+=_cMsg
-	//		endif
-	//	Next x
-
+	
 	EndIf
 
 Return(Nil)

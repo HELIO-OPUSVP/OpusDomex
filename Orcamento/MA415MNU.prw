@@ -17,4 +17,8 @@ User Function MA415MNU()
 
 aAdd( aRotina,{"Proposta Word", "U_PropCom1"	, 0 , 2, 0,.F.} )
 
+If U_Validacao("OSMAR")
+   AAdd( aRotina,{ "Efetivar","A415Baixa"     , 0 , 4 , 0 , NIL} )
+EndIf
+
 Return
