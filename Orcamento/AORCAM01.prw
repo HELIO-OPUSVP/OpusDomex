@@ -18,11 +18,10 @@
 */
 
 User Function AORCAM01()
+	Local aAreaSCK := SCK->(GetArea())
+	Local aAreaSCJ := SCJ->(GetArea())
+	Local aAreaTMP1 := TMP1->( GetArea() )
 	Private lOK := .F.
-	aAreaSCK := SCK->(GetArea())
-	aAreaSCJ := SCJ->(GetArea())
-
-
 
 	SA1->( dbSetOrder(1) )
 	DA0->( dbSetOrder(1) )
@@ -91,6 +90,7 @@ User Function AORCAM01()
 		EndIF
 	EndIf
 
+RestArea(aAreaTMP1)
 RestArea(aAreaSCK)
 RestArea(aAreaSCJ)
 

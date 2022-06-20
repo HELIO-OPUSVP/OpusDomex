@@ -1,3 +1,4 @@
+
 #Include "rwMake.ch"
 #include "totvs.ch"
 #include "protheus.ch"
@@ -170,3 +171,4 @@ Definição dos valores totais dos produtos que constarão na proposta
 		nA1XXORPR1 := ROUND((SCK->CK_PRCVEN * (1+(nIpi /100))) + Round(nValIcmSt/ nQtd,3),2)
 	End Case
 */
+
