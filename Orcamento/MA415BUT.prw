@@ -18,7 +18,9 @@
 User Function MA415BUT()
 Local aBotoes := {}
 
-Aadd(aBotoes , {'AREA_MDI' ,{|| U_AORCAM01() }	,"Importação Planilha"	,"Importar Itens"	} )
-	
+If U_Validacao("OSMAR")
+   Aadd(aBotoes , {'AREA_MDI' ,{|| U_AORCAM01() }	,"Importação Planilha"	,"Importar Itens"	} )
+   Aadd(aBotoes , {'AREA_MDI' ,{|| U_VLDMRGOR(.T.,.F.) }	,"Validar Margem"	,"Validar Margem"	} )
+EndIf	
 	
 Return( aBotoes )

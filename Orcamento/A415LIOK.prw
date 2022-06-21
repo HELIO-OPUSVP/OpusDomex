@@ -18,7 +18,7 @@ User Function A415LIOK
 	Local aAreaSCL := SCL->( GetArea() )
 	Local aAreaSA1 := SA1->( GetArea() )
 	Local lRetorno := .t.
-	Local nMargem  := GetMV("MV_XMARGEM") //Percentual mínimo aceito como margem de lucro
+	Local nPerMargem  := GetMV("MV_XMARGEM") //Percentual mínimo aceito como margem de lucro
 
 	If U_Validacao("OSMAR",.T.) //09/02/2022
 		SA1->(dbSetOrder(01))
@@ -30,14 +30,14 @@ User Function A415LIOK
 			nPerMargem := GetMV("MV_XMARGEM")
 		Endif
 
-		If TMP1->CK_XMARGEM > 0 .And. TMP1->CK_PRCVEN = 0 .And. TMP1->CK_XCUSUNI
-			TMP1->CK_PRCVEN := TMP1->CK_XCUSUNI * (1 + (TMP1->CK_XMARGEM / 100))
+		//If TMP1->CK_XMARGEM > 0 .And. TMP1->CK_PRCVEN = 0 .And. TMP1->CK_XCUSUNI
+		//	TMP1->CK_PRCVEN := TMP1->CK_XCUSUNI * (1 + (TMP1->CK_XMARGEM / 100))
 			//Alert(TMP1->CK_PRCVEN)
-		EndIf
+		//EndIf
 	EndIf
 
 	//If lRetorno
-	//	If TMP1->CK_XMARGEM > 0 .And. TMP1->CK_XMARGEM < nMargem
+	//	If TMP1->CK_XMARGEM > 0 .And. TMP1->CK_XMARGEM < nPerMargem
 	//		MsgInfo("A Margem de Contribuição deste item esta em "+Alltrim(Str(TMP1->CK_XMARGEM))+"%"+Chr(13)+"e esta abaixo de "+Alltrim(Str(nMargem))+"% ","A T E N Ç Ã O")
 	//		lRetorno := .T.
 	//	EndIf
@@ -47,3 +47,4 @@ User Function A415LIOK
 	RestArea(aAreaSCL)
 	RestArea(aAreaSCK)
 Return(lRetorno)
+

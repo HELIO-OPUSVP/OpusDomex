@@ -383,6 +383,7 @@ if lAchou02 .or. lAchou04
 		RecLock("SC7")
 		//      C7_WFID := oProcess:fProcessID
 		C7_FILENT       := C7_FILIAL
+		
 		if SC7->(FieldPos("C7_XXAPROV"))>0
 			SC7->C7_XXAPROV := cNomeInt
 		endif
@@ -655,6 +656,7 @@ if !empty(aRetFLW)
 		sc7->c7_DMXOB2 := aRetFLW[2]
 		sc7->c7_DMXOB3 := aRetFLW[3]
 		SC7->C7_DATPRF := aRetFLW[4]
+		
 		sc7->(msunlock())
 	endif
 endif

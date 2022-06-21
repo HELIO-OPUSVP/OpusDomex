@@ -338,3 +338,4 @@ RestArea(aAreaSCK)
 RestArea(aAreaSCJ)
 
 Return _lRet
+

@@ -4,10 +4,10 @@
 		{
 			"type": "totvs_language_debug",
 			"request": "launch",
-			"name": "TOTVS LOCAL",
+			"name": "TOTVS NOTE",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
-			"smartclientBin": "C:/TOTVS/Acessos_Clientes_SmartClient/DOMEX/smartclient64/smartclient.exe",
+			"smartclientBin": "C:\\Meu Driver\\projetos\\Domex\\smartclient64\\smartclient.exe",
 			"isMultiSession": true,
 			"enableTableSync": true
 		}
@@ -48,5 +48,9 @@
 			"label": "sigafin"
 		}
 	],
+<<<<<<< Updated upstream
 	"lastProgramExecuted": "sigafin"
+=======
+	"lastProgramExecuted": "sigaest"
+>>>>>>> Stashed changes
 }
