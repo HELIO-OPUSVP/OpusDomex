@@ -27,14 +27,20 @@ User Function M415GRV()
 
    If (_nOper == 1)  .Or. (_nOper == 2)    //Inclusão / Alteração
 
-      U_OrcPrNet(M->CJ_NUM)                //Calcula o preço Net para Orçamento
+      If U_VldMrgOr(.F.,.T.)  //Margem dentro dos parametros. Liberar caso esteja bloqueado
 
+
+      Else                    //Margem fora dos parametros. Bloquear caso não esteja liberado pela Adm Vendas
+
+
+      EndIf
+
+     //U_OrcPrNet(M->CJ_NUM)      //Calcula o preço Net para Orçamento
      // If _nOper == 1
      //    cOperacao := "Inclusao"
      // Else
      //    cOperacao := "Alteracao"
      // EndIf
-
       
    EndIf
 

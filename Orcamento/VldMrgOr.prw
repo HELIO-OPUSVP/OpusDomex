@@ -21,7 +21,6 @@ User Function VldMrgOr(lMsg,lWflow)
 	Loca lRet        := .T.
 	Local nPerMargem := 0 //Percentual mínimo aceito como margem de lucro
 	Local cTexto     := ""
-	Local y          := 0
 	Local cAssunto   := ""
 	Local cPara      := ""
 	Local cCC        := ""
@@ -43,25 +42,21 @@ User Function VldMrgOr(lMsg,lWflow)
 		nPerMargem := GetMV("MV_XMARGEM")
 	Endif
 
-	//nPC6_ITEM    := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_ITEM" } )
-	//nPC6_PRODUTO := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_PRODUTO" } )
-	//nPC6_XMARGEM := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_XMARGEM" } )
-
 	TMP1->( dbGotop() )
 	While TMP1->(!Eof())
 		//Tira a margem de lucro para produtos tipo serviço
-			SB1->( dbSeek(xFilial() + TMP1->CK_PRODUTO  ) )
-			If TMP1->CK_XMARGEM < nPerMargem .And. (SB1->B1_TIPO <> "SI" .And. SB1->B1_TIPO <> "SV") 
-				cTexto += aCols[y,nPC6_ITEM] +" / "+ aCols[y,nPC6_PRODUTO]+" Margem -> " + Str(aCols[y,nPC6_XMARGEM])+ Chr(13)
-			EndIf
-	TMP1->( dbSkip() )
+		SB1->( dbSeek(xFilial() + TMP1->CK_PRODUTO  ) )
+		If TMP1->CK_XMARGEM < nPerMargem .And. (SB1->B1_TIPO <> "SI" .And. SB1->B1_TIPO <> "SV")
+			cTexto += TMP1->CK_ITEM +" / "+ TMP1->CK_PRODUTO+"  Margem -> " + Str(TMP1->CK_XMARGEM)+ Chr(13)
+		EndIf
+		TMP1->( dbSkip() )
 	EndDo
 
 	If lMsg .And. cTexto <> ""
 		cAssunto := "ITENS COM MARGEM DE LUCRO ABAIXO DO PADRÃO ("+ Str(nPerMargem)+"%)"
 		cTexto := cAssunto + Chr(13) + cTexto + Chr(13)
-		cTexto := cTexto + "Se gravar os dados o pedido será bloqueado!!"
-		
+		cTexto := cTexto + "Se gravar os dados o Orçamento será bloqueado!!"
+
 		If "COLETOR" $ Funname()
 			U_MsgColetor(cTexto)
 		Else
@@ -79,16 +74,16 @@ User Function VldMrgOr(lMsg,lWflow)
 
 	If lWflow .And. cTexto <> ""  //.And. cMudouMargem = "T"
 		cAssunto := "Orçamento de Venda "+M->C5_NUM+ " BLOQUEADO - Margem Abaixo do Padrão "
-		//cPara := "osmar@opusvp.com.br;dayse.paschoal@rosenbergerdomex.com.br;" + UsrRetMail(M->C5_USER)	
-		cPara := "osmar@opusvp.com.br;" 	
+		//cPara := "osmar@opusvp.com.br;dayse.paschoal@rosenbergerdomex.com.br;" + UsrRetMail(M->C5_USER)
+		cPara := "osmar@opusvp.com.br;"
 		cCC := ""
 		cArquivo := ""
 		cTexto := "CLIENTE: "+M->CJ_CLIENTE+"/"+M->CJ_LOJA+" - "+ SA1->A1_NREDUZ + Chr(13)+;
 			"MARGEM PADRÃO: "+Str(nPerMargem)+"%" + Chr(13) + Chr(13) + cTexto
 		cTexto   := StrTran(cTexto,Chr(13),"<br>")
-		
+
 		If cMudouMargem = "T"
-		   U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
+			U_EnvMailto(cAssunto,cTexto,cPara,cCC,cArquivo)
 		EndIf
 
 		lRet := .f.  // Irá travar o pedido de venda
@@ -96,9 +91,9 @@ User Function VldMrgOr(lMsg,lWflow)
 	EndIf
 
 	If cTexto == ""
-	   Alert("Margem de lucro dentro dos parametros!...")
+		Alert("Margem de lucro dentro dos parametros!...")
 	EndIf
-	
+
 	RestArea(aAreaTMP1)
 	RestArea(aAreaSB1)
 	RestArea(aAreaZZF)
@@ -142,11 +137,11 @@ User Function yGrvPrNet()
 	"SB1",;                                  // 09 - Alias do Cadastro de Produtos - ("SBI" P/ Front Loja)
 	"MATA461")                               // 10 - Nome da rotina que esta utilizando a funcao
 
-    //Posiciona nos itens do Orcamento
+	//Posiciona nos itens do Orcamento
 	TMP1->( dbGotop() )
 	While TMP1->( !Eof() )
-	
-	//For x := 1 To Len(aCols)
+
+		//For x := 1 To Len(aCols)
 		//Adiciona o item nos tratamentos de impostos
 		/*
 		nPC6_PRODUTO := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_PRODUTO" } )
@@ -214,7 +209,7 @@ User Function yGrvPrNet()
 
 	TMP1->( dbGotop() )
 	While TMP1->( !Eof() )
-	//For x := 1 To Len(aCols)
+		//For x := 1 To Len(aCols)
 		//Pega os valores
 
 		/*
@@ -278,20 +273,20 @@ User Function yGrvPrNet()
 		nMargem := ((nPrcNet - nCusMedio) / nPrcNet) * 100
 
 		RecLock("TMP1",.F.)
-		 TMP1->CK_XCUSUNI := nCusMedio
-		 TMP1->CK_XSTACUS := cStatus
-		 TMP1->CK_XPRCNET := nPrcNet
+		TMP1->CK_XCUSUNI := nCusMedio
+		TMP1->CK_XSTACUS := cStatus
+		TMP1->CK_XPRCNET := nPrcNet
 
-		//Tira a margem de lucro para produtos tipo serviço				
-			SB1->(dbSeek(xFilial()+cProdVenda))
-			If (SB1->B1_TIPO == "SI" .Or. SB1->B1_TIPO == "SV")
-			   TMP1->CK_XMARGEM :=  0
-			Else   
-		       TMP1->CK_XMARGEM := nMargem
-			EndIf   
-		TMP1->(msUnLock())		
-	
-	TMP1->( dbSkip() )
+		//Tira a margem de lucro para produtos tipo serviço
+		SB1->(dbSeek(xFilial()+cProdVenda))
+		If (SB1->B1_TIPO == "SI" .Or. SB1->B1_TIPO == "SV")
+			TMP1->CK_XMARGEM :=  0
+		Else
+			TMP1->CK_XMARGEM := nMargem
+		EndIf
+		TMP1->(msUnLock())
+
+		TMP1->( dbSkip() )
 	EndDo
 	nTotFrete := MaFisRet(, "NF_FRETE")
 	nTotVal := MaFisRet(, "NF_TOTAL")
@@ -299,9 +294,9 @@ User Function yGrvPrNet()
 	MaFisEnd()
 	MaFisRestore()
 
- RestArea(aAreaTMP1)
- RestArea(aAreaSB1)
- RestArea(aAreaSCK)
+	RestArea(aAreaTMP1)
+	RestArea(aAreaSB1)
+	RestArea(aAreaSCK)
 Return
 
 
