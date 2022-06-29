@@ -350,6 +350,20 @@ Static Function ValidaEtiq(lTeste)
 					If U_VALIDACAO("HELIO",.T.,'26/07/21','25/08/21') // validacao.Helio   26/07/21 - Producao 25/08/21
 						lSerial := .T.
 					EndIf
+
+					If U_VALIDACAO("JACKSON",.F.,'29/06/22','') .And. lComTravR // validacao.Jackson   29/06/2022 - Producao ??/??/??
+						//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+						//³Valida etiqueta bipada se já passou no roteiro										³
+						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+						If XD4->XD4_STATUS <> "2"
+							While !MsgNoYes("Etiqueta não passou pelo roteiro de Producão. "+CHR(13)+"Deseja continuar?")
+							End
+							oImprime:Disable()
+							cEtiqueta   := Space(_nTamEtiq)
+							oEtiqueta:SetFocus()
+							Return (.F.)
+						Endif
+					EndIf
 				Else
 					If UPPER(Subs(cEtiqOrig,1,1)) <> 'S'
 						If U_VALIDACAO("HELIO",.T.,'26/07/21','25/08/21') // validacao.Helio   26/07/21 - Producao 25/08/21
@@ -418,6 +432,19 @@ Static Function ValidaEtiq(lTeste)
 				XD4->(DbSetOrder(3))
 				If XD4->(DbSeek(xFilial("XD4") + UPPER(Alltrim(cEtiqOrig))))
 					cOPnSerie := Alltrim(XD4->XD4_OP)
+					If U_VALIDACAO("JACKSON",.F.,'29/06/22','') .And. lComTravR // validacao.Jackson   29/06/2022 - Producao ??/??/??
+						//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+						//³Valida etiqueta bipada se já passou no roteiro										³
+						//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+						If XD4->XD4_STATUS <> "2"
+							While !MsgNoYes("Etiqueta não passou pelo roteiro de Producão. "+CHR(13)+"Deseja continuar?")
+							End
+							oImprime:Disable()
+							cEtiqueta   := Space(_nTamEtiq)
+							oEtiqueta:SetFocus()
+							Return (.F.)
+						Endif
+					EndIf	
 				Else
 					If UPPER(Subs(cEtiqOrig,1,1)) <> 'S'
 						XD1->( dbSetOrder(1) )
