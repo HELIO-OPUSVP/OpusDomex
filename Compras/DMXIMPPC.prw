@@ -72,7 +72,7 @@ Static Function DOMGeraPC(nOpc)
 	SA4->(DbSetOrder(1))
 	SA4->(DbSeek(xFilial()+SC5->C5_TRANSP))
 	*/
-*
+
 	If SC7->C7_CONAPRO <> 'L'
 		Alert("Pedido nao aprovado, nao e possivel a impressao")
 		Return
