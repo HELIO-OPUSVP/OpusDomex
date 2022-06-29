@@ -25,6 +25,11 @@ User Function M415GRV()
 	Local aAreaSCK  := SCK->(GetArea())
 	Local aAreaZZF  := ZZF->(GetArea())
 
+	If _nOper == 1
+		U_fCopia()
+	EndIf
+
+
 	If (_nOper == 1)  .Or. (_nOper == 2)    //Inclusão / Alteração
 
 		If U_VldMrgOr(.F.,.T.)  //Margem dentro dos parametros. Liberar caso esteja bloqueado
@@ -84,24 +89,16 @@ User Function M415GRV()
 					Else
 						SCK->( dbSetOrder(1) )
 						SCK->(dbSeek(xFilial()+SCJ->CJ_NUM))
-						While SCK->(!Eof()) .And. SCK->CK_NUM == SCJ->CJ_NUM								
+						While SCK->(!Eof()) .And. SCK->CK_NUM == SCJ->CJ_NUM
 							//RecLock("SCK",.f.)
 							//SCK->CK_XBLQ := "A"
-							//SCK->( msUnLock() )									
+							//SCK->( msUnLock() )
 							SCK->( dbSkip() )
 						EndDo
 					EndIf
 				EndIf
 			EndIf
 		EndIf
-
-		//U_OrcPrNet(M->CJ_NUM)      //Calcula o preço Net para Orçamento
-		// If _nOper == 1
-		//    cOperacao := "Inclusao"
-		// Else
-		//    cOperacao := "Alteracao"
-		// EndIf
-
 	EndIf
 
 	RestArea(aAreaZZF)
@@ -110,3 +107,15 @@ User Function M415GRV()
 
 Return(Nil)
 
+
+// Osmar Ferreira - 29/06/2022
+// Função para atualizar o responsável no caso de cópia do Orçamento
+// Ponto de entrada mt415cpy com problemas
+User Function fCopia()
+	If __cUserID <> SCJ->CJ_SUPORTE
+		RecLock("SCJ",.F.)
+			SCJ->CJ_SUPORTE := __cUserID
+			SCJ->CJ_ELABORA := UsrRetName(__cUserID)
+		SCJ->(msUnlock())
+	EndIf
+Return
