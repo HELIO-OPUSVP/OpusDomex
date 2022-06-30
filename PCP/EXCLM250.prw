@@ -261,7 +261,17 @@ Static Function ValidaOP(lTeste)
 				oExclEtBip:SetFocus()
 				Return (.F.)
 			EndIf
-
+			//Validação se já passou no roteiro
+			If U_VALIDACAO("JACKSON",.F.,'29/06/22','') 
+				If XD1->XD1_OCORRE == "7"
+					While !MsgNoYes("Etiqueta já validada no roteiro de produção, não é possível cancelar."+CHR(13)+"Deseja continuar?")
+					End
+					oImprime:Disable()
+					cExclEtBip   := Space(__nTamExcl)
+					oExclEtBip:SetFocus()
+					Return (.F.)
+				EndIf
+			EndIf
 			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 			//³ Cria arquivo temporário                           ³
 			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ

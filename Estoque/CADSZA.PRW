@@ -29,11 +29,10 @@ User Function CADSZA()
 		{"ZA_SALDO<>0 .AND. ZA_TIPO = 'N'" , "BR_VERDE"    },;
 		{"ZA_SALDO==0 .AND. ZA_TIPO = 'S'" , "BR_CINZA"    },;
 		{"ZA_SALDO<>0 .AND. ZA_TIPO = 'S'" , "BR_AZUL"     }}
-	//Liberado o usuário da Vanessa MOreira do CQ para fazer as perdas que não possui o serial
-	iF Alltrim(__cUserId) <> "000397"
-		apMsgInfo("Favor solicitar acesso a nova rotina de Lançamento de Perdas.")
-		Return
-	EndIf
+
+	apMsgInfo("Favor solicitar acesso a nova rotina de Lançamento de Perdas.")
+
+Return
 
 	Private bFiltraBrw := { || FilBrowse( "SZA" , @aIndex , @cFiltro ) } //Determina a Expressao do Filtro
 	Private cCelula:= 0
