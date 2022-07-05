@@ -1189,7 +1189,7 @@ Static Function ValidaEtiq(lTeste)
 						TPKL->(DBCloseArea())
 					EndIf
 
-					If nQPklOcor8 > 0 .And. nQPklOcor7 < nQPklOcor8 //.And. nQPklOcor6 == 0 //.Or. nQPklOcor6 > 0)
+					If nQPklOcor8 > 0 //.And. nQPklOcor7 < nQPklOcor8 //.And. nQPklOcor6 == 0 //.Or. nQPklOcor6 > 0)
 						While !MsgNoYes("."+CHR(13)+"Existem " +AlltriM(Str(nQPklOcor8)) + " Etiqueta(s) que não foram validadas no roteiro." + ENTER +;
 								" Não será possivel iniciar o Processo!")
 						End
@@ -1764,7 +1764,7 @@ Static Function ValidaEtiq(lTeste)
 						TPKL->(DBCloseArea())
 					EndIf
 
-					If nQPklOcor8 > 0   .And. nQPklOcor7 < nQPklOcor8 //.And. nQPklOcor6 == 0 //.Or. nQPklOcor6 > 0)
+					If nQPklOcor8 > 0   //.And. nQPklOcor7 < nQPklOcor8 //.And. nQPklOcor6 == 0 //.Or. nQPklOcor6 > 0)
 						While !MsgNoYes("."+CHR(13)+"Existem " +AlltriM(Str(nQPklOcor8)) + " Etiqueta(s) que não foram validadas no roteiro." + ENTER +;
 								" Não será possivel iniciar o Processo!")
 						End
