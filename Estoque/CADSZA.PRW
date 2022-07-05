@@ -30,10 +30,23 @@ User Function CADSZA()
 		{"ZA_SALDO==0 .AND. ZA_TIPO = 'S'" , "BR_CINZA"    },;
 		{"ZA_SALDO<>0 .AND. ZA_TIPO = 'S'" , "BR_AZUL"     }}
 
-	apMsgInfo("Favor solicitar acesso a nova rotina de Lançamento de Perdas.")
-
-Return
-
+	/*Liberado para o pessoal do cq poder apontar pela OP.  - chamado 034654
+		Até que seja decidido o processo e seja contornado para apontar as perdas sem a necessidade de informar o Serial.
+		000397-VANESSA 
+		000695-EVANDRO
+		000133-ADEBIANE
+		000741-RENAN
+		000466-MARCELO
+		000943-RAISSA
+		001066-THIAGO
+		000845-VALDECI
+	*/
+	If __CUSERID $ "000397/000695/000133/000741/000466/000943/001066/000845"
+		apMsgInfo("Rotina Liberada para o usuário da Área da Qualidade")
+	Else
+		apMsgInfo("Favor solicitar acesso a nova rotina de Lançamento de Perdas.")
+		Return
+	EndIf
 	Private bFiltraBrw := { || FilBrowse( "SZA" , @aIndex , @cFiltro ) } //Determina a Expressao do Filtro
 	Private cCelula:= 0
 	Private cArm:= '96'
