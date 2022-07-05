@@ -30,8 +30,9 @@ User Function DesBlqPV(cNumPV)
 	Local lAprovado := .t.
 	PRIVATE oFontNW
 
-	If  __cUserID <> "000084"  // Somente a Dayse pode desbloquear Pedido de Venda
-    	MsgInfo("Você não tem permissão para desbloquear Pedido de Venda!")  
+	//If  __cUserID <> "000084"  // Somente a Dayse pode desbloquear Pedido de Venda
+	If !(__CUSERID $ getmv("MV_XLIBMPV"))
+    	MsgInfo("Você não tem permissão para desbloquear Pedido de Venda!!")  
     	Return
 	EndIf        
 
