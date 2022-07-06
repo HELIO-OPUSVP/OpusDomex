@@ -68,6 +68,8 @@ Private bSaveProjet
 Private cFornece := ' - '
 Private lfirst := .t.
 Private nProcessos := 0
+Private oFont3 := TFont():New( "Tahoma"         ,,08,,.F.,,,,,.F.)
+Private aMarca := {}
 
 Static oFWLayer
 Static oWin1
@@ -126,12 +128,33 @@ DEFINE MSDIALOG oDlg TITLE cCadastro FROM aSize[7],aSize[1] TO aSize[6],aSize[5]
 
 
 
+	//oTBitmapExe     := TBitmap():New(01,020,100,50,,cFileExe,.T.,oWin5,   {||  U_ProcTB01(dGet1, dGet1, oGetDados:aCols[oGetDados:oBrowse:nat][2] ) },,.F.,.F.,,,.F.,,.T.,,.F.)
+   //oTBitmapExe:lAutoSize := .T. 
 
-	oTBitmapExe     := TBitmap():New(01,020,100,50,,cFileExe,.T.,oWin5,   {||  U_ProcTB01(dGet1, dGet1, oGetDados:aCols[oGetDados:oBrowse:nat][2] ) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmapExe:lAutoSize := .T. 
+   //oTBitmapSair    := TBitmap():New(02,270,001,50,,cFileExit,.T.,oWin5,   {|| oDlg:End() },,.F.,.F.,,,.F.,,.T.,,.F.)
+   //oTBitmapSair:lAutoSize := .T. 
 
-   oTBitmapSair    := TBitmap():New(02,270,001,50,,cFileExit,.T.,oWin5,   {|| oDlg:End() },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmapSair:lAutoSize := .T. 
+   //	oBtn5 := TBtnBmp2():New( 02,270,001,50,"SAIR",,,, {|| oDlg:End() },oWin5,,,.T. )
+	//@ 001, 001 SAY oLeg4 PROMPT  "SAIR" SIZE 150, 012 OF oWin5 FONT oFont3 COLORS 0, 16777215 PIXEL
+
+
+	@ 005,015 Button "Confere"   	 Size 50,15 Action Processa( {|| fConfere() } ) Pixel Of oWin5
+	@ 005,135 Button "Contabiliza"   Size 50,15 Action Processa( {|| fContab()  } ) Pixel Of oWin5
+	@ 005,255 Button "Sair"   		 Size 50,15 Action Processa( {|| oDlg:End() } ) Pixel Of oWin5
+/*
+	oBtn3 := TButton():New(0,0,"CONFERIR",oWin5,{||  },00,14,,,.F.,.T.,.F.,,.F.,,,.F.)
+	oBtn3:Align  := CONTROL_ALIGN_TOP
+
+	
+	oBtn4 := TButton():New(0,0,"CONTABILIZAR",oWin5,{||  },00,14,,,.F.,.T.,.F.,,.F.,,,.F.)
+	oBtn4:Align  := CONTROL_ALIGN_TOP
+
+
+	oBtn5 := TButton():New(0,0,"SAIR",oWin5,{|| oDlg:End()  },00,14,,,.F.,.T.,.F.,,.F.,,,.F.)
+	oBtn5:Align  := CONTROL_ALIGN_TOP
+*/
+	
+	
 
 
 
@@ -141,120 +164,18 @@ DEFINE MSDIALOG oDlg TITLE cCadastro FROM aSize[7],aSize[1] TO aSize[6],aSize[5]
 	
 	oGetDTFim:= TGet():New(010, 050, { | u | If( PCount() == 0, dGet2, dGet2 := u ) },oWin4, ;
  	045, 010, "@D", , 0, 16777215,,.F.,,.T.,,.F.,,.f., .f.,,.F.,.F. ,,"dGet2",,,,lHasButton  )  
+
+	@ 010,110 Button "Filtrar"   	 Size 35,15 Action Processa( {|| FCARGA() } ) Pixel Of oWin4
 	
 	oFont  := TFont():New('Courier new',,-18,.T.)
 	oSay3:= TSay():New(010,100,{||str(nProcessos)+' Processos filtrados'},oWin4,,oFont,,,,.T.,CLR_HRED,CLR_WHITE,200,20) 
 		
     
-   /*
-	oGetUlmes:= TGet():New(010, 001, { | u | If( PCount() == 0, dMvUlmes, dMvUlmes := u ) },oWin1, ;
- 	045, 010, "@D",, 0, 16777215,,.F.,,.T.,,.F.,,.F.,.F.,,.T.,.F. ,,"dMvUlmes",,,,lHasButton  )   
-   
-   oGetUlmes:Disable()
-      
-   oSay3:= TSay():New(01,01,{||'DT. Ulmes'},oWin1,,oFont,,,,.T.,CLR_HGRAY,CLR_WHITE,200,20) 
-        
-	oGet1:= TGet():New(010, 055, { | u | If( PCount() == 0, dGet1, dGet1 := u ) },oWin1, ;
- 	060, 010, "@D",, 0, 16777215,,.F.,,.T.,,.F.,,.F.,.F.,,.F.,.F. ,,"dGet1",,,,lHasButton  )
-	
-	oSay4:= TSay():New(01,55,{||'DT. Inicio'},oWin1,,oFont,,,,.T.,CLR_HGRAY,CLR_WHITE,200,20) 
-	   
- 	
-   oGet2:=TGet():New( 010, 115, { | u | If( PCount() == 0, dGet2, dGet2 := u ) },oWin1, ;   
-   060, 010,"@D",/*cValid*//*{||.T.},0,16777215,,.F.,,.T.,  ,.F.,/*cWhen*/ /*{||.T.},.F.,.F.,,.F.,.F.,"dGet1",,,,,.f.)*/
- 	/*
- 	oSay5:= TSay():New(01,115,{||'DT. Fim'},oWin1,,oFont,,,,.T.,CLR_HGRAY,CLR_WHITE,200,20) 
-	          
-   
-	oTBitmapVoltar := TBitmap():New(02,010,100,50,,cFileVol,.T.,oWin4, {|| fVoltar() },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmapVoltar:lAutoSize := .T. 
-  	
-   oTBitmapLegenda := TBitmap():New(02,080,100,50,,cFileLeg,.T.,oWin4, {|| ZZBLeg() },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmapLegenda:lAutoSize := .T. 
-  	
-  	oTBitmapExe     := TBitmap():New(01,150,100,50,,cFileExe,.T.,oWin4,   {||  IF(fExeCust(),,MSGSTOP("Selecione uma das opï¿½ï¿½es para processamento")) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmapExe:lAutoSize := .T. 
-       
-   oTBitmapSair    := TBitmap():New(02,220,100,50,,cFileExit,.T.,oWin4,   {|| oDlg:End() },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmapSair:lAutoSize := .T. 
-   
-	oTBitmapAvancar := TBitmap():New(02,290,100,50,,cFileAva,.T.,oWin4,    {|| fAvancar()  },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmapAvancar:lAutoSize := .T. 
-     	
-
-	oTBitmapRelMensal  := TBitmap():New(02,025,100,50,,cFileRel,.T.,oWin5, {||U_RMENCUST() },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmapRelMensal:lAutoSize := .T. 
-  	
-   oTBitmapRelContabil:= TBitmap():New(02,100,100,50,,cFileRel,.T.,oWin5, {||U_R1CTBCUS() },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmapRelContabil:lAutoSize := .T. 
-  	
-  	oTBitmapRelModelo7 := TBitmap():New(02,180,100,50,,cFileRel,.T.,oWin5, {|| MATR460() },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmapRelModelo7:lAutoSize := .T. 
-       
-   oTBitmapEstoqueAna := TBitmap():New(02,260,100,50,,cFileRel,.T.,oWin5, {|| MATR260()  },,.F.,.F.,,,.F.,,.T.,,.F.) 
-   oTBitmapEstoqueAna:lAutoSize := .T.                                                                         
-
-   oTBitmapBloqueio := TBitmap():New(07,640,100,50,,cFileBlq,.T.,oWin1,   {|| BLQEST()  },,.F.,.F.,,,.F.,,.T.,,.F.) 
-   oTBitmapBloqueio:lAutoSize := .T.                                                                         
-   */
-
 
   	 // Cria Fonte para visualizaï¿½ï¿½o
  	oFont  := TFont():New('Courier new',,-18,.T.)
  	oFMemo := TFont():New('Courier new',,-13,.T.)
-   
-  /*
-	oTButton1 := TButton():New( 001, 001, "ALL",oWin2,{||fbmpcontrol()}, 13,14,,,.F.,.T.,.F.,,.F.,,,.F. )  
- 
-   oTBitmap1 := TBitmap():New(17,01,100,50,,cFileNOK,.T.,oWin2,   {|| IIF(oTBitmap1:cBmpFile==cFileNOK ,  fOption("ACERTASB9",.t.,"oTBitmap1:Load(NIL, cFileOK)") ,  fOption("ACERTASB9",.f.,"oTBitmap1:Load(NIL, cFileNOK)") ) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap1:lAutoSize := .T.     
-         
-   oTBitmap2 := TBitmap():New(25,01,100,50,,cFileNOK,.T.,oWin2,   {|| IIF(oTBitmap2:cBmpFile==cFileNOK,   fOption("SLDINICI",.t.,"oTBitmap2:Load(NIL, cFileOK)"),    fOption("SLDINICI",.f.,"oTBitmap2:Load(NIL, cFileNOK)")) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap2:lAutoSize := .T.            
-       	   
-   oTBitmap3 := TBitmap():New(34,01,100,50,,cFileNOK,.T.,oWin2,   {|| IIF(oTBitmap3:cBmpFile==cFileNOK,   fOption("SLDLTEND",.t.,"oTBitmap3:Load(NIL, cFileOK)"),    fOption("SLDLTEND",.f.,"oTBitmap3:Load(NIL, cFileNOK)"))   },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap3:lAutoSize := .T.   
-      
-   oTBitmap4 := TBitmap():New(42,01,100,50,,cFileNOK,.T.,oWin2,   {|| IIF(oTBitmap4:cBmpFile==cFileNOK,  fOption("RECURSIVIDADE",.t.,"oTBitmap4:Load(NIL, cFileOK)"), fOption("RECURSIVIDADE",.f.,"oTBitmap4:Load(NIL, cFileNOK)"))   },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap4:lAutoSize := .T.   
-
-   oTBitmap5 := TBitmap():New(50,01,100,50,,cFileNOK,.T.,oWin2,   {|| IIF(oTBitmap5:cBmpFile==cFileNOK,  fOption("PRXRE",.t.,"oTBitmap5:Load(NIL, cFileOK)") ,    fOption("PRXRE",.f.,"oTBitmap5:Load(NIL, cFileNOK)")) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap5:lAutoSize := .T.            
-                                                                    
-   oTBitmap6 := TBitmap():New(59,01,100,50,,cFileNOK,.T.,oWin2,   {|| IIF(oTBitmap6:cBmpFile==cFileNOK,  fOption("SEMMOVB9",.t.,"oTBitmap6:Load(NIL, cFileOK)") , fOption("SEMMOVB9",.f.,"oTBitmap6:Load(NIL, cFileNOK)")) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap6:lAutoSize := .T.       
-                                                            
-   oTBitmap7 := TBitmap():New(68,01,100,50,,cFileNOK,.T.,oWin2,   {|| IIF(oTBitmap7:cBmpFile==cFileNOK,  fOption("ESTNEG",.t.,"oTBitmap7:Load(NIL, cFileOK)") ,   fOption("ESTNEG", .f.,"oTBitmap7:Load(NIL, cFileNOK)")) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap7:lAutoSize := .T.            
-                               
-   oTBitmap8 := TBitmap():New(76,01,100,50,,cFileNOK,.T.,oWin2,   {|| IIF(oTBitmap8:cBmpFile==cFileNOK,  fOption("VALCUS",.t.,"oTBitmap8:Load(NIL, cFileOK)"),  fOption("VALCUS", .f.,"oTBitmap8:Load(NIL, cFileNOK)")) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap8:lAutoSize := .T.                                                                                                                           
-      
-   oTBitmap9 := TBitmap():New(84,01,100,50,,cFileNOK,.T.,oWin2,   {|| IIF(oTBitmap9:cBmpFile==cFileNOK,  fOption("JOBM330",.t.,"oTBitmap9:Load(NIL, cFileOK)"),  fOption("JOBM330",.f.,"oTBitmap9:Load(NIL, cFileNOK)")) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap9:lAutoSize := .T.            
-                                                                    
-   oTBitmap10 := TBitmap():New(93,01,100,50,,cFileNOK,.T.,oWin2,   {|| IIF(oTBitmap10:cBmpFile==cFileNOK, fOption("SEQCALC",.t.,"oTBitmap10:Load(NIL, cFileOK)") , fOption("SEQCALC",.f.,"oTBitmap10:Load(NIL, cFileNOK)")) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap10:lAutoSize := .T.       
-                                                            
-   oTBitmap11 := TBitmap():New(101,01,100,50,,cFileNOK,.T.,oWin2,  {|| IIF(oTBitmap11:cBmpFile==cFileNOK, fOption("CORDIFCU",.t.,"oTBitmap11:Load(NIL, cFileOK)")  , fOption("CORDIFCU", .f.,"oTBitmap11:Load(NIL, cFileNOK)")) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap11:lAutoSize := .T.            
-                               
-   oTBitmap12 := TBitmap():New(110,01,100,50,,cFileNOK,.T.,oWin2, {|| IIF(oTBitmap12:cBmpFile==cFileNOK,  fOption("PROXREQ",.t.,"oTBitmap12:Load(NIL, cFileOK)")  , fOption("PROXREQ", .f.,"oTBitmap12:Load(NIL, cFileNOK)")) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap12:lAutoSize := .T.                                                                                                                           
-       
-   oTBitmap13 := TBitmap():New(119,01,100,50,,cFileNOK,.T.,oWin2, {|| IIF(oTBitmap13:cBmpFile==cFileNOK, fOption("JOBM331",.t.,"oTBitmap13:Load(NIL, cFileOK)")  , fOption("JOBM331", .f.,"oTBitmap13:Load(NIL, cFileNOK)")) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap13:lAutoSize := .T.                                                                                                                           
-
-   oTBitmap14 := TBitmap():New(128,01,100,50,,cFileNOK,.T.,oWin2, {|| IIF(oTBitmap14:cBmpFile==cFileNOK, fOption("JOBM280",.t.,"oTBitmap14:Load(NIL, cFileOK)") ,  fOption("JOBM280", .f.,"oTBitmap14:Load(NIL, cFileNOK)")) },,.F.,.F.,,,.F.,,.T.,,.F.)
-   oTBitmap14:lAutoSize := .T.                                                                                                                           
-                                                               
-	oSayMemo       := TSay():New(01,01,{||cCabecalho},oWin3,,oFMemo,,,,.T.,CLR_BLACK,CLR_WHITE,200,20)                                                                
-   oMemo1         := TMultiGet():New(10,01,{|u|if(Pcount()>0,cTxtMemo1:=u,cTxtMemo1)},oWin3, 325, 162,oFMemo,.F., NIL, NIL, NIL,.T., NIL,.F.,{||.T.}, .F.,.F., NIL, NIL,{||}, .F., NIL, NIL)
-   
- 	oGet2:SetFocus()
- 	
- 	lOpt := .t. 
-	             */                       
+                   
 
 	//GETDADOS INICIO
 	cGetOpc        := Nil                              // GD_INSERT+GD_DELETE+GD_UPDATE
@@ -272,14 +193,14 @@ DEFINE MSDIALOG oDlg TITLE cCadastro FROM aSize[7],aSize[1] TO aSize[6],aSize[5]
 	aHeader := {}
 	//             X3_TITULO          , X3_CAMPO  , X3_PICTURE        ,X3_TAMANHO, X3_DECIMAL, X3_VALID, X3_USADO, X3_TIPO, X3_ARQUIVO, X3_CONTEXT
 
-	aadd(aHeader, {""     		   		  , "LEGENDA"   , "@BMP"             , 01       , 0         ,""       , ""      , "C"    , ""        ,,})
+	aadd(aHeader, {""     		   		  , "FLAG"      , "@BMP"             , 01       , 0         ,""       , ""      , "C"    , ""        ,,})
 	aadd(aHeader, {"Imp. N"        		  , "DESCRI"    , "@!"               , 17       , 0         ,""       , ""      , "C"    , ""        ,,})
 	aadd(aHeader, {"Data"       		  , "PERIOD"    , "@!"               , 10       , 0         ,""       , ""      , "C"    , ""        ,,})
 	aadd(aHeader, {"Conferido por:"       , "USUARIO"   , "@!"               , 15       , 0         ,""       , ""      , "C"    , ""        ,,})
 	aadd(aHeader, {"Data"          		  , "DATA"      , "@!"               , 10       , 0         ,""       , ""      , "C"    , ""        ,,})
 	aadd(aHeader, {"Hora"          		  , "HORA"      , "@!"               , 08       , 0         ,""       , ""      , "C"    , ""        ,,})
-	//aadd(aHeader, {"Interno"       , "RECNO"     , "@E"               , 01       , 0         ,""       , ""      , "C"    , ""        ,,})
-          
+	aadd(aHeader, {"Interno"              , "RECNO"     , ""                 , 15       , 0         ,""       , ""      , "N"    , ""        ,,})
+           
 
 
 	aAdd(aCols,Array(Len(aHeader)+1))
@@ -293,6 +214,9 @@ DEFINE MSDIALOG oDlg TITLE cCadastro FROM aSize[7],aSize[1] TO aSize[6],aSize[5]
 	//oGetDados:oBrowse:bChange := { |nIndo| fGetnf(oGetDados:aCols[oGetDados:oBrowse:nat][2]) }
 
 	oGetDados:oBrowse:bChange := { |nIndo| fGetnf(oGetDados:aCols,oGetDados:oBrowse:nat) }
+
+	oGetDados:oBrowse:bLDblClick := { || fDblClick1() }
+	oGetDados:oBrowse:brClicked	 := { || fDblClick1() }
 
 	fGetdados()
       
@@ -488,6 +412,112 @@ ACTIVATE MSDIALOG oDlg CENTERED
                                             
 
 Return Nil           
+
+
+
+Static Function fContab()       
+Local nPMark     := aScan(oGetDados:aHeader,{|x|AllTrim(x[2])=="FLAG"       })
+Local nRecno     := aScan(oGetDados:aHeader,{|x|AllTrim(x[2])=="RECNO"      })
+local nx
+
+aMarca := {}
+
+For nx := 1 to Len(oGetDados:aCols)
+	If oGetDados:aCols[nX][nPMark] == "LBTIK" .and.  oGetDados:aCols[nX][nRecno] != 0
+		AADD(aMarca,{oGetDados:aCols[nX][nRecno]})
+	EndIf	
+Next nX
+
+If len(aMarca) > 0
+	MsgRun("Contabilizando itens... ","Aguarde...",{|| fgcont(aMarca) })  // Inclusao (PRODUCAO)
+Else
+	ApMsgAlert("Atenção não há itens validos para conferencia, verifique.")		
+EndIf
+
+FCARGA() 
+
+Return  .t.
+
+Static function fgcont(aW6Recnos)
+Local aW6Area := SW6->(getarea())
+local x
+
+SW6->(DbSetOrder(1))
+
+For x := 1 to len(aW6Recnos) 
+	SW6->(dbGoto(aW6Recnos[x][1]))
+	If SW6->(RECNO()) == aW6Recnos[x][1]
+		U_ProcTB01(dGet1, dGet1, ALLTRIM(SW6->W6_HAWB) ) 		
+	EndIf
+Next x
+
+RestArea(aW6Area)
+Return
+
+Static Function fConfere()       
+Local nPMark     := aScan(oGetDados:aHeader,{|x|AllTrim(x[2])=="FLAG"       })
+Local nRecno     := aScan(oGetDados:aHeader,{|x|AllTrim(x[2])=="RECNO"      })
+local nx
+
+aMarca := {}
+
+For nx := 1 to Len(oGetDados:aCols)
+	If oGetDados:aCols[nX][nPMark] == "LBTIK" .and.  oGetDados:aCols[nX][nRecno] != 0
+		AADD(aMarca,{oGetDados:aCols[nX][nRecno]})
+	EndIf	
+Next nX
+
+If len(aMarca) > 0
+	MsgRun("Conferindo itens... ","Aguarde...",{|| fgrava(aMarca) })  // Inclusao (PRODUCAO)
+Else
+	ApMsgAlert("Atenção não há itens validos para conferencia, verifique.")		
+EndIf
+
+FCARGA() 
+
+Return  .t.
+
+Static function fgrava(aW6Recnos)
+Local aW6Area := SW6->(getarea())
+local x
+
+SW6->(DbSetOrder(1))
+
+For x := 1 to len(aW6Recnos) 
+	SW6->(dbGoto(aW6Recnos[x][1]))
+	If SW6->(RECNO()) == aW6Recnos[x][1]
+		Reclock("SW6",.F.)
+		SW6->W6_XUSER := cUsuario
+		SW6->W6_XDATA := dDataBase
+		SW6->W6_XHORA := Time()														
+		SW6->(MsUnlock())
+	EndIf
+Next x
+
+RestArea(aW6Area)
+Return
+
+
+Static Function fDblClick1()
+
+Local x            := 1
+Local nLinhaOK     := oGetDados:oBrowse:nAt
+Local nPB2FLAG     := aScan(oGetDados:aHeader,{|x|AllTrim(x[2])=="FLAG"       })
+Local cVarTmp      := oGetDados:aCols[nLinhaOK][nPB2FLAG]
+
+If cVarTmp == "LBNO"	
+	oGetDados:aCols[nLinhaOK][nPB2FLAG] := "LBTIK"
+Else
+	oGetDados:aCols[nLinhaOK][nPB2FLAG] := "LBNO"
+EndIf
+
+
+//Atualiza tela
+oGetDados:oBrowse:nAt := nLinhaOK
+oGetDados:oBrowse:Refresh()
+oGetDados:oBrowse:SetFocus()
+
+Return
 
 
 
@@ -778,13 +808,14 @@ return
 Static function fGetdados()
 local cQuery := ""
 
+nProcessos := 0
 /*
 If lfirst
 	lfirst := .f.
 	Return .t.
 EndIf
 */
-cQuery += "  select * from  " + RetSqlName("SW6") + " (NOLOCK)  WHERE D_E_L_E_T_='' AND W6_DT_NF BETWEEN '"+DTOS(dGet1)+"' AND '"+DTOS(dGet2)+"' AND W6_FILIAL='"+xFilial("SW6")+"' "
+cQuery += "  select *, R_E_C_N_O_ AS REC from  " + RetSqlName("SW6") + " (NOLOCK)  WHERE D_E_L_E_T_='' AND W6_DT_NF BETWEEN '"+DTOS(dGet1)+"' AND '"+DTOS(dGet2)+"' AND W6_FILIAL='"+xFilial("SW6")+"' "
 
 If Select("QUERYLT") <> 0
 	QUERYLT->( dbCloseArea() )
@@ -807,11 +838,13 @@ If !QUERYLT->( EOF() )
 	While !QUERYLT->( EOF() )
 		aAdd(oGetDados:aCols,Array(Len(aHeader)+1))
 		//oGetDados:aCols[Len(oGetDados:aCols),1] :=  IIf(EMPTY(QUERYLT->ZZB_STATUS) ,"BR_CINZA",IF (QUERYLT->ZZB_STATUS=="F","BR_VERDE", "BR_VERMELHO"))
-		oGetDados:aCols[Len(oGetDados:aCols),1] :=  ''
+		oGetDados:aCols[Len(oGetDados:aCols),1] :=  "LBNO"
 		oGetDados:aCols[Len(oGetDados:aCols),2] :=  QUERYLT->W6_HAWB
 		oGetDados:aCols[Len(oGetDados:aCols),3] :=  DTOC(STOD(QUERYLT->W6_DT_NF))
-		//oGetDados:aCols[Len(oGetDados:aCols),6] :=  QUERYLT->ZZB_HORA
-		//oGetDados:aCols[Len(oGetDados:aCols),7] :=  QUERYLT->R_E_C_N_O_
+		oGetDados:aCols[Len(oGetDados:aCols),4] :=  QUERYLT->W6_XUSER
+		oGetDados:aCols[Len(oGetDados:aCols),5] :=  DTOC(STOD(QUERYLT->W6_XDATA))
+		oGetDados:aCols[Len(oGetDados:aCols),6] :=  QUERYLT->W6_XHORA
+		oGetDados:aCols[Len(oGetDados:aCols),7] :=  QUERYLT->REC
 		oGetDados:aCols[Len(oGetDados:aCols),Len(aHeader)+1] := .F.
 		oGetDados:Refresh()
 		QUERYLT->( dbSkip() )
@@ -822,8 +855,10 @@ else
 		oGetDados:aCols[Len(oGetDados:aCols),1] :=  ''
 		oGetDados:aCols[Len(oGetDados:aCols),2] :=  ''
 		oGetDados:aCols[Len(oGetDados:aCols),3] :=  '  /  /  '
-		//oGetDados:aCols[Len(oGetDados:aCols),6] :=  QUERYLT->ZZB_HORA
-		//oGetDados:aCols[Len(oGetDados:aCols),7] :=  QUERYLT->R_E_C_N_O_
+		oGetDados:aCols[Len(oGetDados:aCols),4] :=  ''
+		oGetDados:aCols[Len(oGetDados:aCols),5] :=  '  /  /  '
+		oGetDados:aCols[Len(oGetDados:aCols),6] :=  ''	
+		oGetDados:aCols[Len(oGetDados:aCols),7] :=  0
 		oGetDados:aCols[Len(oGetDados:aCols),Len(aHeader)+1] := .F.
 		oGetDados:Refresh()
 EndIf

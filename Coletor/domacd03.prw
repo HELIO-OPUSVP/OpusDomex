@@ -167,7 +167,7 @@ Static Function fOkGrava()
 *---------------------------------------------------------------------------------------------
 Local _cNumSerie  :=Space(Len(CriaVar("B7_NUMSERI",.F.)))
 Local _nTamEtiq   :=Len(CriaVar("XD1_XXPECA",.F.))
-
+local _ni
 Private lMsHelpAuto := .T.
 Private lMsErroAuto := .F.
 Private _aEndereco  := {}

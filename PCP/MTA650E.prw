@@ -73,6 +73,7 @@ Local aAreaGER  := GetArea()
 Local aAreaSD3  := SD3->( GetArea() )
 Local lVerifica := .T.
 Local SUMD3QTD1 := 0
+Local SUMD3PER1 := 0
 
 Default cProdPG := ""
 
@@ -81,12 +82,22 @@ If !Empty(cNewCodOp)
 	If SD3->( dbSeek( xFilial("SD3") + cNewCodOp ) )
 		While !SD3->( EOF() ) .and. ALLTRIM(SD3->D3_XXOP) == ALLTRIM(cNewCodOp)
 			If Empty(cProdPG) .or. cProdPG == SD3->D3_COD
+				//97
 				If Empty(SD3->D3_ESTORNO) .And. SD3->D3_LOCAL == ALLTRIM(GETMV("MV_XXLOCPR"))
 					If SD3->D3_CF == 'DE4'
 						SUMD3QTD1 += SD3->D3_QUANT
 					EndIf
 					If SD3->D3_CF == 'RE4'
 						SUMD3QTD1 -= SD3->D3_QUANT
+					EndIf
+				EndIf
+				//96
+				If Empty(SD3->D3_ESTORNO) .And. SD3->D3_LOCAL == ALLTRIM(GETMV("MV_XXLOCPE"))
+					If SD3->D3_CF == 'DE4'
+						SUMD3PER1 += SD3->D3_QUANT
+					EndIf
+					If SD3->D3_CF == 'RE4'
+						SUMD3PER1 -= SD3->D3_QUANT
 					EndIf
 				EndIf
 			EndIf
@@ -98,6 +109,11 @@ EndIf
 If SUMD3QTD1 <> 0
 	lVerifica := .F.
 EndIf
+
+If SUMD3PER1 <> 0
+	lVerifica := .F.
+EndIf
+
 
 RestArea(aAreaSD3)
 RestArea(aAreaGER)
