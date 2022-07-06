@@ -322,19 +322,57 @@ Static Function fVldOp(nOpc)
 				nQtViaFS:= 1
 				//Alteração para corte da fibra falsa
 				//IF ALLTRIM(QRY->B1_GRUPO) == "FOFS"
-				DbSelectArea("SG1")
-				SG1->(DbSetOrder(1))
-				If SG1->(DbSeek(xFilial("SG1")+PADR(QRY->D4_PRODUTO,TamSX3("D4_PRODUTO")[1])+QRY->D4_COD))
-					If SG1->G1_XQTDVIA > 0
-						nQtViaFS:= SG1->G1_XQTDVIA
-						nQtdOp:= ROUND(SC2->C2_QUANT,4) * nQtViaFS
-					ELSE
-						nQtViaFS:= 1
-						nQtdOp:= ROUND(SC2->C2_QUANT,4)
-					ENDIF
-					//nQtdOp:= QRY->D4_QTDEORI / SG1->G1_QUANT
 
+				IF U_VALIDACAO("RODA")
+					nQtViaFS:= QRY->D4_XQTDVIA
+
+					if nQtViaFS == 0
+						DbSelectArea("SG1")
+						SG1->(DbSetOrder(1))
+						If SG1->(DbSeek(xFilial("SG1")+PADR(QRY->D4_PRODUTO,TamSX3("D4_PRODUTO")[1])+QRY->D4_COD))
+							If SG1->G1_XQTDVIA > 0
+								nQtViaFS:= SG1->G1_XQTDVIA
+								nQtdOp:= ROUND(SC2->C2_QUANT,4) * nQtViaFS
+							ELSE
+								If Select("TMP_B1") <> 0
+									TMP_B1->( dbCloseArea())
+								EndIf
+
+								cQuery:= " SELECT B1_COD FROM "+RetSqlName("SB1")
+								cQuery+= " WHERE B1_ALTER  = '"+QRY->D4_COD+"' "
+								cQuery+= " AND B1_FILIAL = '"+xFilial("SB1")+"'"
+								cQuery+= " AND  AND D_E_L_E_T_ = '' "
+								dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TMP_B1",.T.,.T.)
+
+								SG1->(DbSetOrder(1))
+								If SG1->(DbSeek(xFilial("SG1")+PADR(QRY->D4_PRODUTO,TamSX3("D4_PRODUTO")[1])+TMP_B1->B1_COD))
+									If SG1->G1_XQTDVIA > 0
+										nQtViaFS:= SG1->G1_XQTDVIA
+										nQtdOp:= ROUND(SC2->C2_QUANT,4) * nQtViaFS
+									Else
+										nQtViaFS:= 1
+										nQtdOp:= ROUND(SC2->C2_QUANT,4)
+									ENDIF
+								Endif
+							Endif
+						Endif
+					Endif
+
+				Else
+					DbSelectArea("SG1")
+					SG1->(DbSetOrder(1))
+					If SG1->(DbSeek(xFilial("SG1")+PADR(QRY->D4_PRODUTO,TamSX3("D4_PRODUTO")[1])+QRY->D4_COD))
+						If SG1->G1_XQTDVIA > 0
+							nQtViaFS:= SG1->G1_XQTDVIA
+							nQtdOp:= ROUND(SC2->C2_QUANT,4) * nQtViaFS
+						ELSE
+							nQtViaFS:= 1
+							nQtdOp:= ROUND(SC2->C2_QUANT,4)
+						ENDIF
+						//nQtdOp:= QRY->D4_QTDEORI / SG1->G1_QUANT
+					Endif
 				Endif
+
 
 				If empty (nQtdOp)
 					MyMsg("Quantidade da OP x Estrutura inválida! ",1)
@@ -670,16 +708,63 @@ Static Function fVldEti(cEtiqOfc)
 
 	nQtViaFS:= 1
 	//Alteração para corte da fibra falsa
-	DbSelectArea("SG1")
-	SG1->(DbSetOrder(1))
-	If SG1->(DbSeek(xFilial("SG1")+PADR(cCodPA,TamSX3("D4_PRODUTO")[1])+cCFibra))
-		If SG1->G1_XQTDVIA > 0
-			nQtViaFS:= SG1->G1_XQTDVIA
-		ELSE
-			nQtViaFS:= 1
+
+	IF U_VALIDACAO("RODA")
+		SD4->(DbSetOrder(1))//D4_FILIAL, D4_OP, D4_COD
+		if SD4->(dbSeek(xFilial)+cCodOp+cCFibra)
+			nQtViaFS:= QRY->D4_XQTDVIA
+
+			if nQtViaFS == 0
+				DbSelectArea("SG1")
+				SG1->(DbSetOrder(1))
+				If SG1->(DbSeek(xFilial("SG1")+PADR(cCodPA,TamSX3("G1_PRODUTO")[1])+cCFibra))
+					If SG1->G1_XQTDVIA > 0
+						nQtViaFS:= SG1->G1_XQTDVIA
+						nQtdOp:= ROUND(SC2->C2_QUANT,4) * nQtViaFS
+					ELSE
+						If Select("TMP_B1") <> 0
+							TMP_B1->( dbCloseArea())
+						EndIf
+
+						cQuery:= " SELECT B1_COD FROM "+RetSqlName("SB1")
+						cQuery+= " WHERE B1_ALTER  = '"+QRY->D4_COD+"' "
+						cQuery+= " AND B1_FILIAL = '"+xFilial("SB1")+"'"
+						cQuery+= " AND  AND D_E_L_E_T_ = '' "
+						dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TMP_B1",.T.,.T.)
+
+						SG1->(DbSetOrder(1))
+						If SG1->(DbSeek(xFilial("SG1")+PADR(cCodPA,TamSX3("G1_PRODUTO")[1])+TMP_B1->B1_COD))
+							If SG1->G1_XQTDVIA > 0
+								nQtViaFS:= SG1->G1_XQTDVIA
+								nQtdOp:= ROUND(SC2->C2_QUANT,4) * nQtViaFS
+							Else
+								nQtViaFS:= 1
+								nQtdOp:= ROUND(SC2->C2_QUANT,4)
+							ENDIF
+						Endif
+					Endif
+				Endif
+			Endif
+
+		else
+			nQtViaFS:=1
 		Endif
+
 		nQtdOp:= ROUND(SC2->C2_QUANT,4) * nQtViaFS
+
+	Else
+		DbSelectArea("SG1")
+		SG1->(DbSetOrder(1))
+		If SG1->(DbSeek(xFilial("SG1")+PADR(cCodPA,TamSX3("D4_PRODUTO")[1])+cCFibra))
+			If SG1->G1_XQTDVIA > 0
+				nQtViaFS:= SG1->G1_XQTDVIA
+			ELSE
+				nQtViaFS:= 1
+			Endif
+			nQtdOp:= ROUND(SC2->C2_QUANT,4) * nQtViaFS
+		Endif
 	Endif
+
 	nTamCort:= nTotMtrs/nQtdOp
 
 	oTamCort:Refresh()

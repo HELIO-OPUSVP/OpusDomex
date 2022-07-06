@@ -1,24 +1,26 @@
-#include "protheus.ch"
+
+#include "Protheus.ch"
+
 
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
-ฑฑบPrograma  ณMA415MNU  บAutor  ณFelipe Melo         บ Data ณ  20/02/13   บฑฑ
+ฑฑบPrograma  ณMA415BUT  บAutor  ณOsmar Ferreira      บ Data ณ  07/06/2022 บฑฑ
 ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
-ฑฑบDesc.     ณ Adiciona botใo no browse de Or็amentos de Vendas           บฑฑ
+ฑฑบDesc.     ณ Adiciona bot๕es na atualiza็ใo de Or็amentos de Vendas     บฑฑ
 ฑฑบ          ณ                                                            บฑฑ
 ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
-ฑฑบUso       ณ AP                                                        บฑฑ
+ฑฑบUso       ณ AP                                                         บฑฑ
 ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
 ฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
 */
 
-User Function MA415MNU()
-
-aAdd( aRotina,{"Proposta Word", "U_PropCom1"	, 0 , 2, 0,.F.} )
+User Function MA415BUT()
+Local aBotoes := {}
 
 If U_Validacao("OSMAR")
-   AAdd( aRotina,{ "Efetivar","A415Baixa"     , 0 , 4 , 0 , NIL} )
-EndIf
-
-Return
+   Aadd(aBotoes , {'AREA_MDI' ,{|| U_AORCAM01() }	,"Importa็ใo Planilha"	,"Importar Itens"	} )
+   Aadd(aBotoes , {'AREA_MDI' ,{|| U_VLDMRGOR(.T.,.F.) }	,"Validar Margem"	,"Validar Margem"	} )
+EndIf	
+	
+Return( aBotoes )

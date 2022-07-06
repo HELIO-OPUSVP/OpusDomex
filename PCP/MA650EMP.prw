@@ -53,14 +53,32 @@ User Function MA650EMP()
 					Loop
 				EndIf
 
+				/*/ Roda 04/06/2022 --->
+				Altera豫o contempla a utiliza豫o de produto Alternativo 
+				/*/
+				nQtViaFS:= 1
+				If U_VALIDACAO("RODA")
+					DbSelectArea("SG1")
+					SG1->(DbSetOrder(1))
+					If SG1->(DbSeek(xFilial("SG1")+SD4->D4_PRODUTO+SD4->D4_COD))
+						If SG1->G1_XQTDVIA > 0
+							nQtViaFS:= SG1->G1_XQTDVIA
+						Endif
+					Endif
+
+				Endif
+
+
 				//旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커
 				//쿌certa o lote do empenho da OP											�
 				//읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸
 				Reclock("SD4",.F.)
 				SD4->D4_LOTECTL := U_RetLotC6(SD4->D4_OP)
 				SD4->D4_DTVALID := StoD("20491231")
+				If U_VALIDACAO("RODA")
+					SD4->D4_XQTDVIA:= nQtViaFS
+				Endif		
 				SD4->(MsUnlock())
-
 
 				//旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커
 				//쿎ria registro no empenho por Lote										�

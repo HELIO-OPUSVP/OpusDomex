@@ -1,8 +1,8 @@
-#Include "Protheus.ch" 
-#include "rwmake.ch" 
-#include "totvs.ch"
+#Include "Protheus.ch"
+#include "rwmake.ch"
+#include "totvs.ch" 
 #INCLUDE "TOPCONN.CH"
-#INCLUDE "FIVEWIN.CH"
+#INCLUDE "FIVEWIN.CH" 
 #Include "COLORS.CH"
 #Include "FONT.CH"
 #INCLUDE "MSOBJECT.CH"
@@ -106,6 +106,7 @@ User Function EICFLWUP()
 
 	PRIVATE nLT      := 0
 	PRIVATE nTRSTIME := 0
+	PRIVATE lAtuAcols:=.F.
 
 	DEFINE FONT oFontBRW3  NAME "Arial" SIZE 0,-15 BOLD
 
@@ -172,7 +173,7 @@ User Function EICFLWUP()
 	/*01*/aAdd(aHeader,{""                          ,"XX_COR"       ,   "@BMP"               ,       002,         0,".F."  ,  "   "           ,   "C",       "",    "V",     "",      "",        "", "V"})
 	/*02*/aAdd(aHeader,{"Linha       "	    		,"ZZT_NLINHA"	,	"@E 99999           ",         5,         0,	""   ,	"€€€€€€€€€€€€€€",	"N",	"",,,Nil,,"V" })
 	/*03*/aAdd(aHeader,{"Origin      "		    	,"ZZT_ORIGIN"	,	"@!                 ",        20,         0,	""   ,	"€€€€€€€€€€€€€€",	"C",	"",,,Nil,,"V"})
-	/*04*/aAdd(aHeader,{"PO          "			    ,"ZZT_PO_NUM"	,	"@!                 ",        15,         0,	""   ,	"€€€€€€€€€€€€€€",	"C",	"",,,Nil,,"V"})
+	/*04*/aAdd(aHeader,{"PO          "			    ,"ZZT_PO_NUM"	,	"@!                 ",        25,         0,	""   ,	"€€€€€€€€€€€€€€",	"C",	"",,,Nil,,"V"})
 	/*05*/aAdd(aHeader,{"PO SIGA     "		    	,"ZZT_PO_SIG"	,	"@!                 ",        15,         0,	""   ,	"€€€€€€€€€€€€€€",	"C",	"",,,Nil,,"V"})
 	/*06*/aAdd(aHeader,{"PO Date     "		    	,"ZZT_DT_PO "	,	"@D                 ",         8,         0,	""   ,	"€€€€€€€€€€€€€€",	"D",	"",,,Nil,,"V"})
 	/*07*/aAdd(aHeader,{"Supplier Cod"	    		,"ZZT_SUPCOD"	,	"@!                 ",        15,         0,	""   ,	"€€€€€€€€€€€€€€",	"C",	"",,,Nil,,"V"})
@@ -213,7 +214,7 @@ User Function EICFLWUP()
 	nUsado	:= len(aHeader)
 	aAdd(aCols,Array(nUsado+1))
 
-	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V3.4")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
+	DEFINE MSDIALOG oDlg TITLE OemToAnsi("FollowUP - SIGAEIC V3.7")  FROM 000, 000  TO 600, 1300 COLORS 0, 16777215 PIXEL
 
 	@ 032, 003 GROUP oGroup1 TO 092, 649 PROMPT "Filtros" OF oDlg COLOR 0, 16777215 PIXEL
 
@@ -251,8 +252,8 @@ User Function EICFLWUP()
 	@ 047, 525 MSCOMBOBOX oComboBox2 VAR cComboBox2 ITEMS {"Encerrado","Aberto","Todos"} SIZE 060, 010 OF oDlg COLORS 0, 16777215 PIXEL
 	@ 062, 525 MSCOMBOBOX oComboBox5 VAR cComboBox5 ITEMS {"Origem","PO" ,"PO Date","Supplier","PN","IMP","Nota Fiscal"} SIZE 060, 010 OF oDlg COLORS 0, 16777215 PIXEL
 
-	@ 047, 585 BUTTON oBtnFiltro PROMPT "Aplicar Filtro  (F11)" ACTION {||MsgRun("Processando","Atualizando Informacoes"         ,{|| Atu_aCols()})} SIZE 055, 012 OF oDlg PIXEL
-	@ 062, 585 BUTTON oBtnFiltro PROMPT "Grv. Integracao (F12)" ACTION {||MsgRun("Processando","Atualizando Tabela de Integracao",{|| fGRAVAZZT() })} SIZE 055, 012 OF oDlg PIXEL
+	@ 047, 585 BUTTON oBtnFiltro PROMPT "Aplicar Filtro  <F11>" ACTION {||MsgRun("Processando","Atualizando Informacoes"         ,{|| Atu_aCols()})} SIZE 055, 012 OF oDlg PIXEL
+	@ 062, 585 BUTTON oBtnFiltro PROMPT "Grv. Integracao <F12>" ACTION {||MsgRun("Processando","Atualizando Tabela de Integracao",{|| fGRAVAZZT() })} SIZE 055, 012 OF oDlg PIXEL
 
 	@ 079,008 SAY ocLinha    VAR cLinha   SIZE 150,015  OF oDlg PIXEL COLOR CLR_BLUE FONT oFontBRW3
 	@ 077,030 MSGET oGetorig VAR cGetorig SIZE 072, 010 OF oDlg COLORS 0, 16777215 PIXEL FONT oFontBRW3 WHEN(.F.)
@@ -288,9 +289,10 @@ Return
 
 Static Function Atu_aCols()
 	Processa({ || Atu_aCols2() })
+	lAtuAcols :=.T.
 Return
 
-	*----------------------------------------------------------*
+*----------------------------------------------------------*
 Static Function Atu_aCols2()
 	*----------------------------------------------------------*
 
@@ -308,8 +310,8 @@ Static Function Atu_aCols2()
 	cQuerySC7 := " UPDATE SC7010 SET C7_XDATPRF=C7_DATPRF WHERE C7_XDATPRF='' AND C7_DATPRF<>''  AND C7_FILIAL='"+xFILIAL('SC7')+"'  AND D_E_L_E_T_='' "
 	TCSqlExec(cQuerySC7)
 
-  //cQuery := "SELECT W2_ORIGEM,WN_PO_NUM AS W2_PO_SIGA,CCH_PAIS,TRIM(W3_PO_DA)+' DA' AS W2_PO_NUM,WN_ITEM_DA AS  W3_POSICAO,W2_PO_DT,A2_NREDUZ,W2_DIAS_PA,"
-    cQuery := "SELECT W2_ORIGEM,WN_PO_NUM AS W2_PO_SIGA,CCH_PAIS,W3_PO_NUM            AS W2_PO_NUM,W3_POSICAO AS  W3_POSICAO,W2_PO_DT,A2_NREDUZ,W2_DIAS_PA,"	
+	//cQuery := "SELECT W2_ORIGEM,WN_PO_NUM AS W2_PO_SIGA,CCH_PAIS,TRIM(W3_PO_DA)+' DA' AS W2_PO_NUM,WN_ITEM_DA AS  W3_POSICAO,W2_PO_DT,A2_NREDUZ,W2_DIAS_PA,"
+	cQuery := "SELECT W2_ORIGEM,WN_PO_NUM AS W2_PO_SIGA,CCH_PAIS,W3_PO_NUM            AS W2_PO_NUM,W3_POSICAO AS  W3_POSICAO,W2_PO_DT,A2_NREDUZ,W2_DIAS_PA,"
 	cQuery += "       W3_COD_I,B1_DESC,W3_QTDE,W3_PRECO,W3_QTDE*W3_PRECO VL_TOT ,WN_DOC,WN_QUANT,WN_HAWB,WN_INVOICE,WN_SDOC,WN_QUANT,WN_ITEM,A2_COD,A2_LOJA,WN_HAWB, "
 	cQuery += "       W3_XXOBS,W3_XCONFDT,W3_XNEWDT,W3_XPRVPO,W3_XCOLETA,W3_XETD,W3_XETA,W3_XPRALER,W3_XPRDSB,W3_XENTREG,W3_XFREIGT, "
 	cQuery += "       W3_XMODAL,W3_XDTPCOL,W3_XHOUSE , "
@@ -360,12 +362,12 @@ Static Function Atu_aCols2()
 		cQuery += " AND  B1_DESC LIKE('%"+ALLTRIM(cDesc)+"%')  "
 	ENDIF
 	DO CASE
-	CASE substr(cComboBox2,1,1)=="E"
-		cQuery += " AND  W3_XENTREG <> '' "
-	CASE substr(cComboBox2,1,1)=="A"
-		cQuery += " AND  W3_XENTREG = '' "
-	Otherwise
-		//substr(cComboBox2,1,1)=="T"
+		CASE substr(cComboBox2,1,1)=="E"
+			cQuery += " AND  W3_XENTREG <> '' "
+		CASE substr(cComboBox2,1,1)=="A"
+			cQuery += " AND  W3_XENTREG = '' "
+		Otherwise
+			//substr(cComboBox2,1,1)=="T"
 	EndCase
 
 	//COM NF SEM DA
@@ -422,12 +424,12 @@ Static Function Atu_aCols2()
 		cQuery += " AND  B1_DESC LIKE('%"+ALLTRIM(cDesc)+"%')  "
 	ENDIF
 	DO CASE
-	CASE substr(cComboBox2,1,1)=="E"
-		cQuery += " AND  W3_XENTREG <> '' "
-	CASE substr(cComboBox2,1,1)=="A"
-		cQuery += " AND  W3_XENTREG = '' "
-	Otherwise
-		//substr(cComboBox2,1,1)=="T"
+		CASE substr(cComboBox2,1,1)=="E"
+			cQuery += " AND  W3_XENTREG <> '' "
+		CASE substr(cComboBox2,1,1)=="A"
+			cQuery += " AND  W3_XENTREG = '' "
+		Otherwise
+			//substr(cComboBox2,1,1)=="T"
 	EndCase
 
 	//SEM NF
@@ -451,7 +453,7 @@ Static Function Atu_aCols2()
 	cQuery += " AND  SA2.D_E_L_E_T_=''"
 	cQuery += " AND  CCH.D_E_L_E_T_=''"
 	cQuery += " AND  SB1.D_E_L_E_T_=''"
-    cQuery += " AND  W5_FILIAL='"+xFILIAL('SW5')+"' "	
+	cQuery += " AND  W5_FILIAL='"+xFILIAL('SW5')+"' "
 	cQuery += " AND  W2_FILIAL='"+xFILIAL('SW2')+"' "
 	cQuery += " AND  W3_FILIAL='"+xFILIAL('SW3')+"' "
 	cQuery += " AND  A2_FILIAL='"+xFILIAL('SA2')+"' "
@@ -490,19 +492,20 @@ Static Function Atu_aCols2()
 		cQuery += " AND  B1_DESC LIKE('%"+ALLTRIM(cDesc)+"%')  "
 	ENDIF
 	DO CASE
-	CASE substr(cComboBox2,1,1)=="E"
-		cQuery += " AND  W3_XENTREG <> '' "
-	CASE substr(cComboBox2,1,1)=="A"
-		cQuery += " AND  W3_XENTREG = '' "
-	Otherwise
-		//substr(cComboBox2,1,1)=="T"
+		CASE substr(cComboBox2,1,1)=="E"
+			cQuery += " AND  W3_XENTREG <> '' "
+		CASE substr(cComboBox2,1,1)=="A"
+			cQuery += " AND  W3_XENTREG = '' "
+		Otherwise
+			//substr(cComboBox2,1,1)=="T"
 	EndCase
 	*---------------------------------------------------------------------------------------------
 	//SEM NF COM IMP (HAWB)
 	cQuery += " UNION ALL "
 	cQuery += " SELECT W2_ORIGEM,W2_PO_SIGA,CCH_PAIS,W2_PO_NUM,W3_POSICAO,W2_PO_DT,A2_NREDUZ,W2_DIAS_PA, "
 	cQuery += " W3_COD_I,B1_DESC,W3_QTDE ,W3_PRECO,W3_QTDE*W3_PRECO VL_TOT ,'' WN_DOC,0 WN_QUANT,W5_HAWB WN_HAWB,'' WN_INVOICE,'' WN_SDOC,0 WN_QUANT,'' WN_ITEM,A2_COD,A2_LOJA,W5_HAWB WN_HAWB, "
-	cQuery += " W3_XXOBS,W3_XCONFDT,W3_XNEWDT,W3_XPRVPO,W3_XCOLETA,W3_XETD,W3_XETA,W3_XPRALER,W3_XPRDSB,'' AS W3_XENTREG,W3_XFREIGT, "
+	//cQuery += " W3_XXOBS,W3_XCONFDT,W3_XNEWDT,W3_XPRVPO,W3_XCOLETA,W3_XETD,W3_XETA,W3_XPRALER,W3_XPRDSB,'' AS W3_XENTREG,W3_XFREIGT, "
+	cQuery += " W3_XXOBS,W3_XCONFDT,W3_XNEWDT,W3_XPRVPO,W3_XCOLETA,W3_XETD,W3_XETA,W3_XPRALER,W3_XPRDSB,W3_XENTREG,W3_XFREIGT, "
 	cQuery += " W3_XMODAL,W3_XDTPCOL,W3_XHOUSE , "
 	cQuery += " W2_TIPO_EM,W2_DEST "
 	cQuery += " FROM SW2010 SW2 WITH(NOLOCK),SW3010 SW3 WITH(NOLOCK),SA2010 SA2 WITH(NOLOCK),CCH010 CCH WITH(NOLOCK) ,SB1010 SB1 WITH(NOLOCK), "
@@ -558,12 +561,12 @@ Static Function Atu_aCols2()
 		cQuery += " AND  B1_DESC LIKE('%"+ALLTRIM(cDesc)+"%')  "
 	ENDIF
 	DO CASE
-	CASE substr(cComboBox2,1,1)=="E"
-		cQuery += " AND  W3_XENTREG <> '' "
-	CASE substr(cComboBox2,1,1)=="A"
-		cQuery += " AND  W3_XENTREG = '' "
-	Otherwise
-		//substr(cComboBox2,1,1)=="T"
+		CASE substr(cComboBox2,1,1)=="E"
+			cQuery += " AND  W3_XENTREG <> '' "
+		CASE substr(cComboBox2,1,1)=="A"
+			cQuery += " AND  W3_XENTREG = '' "
+		Otherwise
+			//substr(cComboBox2,1,1)=="T"
 	EndCase
 
 	*---------------------------------------------------------------------------------------------
@@ -618,32 +621,32 @@ Static Function Atu_aCols2()
 		cQuery += " AND  B1_DESC LIKE('%"+ALLTRIM(cDesc)+"%')  "
 	ENDIF
 	DO CASE
-	CASE substr(cComboBox2,1,1)=="E"
-		cQuery += " AND  W3_XENTREG <> '' "
-	CASE substr(cComboBox2,1,1)=="A"
-		cQuery += " AND  W3_XENTREG = '' "
-	Otherwise
-		//substr(cComboBox2,1,1)=="T"
+		CASE substr(cComboBox2,1,1)=="E"
+			cQuery += " AND  W3_XENTREG <> '' "
+		CASE substr(cComboBox2,1,1)=="A"
+			cQuery += " AND  W3_XENTREG = '' "
+		Otherwise
+			//substr(cComboBox2,1,1)=="T"
 	EndCase
 
 	*---------------------------------------------------------------------------------------------
 	DO Case
-	CASE cComboBox5=='Origem'
-		cQuery += " ORDER BY CCH.CCH_PAIS,W2_ORIGEM,W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
-	CASE cComboBox5=='PO'
-		cQuery += " ORDER BY W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
-	CASE cComboBox5=='PO Date'
-		cQuery +=  " ORDER BY W2_PO_DT,W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
-	CASE cComboBox5=='Supplier'
-		cQuery +=  " ORDER BY A2_NREDUZ,W2_PO_DT,W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
-	CASE cComboBox5=='PN'
-		cQuery += " ORDER BY W3_COD_I,W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
-	CASE cComboBox5=='IMP'
-		cQuery += " ORDER BY WN_HAWB,W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
-	CASE cComboBox5=='Nota Fiscal'
-		cQuery += " ORDER BY   WN_DOC,WN_SDOC,W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
-	Otherwise
-		cQuery += " ORDER BY W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
+		CASE cComboBox5=='Origem'
+			cQuery += " ORDER BY CCH.CCH_PAIS,W2_ORIGEM,W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
+		CASE cComboBox5=='PO'
+			cQuery += " ORDER BY W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
+		CASE cComboBox5=='PO Date'
+			cQuery +=  " ORDER BY W2_PO_DT,W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
+		CASE cComboBox5=='Supplier'
+			cQuery +=  " ORDER BY A2_NREDUZ,W2_PO_DT,W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
+		CASE cComboBox5=='PN'
+			cQuery += " ORDER BY W3_COD_I,W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
+		CASE cComboBox5=='IMP'
+			cQuery += " ORDER BY WN_HAWB,W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
+		CASE cComboBox5=='Nota Fiscal'
+			cQuery += " ORDER BY   WN_DOC,WN_SDOC,W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
+		Otherwise
+			cQuery += " ORDER BY W2_PO_NUM,W3_POSICAO,WN_DOC DESC"
 	EndCase
 
 	If Select("TRB") > 0
@@ -1066,7 +1069,7 @@ Static Function Atu_aCols2()
 
 Return Nil
 
-	*----------------------------------------------------------*
+*----------------------------------------------------------*
 Static Function GETDCLR(aLinha,nLinha,aHeader)
 	*----------------------------------------------------------*
 	Local nCor2 := 16776960 // Ciano - RGB(0,255,255)
@@ -1088,7 +1091,7 @@ Static Function GETDCLR(aLinha,nLinha,aHeader)
 
 Return nRet
 
-	*----------------------------------------------------------*
+*----------------------------------------------------------*
 USER FUNCTION FLWUPCHG(oGet)
 	*----------------------------------------------------------*
 	LOCAL nLIN :=oGet:nat
@@ -1119,13 +1122,13 @@ USER FUNCTION FLWUPCHG(oGet)
 
 RETURN
 
-	*----------------------------------------------------------*
+*----------------------------------------------------------*
 STATIC FUNCTION FDESENV()
 	*----------------------------------------------------------*
 	MSGALERT('EM DESENVOLVIMENTO')
 RETURN
 
-	*----------------------------------------------------------*
+*----------------------------------------------------------*
 User Function FLWUPLEG()
 	*----------------------------------------------------------*
 	Local aLegenda := {}
@@ -1143,7 +1146,7 @@ User Function FLWUPLEG()
 
 Return Nil
 
-	*----------------------------------------------------------*
+*----------------------------------------------------------*
 USER FUNCTION fGRVZZT(NLIN,lFST)
 	*----------------------------------------------------------*
 	/*16*/       Local nPos16 := aScan(aHeader,{|x|AllTrim(x[2])=="ZZT_DTCONF"})
@@ -1168,141 +1171,144 @@ USER FUNCTION fGRVZZT(NLIN,lFST)
 	//cPEDIDO  :=SUBSTR(aCols[N][nPos02],01,15) //I0011387          /0001
 	//cPOSICAO :=SUBSTR(aCols[N][nPos02],20,04) // PRODUCAO    "I0011387          /0001"
 	cPEDIDO  :=SUBSTR(aCols[N][nPos02],01,20)
-	cPOSICAO :=SUBSTR(aCols[N][nPos02],25,04)   // HOMOLOGACAO "I0011575               /0001"
+	cPOSICAO :=SUBSTR(aCols[N][nPos02],22,04)   ////cPOSICAO :=SUBSTR(aCols[N][nPos02],25,04)   // HOMOLOGACAO "I0011575               /0001"
 	cPOSIGA  :=aCols[N][nPos03]
 
 	DbSelectArea("SW3")
 	SW3->(DbSetOrder(8)) // 8     W3_FILIAL+W3_PO_NUM+W3_POSICAO
-	SW3->(DbSeek(xFilial("SW3")+cPEDIDO+cPOSICAO))
-	While SW3->(!Eof()) .And. SW3->W3_PO_NUM == cPEDIDO .And. SW3->W3_POSICAO == cPOSICAO
-		nLT :=0
-		IF !EMPTY(aCols[N][nPos31]) .AND. !EMPTY(aCols[N][nPos22])
-			nLT :=  DateDiffDay(aCols[N][nPos31],aCols[N][nPos22])
-		ENDIF
-		M->ZZT_LT        :=  nLT
-		aCols[N][nPos32] :=  nLT
-		dDTFUP1 :=DATE()
-		dDTFUP2 :=DATE()
-		dDTFUP3 :=DATE()
-		dDTFUP  :=DATE()
-		lDTFUP  :=.F.
-
-		//-------------------transit time
-		IF !EMPTY(aCols[N][nPos16]) //ZZT_DTCONF
-			dPRV := DaySum(aCols[N][nPos16], aCols[N][41]) //DaySum(Data, nDias)
-			dPRV := DataValida(dPRV,.T.)
-			M->ZZT_DTPPOR    := dPRV
-			aCols[N][nPos18] := dPRV
-		ENDIF
-		IF !EMPTY(aCols[N][nPos17]) //ZZT_DNEW
-			dPRV := DaySum(aCols[N][nPos17], aCols[N][41]) //DaySum(Data, nDias)
-			dPRV := DataValida(dPRV,.T.)
-			M->ZZT_DTPPOR    := dPRV
-			aCols[N][nPos18] := dPRV
-		ENDIF
-
-		IF !EMPTY(aCols[N][nPos22]) //ZZT_DTCOLE
-			//*retirado auto*//
-			//	dPRV := DaySum(aCols[N][nPos22], aCols[N][41]) //DaySum(Data, nDias)
-			//	dPRV := DataValida(dPRV,.T.)
-			//	M->ZZT_DTPCOL    := dPRV
-			//	aCols[N][nPos23] := dPRV
-		ENDIF
-
-		IF !EMPTY(aCols[N][nPos26]) //ZZT_ETA
-			IF SUBSTRING(aCols[N][nPos20],1,1)=='1' // ZZT_MODAL 1-MARITMO 4-AEREO
-				dPRV := DaySum(aCols[N][nPos26], 15) //DaySum(Data, nDias)
-			ELSE
-				dPRV := DaySum(aCols[N][nPos26], 3) //DaySum(Data, nDias)
+	if SW3->(DbSeek(xFilial("SW3")+cPEDIDO+cPOSICAO))
+		While SW3->(!Eof()) .And. SW3->W3_PO_NUM == cPEDIDO .And. SW3->W3_POSICAO == cPOSICAO
+			nLT :=0
+			IF !EMPTY(aCols[N][nPos31]) .AND. !EMPTY(aCols[N][nPos22])
+				nLT :=  DateDiffDay(aCols[N][nPos31],aCols[N][nPos22])
 			ENDIF
-			dPRV := DataValida(dPRV,.T.)
-			M->ZZT_PRVRDT   := dPRV
-			aCols[N][nPos28] := dPRV
-		ENDIF
+			M->ZZT_LT        :=  nLT
+			aCols[N][nPos32] :=  nLT
+			dDTFUP1 :=DATE()
+			dDTFUP2 :=DATE()
+			dDTFUP3 :=DATE()
+			dDTFUP  :=DATE()
+			lDTFUP  :=.F.
 
-		IF !EMPTY(aCols[N][nPos27]) //ZZT_DTALER
-			IF SUBSTRING(aCols[N][nPos20],1,1)=='1' // ZZT_MODAL 1-MARITMO 4-AEREO
-				dPRV := DaySum(aCols[N][nPos27], 15) //DaySum(Data, nDias)
-			ELSE
-				dPRV := DaySum(aCols[N][nPos27], 3) //DaySum(Data, nDias)
+			//-------------------transit time
+			IF !EMPTY(aCols[N][nPos16]) //ZZT_DTCONF
+				dPRV := DaySum(aCols[N][nPos16], aCols[N][41]) //DaySum(Data, nDias)
+				dPRV := DataValida(dPRV,.T.)
+				M->ZZT_DTPPOR    := dPRV
+				aCols[N][nPos18] := dPRV
 			ENDIF
-			dPRV := DataValida(dPRV,.T.)
-			M->ZZT_PRVRDT   := dPRV
-			aCols[N][nPos28] := dPRV
-		ENDIF
-
-		//-----fup--------------------------------
-		IF !EMPTY(aCols[N][nPos18]) //FUP1 previsao poxrdt
-			dDTFUP  :=aCols[N][nPos18]
-			lDTFUP  :=.T.
-		ENDIF
-		dDTFUP1 :=aCols[N][nPos18]
-
-		IF !EMPTY(aCols[N][nPos23]) //FUP2 previsao coletaxrdt
-			dDTFUP  :=aCols[N][nPos23]
-			lDTFUP  :=.T.
-		ENDIF
-		dDTFUP2 :=aCols[N][nPos23]
-
-		IF !EMPTY(aCols[N][nPos28]) //FUP3 desembaraco rdt
-			dDTFUP  :=aCols[N][nPos28]
-			lDTFUP  :=.T.
-		ENDIF
-		dDTFUP3 :=aCols[N][nPos28]
-		//------------------------------------------
-
-		RecLock("SW3",.F.)
-		/*16*/   SW3->W3_XCONFDT :=   aCols[N][nPos16]
-		/*17*/   SW3->W3_XNEWDT  :=   aCols[N][nPos17]
-		/*18*/   SW3->W3_XPRVPO  :=   aCols[N][nPos18]
-		/*20*/   SW3->W3_XMODAL  :=   aCols[N][nPos20]
-		/*22*/   SW3->W3_XCOLETA :=   aCols[N][nPos22]
-		/*23*/   SW3->W3_XDTPCOL :=   aCols[N][nPos23]
-		/*24*/   SW3->W3_XFREIGT :=   aCols[N][nPos24]
-		/*25*/   SW3->W3_XETD    :=   aCols[N][nPos25]
-		/*26*/   SW3->W3_XETA    :=   aCols[N][nPos26]
-		/*27*/   SW3->W3_XPRALER :=   aCols[N][nPos27]
-		/*28*/   SW3->W3_XPRDSB  :=   aCols[N][nPos28]
-		/*29*/   SW3->W3_XHOUSE  :=   aCols[N][nPos29]
-		/*30*/   SW3->W3_XXOBS   :=   aCols[N][nPos30]
-		/*31*/   SW3->W3_XENTREG :=   aCols[N][nPos31]
-		IF lDTFUP ==.T.
-			SW3->W3_DT_ENTR :=dDTFUP
-		ENDIF
-		SW3->(MsUnlock())
-
-		SC7->(DbSelectArea("SC7"))
-		SC7->(DbSetOrder(1)) // C7_FILIAL+C7_NUM+C7_ITEM+C7_SEQUEN
-		IF SC7->(DbSeek(xFilial("SC7")+cPOSIGA+cPOSICAO))
-			RecLock("SC7",.F.)
-			IF !EMPTY(dDTFUP1)
-				SC7->C7_DMXOB1 :=DTOC(dDTFUP1)
-			ELSE
-				SC7->C7_DMXOB1 :=SPACE(08)
+			IF !EMPTY(aCols[N][nPos17]) //ZZT_DNEW
+				dPRV := DaySum(aCols[N][nPos17], aCols[N][41]) //DaySum(Data, nDias)
+				dPRV := DataValida(dPRV,.T.)
+				M->ZZT_DTPPOR    := dPRV
+				aCols[N][nPos18] := dPRV
 			ENDIF
-			IF !EMPTY(dDTFUP2)
-				SC7->C7_DMXOB2 :=DTOC(dDTFUP2)
-			ELSE
-				SC7->C7_DMXOB2 :=SPACE(08)
+
+			IF !EMPTY(aCols[N][nPos22]) //ZZT_DTCOLE
+				//*retirado auto*//
+				//	dPRV := DaySum(aCols[N][nPos22], aCols[N][41]) //DaySum(Data, nDias)
+				//	dPRV := DataValida(dPRV,.T.)
+				//	M->ZZT_DTPCOL    := dPRV
+				//	aCols[N][nPos23] := dPRV
 			ENDIF
-			IF !EMPTY(dDTFUP3)
-				SC7->C7_DMXOB3 :=DTOC(dDTFUP3)
-			ELSE
-				SC7->C7_DMXOB3 :=SPACE(08)
+
+			IF !EMPTY(aCols[N][nPos26]) //ZZT_ETA
+				IF SUBSTRING(aCols[N][nPos20],1,1)=='1' // ZZT_MODAL 1-MARITMO 4-AEREO
+					dPRV := DaySum(aCols[N][nPos26], 15) //DaySum(Data, nDias)
+				ELSE
+					dPRV := DaySum(aCols[N][nPos26], 3) //DaySum(Data, nDias)
+				ENDIF
+				dPRV := DataValida(dPRV,.T.)
+				M->ZZT_PRVRDT   := dPRV
+				aCols[N][nPos28] := dPRV
 			ENDIF
-			IF lDTFUP ==.F.
-				SC7->C7_DATPRF :=SC7->C7_XDATPRF
-			ELSE
-				SC7->C7_DATPRF :=dDTFUP
+
+			IF !EMPTY(aCols[N][nPos27]) //ZZT_DTALER
+				IF SUBSTRING(aCols[N][nPos20],1,1)=='1' // ZZT_MODAL 1-MARITMO 4-AEREO
+					dPRV := DaySum(aCols[N][nPos27], 15) //DaySum(Data, nDias)
+				ELSE
+					dPRV := DaySum(aCols[N][nPos27], 3) //DaySum(Data, nDias)
+				ENDIF
+				dPRV := DataValida(dPRV,.T.)
+				M->ZZT_PRVRDT   := dPRV
+				aCols[N][nPos28] := dPRV
 			ENDIF
-			SC7->(MsUnlock())
-		ENDIF
-		lDTFUP :=.F.
-		SW3->(DbSkip())
-	Enddo
+
+			//-----fup--------------------------------
+			IF !EMPTY(aCols[N][nPos18]) //FUP1 previsao poxrdt
+				dDTFUP  :=aCols[N][nPos18]
+				lDTFUP  :=.T.
+			ENDIF
+			dDTFUP1 :=aCols[N][nPos18]
+
+			IF !EMPTY(aCols[N][nPos23]) //FUP2 previsao coletaxrdt
+				dDTFUP  :=aCols[N][nPos23]
+				lDTFUP  :=.T.
+			ENDIF
+			dDTFUP2 :=aCols[N][nPos23]
+
+			IF !EMPTY(aCols[N][nPos28]) //FUP3 desembaraco rdt
+				dDTFUP  :=aCols[N][nPos28]
+				lDTFUP  :=.T.
+			ENDIF
+			dDTFUP3 :=aCols[N][nPos28]
+			//------------------------------------------
+
+			RecLock("SW3",.F.)
+			/*16*/   SW3->W3_XCONFDT :=   aCols[N][nPos16]
+			/*17*/   SW3->W3_XNEWDT  :=   aCols[N][nPos17]
+			/*18*/   SW3->W3_XPRVPO  :=   aCols[N][nPos18]
+			/*20*/   SW3->W3_XMODAL  :=   aCols[N][nPos20]
+			/*22*/   SW3->W3_XCOLETA :=   aCols[N][nPos22]
+			/*23*/   SW3->W3_XDTPCOL :=   aCols[N][nPos23]
+			/*24*/   SW3->W3_XFREIGT :=   aCols[N][nPos24]
+			/*25*/   SW3->W3_XETD    :=   aCols[N][nPos25]
+			/*26*/   SW3->W3_XETA    :=   aCols[N][nPos26]
+			/*27*/   SW3->W3_XPRALER :=   aCols[N][nPos27]
+			/*28*/   SW3->W3_XPRDSB  :=   aCols[N][nPos28]
+			/*29*/   SW3->W3_XHOUSE  :=   aCols[N][nPos29]
+			/*30*/   SW3->W3_XXOBS   :=   aCols[N][nPos30]
+			/*31*/   SW3->W3_XENTREG :=   aCols[N][nPos31]
+			IF lDTFUP ==.T.
+				SW3->W3_DT_ENTR :=dDTFUP
+			ENDIF
+			SW3->(MsUnlock())
+
+			SC7->(DbSelectArea("SC7"))
+			SC7->(DbSetOrder(1)) // C7_FILIAL+C7_NUM+C7_ITEM+C7_SEQUEN
+			IF SC7->(DbSeek(xFilial("SC7")+cPOSIGA+cPOSICAO))
+				RecLock("SC7",.F.)
+				IF !EMPTY(dDTFUP1)
+					SC7->C7_DMXOB1 :=DTOC(dDTFUP1)
+				ELSE
+					SC7->C7_DMXOB1 :=SPACE(08)
+				ENDIF
+				IF !EMPTY(dDTFUP2)
+					SC7->C7_DMXOB2 :=DTOC(dDTFUP2)
+				ELSE
+					SC7->C7_DMXOB2 :=SPACE(08)
+				ENDIF
+				IF !EMPTY(dDTFUP3)
+					SC7->C7_DMXOB3 :=DTOC(dDTFUP3)
+				ELSE
+					SC7->C7_DMXOB3 :=SPACE(08)
+				ENDIF
+				IF lDTFUP ==.F.
+					SC7->C7_DATPRF :=SC7->C7_XDATPRF
+				ELSE
+					SC7->C7_DATPRF :=dDTFUP
+				ENDIF
+				SC7->(MsUnlock())
+			ENDIF
+			lDTFUP :=.F.
+			SW3->(DbSkip())
+		Enddo
+	ELSE
+		MsgAlert('Comunicar com TI: '+cPOSIGA+cPOSICAO, 'Pedido não encontrado')
+	endif
 RETURN(cPOSIGA)
 
-	*----------------------------------------------------------------------------------------*
+*----------------------------------------------------------------------------------------*
 USER FUNCTION RDMC050Con()
 	//Local lRet		:= .T.
 	/*09*/       //Local nPos09 := aScan(aHeader,{|x|AllTrim(x[2])=="ZZT_COD_I"})
@@ -1330,8 +1336,8 @@ USER FUNCTION FLWCONPRD()
 	//MC050Con()
 
 RETURN
-	*----------------------------------------------------------------------------------------*
-	*----------------------------------------------------------------------------------------*
+*----------------------------------------------------------------------------------------*
+*----------------------------------------------------------------------------------------*
 USER FUNCTION RDMC050B()
 	//Local   lRet	  := .T.
 
@@ -1404,7 +1410,7 @@ USER FUNCTION FLWCONP2()
 	MC050Con()
 
 RETURN
-	*----------------------------------------------------------------------------------------*
+*----------------------------------------------------------------------------------------*
 
 
 USER FUNCTION RDMTA061()
@@ -1424,7 +1430,71 @@ RETURN nil
 //User Function GRAVAZZT(_cEmpresa, _cFilial, aCols1)
 STATIC FUNCTION fGRAVAZZT()
 	Local nX:=0
-	Local cQRDEL1:=''
+	Local cQRDEL1 :=''
+	Local lRETGRV :=.T.
+	Local CrLf	     := Chr(13)+Chr(10)
+	//------------------------------------------------ ------------------
+
+	IF lAtuAcols ==.F.
+			MSGALERT('Por favor, atualizar os filtros <F11>, antes da Integração')
+		lRETGRV :=.F.
+	ENDIF
+
+
+	IF !EMPTY(cGetPn1) .OR. SUBSTR(cGetpn2,1,15)<>'ZZZZZZZZZZZZZZZ'
+		MSGALERT('Filtro "PN" deve ser de Branco a ZZZZZZZZZZZZZZZ')
+		lRETGRV :=.F.
+	ENDIF
+
+	IF !EMPTY(cDesc) .OR. !EMPTY(cfornec)
+		MSGALERT('Filtro "Descr PN / Fornec" deve estar vazio')
+		lRETGRV :=.F.
+	ENDIF
+
+	IF !EMPTY(cimp) .OR. !EMPTY(cagent)
+		MSGALERT('Filtro "N.Imp / Age.Carga" deve estar vazio')
+		lRETGRV :=.F.
+	ENDIF
+
+	IF !EMPTY(cblhouse ) .OR. !EMPTY(cXmodal)
+		MSGALERT('Filtro "Bl House / Modal" deve estar vazio')
+		lRETGRV :=.F.
+	ENDIF
+
+	IF !EMPTY(cnf)
+		MSGALERT('Filtro "Nota Fiscal"  deve estar vazio')
+		lRETGRV :=.F.
+	ENDIF
+
+	IF ALLTRIM(cComboBox6)<>'Todos'
+		MSGALERT('Filtro "Com Embarque"  deve estar "Todos"')
+		lRETGRV :=.F.
+	ENDIF
+
+	IF ALLTRIM(cComboBox2)<>'Todos'
+		MSGALERT('Filtro "Entregue"  deve estar "Todos"')
+		lRETGRV :=.F.
+	ENDIF
+
+	
+
+	IF lRETGRV ==.F.
+	    lAtuAcols :=.F.
+		CrLf
+		cMSGRET:="Não integrado, "+CrLf
+		cMSGRET+="Por favor: "+CrLf
+		cMSGRET+="-Revisar os filtros"+CrLf
+		cMSGRET+="-Aplicar os Filtros F11"+CrLf
+		cMSGRET+="-Gravar integração  F12"+CrLf+CrLf
+		
+		cMSGRET+="Poderá utilizar os filtros de :  "+CrLf
+		cMSGRET+="-Data do PO "+CrLf
+		cMSGRET+="-Numero do PO"+CrLf
+		//msgalert("Não integrado, por favor, revisar os filtros, Aplicar os Filtros <F11> e gravar integração <F12>, poderá utilizar os filtros de Data do PO e Numero do PO")
+		msgalert(cMSGRET)
+		return
+	ENDIF
+	//------------------------------------------------------------------
 
 	//	aAbreTab := {}
 	//	RPCSetType(3)
@@ -1435,10 +1505,24 @@ STATIC FUNCTION fGRAVAZZT()
 	next nx
 	// HOMOLOGACAO "I0011575               /0001"
 	//--------------------------------------------------------------------------------------------------------------------------------------
-	cQRDEL2 := " DELETE FROM ZZT010 WHERE SUBSTRING(ZZT_PO_SIG,1,6)+SUBSTRING(ZZT_PO_NUM,25,4) NOT IN  "
-	cQRDEL2 += " (SELECT C7_NUM+C7_ITEM FROM SC7010  WITH(NOLOCK)  WHERE C7_NUM=SUBSTRING(ZZT_PO_SIG,1,6) AND C7_ITEM=SUBSTRING(ZZT_PO_NUM,25,4) AND D_E_L_E_T_='') "
-	cQRDEL2 += " AND SUBSTRING(ZZT_PO_NUM,1,2)<>'DA' AND ZZT_NFISCA='' "
+	//cQRDEL2 := " DELETE FROM ZZT010 WHERE SUBSTRING(ZZT_PO_SIG,1,6)+SUBSTRING(ZZT_PO_NUM,20,4) NOT IN  "
+	//cQRDEL2 += " (SELECT C7_NUM+C7_ITEM FROM SC7010  WITH(NOLOCK)  WHERE C7_NUM=SUBSTRING(ZZT_PO_SIG,1,6) AND C7_ITEM=SUBSTRING(ZZT_PO_NUM,25,4) AND D_E_L_E_T_='') "
+	//cQRDEL2 += " AND SUBSTRING(ZZT_PO_NUM,1,2)<>'DA' AND ZZT_NFISCA='' "
+	//TCSqlExec(cQRDEL2)
+
+	cQRDEL2 := " DELETE FROM ZZT010 WHERE SUBSTRING(ZZT_PO_SIG,1,6)+SUBSTRING(ZZT_PO_NUM,22,4) NOT IN  "
+	cQRDEL2 += " (SELECT C7_NUM+C7_ITEM FROM SC7010  WITH(NOLOCK)  WHERE C7_NUM=SUBSTRING(ZZT_PO_SIG,1,6) AND C7_ITEM=SUBSTRING(ZZT_PO_NUM,22,4) "
+	cQRDEL2 += "      AND C7_FILIAL='"+xFILIAL('SC7')+"' AND D_E_L_E_T_='')  "
+	cQRDEL2 += " AND SUBSTRING(ZZT_PO_NUM,1,2)<>'DA' AND ZZT_FILIAL='"+xFILIAL('ZZT')+"' "
 	TCSqlExec(cQRDEL2)
+
+	cQRDEL3 := " DELETE FROM ZZT010  "
+	cQRDEL3 += " WHERE SUBSTRING(ZZT_PO_NUM,1,20)+SUBSTRING(ZZT_PO_NUM,22,4) NOT IN  "
+	cQRDEL3 += " (SELECT W3_PO_NUM+W3_POSICAO FROM SW3010  WITH(NOLOCK)  WHERE W3_PO_NUM=SUBSTRING(ZZT_PO_NUM,1,20) AND W3_POSICAO=SUBSTRING(ZZT_PO_NUM,22,4) "
+	cQRDEL3 += "    AND W3_FILIAL='"+xFILIAL('SW3')+"'AND D_E_L_E_T_='')  "
+	cQRDEL3 += " AND SUBSTRING(ZZT_PO_NUM,1,2)<>'DA' AND ZZT_FILIAL='"+xFILIAL('ZZT')+"' "
+	TCSqlExec(cQRDEL3)
+
 	//---------------------------------------------------------------------------------------------------
 
 	dbSelectArea("ZZT")
@@ -1485,7 +1569,7 @@ STATIC FUNCTION fGRAVAZZT()
 			/*35 Nota Fiscal  */ ZZT_NFISCA :=aCols1[nX][35]
 			/*36 Qtde nfe     */ ZZT_QTDNFE :=aCols1[nX][36]
 			IF !EMPTY(aCols1[nX][37])
-			   /*37 Data NF      */ ZZT_DTNF   :=aCols1[nX][37]
+				/*37 Data NF      */ ZZT_DTNF   :=aCols1[nX][37]
 			ENDIF
 			/*38 Sld_PO_Qty   */ ZZT_SLDPO  :=aCols1[nX][38]
 			/*39 QTY_IMP      */ ZZT_QTDIMP  :=aCols1[nX][39]
@@ -1495,6 +1579,8 @@ STATIC FUNCTION fGRAVAZZT()
 			ZZT->(MsUnlock())
 		ENDIF
 	Next nX
+
+	MSGALERT('Gravar integração F12, finalizada')
 
 return
 

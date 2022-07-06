@@ -394,29 +394,52 @@ If XD1->( dbSeek( xFilial("XD1") + cEtiqueta ) )
 				cEtqGerada:= U_EtPgOP39(TMPD3->D3_XXOP,TMPD3->D3_COD,TMPD3->B1_DESC,TMPD3->D3_QUANT,.F.,nCont,nTotReg,xFilial("SC2"),.T.)
 				If !Empty(Alltrim(cEtqGerada))
 					//Ajustar a etiqueta do Movimento e cancelar a eiqueta anterior
+					
 					cQryXD1 := " SELECT XD1_XXPECA  "
 					cQryXD1 += " FROM XD1010 XD1 "
 					cQryXD1 += " WHERE XD1.D_E_L_E_T_ ='' AND XD1_FILIAL = '" + xFilial("XD1") + "' "
 					cQryXD1 += " AND XD1_COD ='" + TMPD3->D3_COD  + "' "
 					cQryXD1 += " AND XD1_OP = '" + TMPD3->D3_XXOP + "' "
 					cQryXD1 += " AND XD1_QTDATU =" + Alltrim(Str(TMPD3->D3_QUANT)) + " AND XD1_LOCAL = '97' "
-					cQryXD1 += " AND XD1_XXPECA <'" + Alltrim(cEtqGerada) + "' AND XD1_OCORRE <> '5' AND XD1_OCORRE = '8' "							
+					cQryXD1 += " AND XD1_XXPECA <'" + Alltrim(cEtqGerada) + "' AND XD1_OCORRE <> '5' AND XD1_OCORRE = '7' "	
+
 					If Select("TBXD1") > 0
 						TBXD1->(DbCloseArea())
 					EndIf
 					TCQUERY cQryXD1 NEW ALIAS "TBXD1"					
 					IF TBXD1->(!EOF())
-						XD1->(DbGoTop())
-						If XD1->( dbSeek( xFilial("XD1") + TBXD1->XD1_XXPECA  ) )	
-							RecLock("XD1",.F.)
-								XD1->XD1_OCORRE := "5" // Cancela a Etiqueta
-							XD1->(MsUnlock())
-						Endif				
-					EndIf
-					If Select("TBXD1") > 0
-						TBXD1->(DbCloseArea())
-					EndIf
- 					/*
+						U_MsgColetor("As Etiquetas relacionadas já foram validadas no roteiro não será possível re-imprimir")	
+						lRet := .F.
+					Else
+						If Select("TBXD1") > 0
+							TBXD1->(DbCloseArea())
+						EndIf
+
+
+						cQryXD1 := " SELECT XD1_XXPECA  "
+						cQryXD1 += " FROM XD1010 XD1 "
+						cQryXD1 += " WHERE XD1.D_E_L_E_T_ ='' AND XD1_FILIAL = '" + xFilial("XD1") + "' "
+						cQryXD1 += " AND XD1_COD ='" + TMPD3->D3_COD  + "' "
+						cQryXD1 += " AND XD1_OP = '" + TMPD3->D3_XXOP + "' "
+						cQryXD1 += " AND XD1_QTDATU =" + Alltrim(Str(TMPD3->D3_QUANT)) + " AND XD1_LOCAL = '97' "
+						cQryXD1 += " AND XD1_XXPECA <'" + Alltrim(cEtqGerada) + "' AND XD1_OCORRE <> '5' AND XD1_OCORRE = '8' "							
+						If Select("TBXD1") > 0
+							TBXD1->(DbCloseArea())
+						EndIf
+						TCQUERY cQryXD1 NEW ALIAS "TBXD1"					
+						IF TBXD1->(!EOF())
+							XD1->(DbGoTop())
+							If XD1->( dbSeek( xFilial("XD1") + TBXD1->XD1_XXPECA  ) )	
+								RecLock("XD1",.F.)
+									XD1->XD1_OCORRE := "5" // Cancela a Etiqueta
+								XD1->(MsUnlock())
+							Endif				
+						EndIf
+						If Select("TBXD1") > 0
+							TBXD1->(DbCloseArea())
+						EndIf
+					EndiF
+						/*
 					 TMPD3->(DbGoTo(TMPD3->RECSD3))
 					If Alltrim(TMPD3->D3_XXOP) == Alltrim(SD3->D3_XXOP)
 						RecLock("SD3",.F.)

@@ -9,20 +9,26 @@ User Function Nosso033()
 //EE_FILIAL+EE_CODIGO+EE_AGENCIA+EE_CONTA+EE_SUBCTA 
 
 if cFilAnt == "01"  //  Santander - Matriz
-    _cxBco  := "033"
-    _cxAge  := "3072 "
-    _cxConta:= "01051781  "
-    _cxSub  := "001"
+
+    cPortador   := Padr("033",3)
+    cAgencia    := Padr("3072",5)
+    cConta      := Padr("01051781",10)
+    cSbConta	:= Padr("001",3)
+    cCarteira  :=  "101" 
+
 
 ElseIf cFilAnt == '02'  // Santander - Filial
-    _cxBco  := "033"
-    _cxAge  := "3078 "
-    _cxConta:= "13002050  "
-    _cxSub  := "001"
+
+    cPortador   := Padr("033",3)
+    cAgencia    := Padr("3078",5)
+    cConta      := Padr("13002050",10)  //  conta completa para localizar no SEE ( para Codigo de barras é diferente)
+    cSbConta	:= Padr("001",3)
+    cCarteira  :=  "101" 
+
 Endif
                                                                                                               
 SEE->(DbSetOrder(1))
-SEE->( dbSeek( xFilial("SEE") + _cxBco + _cxAge + _cxConta+_cxSub  ) )
+SEE->( dbSeek( xFilial("SEE")  +cPortador+cAgencia+cConta+cSbConta  ) )
 //nRecSEE :=  SEE->( Recno())      //nRecSEE := 7  //    CARREGAR O RECNO DO BANCO NA TABELA SEE  ******
 
 nNossoNum := Strzero( Val(SEE->EE_FAXATU)+1 ,8)
