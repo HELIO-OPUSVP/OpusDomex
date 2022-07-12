@@ -232,9 +232,10 @@ Static Function fFiltroSZJ()
 //Opções da Pergunta 03
 	aAdd(aPerg3Arr,"0=Todas Classific.")
 	aAdd(aPerg3Arr,"1=Suporte N1")
-	aAdd(aPerg3Arr,"2=Suporte N2")
+	aAdd(aPerg3Arr,"2=Sup. N2 2T")
 	aAdd(aPerg3Arr,"3=Suporte N3")
 	aAdd(aPerg3Arr,"4=Melhorias")
+	aAdd(aPerg3Arr,"9=Sup. N2 1T")
 
 	Private mv_par01 := "1"
 	Private mv_par02 := "2"
@@ -352,7 +353,7 @@ Static Function fFiltroSZJ()
 				cRet += IIf(Empty(cRet),""," AND ")
 				cRet += "ZJ_CLASSIF='1'  "
 
-				// 2=Suporte N2
+				// 2=Suporte N2 1 Turno
 			Case SubStr(mv_par03,1,1) == "2"
 				cRet += IIf(Empty(cRet),""," AND ")
 				cRet += "ZJ_CLASSIF='2'  "
@@ -365,7 +366,12 @@ Static Function fFiltroSZJ()
 				//4=Melhorias
 			Case SubStr(mv_par03,1,1) == "4"
 				cRet += IIf(Empty(cRet),""," AND ")
-				cRet += "ZJ_CLASSIF='4'  "
+				cRet += "ZJ_CLASSIF='4'  "	
+
+			// 9=Suporte N2 2 Turno
+			Case SubStr(mv_par03,1,1) == "9"
+				cRet += IIf(Empty(cRet),""," AND ")
+				cRet += "ZJ_CLASSIF='9'  "
 
 			EndCase
 		Else
@@ -2925,7 +2931,7 @@ User Function DmxClaCh(nTipo,cCampo)
 Local cTitulo
 Local cDescri
 Local cCombo
-Local cRet := "1=Suporte N1;2=Suporte N2;3=Suporte N3 OpusVP;4=Melhoria;5=Projeto;6=Suporte N3 Outros;7=Aguardando envio Opus;8=Obrigações" 
+Local cRet := "1=Sup.N1;2=Sup.N2 2T;3=Suporte N3 OpusVP;4=Melhoria;5=Projeto;6=Suporte N3 Outros;7=Aguardando envio Opus;8=Obrigações;9=Sup.N2 1T" 
 Default nTipo := 1
 Default cCampo := "ZJ_CLASSIF"
 
@@ -2941,7 +2947,7 @@ If SX3->(dbSeek( cCampo )  )
 			EndIf
 		EndIf
 	else
-		cRet := "1=Suporte N1;2=Suporte N2;3=Suporte N3 OpusVP;4=Melhoria;5=Projeto;6=Suporte N3 Outros;7=Aguardando envio Opus;8=Obrigações" 
+		cRet := "1=Sup.N1;2=Sup.N2 2T;3=Suporte N3 OpusVP;4=Melhoria;5=Projeto;6=Suporte N3 Outros;7=Aguardando envio Opus;8=Obrigações;9=Sup.N2 1T" 
 		If Alltrim(SX3->X3_CBOX) <> Alltrim(cRet ) .And. Alltrim(SX3->X3_CAMPO) == Alltrim(cCampo)
 			If Reclock("SX3",.F.) 
 				SX3->X3_CBOX := cRet
