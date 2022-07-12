@@ -4,62 +4,18 @@
 		{
 			"type": "totvs_language_debug",
 			"request": "launch",
-			"name": "TOTVS NOTE",
+			"name": "Depuração do idioma TOTVS",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
-<<<<<<< HEAD
-			"smartclientBin": "C:/Totvs/bin/smartclient/smartclient.exe",
-=======
 			"smartclientBin": "C:\\Meu Driver\\projetos\\Domex\\smartclient64\\smartclient.exe",
->>>>>>> f7c92516c2b38faaa49194edeaafef5a16149fb6
 			"isMultiSession": true,
 			"enableTableSync": true
 		}
 	],
 	"lastPrograms": [
 		{
-			"args": [],
-			"label": "sigaadv",
-			"description": ""
-		},
-		{
-			"label": "sigaadv",
-			"description": "<nil>"
-		},
-		{
-			"args": [],
-			"label": "u_mnucoletor",
-			"description": ""
-		},
-		{
-			"args": [],
-			"label": "sigadv",
-			"description": ""
-		},
-		{
-			"label": "u_mnu02coletor"
-		},
-		{
-			"label": "sigamdi"
-		},
-		{
-			"label": "sigaest"
-		},
-		{
-			"label": "sigacom"
-		},
-		{
-			"label": "sigafin"
+			"label": "SIGAMDI"
 		}
 	],
-<<<<<<< HEAD
-	"lastProgramExecuted": "sigaadv",
-	"lastProgramArgumens": []
-=======
-<<<<<<< Updated upstream
-	"lastProgramExecuted": "sigafin"
-=======
-	"lastProgramExecuted": "sigaest"
->>>>>>> Stashed changes
->>>>>>> f7c92516c2b38faaa49194edeaafef5a16149fb6
+	"lastProgramExecuted": "SIGAMDI"
 }
