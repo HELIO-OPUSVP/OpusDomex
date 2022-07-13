@@ -3,7 +3,7 @@
 #INCLUDE "FWBROWSE.CH"
 //--------------------------------------------------------------
 /*/Protheus.doc DOMROT - ROTEIRO DE PRODUÇÃO 
-   **** DOMEX EXCLUSIVO PARA LINHA PIGTAIL ****
+**** DOMEX EXCLUSIVO PARA LINHA PIGTAIL ****
 Description
 author: Ricardo Roda
 return xRet Return Description
@@ -79,8 +79,8 @@ User Function DOMROTPIG(cTipo,nMaxLinhas)
 	Private cTpProd	    := ""
 
 	Private cComp 		:= CriaVar("B1_COD")
-    
-    Private nCelula		:= fButtCel(nMaxLinhas)
+
+	Private nCelula		:= fButtCel(1)
 	Private dDataIni	:= dDataBase
 	Private cLocOP 		:= CRIAVAR("D4_OP")
 	Private oDtIni
@@ -101,8 +101,8 @@ User Function DOMROTPIG(cTipo,nMaxLinhas)
 	cPerc99			    := cStartPath + 'PERC99.png'
 	cLogoHu				:= cStartPath + 'huawei_lg.png'
 
-		cTpProd  := "'CORD'"
-		_cTitulo := "ROTEIRO DE PRODUÇÃO PIGTAIL - LINHA " + cValToChar(nCelula)
+	cTpProd  := "'CORD'"
+	_cTitulo := "ROTEIRO DE PRODUÇÃO PIGTAIL - LINHA " + cValToChar(nCelula)
 
 	DEFINE MSDIALOG oDlg TITLE "" FROM 000, 000  TO 800, 1366 COLORS 0, 16777215 PIXEL
 	oDlg:lMaximized := .T.
@@ -247,6 +247,7 @@ Static Function fVldEti(cEtiqOfc)
 	Local nPQtdOp	:= GdFieldPos( "QTDOP" )
 	Local lRet:= .F.
 	Local lTroca:= .F.
+	Local _x
 
 	if Empty(Alltrim(cEtiqOfc))
 		Return .F.
@@ -276,15 +277,15 @@ Static Function fVldEti(cEtiqOfc)
 			fStatus()
 
 			IF lContinua
-				nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
-				oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
+				// nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+				// oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 				For _x := 1 to len(oGetDados:aCols)
 					if	oGetDados:aCols[_x,nPQtdent] == oGetDados:aCols[_x,nPQtdOp]
 						oGetDados:aCols[_x,nPosFlag] := oOk
 					Elseif oGetDados:aCols[_x,nPQtdent] == 0
 						oGetDados:aCols[_x,nPosFlag] := oNo
-					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
+					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
 						oGetDados:aCols[_x,nPosFlag] := oIn
 					Endif
 				Next _x
@@ -321,15 +322,15 @@ Static Function fVldEti(cEtiqOfc)
 
 
 				IF lContinua
-					nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
-					oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
+					// nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+					// oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 					For _x := 1 to len(oGetDados:aCols)
 						if	oGetDados:aCols[_x,nPQtdent] == oGetDados:aCols[_x,nPQtdOp]
 							oGetDados:aCols[_x,nPosFlag] := oOk
 						Elseif oGetDados:aCols[_x,nPQtdent] == 0
 							oGetDados:aCols[_x,nPosFlag] := oNo
-						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
+						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
 							oGetDados:aCols[_x,nPosFlag] := oIn
 						Endif
 					Next _x
@@ -353,16 +354,16 @@ Static Function fVldEti(cEtiqOfc)
 
 
 			IF lContinua
-				nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
-				oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
+				// nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+				// oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 				For _x := 1 to len(oGetDados:aCols)
 					if	oGetDados:aCols[_x,nPQtdent] == oGetDados:aCols[_x,nPQtdOp]
 						oGetDados:aCols[_x,nPosFlag] := oOk
 					Elseif oGetDados:aCols[_x,nPQtdent] == 0
 						oGetDados:aCols[_x,nPosFlag] := oNo
-					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
-						oGetDados:aCols[_x,nPosFlag] := oIn
+					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
+					oGetDados:aCols[_x,nPosFlag] := oIn
 					Endif
 				Next _x
 			Endif
@@ -397,15 +398,15 @@ Static Function fVldEti(cEtiqOfc)
 			fStatus()
 
 			IF lContinua
-				nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
-				oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
+				// nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+				// oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 				For _x := 1 to len(oGetDados:aCols)
 					if	oGetDados:aCols[_x,nPQtdent] == oGetDados:aCols[_x,nPQtdOp]
 						oGetDados:aCols[_x,nPosFlag] := oOk
 					Elseif oGetDados:aCols[_x,nPQtdent] == 0
 						oGetDados:aCols[_x,nPosFlag] := oNo
-					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
+					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
 						oGetDados:aCols[_x,nPosFlag] := oIn
 					Endif
 				Next _x
@@ -443,15 +444,15 @@ Static Function fVldEti(cEtiqOfc)
 
 
 					IF lContinua
-						nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
-						oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
+						// nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+						// oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 						For _x := 1 to len(oGetDados:aCols)
 							if	oGetDados:aCols[_x,nPQtdent] == oGetDados:aCols[_x,nPQtdOp]
 								oGetDados:aCols[_x,nPosFlag] := oOk
 							Elseif oGetDados:aCols[_x,nPQtdent] == 0
 								oGetDados:aCols[_x,nPosFlag] := oNo
-							Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
+							Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
 								oGetDados:aCols[_x,nPosFlag] := oIn
 							Endif
 						Next _x
@@ -474,15 +475,15 @@ Static Function fVldEti(cEtiqOfc)
 				fStatus()
 
 				IF lContinua
-					nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
-					oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
+					// nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+					// oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 					For _x := 1 to len(oGetDados:aCols)
 						if	oGetDados:aCols[_x,nPQtdent] == oGetDados:aCols[_x,nPQtdOp]
 							oGetDados:aCols[_x,nPosFlag] := oOk
 						Elseif oGetDados:aCols[_x,nPQtdent] == 0
 							oGetDados:aCols[_x,nPosFlag] := oNo
-						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
+							Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
 							oGetDados:aCols[_x,nPosFlag] := oIn
 						Endif
 					Next _x
@@ -743,7 +744,7 @@ Static Function MontaTela()
 
 		While QRY2->(!eof())
 
-			IF ALLTRIM(QRY2->B1_GRUPO) $ 'FO|FOFS' 
+			IF ALLTRIM(QRY2->B1_GRUPO) $ 'FO|FOFS'
 				DbSelectArea("SG1")
 				SG1->(DbSetOrder(1))
 				IF SG1->(DbSeek(xFilial("SG1")+PADR(QRY2->D4_PRODUTO,TamSX3("D4_PRODUTO")[1])+QRY2->D4_COD))
@@ -816,25 +817,25 @@ Static Function MontaTela2(nMaxLinhas)
 	Endif
 
 	If nMaxLinhas > 1 // cTpProd == "CORD"
-    	cQuery:= "  SELECT DISTINCT P10_OP OP, P10_DTPROG DTPROG, C2_QUANT,C2_QUJE "
+		cQuery:= "  SELECT DISTINCT P10_OP OP, P10_DTPROG DTPROG, C2_QUANT,C2_QUJE "
 		cQuery+= " , C2_ORDSEP   "
 		cQuery+= " FROM "+RETSQLNAME("P10")+" P10 "
 		cQuery+= " INNER JOIN "+RETSQLNAME("SC2")+" SC2 ON C2_FILIAL = '"+xFilial("SC2")+"' "
-       	cQuery+= "  AND C2_NUM+C2_ITEM+C2_SEQUEN = P10_OP AND SC2.D_E_L_E_T_ = '' "
+		cQuery+= "  AND C2_NUM+C2_ITEM+C2_SEQUEN = P10_OP AND SC2.D_E_L_E_T_ = '' "
 		cQuery+= "  AND C2_QUANT > C2_QUJE "
-		 cQuery+= " INNER JOIN "+RETSQLNAME("SB1")+" SB1 ON B1_COD = C2_PRODUTO AND SB1.D_E_L_E_T_ = ''
+		cQuery+= " INNER JOIN "+RETSQLNAME("SB1")+" SB1 ON B1_COD = C2_PRODUTO AND SB1.D_E_L_E_T_ = ''
 		cQuery+= " AND B1_GRUPO IN ("+cTpProd+") "
-        cQuery+= " AND B1_SUBCLAS =  'KIT PIGT'"
+		cQuery+= " AND B1_SUBCLAS =  'KIT PIGT'"
 		cQuery+= "  WHERE  P10_FILIAL = '"+xFilial("P10")+"'  AND P10.D_E_L_E_T_ = '' "
 		cQuery+= "  AND P10_LINHA = 'LINHA "+cValToChar(nCelula)+"'  "
 		cQuery+= "  ORDER BY 2 "
-    Else
+	Else
 		cQuery:= " SELECT  D4_OP OP,D4_DATA DTPROG, C2_QUANT,C2_QUJE,C2_ORDSEP
 		cQuery+= " FROM "+RETSQLNAME("SD4")+" SD4 WITH(NOLOCK) "
 		cQuery+= " INNER JOIN "+RETSQLNAME("SB1")+" SB1 ON B1_COD = D4_PRODUTO AND SB1.D_E_L_E_T_ = ''
 		cQuery+= " AND B1_GRUPO IN ("+cTpProd+") "
-        cQuery+= " AND B1_SUBCLAS = 'KIT PIGT'"
-        cQuery+= " INNER JOIN "+RETSQLNAME("SC2")+" SC2 ON   C2_FILIAL = '"+xFilial("SC2")+"' AND C2_NUM+C2_ITEM+C2_SEQUEN  = D4_OP AND SC2.D_E_L_E_T_ = '' AND C2_DATRF = ''
+		cQuery+= " AND B1_SUBCLAS = 'KIT PIGT'"
+		cQuery+= " INNER JOIN "+RETSQLNAME("SC2")+" SC2 ON   C2_FILIAL = '"+xFilial("SC2")+"' AND C2_NUM+C2_ITEM+C2_SEQUEN  = D4_OP AND SC2.D_E_L_E_T_ = '' AND C2_DATRF = ''
 		cQuery+= " WHERE D4_FILIAL = '"+xFilial("SD4")+"'
 		cQuery+= " AND SD4.D_E_L_E_T_ =''
 		cQuery+= " AND D4_QUANT > 0
@@ -960,70 +961,77 @@ Static function fVldXd4St(cCodOp,_nSerie)
 		QRY->(DbCloseArea())
 	Endif
 
-	IF val(_nSerie) == 0
-		cQuery+=" 	SELECT COUNT(*) QTDLID "
-		cQuery+=" 	FROM "+RETSQLNAME("XD4")+" XD4 (NOLOCK)  "
-		cQuery+=" 	WHERE XD4_OP =  '"+cCodOp+"' "
-		cQuery+=" 	AND XD4_STATUS = '2'   "
-		cQuery+=" 	AND XD4_FILIAL = '"+xFilial("XD4")+"' "
-		cQuery+=" 	AND XD4.D_E_L_E_T_ = '' "
+	IF val(_nSerie) <> 0
+
+		cQuery:=" SELECT XD4_STATUS, R_E_C_N_O_ REC
+		cQuery+=" 		,(SELECT COUNT(*)
+		cQuery+=" 		FROM "+RETSQLNAME("XD4")+" XD4
+		cQuery+=" 		 WHERE XD4_OP =  '"+cCodOp+"'"
+		cQuery+=" 		 AND XD4_STATUS = '2'
+		cQuery+=" 		 AND XD4.D_E_L_E_T_ = '') QTDLID
+		cQuery+=" FROM "+RetSqlName("XD4")+" XD4 "
+		cQuery+=" WHERE XD4_OP =  '"+cCodOp+"'"
+		cQuery+=" AND XD4_SERIAL = "+_nSerie+" 	"
+		cQuery+=" AND XD4_FILIAL = '"+xFilial("XD4")+"' "
+		cQuery+=" AND XD4.D_E_L_E_T_ = ''
 		dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"QRY",.T.,.T.)
 
-		if QRY->(!Eof())
-			for _y := 1 to Len(oGetDados:aCols)
-				If alltrim(oGetDados:aCols[_y,nPosGpr]) $ "FO|FOFS"
-					oGetDados:aCols[_y,nPQtdent] := QRY->QTDLID
-				Endif
-			Next _y
+		If QRY->(Eof())
+			MyMsg("Etiqueta Serial inválida!" ,1)
+			oGetDados:refresh()
+			Return .F.
+
+		ElseIf QRY->XD4_STATUS == '2'
+			MyMsg("Etiqueta Serial já lida!" ,1)
+			oGetDados:refresh()
+			Return .F.
 		Endif
 
+		if lRet
+			dbSelectArea("XD4")
+			dbGoto(QRY->REC)
+			Reclock("XD4", .F.)
+			XD4->XD4_STATUS	:= '2'
+			XD4->XD4_USRROT:= cUserSis
+			XD4->XD4_DTROT:= dDataBase
+			XD4->XD4_HRROT:= time()
+			XD4->(MsUnlock())
+		Endif
 
 		QRY->(DbCloseArea())
 
-		oGetDados:refresh()
-		Return .F.
+	ENDIF
+	// if QRY->(!Eof())
+	// 	for _y := 1 to Len(oGetDados:aCols)
+	// 		If alltrim(oGetDados:aCols[_y,nPosGpr]) $ "FO|FOFS"
+	// 			oGetDados:aCols[_y,nPQtdent] := QRY->QTDLID
+	// 		Endif
+	// 	Next _y
+	// Endif
+
+	// nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
+	// oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
+
+	If Select("QRY") > 0
+		QRY->(DbCloseArea())
 	Endif
 
-
-	cQuery:=" SELECT XD4_STATUS, R_E_C_N_O_ REC
-	cQuery+=" 		,(SELECT COUNT(*)
-	cQuery+=" 		FROM "+RETSQLNAME("XD4")+" XD4
-	cQuery+=" 		 WHERE XD4_OP =  '"+cCodOp+"'"
-	cQuery+=" 		 AND XD4_STATUS = '2'
-	cQuery+=" 		 AND XD4.D_E_L_E_T_ = '') QTDLID
-	cQuery+=" FROM "+RetSqlName("XD4")+" XD4 "
-	cQuery+=" WHERE XD4_OP =  '"+cCodOp+"'"
-	cQuery+=" AND XD4_SERIAL = "+_nSerie+" 	"
-	cQuery+=" AND XD4_FILIAL = '"+xFilial("XD4")+"' "
-	cQuery+=" AND XD4.D_E_L_E_T_ = ''
+	cQuery+=" 	SELECT COUNT(*) QTDLID "
+	cQuery+=" 	FROM "+RETSQLNAME("XD4")+" XD4 (NOLOCK)  "
+	cQuery+=" 	WHERE XD4_OP =  '"+cCodOp+"' "
+	cQuery+=" 	AND XD4_STATUS = '2'   "
+	cQuery+=" 	AND XD4_FILIAL = '"+xFilial("XD4")+"' "
+	cQuery+=" 	AND XD4.D_E_L_E_T_ = '' "
 	dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"QRY",.T.,.T.)
 
-	If QRY->(Eof())
-		MyMsg("Etiqueta Serial inválida!" ,1)
-		lRet:= .F.
-
-	ElseIf QRY->XD4_STATUS == '2'
-		MyMsg("Etiqueta Serial já lida!" ,1)
-		lRet:= .F.
+	if QRY->(!Eof())
+		for _y := 1 to Len(oGetDados:aCols)
+			If alltrim(oGetDados:aCols[_y,nPosGpr]) $ "FO|FOFS"
+				oGetDados:aCols[_y,nPQtdent] := QRY->QTDLID
+			Endif
+		Next _y
 	Endif
 
-	nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
-	oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
-
-	if lRet
-		dbSelectArea("XD4")
-		dbGoto(QRY->REC)
-		Reclock("XD4", .F.)
-		XD4->XD4_STATUS	:= '2'
-		XD4->XD4_USRROT:= cUserSis
-		XD4->XD4_DTROT:= dDataBase
-		XD4->XD4_HRROT:= time()
-
-		XD4->(MsUnlock())
-	Endif
-
-
-	QRY->(DbCloseArea())
 	oGetDados:refresh()
 	fStatus()
 
@@ -1137,7 +1145,7 @@ Return
 
 /*/Protheus.doc fVldXd1St
 	description
-	type function
+type function
 	version
 	author Ricardo Roda
 	since 06/08/2020

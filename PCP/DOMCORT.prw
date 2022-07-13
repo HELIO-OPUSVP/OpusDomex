@@ -278,13 +278,22 @@ Static Function fVldOp(nOpc)
 	dbSelectArea("SC2")
 	SC2->(dbSetOrder(1))
 	if SC2->(dbSeek(xFilial("SC2")+cCodOp))
-
 		IF !EMPTY(SC2->C2_DATRF)
 			MyMsg("Ordem de produção encerrada!" ,1)
 			LimpaTudo()
 			Return .F.
 		Endif
 
+		SB1->(DbSetOrder(1))
+		IF SB1->(DbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
+			IF SB1->B1_GRUPO == 'CORD'
+				IF alltrim(SB1->B1_SUBCLAS) == 'KIT PIGT'
+					MyMsg("Essa ordem de produção pertence a Clase PIGTAIL..."+ Chr(13)+Chr(10)+"Entre pela rotina Corte Pigtail"  ,1)
+					LimpaTudo()
+					Return .F.
+				Endif
+			Endif
+		ENDIF
 
 
 		cCodPA:= SC2->C2_PRODUTO
@@ -341,7 +350,7 @@ Static Function fVldOp(nOpc)
 								cQuery:= " SELECT B1_COD FROM "+RetSqlName("SB1")
 								cQuery+= " WHERE B1_ALTER  = '"+QRY->D4_COD+"' "
 								cQuery+= " AND B1_FILIAL = '"+xFilial("SB1")+"'"
-								cQuery+= " AND  AND D_E_L_E_T_ = '' "
+								cQuery+= " AND D_E_L_E_T_ = '' "
 								dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TMP_B1",.T.,.T.)
 
 								SG1->(DbSetOrder(1))
@@ -711,7 +720,7 @@ Static Function fVldEti(cEtiqOfc)
 
 	IF U_VALIDACAO("RODA")
 		SD4->(DbSetOrder(1))//D4_FILIAL, D4_OP, D4_COD
-		if SD4->(dbSeek(xFilial)+cCodOp+cCFibra)
+		if SD4->(dbSeek(xFilial("SD4")+cCodOp+cCFibra))
 			nQtViaFS:= QRY->D4_XQTDVIA
 
 			if nQtViaFS == 0
@@ -729,7 +738,7 @@ Static Function fVldEti(cEtiqOfc)
 						cQuery:= " SELECT B1_COD FROM "+RetSqlName("SB1")
 						cQuery+= " WHERE B1_ALTER  = '"+QRY->D4_COD+"' "
 						cQuery+= " AND B1_FILIAL = '"+xFilial("SB1")+"'"
-						cQuery+= " AND  AND D_E_L_E_T_ = '' "
+						cQuery+= " AND D_E_L_E_T_ = '' "
 						dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TMP_B1",.T.,.T.)
 
 						SG1->(DbSetOrder(1))

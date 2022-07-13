@@ -4,6 +4,16 @@
 		{
 			"type": "totvs_language_debug",
 			"request": "launch",
+			"name": "Smart Client Debug",
+			"program": "${command:AskForProgramName}",
+			"smartclientBin": "C:/Totvs/smartclient64_DOMEX/smartclient.exe",
+			"cwb": "${workspaceFolder}",
+			"isMultiSession": true,
+			"enableTableSync": true
+		},
+		{
+			"type": "totvs_language_debug",
+			"request": "launch",
 			"name": "Depuração do idioma TOTVS",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
@@ -15,7 +25,10 @@
 	"lastPrograms": [
 		{
 			"label": "SIGAMDI"
+		},
+		{
+			"label": "SIGApcp"
 		}
 	],
-	"lastProgramExecuted": "SIGAMDI"
+	"lastProgramExecuted": "SIGApcp"
 }

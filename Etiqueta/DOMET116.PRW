@@ -14,7 +14,7 @@ Description ETIQUETA DE SERIAL CORTE FIBRA FURUKAWA
 @since 01/09/2021
 /*/
 //-------------------------------------------------------------
-User Function DOMET116(cNumOP,nQtdEtq,nNumSerie)
+User Function DOMET116(cNumOP,nQtdEtq,nNumSerie,cLocImp)
 
 	Local _aArq		:= {}
 	Local aCodEtq 	:= {}
@@ -25,26 +25,27 @@ User Function DOMET116(cNumOP,nQtdEtq,nNumSerie)
 	Local nY
 	Private cCodFuruk:= ""
 	Private lFuruk := fFurukawa(cNumOP)
-	Private cLocImp:= ""
 	Private cUserSis	:= Upper(Alltrim(Substr(cUsuario,7,15)))
 	Private _cPrxDoc:= fPrxDoc(cNumOP)
 	private aRetPar   := {}
 	Private aPar:= {}
 
+	Default cLocImp:= ""
 
 	if !lFuruk
 		MsgAlert("Ordem de produção não é Furukawa!","Aviso")
 		Return .F.
 	Endif
+
 	if empty(Alltrim(cLocImp))
 		aAdd(aPar,{1,"Escolha a Impressora " ,SPACE(6) ,"@!"       ,'.T.' , 'CB5', '.T.', 20 , .T. } )
+
+		If !ParamBox(aPar,"INFORMAR IMPRESSORA",@aRetPar)
+			Return
+		EndIf
+
+		cLocImp := ALLTRIM(aRetPar[1])
 	Endif
-
-	If !ParamBox(aPar,"INFORMAR IMPRESSORA",@aRetPar)
-		Return
-	EndIf
-
-	cLocImp := ALLTRIM(aRetPar[1])
 
 	If !CB5SetImp(cLocImp,.F.)
 		MsgAlert("Local de impressao invalido!","Aviso")
@@ -84,15 +85,15 @@ User Function DOMET116(cNumOP,nQtdEtq,nNumSerie)
 		AADD(_aArq,'^PW591'+ CRLF)
 		AADD(_aArq,'^LL142'+ CRLF)
 		AADD(_aArq,'^LS0'+ CRLF)
-		
-		_nLin:= 90
-		_nCol:= 365
 
-		AADD(_aArq,'^FT'+cValToChar(_nCol+57)+','+cValToChar(_nLin)+'^BXN,4,200,0,0,1,_,1'+ CRLF)
+		_nLin:= 60
+		_nCol:= 380
+
+		AADD(_aArq,'^FT'+cValToChar(_nCol+57)+','+cValToChar(_nLin)+'^BXN,3,200,0,0,1,_,1'+ CRLF)
 		AADD(_aArq,'^FH\^FD'+cValtoChar(nNumSerie+nNumEt)+'\09'+cValtoChar(cCodFuruk)+'^FS'+ CRLF)
-		AADD(_aArq,'^FT'+cValToChar(_nCol+42)+','+cValToChar(_nLin+30)+'^A0N,27,38^FH\^CI28^FD'+strzero((nNumSerie+nNumEt),ntam)+'^FS^CI27'+ CRLF)
-		AADD(_aArq,'^FT'+cValToChar(_nCol)+','+cValToChar(_nLin+60)+'^A0N,31,33^FH\^CI28^FD'+cValtoChar(cCodFuruk)+'^FS^CI27'+ CRLF)
-		
+		AADD(_aArq,'^FT'+cValToChar(_nCol+50)+','+cValToChar(_nLin+24)+'^A0N,24,30^FH\^CI28^FD'+strzero((nNumSerie+nNumEt),ntam)+'^FS^CI27'+ CRLF)
+		AADD(_aArq,'^FT'+cValToChar(_nCol)+','+cValToChar(_nLin+46)+'^A0N,24,30^FH\^CI28^FD'+cValtoChar(cCodFuruk)+'^FS^CI27'+ CRLF)
+
 		AADD(_aArq,'^PQ1,0,1,Y'+ CRLF)
 		AADD(_aArq,'^XZ'+ CRLF)
 		AaDd(aCodEtq,_aArq)
