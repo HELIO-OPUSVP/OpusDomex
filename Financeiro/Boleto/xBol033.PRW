@@ -154,6 +154,8 @@ Method SetBanco(nRecSEE) Class xBol033
 			::cConta	:= "01051781"
 			::cDVConta	:= "1"
 			::cCarteira := "101"
+  			::cBenefici := "0082233"
+
 
 		ElseIf cFilAnt == '02'  // Santander - Filial
 			::cPortador := "033"
@@ -162,6 +164,8 @@ Method SetBanco(nRecSEE) Class xBol033
 			::cConta	:= "02050"  //"13002050"
 			::cDVConta	:= "7"   //"1"
   			::cCarteira := "101"
+  			::cBenefici := "0082233"
+
 		Endif
 
 
@@ -312,7 +316,9 @@ Method GerarBoletos() Class xBol033
 		EndIf
 		
 		cNumBco   	:= Alltrim(SE1->E1_NUMBCO)
-		::pNossoNum := ::cCarteira + '/' + cNumBco + '-' + ::Modulo10(::cAgencia + ::cConta + ::cCarteira + cNumBco)
+//		::pNossoNum := ::cCarteira + '/' + cNumBco + '-' + ::Modulo10(::cAgencia + ::cConta + ::cCarteira + cNumBco)
+		::pNossoNum := cNumBco 
+
 		::cNossoNum := cNumBco + ::Modulo10(::cAgencia + ::cConta + ::cCarteira + cNumBco)
 		
 		//Posiciona no Cliente		
@@ -952,10 +958,19 @@ Local cCampo5	 := ""
 Local cCpoLivre	 := ::cAgencia + ::cConta + ::cCarteira + Substr(::cNossoNum,1,8)
 
 /* Calculo da representacao numerica */
+/*
 cCampo1	:= ::cPortador + ::cNumMoeda + ::cCarteira + Substr(::cNossoNum,1,2)	  
 cCampo2	:= Substr(::cNossoNum,3,6) + ::Modulo10(cCpoLivre) + Substr(::cAgencia,1,3)
 cCampo3	:= substr(::cAgencia,4,1) + ::cConta + ::Modulo10(::cAgencia + ::cConta) + "000"
 cCampo5	:= cFatVencto + cValor
+*/
+//Mauresi - 24/06/2022
+cCampo1	:= ::cPortador + ::cNumMoeda + "9" + ::cBenefici   //::cCarteira + Substr(::cNossoNum,1,2)	  
+cCampo2	:= Substr(::cNossoNum,3,6) + ::Modulo10(cCpoLivre) + Substr(::cAgencia,1,3)
+cCampo3	:= substr(::cAgencia,4,1) + ::cConta + ::Modulo10(::cAgencia + ::cConta) + "000"
+cCampo5	:= cFatVencto + cValor
+
+
 
 /* Calculando os DACs dos campos 1, 2 e 3 */
 cCampo1	:= cCampo1 + ::Modulo10(cCampo1)
