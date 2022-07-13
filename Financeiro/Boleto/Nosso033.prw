@@ -16,7 +16,6 @@ if cFilAnt == "01"  //  Santander - Matriz
     cSbConta	:= Padr("001",3)
     cCarteira  :=  "101" 
 
-
 ElseIf cFilAnt == '02'  // Santander - Filial
 
     cPortador   := Padr("033",3)
