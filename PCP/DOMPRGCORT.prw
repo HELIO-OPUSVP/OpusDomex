@@ -184,9 +184,9 @@ User Function DOMPRGCORT()
 		cTpProd:= "JUMPER"
 	ElseIF nTpProd == 5
 		cTpProd:= "PRECON"
-	ElseIF nTpProd == 6 .AND. U_VALIDACAO("RODA")
+	ElseIF nTpProd == 6 .AND. U_VALIDACAO("RODA")  .OR. .T.
 		cTpProd:= "DATACENTER"
-	ElseIF nTpProd == 7 .AND. U_VALIDACAO("RODA")
+	ElseIF nTpProd == 7 .AND. U_VALIDACAO("RODA")  .OR. .T.
 		cTpProd:= "FTTA"
 	Endif
 
@@ -418,7 +418,7 @@ Static Function MontaMsGet()
 	cQuery+= "		AND D_E_L_E_T_ = ''
 	cQuery+= "		AND D4_COD = '50010100T')
 
-	if U_VALIDACAO("RODA")
+	if U_VALIDACAO("RODA") .OR. .T.
 		cQuery+= "		WHEN SB1A.B1_GRUPO = 'CMTP' THEN
 		cQuery+= "		(SELECT D4_QUANT
 		cQuery+= "		FROM   "+RETSQLNAME("SD4")+" D4LIN
@@ -485,9 +485,9 @@ Static Function MontaMsGet()
 		cQuery+= " 	AND SB1A.B1_GRUPO = 'JUMP'"
 	ElseIF nTpProd == 5
 		cQuery+= " 	AND SB1A.B1_GRUPO = 'PCON'"
-	ElseIF nTpProd == 6 .AND. ( U_VALIDACAO("RODA"))
+	ElseIF nTpProd == 6 .AND. ( U_VALIDACAO("RODA") .OR. .T.)
 		cQuery+= " 	AND SB1A.B1_GRUPO = 'CMTP'"
-	ElseIF nTpProd == 7 .AND. ( U_VALIDACAO("RODA"))
+	ElseIF nTpProd == 7 .AND. (U_VALIDACAO("RODA") .OR. .T.)
 		cQuery+= " 	AND SB1A.B1_GRUPO = 'FTTA'"
 	Endif
 
@@ -1471,7 +1471,7 @@ Static Function fRefrButt(nOpc,cOpc,nTpProd)
 			elseif 	nOpc == 5
 				Corte_x:= "PRECON 5"
 			Endif
-		ElseIf nTpProd == 6 .AND. U_VALIDACAO("RODA")
+		ElseIf nTpProd == 6 .AND. U_VALIDACAO("RODA")  .OR. .T.
 			If 	nOpc == 1
 				Corte_x:= "DTCENTER 1"
 			elseif 	nOpc == 2
@@ -1483,7 +1483,7 @@ Static Function fRefrButt(nOpc,cOpc,nTpProd)
 			elseif 	nOpc == 5
 				Corte_x:= "DTCENTER 5"
 			Endif
-		ElseIf nTpProd == 7 .AND. U_VALIDACAO("RODA")
+		ElseIf nTpProd == 7 .AND. U_VALIDACAO("RODA") .OR. .T.
 			If 	nOpc == 1
 				Corte_x:= "FTTA 1"
 			elseif 	nOpc == 2
@@ -1838,7 +1838,7 @@ Static Function FTpProd()
 	nLin:= nLin+55
 	@ nLin, 040 BUTTON oTpProd5 PROMPT "PRECON" SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 5,  oDlgFil:end()) FONT oFont1 PIXEL
 	oTpProd5:setCSS(cCSSBtN1)
-	if U_VALIDACAO("RODA")
+	if U_VALIDACAO("RODA") .OR. .T.
 		@ nLin, 212 BUTTON oTpProd6 PROMPT "DATACENTER" SIZE 150, 053 OF oDlgFil ACTION (nTpProd := 6,  oDlgFil:end()) FONT oFont1 PIXEL
 		oTpProd6:setCSS(cCSSBtN1)
 		
