@@ -81,6 +81,7 @@ User Function DOMCORTPIG()
 	Private n2Leg2      := RGB(248,248,255)
 	Private oOk      	:= LoadBitmap( GetResources(), "CHECKED" )
 	Private oNo      	:= LoadBitmap( GetResources(), "UNCHECKED" )
+	Private oXX      	:= LoadBitmap( GetResources(), "NOCHECKED" )
 	Private cTmEnt    := GetMV('MV_XTMENT')
 	Private cTmSai    := GetMV('MV_XTMSAI')
 
@@ -445,7 +446,8 @@ Endif
 
 
 			AADD(oGetDados:aCols,Array(Len(oGetDados:aHeader)+1))
-			oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'FLAG'    })] := If(!EMPTY(ALLTRIM(QRY2->ZZ4_ETIQ)),oOk,oNo)
+			oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'FLAG'    })] := IIf(!EMPTY(ALLTRIM(QRY2->ZZ4_ETIQ)).AND.QRY2->ZZ4_QTDETI > 0,oOk, IIF(!EMPTY(ALLTRIM(QRY2->ZZ4_ETIQ)).AND.QRY2->ZZ4_QTDETI <= 0,oXX,oNo))
+			//oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'FLAG'    })] := If(!EMPTY(ALLTRIM(QRY2->ZZ4_ETIQ)),oOk,oNo)
 			oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'LEGENDA' })] := If(QRY2->ZZ4_STATUS == '1' ,"BR_VERMELHO",If(QRY2->ZZ4_STATUS == '2',"BR_AMARELO","BR_VERDE"))
 			oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'NOMEUSR' })] := UsrFullName ( ALLTRIM(QRY2->ZZ4_USER) )
 			oGetDados:aCols[Len(oGetDados:aCols),aScan(oGetDados:aHeader,{|aVet| Alltrim(aVet[2]) == 'FIBRA'   })] := QRY2->ZZ4_PROD
