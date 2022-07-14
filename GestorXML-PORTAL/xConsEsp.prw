@@ -104,32 +104,32 @@ User Function FiltroF3(cTitulo,cQuery,nTamCpo,cAlias,cCodigo,cCpoChave,cTitCampo
 		Return
 	Endif
    
-	Do While (cTabela)->(!Eof())
-		/*Cria o array conforme a quantidade de campos existentes na consulta SQL*/
-		cCampos	:= ""
-		aCampos 	:= {}
-		For nX := 1 TO FCount()
-			bCampo := {|nX| Field(nX) }
-			If ValType((cTabela)->&amp;(EVAL(bCampo,nX)) ) == "M" .OR. ValType((cTabela)->&amp;(EVAL(bCampo,nX)) ) == "U"
-				if ValType((cTabela)->&amp;(EVAL(bCampo,nX)) )=="C"
-					cCampos += "'" + (cTabela)->&amp;(EVAL(bCampo,nX)) + "',"
-				ElseIf ValType((cTabela)->&amp;(EVAL(bCampo,nX)) )=="D"
-					cCampos +=  DTOC((cTabela)->&amp;(EVAL(bCampo,nX))) + ","
-				Else
-					cCampos +=  (cTabela)->&amp;(EVAL(bCampo,nX)) + ","
-				Endif
+	// Do While (cTabela)->(!Eof())
+	// 	/*Cria o array conforme a quantidade de campos existentes na consulta SQL*/
+	// 	cCampos	:= ""
+	// 	aCampos 	:= {}
+	// 	For nX := 1 TO FCount()
+	// 		bCampo := {|nX| Field(nX) }
+	// 		If ValType((cTabela)->&amp;(EVAL(bCampo,nX)) ) == "M" .OR. ValType((cTabela)->&amp;(EVAL(bCampo,nX)) ) == "U"
+	// 			if ValType((cTabela)->&amp;(EVAL(bCampo,nX)) )=="C"
+	// 				cCampos += "'" + (cTabela)->&amp;(EVAL(bCampo,nX)) + "',"
+	// 			ElseIf ValType((cTabela)->&amp;(EVAL(bCampo,nX)) )=="D"
+	// 				cCampos +=  DTOC((cTabela)->&amp;(EVAL(bCampo,nX))) + ","
+	// 			Else
+	// 				cCampos +=  (cTabela)->&amp;(EVAL(bCampo,nX)) + ","
+	// 			Endif
 					
-				aadd(aCampos,{EVAL(bCampo,nX),Alltrim(RetTitle(EVAL(bCampo,nX))),"LEFT",30})
-			Endif
-		Next
+	// 			aadd(aCampos,{EVAL(bCampo,nX),Alltrim(RetTitle(EVAL(bCampo,nX))),"LEFT",30})
+	// 		Endif
+	// 	Next
      
-     	If !Empty(cCampos) 
-     		cCampos 	:= Substr(cCampos,1,len(cCampos)-1)
-     		aAdd( _aDados,&amp;("{"+cCampos+"}"))
-     	Endif
+    //  	If !Empty(cCampos) 
+    //  		cCampos 	:= Substr(cCampos,1,len(cCampos)-1)
+    //  		aAdd( _aDados,&amp;("{"+cCampos+"}"))
+    //  	Endif
      	
-		(cTabela)->(DbSkip())     
-	Enddo
+	// 	(cTabela)->(DbSkip())     
+	// Enddo
    
 	DbCloseArea(cTabela)
 	
@@ -146,16 +146,16 @@ User Function FiltroF3(cTitulo,cQuery,nTamCpo,cAlias,cCodigo,cCpoChave,cTitCampo
 	
 	oCodigo:= TGet():New( 003, 005,{|u| if(PCount()>0,_cCodigo:=u,_cCodigo)},_oDlg,205, 010,cMascara,{|| /*Processa({|| FiltroF3P(M->_cCodigo)},"Aguarde...")*/ },0,,,.F.,,.T.,,.F.,,.F.,.F.,,.F.,.F.,"",_cCodigo,,,,,,,cTitCampo + ": ",1 )
 	oCodigo:SetCss(cCSSGet)	
-	oButton1 := TButton():New(010, 212," &amp;Pesquisar ",_oDlg,{|| Processa({|| FiltroF3P(M->_cCodigo) },"Aguarde...") },037,013,,,.F.,.T.,.F.,,.F.,,,.F. )
-	oButton1:SetCss(cCSSButton)	
+	//oButton1 := TButton():New(010, 212," &amp;Pesquisar ",_oDlg,{|| Processa({|| FiltroF3P(M->_cCodigo) },"Aguarde...") },037,013,,,.F.,.T.,.F.,,.F.,,,.F. )
+	//oButton1:SetCss(cCSSButton)	
 	    
 	_oLista:= TCBrowse():New(26,05,245,90,,,,_oDlg,,,,,{|| _oLista:Refresh()},,,,,,,.F.,,.T.,,.F.,,,.f.)
 	nCont := 1
         //Para ficar dinâmico a criação das colunas, eu uso macro substituição "&amp;"
-	For nX := 1 to len(aCampos)
-		cColuna := &amp;('_oLista:AddColumn(TCColumn():New("'+aCampos[nX,2]+'", {|| _aDados[_oLista:nAt,'+StrZero(nCont,2)+']},PesqPict("'+cAlias+'","'+aCampos[nX,1]+'"),,,"'+aCampos[nX,3]+'", '+StrZero(aCampos[nX,4],3)+',.F.,.F.,,{|| .F. },,.F., ) )')
-		nCont++
-	Next
+	//For nX := 1 to len(aCampos)
+	//	cColuna := &amp;('_oLista:AddColumn(TCColumn():New("'+aCampos[nX,2]+'", {|| _aDados[_oLista:nAt,'+StrZero(nCont,2)+']},PesqPict("'+cAlias+'","'+aCampos[nX,1]+'"),,,"'+aCampos[nX,3]+'", '+StrZero(aCampos[nX,4],3)+',.F.,.F.,,{|| .F. },,.F., ) )')
+	//	nCont++
+	//Next
 	_oLista:SetArray(_aDados)
 	_oLista:bWhen 		 := { || Len(_aDados) > 0 }
 	_oLista:bLDblClick  := { || FiltroF3R(_oLista:nAt, _aDados, cRetCpo)  }

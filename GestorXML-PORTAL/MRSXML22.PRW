@@ -63,8 +63,8 @@ Return
 Static Function fprocPortal()
 
 	PRIVATE _oChave
-//	Private _cChave := '35220503618641000100550010000558371447664993'  // Space(44)
-    Private _cChave := Space(44)
+	//Private _cChave := '35220700798897000140550010000167671455951190'  // Space(44)
+	Private _cChave := Space(44)
 	Private _cCnpj  := substr(_cChave,7,14)
 
 	Private nXXFLAG
@@ -87,7 +87,6 @@ Static Function fprocPortal()
 	Private nXXTES
 	Private _cNF     := Space(10)
 	Private _cRazao  := Space(11)
-	Private _Cfornec := SPACE(40)
 	Private _cCodFOR := SPACE(06)
 	Private _cLojFOR := SPACE(02)
 	Private _cFornec := SPACE(30)
@@ -306,6 +305,7 @@ Return
 
 Static Function fCarregaNF(_cChave)
 //alterado mauricio
+	Local x
 
 	Private _cxCusto  :=space(Len(SD1->D1_CC))    // Alimenta Centro de Custo quando nao tem PC
 	Private _cxLocal  :=space(Len(SD1->D1_LOCAL)) // Alimenta aRMAZEM quando nao tem PC
@@ -563,7 +563,7 @@ Static Function fCarregaNF(_cChave)
 				//cTpFator := aFatorCon[y,2]
 
 				AADD(oXXGetDad:aCols,array(Len(oXXGetDad:aHeader)+1))
-				oXXGetDad:aCols[x,Len(oXXGetDad:aHeader)+1] := .F.			
+				oXXGetDad:aCols[x,Len(oXXGetDad:aHeader)+1] := .F.
 				oXXGetDad:aCols[x,nXXITEMXML] := StrZero(x,4)
 				oXXGetDad:aCols[x,nXXPRODXML] := aPrdXML[x]
 				oXXGetDad:aCols[x,nXXDESCRIC] := aPrdDesc[x]
@@ -749,7 +749,7 @@ Static Function fSalvaZZ3()
 	Local cAls1 := IIf(SubStr(cTab1,1,1)=="S",SubStr(cTab1,2,2),cTab1)
 	Local cTab3 := AllTrim(GetMV("MX_MRALS03"))
 	Local cAls3 := IIf(SubStr(cTab3,1,1)=="S",SubStr(cTab3,2,2),cTab3)
-	Local aArea := (cTab3)->(GetArea())
+	//Local aArea := (cTab3)->(GetArea())
 
 	(cTab3)->( dbSetOrder(1) )
 
@@ -773,7 +773,7 @@ Static Function fSalvaZZ3()
 			(cTab3)->&(cAls3+"_ITEMPC") := oXXGetDad:aCols[x][nXXITEMPC]
 			(cTab3)->&(cAls3+"_QTD")    := oXXGetDad:aCols[x][nXXQTD2]
 			(cTab3)->&(cAls3+"_COD")    := oXXGetDad:aCols[x][nXXPRODUTO]
-			(cTab3)->&(cAls3+"_ORIGEM") :=  "I" // G=Gestor I=Interno(Portal) P=Portal Fornecedor			
+			(cTab3)->&(cAls3+"_ORIGEM") :=  "I" // G=Gestor I=Interno(Portal) P=Portal Fornecedor
 			//	(cTab3)->&(cAls3+"_DATPRF") := oXXGetDad:aCols[x]dXXDATPRF]
 			(cTab3)->( msUnlock() )
 		EndIf
@@ -798,11 +798,11 @@ Return _Retorno
 User Function VcpoPort()  // Valida Pedido Portal
 	Local _Retorno := .T.
 	Local cPedido  := SC7->C7_NUM
-	Local cItemPC  := SC7->C7_ITEM
-	Local cProduto := SC7->C7_PRODUTO
-	Local cQuery
-	Local cProdXML := oXXGetDad:aCols[oXXGetDad:oBrowse:nAt,nXXPRODXML]
-	Local cPedido  := oXXGetDad:aCols[oXXGetDad:oBrowse:nAt,nXXPEDIDO ]
+	//Local cItemPC  := SC7->C7_ITEM
+	//Local cProduto := SC7->C7_PRODUTO
+	//Local cQuery
+	//Local cProdXML := oXXGetDad:aCols[oXXGetDad:oBrowse:nAt,nXXPRODXML]
+	//Local cPedido  := oXXGetDad:aCols[oXXGetDad:oBrowse:nAt,nXXPEDIDO ]
 
 	If ReadVar() == "M->XX_PEDIDO"
 		IF !Empty(M->XX_PEDIDO)
@@ -829,15 +829,15 @@ User Function VcpoPort()  // Valida Pedido Portal
 		IF !Empty(cPedido)
 			SC7->( dbSetOrder(1) )
 			If SC7->( dbSeek( xFilial() + cPedido + M->XX_ITEM ) )
-					SA5->( dbSetOrder( RetOrder("SA5","A5_FILIAL+A5_FORNECE+A5_LOJA+A5_CODPRF") ) )
-					//If 
+				SA5->( dbSetOrder( RetOrder("SA5","A5_FILIAL+A5_FORNECE+A5_LOJA+A5_CODPRF") ) )
+				//If
 
-					cInternBkp := __cInternet
-					__cInternet := Nil
-					MsgStop("Pedido '"+M->XX_PEDIDO+"' não pertence ao Fornecedor " + _cCodFOR+'/'+_cLojFOR + Chr(13) + 'CNPJ: ' + _cCnpj)
-					_Retorno := .F.
-					__cInternet := cInternBkp
-				
+				cInternBkp := __cInternet
+				__cInternet := Nil
+				MsgStop("Pedido '"+M->XX_PEDIDO+"' não pertence ao Fornecedor " + _cCodFOR+'/'+_cLojFOR + Chr(13) + 'CNPJ: ' + _cCnpj)
+				_Retorno := .F.
+				__cInternet := cInternBkp
+
 			Else
 				cInternBkp := __cInternet
 				__cInternet := Nil
@@ -846,11 +846,11 @@ User Function VcpoPort()  // Valida Pedido Portal
 				__cInternet := cInternBkp
 			ENDIF
 		else
-				cInternBkp := __cInternet
-				__cInternet := Nil
-				MsgStop("Favor preencher o campo Pedido antes do Item")
-				_Retorno := .F.
-				__cInternet := cInternBkp
+			cInternBkp := __cInternet
+			__cInternet := Nil
+			MsgStop("Favor preencher o campo Pedido antes do Item")
+			_Retorno := .F.
+			__cInternet := cInternBkp
 		EndIf
 	ENDIF
 Return _Retorno
