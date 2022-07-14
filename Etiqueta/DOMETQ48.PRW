@@ -380,7 +380,7 @@ User Function DOMETQ48(cNumOP,cNumSenf,nQtdEmb,nQtdEtq,cNivel,aFilhas,lImpressao
 			cPrn         := "DOMETQ48.prn"
 			aVar         := aVar
 			cVetor      := "!aVar"
-			lTemperatura := .T.
+			lTemperatura := .F.
 			U_IMPPRN(cLocImp,cPrn,aVar,cVetor,lTemperatura)
 
 		Next x
