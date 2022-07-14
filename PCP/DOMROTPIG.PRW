@@ -16,23 +16,23 @@ since 19/03/2020
 User Function DOMROTPIG(cTipo,nMaxLinhas)
 	Local oBitmap1
 	Local oButton1
-	Local oButton2
-	Local oButton3
-	Local oButton4
-	Local oButton5
-	Local oButton6
+
 	Local oSay1
 	Local oSay2
 	Local oSay3
 	Local oSay4
 	Local oSay5
 	Local oSay6
-	Local oBnt1
-	Local oBnt2
-	Local oBnt3
 	Local oLeg1
 	Local oLeg2
 	Local oLeg3
+
+	If Empty(cTipo)
+		cTipo:= "CORD"
+		nMaxLinhas:= 7
+		//MsgStop("Favor solicitar manutenção no menu")
+		//Return
+	EndIf
 
 	Private cUserSis   := Upper(Alltrim(Substr(cUsuario,7,15)))
 	Private oSayHuawei
@@ -64,6 +64,7 @@ User Function DOMROTPIG(cTipo,nMaxLinhas)
 	Private oOk      	:= LoadBitmap( GetResources(), "VERDE" )
 	Private oNo      	:= LoadBitmap( GetResources(), "VERMELHO" )
 	Private oIn      	:= LoadBitmap( GetResources(), "AMARELO" )
+	Private oErro      	:= LoadBitmap( GetResources(), "NGBIOALERTA_01" )
 
 	Private c2Leg1      := "1"
 	Private n2Leg1      := RGB(176,224,230)
@@ -188,7 +189,7 @@ User Function DOMROTPIG(cTipo,nMaxLinhas)
 
 	oGetDados2:= (MsNewGetDados():New( 125, 455 , 288 ,660,NIL ,"AlwaysTrue" ,"AlwaysTrue", /*inicpos*/,/*aCpoHead*/,/*nfreeze*/,9999 ,/*VldCpo*/,/*superdel*/,/*delok*/,oDlg,aHeader2,aCols2))
 	oGetDados2:oBrowse:lUseDefaultColors := .F.
-	oGetDados2:oBrowse:SetBlkBackColor({|| CorGd02(oGetDados2:nAt,8421376)})
+	oGetDados2:oBrowse:SetBlkBackColor({|| CorGd02(oGetDados2:nAt)})
 	oGetDados2:oBrowse:Refresh()
 	oGetDados2:oBrowse:bLDblClick := { || cEtiqOfc:= "S"+oGetDados2:aCols[oGetDados2:nAt,3],fVldEti(@cEtiqOfc) }
 	MONTATELA2(nMaxLinhas)
@@ -221,7 +222,6 @@ Return
 
 Static Function CorGd02(nLinha)
 	Local nRet := 16777215
-	Local nPosCor	:= aScan(oGetDados2:aHeader,{|_y| Alltrim(_y[2]) == "COR2"  })
 	Local nPosOp	:= aScan(oGetDados2:aHeader,{|_y| Alltrim(_y[2]) == "OP"  })
 
 
@@ -266,7 +266,7 @@ Static Function fVldEti(cEtiqOfc)
 				cEtiqOfc := SPACE(30)
 				cComp := CriaVar("B1_COD")
 				oEtiq:Refresh()
-				oEtiq:setfocus
+				oEtiq:setfocus()
 				cCodOp:= Space(11)
 				Return .F.
 			Endif
@@ -280,15 +280,17 @@ Static Function fVldEti(cEtiqOfc)
 				// nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosGpr]) $ "FO|FOFS"})
 				// oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
-				For _x := 1 to len(oGetDados:aCols)
-					if	oGetDados:aCols[_x,nPQtdent] == oGetDados:aCols[_x,nPQtdOp]
-						oGetDados:aCols[_x,nPosFlag] := oOk
-					Elseif oGetDados:aCols[_x,nPQtdent] == 0
-						oGetDados:aCols[_x,nPosFlag] := oNo
-					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
-						oGetDados:aCols[_x,nPosFlag] := oIn
-					Endif
-				Next _x
+					For _x := 1 to len(oGetDados:aCols)
+						if	oGetDados:aCols[_x,nPQtdent] == oGetDados:aCols[_x,nPQtdOp]
+							oGetDados:aCols[_x,nPosFlag] := oOk
+						Elseif oGetDados:aCols[_x,nPQtdent] == 0
+							oGetDados:aCols[_x,nPosFlag] := oNo
+						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
+							oGetDados:aCols[_x,nPosFlag] := oIn
+						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+							oGetDados:aCols[_x,nPosFlag] := oErro
+						Endif
+					Next _x
 			Endif
 
 		ElseIf !empty(cCodOp) .and. alltrim(Subs(cEtiqOfc,2,11)) <> cCodOp
@@ -310,7 +312,7 @@ Static Function fVldEti(cEtiqOfc)
 					cEtiqOfc := SPACE(30)
 					cComp := CriaVar("B1_COD")
 					oEtiq:Refresh()
-					oEtiq:setfocus
+					oEtiq:setfocus()
 					cCodOp:= Space(11)
 					Return .F.
 				Endif
@@ -326,12 +328,16 @@ Static Function fVldEti(cEtiqOfc)
 					// oGetDados:aCols[nPos,nPQtdent] := oGetDados:aCols[nPos,nPQtdent] + 1
 
 					For _x := 1 to len(oGetDados:aCols)
+
 						if	oGetDados:aCols[_x,nPQtdent] == oGetDados:aCols[_x,nPQtdOp]
 							oGetDados:aCols[_x,nPosFlag] := oOk
 						Elseif oGetDados:aCols[_x,nPQtdent] == 0
 							oGetDados:aCols[_x,nPosFlag] := oNo
 						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
 							oGetDados:aCols[_x,nPosFlag] := oIn
+						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+							oGetDados:aCols[_x,nPosFlag] := oErro
+
 						Endif
 					Next _x
 				Endif
@@ -342,7 +348,7 @@ Static Function fVldEti(cEtiqOfc)
 				cEtiqOfc := SPACE(30)
 				cComp := CriaVar("B1_COD")
 				oEtiq:Refresh()
-				oEtiq:setfocus
+				oEtiq:setfocus()
 				Return .F.
 			Endif
 
@@ -362,16 +368,17 @@ Static Function fVldEti(cEtiqOfc)
 						oGetDados:aCols[_x,nPosFlag] := oOk
 					Elseif oGetDados:aCols[_x,nPQtdent] == 0
 						oGetDados:aCols[_x,nPosFlag] := oNo
-					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
-					oGetDados:aCols[_x,nPosFlag] := oIn
+					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
+						oGetDados:aCols[_x,nPosFlag] := oIn
+					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+						oGetDados:aCols[_x,nPosFlag] := oErro
 					Endif
 				Next _x
 			Endif
 		Endif
 
 		/*/Etiq. Furukawa/*/
-	Elseif Substring(cEtiqOfc,LEN(alltrim(cEtiqOfc)),1) == "X"
-
+	Elseif Substring(cEtiqOfc,LEN(alltrim(cEtiqOfc)),1) == "X" .OR. "DOM-" $ alltrim(cEtiqOfc)
 		If Empty(cCodOp)
 
 			XD4->(DBSETORDER(3))
@@ -387,7 +394,7 @@ Static Function fVldEti(cEtiqOfc)
 				cEtiqOfc := SPACE(30)
 				cComp := CriaVar("B1_COD")
 				oEtiq:Refresh()
-				oEtiq:setfocus
+				oEtiq:setfocus()
 				cCodOp:= Space(11)
 				Return .F.
 			Endif
@@ -408,6 +415,8 @@ Static Function fVldEti(cEtiqOfc)
 						oGetDados:aCols[_x,nPosFlag] := oNo
 					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
 						oGetDados:aCols[_x,nPosFlag] := oIn
+					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+						oGetDados:aCols[_x,nPosFlag] := oErro
 					Endif
 				Next _x
 			Endif
@@ -432,7 +441,7 @@ Static Function fVldEti(cEtiqOfc)
 						cEtiqOfc := SPACE(30)
 						cComp := CriaVar("B1_COD")
 						oEtiq:Refresh()
-						oEtiq:setfocus
+						oEtiq:setfocus()
 						cCodOp:= Space(11)
 						Return .F.
 					Endif
@@ -454,6 +463,8 @@ Static Function fVldEti(cEtiqOfc)
 								oGetDados:aCols[_x,nPosFlag] := oNo
 							Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
 								oGetDados:aCols[_x,nPosFlag] := oIn
+							Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+								oGetDados:aCols[_x,nPosFlag] := oErro
 							Endif
 						Next _x
 					Endif
@@ -464,7 +475,7 @@ Static Function fVldEti(cEtiqOfc)
 					cEtiqOfc := SPACE(30)
 					cComp := CriaVar("B1_COD")
 					oEtiq:Refresh()
-					oEtiq:setfocus
+					oEtiq:setfocus()
 					Return .F.
 				Endif
 
@@ -485,6 +496,8 @@ Static Function fVldEti(cEtiqOfc)
 							oGetDados:aCols[_x,nPosFlag] := oNo
 							Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
 							oGetDados:aCols[_x,nPosFlag] := oIn
+						Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+							oGetDados:aCols[_x,nPosFlag] := oErro
 						Endif
 					Next _x
 				Endif
@@ -509,7 +522,7 @@ Static Function fVldEti(cEtiqOfc)
 				cEtiqOfc := SPACE(30)
 				cComp := CriaVar("B1_COD")
 				oEtiq:Refresh()
-				oEtiq:setfocus
+				oEtiq:setfocus()
 				Return .F.
 			ElseIf !empty(cCodOp) .and.   !empty(alltrim(XD1->XD1_OP)) .and. alltrim(XD1->XD1_OP) <> cCodOp
 				MyMsg("Etiqueta pertence a outra ordem de produção: Nº OP "+alltrim(XD1->XD1_OP)  ,1)
@@ -528,7 +541,7 @@ Static Function fVldEti(cEtiqOfc)
 					cEtiqOfc := SPACE(30)
 					cComp := CriaVar("B1_COD")
 					oEtiq:Refresh()
-					oEtiq:setfocus
+					oEtiq:setfocus()
 					Return .F.
 				Endif
 			ElseIf XD1->XD1_QTDATU <= 0
@@ -538,7 +551,7 @@ Static Function fVldEti(cEtiqOfc)
 				cEtiqOfc := SPACE(30)
 				cComp := CriaVar("B1_COD")
 				oEtiq:Refresh()
-				oEtiq:setfocus
+				oEtiq:setfocus()
 				Return .F.
 			ElseIf empty(cCodOp)
 				cCodOp:=  XD1->XD1_OP
@@ -555,7 +568,7 @@ Static Function fVldEti(cEtiqOfc)
 				cEtiqOfc := SPACE(30)
 				cComp := CriaVar("B1_COD")
 				oEtiq:Refresh()
-				oEtiq:setfocus
+				oEtiq:setfocus()
 				Return .F.
 			Endif
 
@@ -572,7 +585,7 @@ Static Function fVldEti(cEtiqOfc)
 					cEtiqOfc := SPACE(30)
 					cComp := CriaVar("B1_COD")
 					oEtiq:Refresh()
-					oEtiq:setfocus
+					oEtiq:setfocus()
 					Return .F.
 				Else
 
@@ -596,6 +609,9 @@ Static Function fVldEti(cEtiqOfc)
 						oGetDados:aCols[nPos,nPosFlag] := oNo
 					Elseif oGetDados:aCols[nPos,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
 						oGetDados:aCols[nPos,nPosFlag] := oIn
+					Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+						oGetDados:aCols[_x,nPosFlag] := oErro
+
 					Endif
 
 				Endif
@@ -627,7 +643,6 @@ Return lRet
 static Function MyMsg(cAviso,nOpc, lPerg)
 	Local oFont1 := TFont():New("Arial",,044,,.F.,,,,,.F.,.F.)
 	Local oFont2 := TFont():New("Arial",,020,,.F.,,,,,.F.,.F.)
-	Local oFont3 := TFont():New("Arial",,020,,.F.,,,,,.F.,.F.)
 
 	Local oSay1
 	Local lRet:= .T.
@@ -675,8 +690,8 @@ static Function MyMsg(cAviso,nOpc, lPerg)
 //-------------------------------
 Static Function MontaTela()
 	Local cQuery:= ""
-	Local nPosCor	:= GdFieldPos( "COR" )
-	Local nPosFlag	:= GdFieldPos( "FLAG" )
+	//Local nPosCor	:= GdFieldPos( "COR" )
+	//Local nPosFlag	:= GdFieldPos( "FLAG" )
 	Local nQtdOp    := 0
 
 	if empty(cCodOp)
@@ -686,7 +701,6 @@ Static Function MontaTela()
 	If select("QRY2") > 0
 		QRY2->(dbClosearea())
 	Endif
-
 	cQuery:= " SELECT * "
 	cQuery+= " FROM "+RETSQLNAME("SD4")+" SD4 "
 	cQuery+= " INNER JOIN "+RETSQLNAME("SB1")+" SB1 ON B1_COD = D4_COD  "
@@ -796,8 +810,6 @@ Static Function MontaTela()
 	fStatus()
 
 Return
-
-
 
 
 //--------------------------------------------------------------
@@ -946,12 +958,13 @@ Return nCelula
 Static function fVldXd4St(cCodOp,_nSerie)
 	Local cQuery:=""
 	Local lRet:= .T.
-	Local nPosComp	:= GdFieldPos( "COMP" )
+	//Local nPosComp	:= GdFieldPos( "COMP" )
 	Local nPosGpr	:= GdFieldPos( "GRUPO" )
 	Local nPQtdent	:= GdFieldPos( "QTDENT" )
-	Local nPQtdOp	:= GdFieldPos( "QTDOP" )
-	Local nPosFlag	:= GdFieldPos( "FLAG" )
-	Local _y
+	//Local nPQtdOp	:= GdFieldPos( "QTDOP" )
+	//Local nPosFlag	:= GdFieldPos( "FLAG" )
+	Local _x
+	local _y
 
 	IF nCelula > 7
 		Return .F.
@@ -1053,7 +1066,7 @@ Static Function fStatus()
 	Local nLinha 	:= aScan(oGetDados2:acols,{|aVet| Alltrim(aVet[nPosOp]) == alltrim(cCodOP)  })
 	Local nToReg:= len(oGetDados:aCols)
 	Local nRegOk:= 0
-	Local nPerc := 0
+	//Local nPerc := 0
 	Local _x := 0
 	Local cStatus:= '1'
 	Local nTotProds:= 0
@@ -1072,6 +1085,8 @@ Static Function fStatus()
 			oGetDados:aCols[_x,nPosFlag] := oNo
 		Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] < oGetDados:aCols[_x,nPQtdOp]
 			oGetDados:aCols[_x,nPosFlag] := oIn
+		Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[_x,nPQtdent] > oGetDados:aCols[_x,nPQtdOp]
+			oGetDados:aCols[_x,nPosFlag] := oErro
 		Endif
 
 	Next _x
@@ -1157,7 +1172,7 @@ Static function fVldXd1St(cCodOp)
 	Local cQuery:=""
 	Local lRet:= .T.
 	Local nPosComp	:= GdFieldPos( "COMP" )
-	Local nPosGpr	:= GdFieldPos( "GRUPO" )
+	//Local nPosGpr	:= GdFieldPos( "GRUPO" )
 	Local nPQtdent	:= GdFieldPos( "QTDENT" )
 	Local nPQtdOp	:= GdFieldPos( "QTDOP" )
 	Local nPosFlag	:= GdFieldPos( "FLAG" )
@@ -1179,14 +1194,18 @@ Static function fVldXd1St(cCodOp)
 	if QRY->(!Eof())
 		WHILE QRY->(!EOF())
 			nPos:= aScan(oGetDados:aCols,{|x| Alltrim(x[nPosComp]) == alltrim(XD1_COD) })
-			oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
 
-			if	oGetDados:aCols[nPos,nPQtdent] == oGetDados:aCols[nPos,nPQtdOp]
-				oGetDados:aCols[nPos,nPosFlag] := oOk
-			Elseif oGetDados:aCols[nPos,nPQtdent] == 0
-				oGetDados:aCols[nPos,nPosFlag] := oNo
-			Elseif oGetDados:aCols[nPos,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
-				oGetDados:aCols[nPos,nPosFlag] := oIn
+			if nPos > 0
+				oGetDados:aCols[nPos,nPQtdent] := QRY->QTDLID
+				if	oGetDados:aCols[nPos,nPQtdent] == oGetDados:aCols[nPos,nPQtdOp]
+					oGetDados:aCols[nPos,nPosFlag] := oOk
+				Elseif oGetDados:aCols[nPos,nPQtdent] == 0
+					oGetDados:aCols[nPos,nPosFlag] := oNo
+				Elseif oGetDados:aCols[nPos,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] < oGetDados:aCols[nPos,nPQtdOp]
+					oGetDados:aCols[nPos,nPosFlag] := oIn
+				Elseif oGetDados:aCols[_x,nPQtdent] > 0 .and. oGetDados:aCols[nPos,nPQtdent] > oGetDados:aCols[nPos,nPQtdOp]
+					oGetDados:aCols[_x,nPosFlag] := oErro
+				Endif
 			Endif
 
 			QRY->(DbSkip())
