@@ -42,6 +42,7 @@ User Function DOMACD47()
 	Private _nQtd          := 0
 	Private _aDados        := {}
 	Private _aEnd          := {}
+	Private aProds		   := {}
 	Private _nCont
 	Private _cDtaFat       := dDataBase
 	Private nQtdCaixa      := 0
@@ -101,6 +102,8 @@ Return
 Static Function VldEtiq()
 
 	Local _lRet := .T.
+	
+
 	_cCliEmp    := ""
 	_cDescric   := ""
 	_cEmbalag   := ""
@@ -126,12 +129,13 @@ Static Function VldEtiq()
 	If XD1->( dbSeek(xFilial("XD1") + _cNumEtqPA ) )
 
 		cItemPV := Alltrim(Subs(XD1->XD1_PVSENF,7,2))
-		_nQtdEtiqs += XD1->XD1_QTDORI
-
 		SB1->(dbSeek(xFilial("SB1")+XD1->XD1_COD))
 
 		iF EMPTY(XD1->XD1_PVSENF)
 			U_MsgColetor("Pedido não informado na Etiqueta (XD1_PVSENF) ")
+			_cNumEtqPA := Space(_nTamEtiq)
+			__oGetOP:Refresh()
+			__oGetOP:SetFocus()
 			Return .F.
 		Endif
 
@@ -147,7 +151,6 @@ Static Function VldEtiq()
 		lGlobal := .F.
 		If ("GLOBO GROUP S.A." $ Upper(Alltrim(SA1->A1_NOME))) .Or. ("GLOBO GROUP S.A." $ Upper(Alltrim(SA1->A1_NREDUZ))) .or.;
 				("TELECOM ARGENTINA S.A." $ Upper(Alltrim(SA1->A1_NOME))) .Or. ("TELECOM ARGENTINA S.A." $ Upper(Alltrim(SA1->A1_NREDUZ)))
-
 			lGlobal := .T.
 		Else
 			U_MsgColetor("Esse volume não pertence ao cliente GLOBO GROUP S.A.")
@@ -157,6 +160,18 @@ Static Function VldEtiq()
 			Return(.F.)
 		EndIf
 
+		nPos:= aScan(aProds,{ |aVet| alltrim(aVet[1]) == alltrim(XD1->XD1_COD)})
+		if len(aProds)> 0 .and. nPos == 0
+			U_MsgColetor("Produto diferente dos já informados anteriormente nessa embalagem", "Verifique")
+			_cNumEtqPA := Space(_nTamEtiq)
+			__oGetOP:Refresh()
+			__oGetOP:SetFocus()
+			Return .F.
+		Endif 
+		
+		_nQtdEtiqs += XD1->XD1_QTDORI
+		aadd(aProds,XD1->XD1_COD)
+		
 		_cNumPed  := SC5->C5_NUM + cItemPV
 		_cCliEmp  := SC5->C5_CLIENTE
 		_cDescric := SA1->A1_NOME
