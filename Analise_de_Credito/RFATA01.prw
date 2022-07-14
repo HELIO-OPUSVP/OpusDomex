@@ -145,7 +145,9 @@ Static Function _Gravar()
 		
 				cTexto   := StrTran(cTexto,Chr(13),"<br>")
 
-	 			cPara    := "marco.aurelio@opusvp.com.br;"
+				cPara	 := 'patricia.vieira@rosenbergerdomex.com.br;adriana.souza@rosenbergerdomex.com.br'  
+	 			cPara    += ";marco.aurelio@opusvp.com.br"
+
 				cCC      := ""
  				cArquivo := ""
 
