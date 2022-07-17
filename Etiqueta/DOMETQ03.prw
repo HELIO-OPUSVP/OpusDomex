@@ -37,7 +37,7 @@ Local aCodAnat   := {}        //Codigos Anatel, Array
 Local cCdAnat1   := ""        //Codigo Anatel 1
 Local cCdAnat2   := ""        //Codigo Anatel 2
 Local cCdAnat3   := ""        //Codigo Anatel 3
-
+Local x,_nX 		 := 0
 Private lAchou   := .T.
 Private lNokia   := .F.
 Private aGrpAnat := {}     //Codigos Anatel Agrupados
@@ -312,7 +312,7 @@ If lImpressao
 	aRetEmbala   := U_RetEmbala(SB1->B1_COD,cNivel)
 	
 	//Se o nivel da embalagem foi 01 e a quantidade por embalagem for maior que 1.
-	If Alltrim(cNivel) == "1" .And. aRetEmbala[2] > 1 
+	If Alltrim(cNivel) == "1" .And. aRetEmbala[2] > 1 .And. !ISINCALLSTACK('U_DOMETDLG') 
 		If lFinalOP
 			nQtdEmb := aRetEmbala[2]		
 			MVPAR02:= nQtdEtq   //Qtd Embalagem

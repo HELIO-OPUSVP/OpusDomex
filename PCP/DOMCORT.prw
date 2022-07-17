@@ -152,7 +152,7 @@ User Function DOMCORT()
 
 
 //@ 023, 550 MSGET oStatus  VAR cStatus 			SIZE 080, 078 OF oDlg PICTURE "@!" COLORS 16711680, 16777215 FONT oFont96B PIXEL  WHen .F.
-	@ 115, 545 BUTTON oButton5 PROMPT "Excluir Etiq." 	SIZE 070, 025 OF oDlg ACTION (fExclEti() ) FONT oFont14 PIXEL
+	@ 115, 545 BUTTON oButton5 PROMPT "Excluir Etiq." 	SIZE 070, 025 OF oDlg ACTION (IIF (fAutoriza(), fExclEti(),.F.) ) FONT oFont14 PIXEL
 	if nCelula == 7
 		@ 140, 545 BUTTON oButton5 PROMPT "Fibra Falsa" 	SIZE 070, 025 OF oDlg ACTION ( fImpEtqFF()) FONT oFont14 PIXEL
 	Endif
@@ -278,13 +278,22 @@ Static Function fVldOp(nOpc)
 	dbSelectArea("SC2")
 	SC2->(dbSetOrder(1))
 	if SC2->(dbSeek(xFilial("SC2")+cCodOp))
-
 		IF !EMPTY(SC2->C2_DATRF)
 			MyMsg("Ordem de produção encerrada!" ,1)
 			LimpaTudo()
 			Return .F.
 		Endif
 
+		SB1->(DbSetOrder(1))
+		IF SB1->(DbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
+			IF SB1->B1_GRUPO == 'CORD'
+				IF alltrim(SB1->B1_SUBCLAS) == 'KIT PIGT'
+					MyMsg("Essa ordem de produção pertence a Clase PIGTAIL..."+ Chr(13)+Chr(10)+"Entre pela rotina Corte Pigtail"  ,1)
+					LimpaTudo()
+					Return .F.
+				Endif
+			Endif
+		ENDIF
 
 
 		cCodPA:= SC2->C2_PRODUTO
@@ -335,13 +344,13 @@ Static Function fVldOp(nOpc)
 								nQtdOp:= ROUND(SC2->C2_QUANT,4) * nQtViaFS
 							ELSE
 								If Select("TMP_B1") <> 0
-									TMP_B1->( dbCloseArea())
+									TMP_B1->(dbCloseArea())
 								EndIf
 
-								cQuery:= " SELECT B1_COD FROM "+RetSqlName("SB1")
+								cQuery:= " SELECT B1_COD FROM "+RetSqlName("SB1") 
 								cQuery+= " WHERE B1_ALTER  = '"+QRY->D4_COD+"' "
 								cQuery+= " AND B1_FILIAL = '"+xFilial("SB1")+"'"
-								cQuery+= " AND  AND D_E_L_E_T_ = '' "
+								cQuery+= " AND D_E_L_E_T_ = '' "
 								dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TMP_B1",.T.,.T.)
 
 								SG1->(DbSetOrder(1))
@@ -711,7 +720,7 @@ Static Function fVldEti(cEtiqOfc)
 
 	IF U_VALIDACAO("RODA")
 		SD4->(DbSetOrder(1))//D4_FILIAL, D4_OP, D4_COD
-		if SD4->(dbSeek(xFilial)+cCodOp+cCFibra)
+		if SD4->(dbSeek(xFilial("SD4")+cCodOp+cCFibra))
 			nQtViaFS:= QRY->D4_XQTDVIA
 
 			if nQtViaFS == 0
@@ -729,7 +738,7 @@ Static Function fVldEti(cEtiqOfc)
 						cQuery:= " SELECT B1_COD FROM "+RetSqlName("SB1")
 						cQuery+= " WHERE B1_ALTER  = '"+QRY->D4_COD+"' "
 						cQuery+= " AND B1_FILIAL = '"+xFilial("SB1")+"'"
-						cQuery+= " AND  AND D_E_L_E_T_ = '' "
+						cQuery+= " AND D_E_L_E_T_ = '' "
 						dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),"TMP_B1",.T.,.T.)
 
 						SG1->(DbSetOrder(1))
@@ -2327,7 +2336,7 @@ Static Function AjustSup( cFibAj, cQRoloAj, cApontAj, cDescAj, cEtiAj,cNV )
 	@ 141, 318 MSGET oSenhaSup VAR cSenhaC SIZE 097, 022  Password OF oDlgSup valid(fOK(2)) COLORS 16711680, 16777215 FONT oFont5 PIXEL
 
 	@ 172, 014 SAY oSay3 PROMPT "Etiqueta" SIZE 124, 019 OF oDlgSup FONT oFont2 COLORS 16711680, 16777215 PIXEL
-	@ 168, 084 MSGET oConfEtiAj VAR cConfEtiAj SIZE 119, 022 OF oDlgSup  valid(fVldEtqSup(cEtiAj,cConfEtiAj)) COLORS 16711680, 16777215 FONT oFont2 PIXEL
+	@ 168, 084 MSGET oConfEtiAj VAR cConfEtiAj SIZE 119, 022 OF oDlgSup  valid( fVldEtqSup(cEtiAj,cConfEtiAj)) COLORS 16711680, 16777215 FONT oFont2 PIXEL
 
 	if cNivel == "G"
 		@ 172, 220 SAY oSay8 PROMPT "Qtd.Aferida" SIZE 073, 020 OF oDlgSup FONT oFont2 COLORS 16711680, 16777215 PIXEL
@@ -2374,6 +2383,7 @@ Static Function fOK(nOpc)
 	if nopc == 2
 		If Empty(alltrim(cSenhaC))
 			MyMsg("Senha em branco.",1)
+			Return .F.
 		Else
 			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 			//³Busca o usuario digitado			   						³
@@ -2395,11 +2405,14 @@ Static Function fOK(nOpc)
 				Else
 					If cNivel ==  "S" .AND. (Upper(AllTrim(aUsrRet[1,13])) <> Upper("Supervisor de Producao")) .or. cNivel ==  "G" .AND.  (Upper(AllTrim(aUsrRet[1,13])) <> Upper("Gerente de Producao"))
 						MyMsg("Usuario não é SUPERVISOR",1)
+						Return .F.
 					ElseIf cNivel ==  "G" .AND.  (Upper(AllTrim(aUsrRet[1,13])) <> Upper("Gerente de Producao"))
 						MyMsg("Usuario não é GERENTE",1)
+						Return .F.
 					Else
 						cSuperv:= cGetSup
 						lAjusteOk := .T.
+						Return .T.
 					EndIf
 				EndIf
 			Else
@@ -2409,9 +2422,6 @@ Static Function fOK(nOpc)
 		Endif
 	Endif
 
-//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-//³Usuario ou senha em branco			   						³
-//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 Return .T.
 
 Static Function fVldEtqSup(cEtiAj,cConfEtiAj)
@@ -2810,5 +2820,54 @@ Static Function fFurukawa(cCodOp)
 		cLocImp:= '000013'
 		lRet:= .T.
 	Endif
+
+Return lRet
+
+Static Function fAutoriza()
+	Local lRet:= .F.
+	Local oFont2 := TFont():New("Arial",,032,,.T.,,,,,.F.,.F.)
+	Local oFont3 := TFont():New("Arial",,032,,.T.,,,,,.F.,.F.)
+	Local oFont4 := TFont():New("Arial",,044,,.T.,,,,,.F.,.F.)
+	Local oFont5 := TFont():New("Arial",,060,,.T.,,,,,.F.,.F.)
+	Local oButton1
+	Local oButton2
+	Local oSay1
+	Local oSay8
+	Local oSay9
+
+	Private cCerto:= cStartPath + 'Certo2.jpg'
+	Private cErro := cStartPath + 'Errado2.jpg'
+	Private cStatus:= cStartPath + 'Interroga2.png'
+	Private oSenhaSup
+	Private oDlgSup
+	Private cNivel:= "S"
+
+	cSenhaC := SPACE(20)
+
+	if U_VALIDACAO("RODA")  .AND. (DtoS(Date()) >= '20220616') .or. DtoS(Date()) == '20220615' .and. time() >= '15:00:00'
+
+		DEFINE MSDIALOG oDlgSup TITLE "Autorização para Exclusão de Etiqueta" FROM 000, 000  TO 500, 1000 COLORS 0, 16777215 PIXEL  Style DS_MODALFRAME
+		oDlgSup:lEscClose     := .F.
+
+		@ 059, 420 BITMAP oBitmapSup SIZE 100, 098 OF oDlgSup FILENAME cStatus NOBORDER PIXEL
+
+		@ 008, 082 SAY oSay5 PROMPT "AUTORIZAR EXCLUSÃO DE ETIQUETA" SIZE 337, 028 OF oDlgSup FONT oFont4 COLORS 0, 16777215 PIXEL
+		@ 037, 118 SAY oSay1 PROMPT "*** LIBERAÇÃO DO SUPERVISOR ***" SIZE 236, 019 OF oDlgSup FONT oFont3 COLORS 0, 16777215 PIXEL
+		
+
+		@ 141, 008 SAY oSay9 PROMPT "Supervisor" SIZE 074, 020 OF oDlgSup FONT oFont2 COLORS 16711680, 16777215 PIXEL
+		@ 141, 084 MSGET oGetSup VAR cGetSup SIZE 180, 022 OF oDlgSup valid(lRet:= fOK(1)) COLORS 16711680, 16777215 FONT oFont2 PIXEL
+
+		@ 141, 274 SAY oSay8 PROMPT "Senha" SIZE 053, 020 OF oDlgSup FONT oFont2 COLORS 16711680, 16777215 PIXEL
+		@ 141, 318 MSGET oSenhaSup VAR cSenhaC SIZE 097, 022  Password OF oDlgSup valid(lRet:= fOK(2)) COLORS 16711680, 16777215 FONT oFont5 PIXEL
+
+		@ 200, 122 BUTTON oButton1 PROMPT "AJUSTAR" SIZE 131, 045 OF oDlgSup action( oDlgSup:end()) FONT oFont3 PIXEL
+		@ 200, 257 BUTTON oButton2 PROMPT "RECUSAR" SIZE 131, 045 OF oDlgSup action(lRet:=.F., MYMSG("Exclusão Recusada!",1), oDlgSup:end()) FONT oFont3 PIXEL
+
+
+		ACTIVATE MSDIALOG oDlgSup CENTERED
+	ELSE
+		lRet:= .T.
+	ENDIF
 
 Return lRet

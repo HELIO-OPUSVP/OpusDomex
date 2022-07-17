@@ -2481,7 +2481,7 @@ User Function XDmxClaCh(nTipo,cCampo)
 	Local cTitulo
 	Local cDescri
 	Local cCombo
-	Local cRet := "1=Suporte N1;2=Suporte N2;3=Suporte N3 OpusVP;4=Melhoria;5=Projeto;6=Suporte N3 Outros;7=Aguardando envio Opus;8=Obrigações"
+	Local cRet := "1=Sup.N1;2=Sup.N2 2T;3=Suporte N3 OpusVP;4=Melhoria;5=Projeto;6=Suporte N3 Outros;7=Aguardando envio Opus;8=Obrigações;9-Sup.N2 1T"
 	Default nTipo := 1
 	Default cCampo := "ZJ_CLASSIF"
 
@@ -2497,7 +2497,7 @@ User Function XDmxClaCh(nTipo,cCampo)
 				EndIf
 			EndIf
 		else
-			cRet := "1=Suporte N1;2=Suporte N2;3=Suporte N3 OpusVP;4=Melhoria;5=Projeto;6=Suporte N3 Outros;7=Aguardando envio Opus;8=Obrigações"
+			cRet := "1=Sup.N1;2=Sup.N2 2T;3=Suporte N3 OpusVP;4=Melhoria;5=Projeto;6=Suporte N3 Outros;7=Aguardando envio Opus;8=Obrigações;9-Sup.N2 1T"
 			If Alltrim(SX3->X3_CBOX) <> Alltrim(cRet ) .And. Alltrim(SX3->X3_CAMPO) == Alltrim(cCampo)
 				If Reclock("SX3",.F.)
 					SX3->X3_CBOX := cRet

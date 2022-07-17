@@ -3418,7 +3418,7 @@ Static Function fLinkCarga()
 	Enddo
 
 // Restaura amarração já realizada anteriormente do ZZ6 (DOMEX e ZZ3 outros clientes)
-	// fRestSalva()
+	 fRestSalva()
 
 //Carrega aCols com uma linha vazia por não teve resultado na query
 	QRY->(DbGoTop())

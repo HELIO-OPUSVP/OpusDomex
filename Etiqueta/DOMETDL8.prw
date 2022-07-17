@@ -126,6 +126,16 @@ If !Empty(cRecEtiq)
             Return(.F.)
 			EndIf
 			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³Verifica ocorrência												³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			If U_Validacao("JAKCSON",.F.,"30/06/2022","") // Por Jackson em Validação -  30/06/2022
+				If XD1->XD1_OCORRE == "7" .Or. XD1->XD1_OCORRE == "4" .Or. XD1->XD1_OCORRE == "6" // Status que já passaram no roteiro.
+						While !MsgNoYes("Etiqueta já passou pelo roteiro."+CHR(13)+CHR(13)+"Deseja continuar?")
+						End
+					Return(.F.)
+				EndIf
+			EndIf
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
 			//³Procura o grupo e subclass do produto ordem de produção³
 			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ 			
  			

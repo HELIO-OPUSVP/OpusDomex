@@ -181,45 +181,51 @@ Static Function ValidaOP(lTeste)
 		//³Prepara número da etiqueta bipada							³
 		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 		If Len(AllTrim(cExclEtBip)) == 12
+			If UPPER(Subs(cEtiqOrig,1,1)) <> 'S'
+				nItOP     := StrZero(Val(SubStr(cEtiqAux,8,1)),3)
+				cOPnSerie := PADR(SubsTr(cEtiqAux,1,5),6)+SubsTr(cEtiqAux,6,2)+nItOP
 
-			nItOP     := StrZero(Val(SubStr(cEtiqAux,8,1)),3)
-			cOPnSerie := PADR(SubsTr(cEtiqAux,1,5),6)+SubsTr(cEtiqAux,6,2)+nItOP
+				If SC2->(dbSeek(xFilial()+cOPnSerie))
+					If SC2->C2_EMISSAO >= StoD('20170101')
+						lSerial := .T.
+					Else
+						cExclEtBip := "0"+cExclEtBip
+						cExclEtBip := Subs(cExclEtBip,1,12)
 
-			If SC2->(dbSeek(xFilial()+cOPnSerie))
-				If SC2->C2_EMISSAO >= StoD('20170101')
-					lSerial := .T.
+						lSerial   := .F.
+					EndIf
 				Else
 					cExclEtBip := "0"+cExclEtBip
 					cExclEtBip := Subs(cExclEtBip,1,12)
 
 					lSerial   := .F.
 				EndIf
-			Else
-				cExclEtBip := "0"+cExclEtBip
-				cExclEtBip := Subs(cExclEtBip,1,12)
-
-				lSerial   := .F.
+			else
+				cOPnSerie := Subs(cEtiqAux,2,11)
+				lSerial := .T.				
 			EndIf
-
 		Else
+			If UPPER(Subs(cEtiqOrig,1,1)) <> 'S'			
+				nItOP     := StrZero(Val(SubStr(cEtiqAux,8,1)),3)
+				cOPnSerie := PADR(SubsTr(cEtiqAux,1,5),6)+SubsTr(cEtiqAux,6,2)+nItOP
 
-			nItOP     := StrZero(Val(SubStr(cEtiqAux,8,1)),3)
-			cOPnSerie := PADR(SubsTr(cEtiqAux,1,5),6)+SubsTr(cEtiqAux,6,2)+nItOP
-
-			If SC2->(dbSeek(xFilial("SC2")+cOPnSerie))
-				lSerial := .T.
-			Else
-				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-				//³Valida etiqueta bipada											³
-				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-				While !MsgNoYes("Etiqueta não encontrada. "+CHR(13)+"Deseja continuar?")
-				End
-				oImprime:Disable()
-				cExclEtBip   := Space(__nTamExcl)
-				oExclEtBip:SetFocus()
-				Return (.F.)
-			EndIf
-
+				If SC2->(dbSeek(xFilial("SC2")+cOPnSerie))
+					lSerial := .T.
+				Else
+					//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+					//³Valida etiqueta bipada											³
+					//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+					While !MsgNoYes("Etiqueta não encontrada. "+CHR(13)+"Deseja continuar?")
+					End
+					oImprime:Disable()
+					cExclEtBip   := Space(__nTamExcl)
+					oExclEtBip:SetFocus()
+					Return (.F.)
+				EndIf
+			else
+				cOPnSerie := Subs(cEtiqAux,2,11)
+				lSerial := .T.		
+			Endif
 		EndIf
 
 		XD1->( dbSetOrder(1) )
@@ -386,7 +392,20 @@ Static Function ValidaOP(lTeste)
 			nQtdExclEt := SC2->C2_QUANT
 			cExclPed   := SC2->C2_PEDIDO
 			nExclSald  := (SC2->C2_QUANT - SC2->C2_QUJE)  // Trocado de C2_XXQUJE para C2_QUJE por Hélio em 25/09/18
-
+		elseIf lSerial
+			If U_VALIDACAO("JACKSON",.F.,'07/07/22','') 			
+				XD4->(DbSetOrder(3))
+				If XD4->(DbSeek(xFilial("XD4") + UPPER(Alltrim(cExclEtBip))))
+					If XD4->XD4_STATUS == "2"
+						While !MsgNoYes("Etiqueta já validada no roteiro de produção, não é possível cancelar."+CHR(13)+"Deseja continuar?")
+						End
+						oImprime:Disable()
+						cExclEtBip   := Space(__nTamExcl)
+						oExclEtBip:SetFocus()
+						Return (.F.)
+					EndIf
+				EndIf
+			Endif			
 		EndIf
 
 		_oCliente:Refresh()

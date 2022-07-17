@@ -517,7 +517,7 @@ Static Function ColetorMenu(cDep)
 
 	If aScan(aAcessos,23) <> 0
 		Private oBtn35 := Nil
-		@ nLin, nCol BUTTON oBtn35 PROMPT "Etiqueta Global"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACD47(2), U_DOMACD47(2))} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
+		@ nLin, nCol BUTTON oBtn35 PROMPT "Etiqueta Global"   ACTION Processa( {|| IF(U_WEBCOL(cAmbiente), U_DOMACD47(), U_DOMACD47())} ) SIZE nLargBut,nAltuBut PIXEL OF oScroll //oDlgMenu01
 		cCSSBtN1 :=  "QPushButton{background-image: url(rpo:totvsprinter_spool.png);"+cPush+;
 			"QPushButton:pressed {background-image: url(rpo:totvsprinter_spool.png);"+cPressed+;
 			"QPushButton:hover {background-image: url(rpo:totvsprinter_spool.png);"+cHover

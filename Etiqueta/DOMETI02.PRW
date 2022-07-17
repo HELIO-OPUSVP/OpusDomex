@@ -25,7 +25,13 @@ Local cUserSis	:= Upper(Alltrim(Substr(cUsuario,7,15)))
 Local cDescSer  := ""
 Local nPos1  := 0
 Local nPos2  := 0 
+Local lNewFuruk:= SuperGetMv("MV_NEWFRK",.F.,.T.)
 Local _i
+
+IF lNewFuruk
+	U_DOMET116(cNumOP,nQtdEtq,nNumSerie,cLocImp)
+	RETURN .T.
+ENDIF
 
 if Empty(alltrim(cLocImp)) 
     MsgAlert("Local de impressao não informado!","Aviso")
