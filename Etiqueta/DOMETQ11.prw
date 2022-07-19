@@ -414,10 +414,11 @@ For nQ := 1 To nQtdEtq		// nQtdEtq = Quantidade de Etiquetas no parametro de imp
 	Do While ETQ->(!Eof())
 		
 		For nLado1 := 1 to ETQ->G1_XXQTET1			// Preenche Primeiro Lado do Conector
-		
+
 			If SB1->B1_XXMETIQ == Int(SB1->B1_XXMETIQ)
 			   cMasc := "@E 999"
 			Else
+				nReduzCol := 4
 			   If Round(SB1->B1_XXMETIQ,1) == SB1->B1_XXMETIQ
 			      cMasc := "@E 999.9"
 			   Else
@@ -454,6 +455,7 @@ For nQ := 1 To nQtdEtq		// nQtdEtq = Quantidade de Etiquetas no parametro de imp
 			If SB1->B1_XXMETIQ == Int(SB1->B1_XXMETIQ)
 			   cMasc := "@E 999"
 			Else
+				nReduzCol := 4
 			   If Round(SB1->B1_XXMETIQ,1) == SB1->B1_XXMETIQ
 			      cMasc := "@E 999.9"
 			   Else
@@ -664,16 +666,16 @@ If Len(aLado1) > 0
 		
 		If a == 1
 			Lin3Col1 := 004
-			Lin3Col2 := 029
+			Lin3Col2 := 030
 		ElseIf a == 2
 			Lin3Col1 := 044
 			Lin3Col2 := 070
 		ElseIf a == 3
 			Lin3Col1 := 085
-			Lin3Col2 := 110
+			Lin3Col2 := 111
 		EndIf
 
-		MSCBSAY(Lin3Col1-nReduzCol ,nIni+(nLin*2.8)   ,aLado1[x,6] + " " + aLado1[x,3],cRotacao,"0","21,21") // ANATAL + METRAGEM
+		MSCBSAY(Lin3Col1-nReduzCol ,nIni+(nLin*2.8)   ,aLado1[x,6] + aLado1[x,3],cRotacao,"0","21,21") // ANATAL + METRAGEM
 		//MSCBSAY(Lin3Col1-nReduzCol ,nIni+(nLin*2.8)   ,aLado1[x,6] ,cRotacao,"0","21,21") // ANATAL + METRAGEM
 		MSCBSAY(Lin3Col2-nReduzCol ,nIni+(nLin*2.8)   ,aLado1[x,7] ,cRotacao,"0","21,21") // VIA
 		
@@ -767,16 +769,16 @@ If Len(aLado2) > 0
 		
 		If a == 1
 			Lin3Col1 := 004
-			Lin3Col2 := 029
+			Lin3Col2 := 030
 		ElseIf a == 2
 			Lin3Col1 := 044
 			Lin3Col2 := 070
 		ElseIf a == 3
 			Lin3Col1 := 085
-			Lin3Col2 := 110
+			Lin3Col2 := 111
 		EndIf
 		
-		MSCBSAY(Lin3Col1-nReduzCol ,nIni+(nLin*2.8)   ,aLado2[x,6] + " " + aLado2[x,3],cRotacao,"0","21,21") // ANATAL + METRAGEM
+		MSCBSAY(Lin3Col1-nReduzCol ,nIni+(nLin*2.8)   ,aLado2[x,6] + aLado2[x,3],cRotacao,"0","21,21") // ANATAL + METRAGEM
 		//MSCBSAY(Lin3Col1-nReduzCol ,nIni+(nLin*2.8)   ,aLado2[x,6] ,cRotacao,"0","21,21")
 		MSCBSAY(Lin3Col2-nReduzCol ,nIni+(nLin*2.8)   ,aLado2[x,7] ,cRotacao,"0","21,21")
 		
