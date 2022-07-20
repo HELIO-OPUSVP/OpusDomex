@@ -29,7 +29,7 @@ Local lNewFuruk:= SuperGetMv("MV_NEWFRK",.F.,.T.)
 Local _i
 
 IF lNewFuruk
-	U_DOMET116(cNumOP,nQtdEtq,nNumSerie,cLocImp)
+	U_DOMET116(cNumOP,nQtdEtq,nNumSerie,cLocImp,.F.)
 	RETURN .T.
 ENDIF
 

@@ -14,7 +14,7 @@ Description ETIQUETA DE SERIAL CORTE FIBRA FURUKAWA
 @since 01/09/2021
 /*/
 //-------------------------------------------------------------
-User Function DOMET116(cNumOP,nQtdEtq,nNumSerie,cLocImp)
+User Function DOMET116(cNumOP,nQtdEtq,nNumSerie,cLocImp,lAvulsa)
 
 	Local _aArq		:= {}
 	Local aCodEtq 	:= {}
@@ -23,6 +23,7 @@ User Function DOMET116(cNumOP,nQtdEtq,nNumSerie,cLocImp)
 	Local nTam  := 0
 	Local nP
 	Local nY
+
 	Private cCodFuruk:= ""
 	Private lFuruk := fFurukawa(cNumOP)
 	Private cUserSis	:= Upper(Alltrim(Substr(cUsuario,7,15)))
@@ -31,6 +32,7 @@ User Function DOMET116(cNumOP,nQtdEtq,nNumSerie,cLocImp)
 	Private aPar:= {}
 
 	Default cLocImp:= ""
+	Default lAvulsa:= .T.
 
 	if !lFuruk
 		MsgAlert("Ordem de produção não é Furukawa!","Aviso")
@@ -99,16 +101,20 @@ User Function DOMET116(cNumOP,nQtdEtq,nNumSerie,cLocImp)
 		AaDd(aCodEtq,_aArq)
 		_aArq:= {}
 
-		XD4->(dbSetOrder(1))
-		Reclock("XD4", .T.)
-		XD4->XD4_FILIAL	:= xFilial("XD4")
-		XD4->XD4_SERIAL	:= (nNumSerie+nNumEt)
-		XD4->XD4_STATUS	:= '6'
-		XD4->XD4_OP	   	:= cNumOP
-		XD4->XD4_NOMUSR	:= cUserSis
-		XD4->XD4_DOC    := _cPrxDoc
-		XD4->XD4_KEY 	:= cvaltochar(nNumSerie+nNumEt) + cCodFuruk
-		XD4->(MsUnlock())
+		if lAvulsa
+			XD4->(dbSetOrder(1))
+			Reclock("XD4", .T.)
+			XD4->XD4_FILIAL	:= xFilial("XD4")
+			XD4->XD4_SERIAL	:= (nNumSerie+nNumEt)
+			XD4->XD4_STATUS	:= '6'
+			XD4->XD4_OP	   	:= cNumOP
+			XD4->XD4_NOMUSR	:= cUserSis
+			XD4->XD4_DOC    := _cPrxDoc
+			XD4->XD4_KEY 	:= cvaltochar(nNumSerie+nNumEt) + cCodFuruk
+			
+			XD4->(MsUnlock())
+		ENDIF
+
 		nNumEt++
 
 	Next _i
