@@ -18,15 +18,14 @@ Adaptação para o Orçamento - Osmar Ferreira 04/07/2022
 User Function GCJCLIENTE()
 Local aAreaTMP1 
 Local cRet := M->CJ_CLIENTE
+Local _cUF 		  := Posicione("SA1", 1, xFilial("SA1")+M->CJ_CLIENTE+M->CJ_LOJA, "A1_EST")
+Local _lContrib	:= .T.
 
-//Local x
-//Local nPC6XOPER   := aScan(aHeader,{ |aVet| Alltrim(aVet[2]) == "C6_XOPER"   })
-//Local nPC6TES     := aScan(aHeader,{ |aVet| Alltrim(aVet[2]) == "C6_TES"     })
-//Local nPC6PRODUTO := aScan(aHeader,{ |aVet| Alltrim(aVet[2]) == "C6_PRODUTO" })
-//Local nPC6CF      := aScan(aHeader,{ |aVet| Alltrim(aVet[2]) == "C6_CF"      })
-
-	Local _cUF 		  := Posicione("SA1", 1, xFilial("SA1")+M->CJ_CLIENTE+M->CJ_LOJA, "A1_EST")
-	Local _lContrib	:= .T.
+	DbSelectArea("TMP1")
+	TMP1->( dbGoTop() )
+	If Empty(TMP1->CK_PRODUTO) // Inclusão o browser esta vazio
+		Return(cRet)
+	EndIf
 
 	oGetDad:oBrowse:GoBottom()
 	aAreaTMP1 := TMP1->( GetArea() )
@@ -77,9 +76,14 @@ Local cRet := M->CJ_LOJA
 Local _cUF 			:= Posicione("SA1", 1, xFilial("SA1")+M->CJ_CLIENTE+M->CJ_LOJA, "A1_EST")
 Local _lContrib	:= .T.
 
+	DbSelectArea("TMP1")
+	TMP1->( dbGoTop() )
+	If Empty(TMP1->CK_PRODUTO) // Inclusão o browser esta vazio
+		Return(cRet)
+	EndIf
+
 	oGetDad:oBrowse:GoBottom()
 	aAreaTMP1 := TMP1->( GetArea() )
-
 
 	_lContrib := iif(Alltrim(Posicione("SA1", 1, xFilial("SA1")+M->CJ_CLIENTE+M->CJ_LOJA, "A1_CONTRIB"))<>"2",.T.,.F.)
 
@@ -120,6 +124,12 @@ Local cRet := M->CJ_TIPOCLI
 Local _cUF 			:= Posicione("SA1", 1, xFilial("SA1")+M->CJ_CLIENTE+M->CJ_LOJA, "A1_EST")
 Local _lContrib	:= .T.
 
+	DbSelectArea("TMP1")
+	TMP1->( dbGoTop() )
+	If Empty(TMP1->CK_PRODUTO) // Inclusão o browser esta vazio
+		Return(cRet)
+	EndIf
+
 	oGetDad:oBrowse:GoBottom()
 
 	aAreaTMP1 := TMP1->( GetArea() )
@@ -129,7 +139,8 @@ Local _lContrib	:= .T.
 	If !Empty(M->CJ_CLIENTE) .AND. !Empty(M->CJ_LOJA)	
 		DbSelectArea("TMP1")
 		TMP1->( dbGoTop() )
-		While TMP1->( !Eof() )
+		
+		While TMP1->( !Eof() ) 
 			RecLock("TMP1",.F.)
 			
 			TMP1->CK_TES := U_ReTesInt(TMP1->CK_XOPER,M->CJ_CLIENTE,M->CJ_LOJA,TMP1->CK_PRODUTO,M->CJ_TIPOCLI)[1]
