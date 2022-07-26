@@ -1,13 +1,13 @@
 
 #INCLUDE "protheus.ch"
-#INCLUDE "tlpp-core.th"
-#INCLUDE "tlpp-rest.th"
+//#INCLUDE "tlpp-core.th"
+
 
 User Function FTPPDF()
 Local oFtp, nStat
 Local cFtpSrv := "10.62.28.114"
 Local nFTPPort := 22
-local aFiles, cErrorMsg := ''
+//local aFiles, cErrorMsg := ''
 
 
 // Cria o objeto Client
@@ -30,17 +30,14 @@ Endif
 oFtp:Close()
 
 
-
-
+/*
 aFiles := SFTPDirLS(cFtpSrv, "/home/ondati/public_html","ondati", "Ondati2022!@", @cErrorMsg)
- 
 If ( valtype(aFiles) != 'A' )
     Alert("Falha na execução : Erro "+cErrorMsg)
 Else
 	Alert(Len(aFiles))	
 Endif
-
-
+*/
 
 
 /*

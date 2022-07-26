@@ -1,11 +1,13 @@
+
 #include "protheus.ch"
 
 /*
 ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
 ±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
-±±ºPrograma  ³MA415MNU  ºAutor  ³Felipe Melo         º Data ³  20/02/13   º±±
+±±ºPrograma  ³MA416FIL  ºAutor  ³Osmar Ferreira      º Data ³  26/07/22   º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
-±±ºDesc.     ³ Adiciona botão no browse de Orçamentos de Vendas           º±±
+±±ºDesc.     ³ Ponto de entrada é executado antes da apresentação         º±±
+±±º          ³ do Browse e utilizado como filtro do usuário.              º±±
 ±±º          ³                                                            º±±
 ±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
 ±±ºUso       ³ AP                                                        º±±
@@ -13,12 +15,14 @@
 ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
 */
 
-User Function MA415MNU()
+User Function MA416FIL()
+Local cFiltro := ""              
+Local cNum := "'"+SCJ->CJ_NUM+"'"
 
-aAdd( aRotina,{"Proposta Word", "U_PropCom1"	, 0 , 2, 0,.F.} )
-
-If U_Validacao("OSMAR")
-   AAdd( aRotina,{ "Efetivar","MATA416(,)" , 0 , 0 , 0 ,NIL } )
+//Mas somente quanto a efetivação é chamada pela rotina de cadastro do orçamento
+If FUnName() ==  "MATA415" 
+   cFiltro := "CJ_NUM == " + cNum
 EndIf
 
-Return
+Return(cFiltro)
+
