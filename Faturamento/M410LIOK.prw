@@ -24,11 +24,9 @@ User Function M410LIOK()
 	Local nPC6_XXOP
 	Local nPC6_TES
 	Local nPC6_LOCAL
-	Local cTimeIni
-	Local nMargem  := GetMV("MV_XMARGEM")  //Percentual mínimo aceito como margem de lucro
+	Local cTimeIni	
 	Local cPC6_XGERAOP
-
-//return
+	//Local nMargem  := GetMV("MV_XMARGEM")  //Percentual mínimo aceito como margem de lucro
 
 	cTimeIni := Time()
 
@@ -40,15 +38,15 @@ User Function M410LIOK()
 	aAreaSD4  := SD4->( GetArea() )
 	aAreaSA1  := SA1->( GetArea() )
 
-	If U_Validacao("OSMAR")
-		SA1->(dbSetOrder(01))
-		SA1->( dbSeek(xFilial()+M->C5_CLIENTE+M->C5_LOJACLI) )
-		If SA1->A1_XMARGEM > 0
-			nMargem := SA1->A1_XMARGEM
-		Else
-			nMargem := GetMV("MV_XMARGEM")
-		Endif
-	EndIf
+	//If U_Validacao("OSMAR")
+	//	SA1->(dbSetOrder(01))
+	//	SA1->( dbSeek(xFilial()+M->C5_CLIENTE+M->C5_LOJACLI) )
+	//	If SA1->A1_XMARGEM > 0
+	//		nMargem := SA1->A1_XMARGEM
+	//	Else
+	//		nMargem := GetMV("MV_XMARGEM")
+	//	Endif
+	//EndIf
 
 	nPC6_ITEM    := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_ITEM"    } )
 	nPC6_PRODUTO := aScan( aHeader, { |aVet| Alltrim(aVet[2]) == "C6_PRODUTO" } )
@@ -61,7 +59,8 @@ User Function M410LIOK()
 
 	If _Retorno
 		If !aCols[n,Len(aHeader)+1]
-			If U_VALIDACAO("OSMAR")
+
+			If U_VALIDACAO("OSMAR")      //Início da validação de remessa para beneficiamento
 				SF4->( dbSetOrder(1) )
 				If SF4->( dbSeek( xFilial() + aCols[N,nPC6_TES] ) )
 					If SF4->F4_XOPBENE == 'S'
@@ -89,38 +88,39 @@ User Function M410LIOK()
 					EndIf
 				EndIf
 			Else
-				If SF4->( Fieldpos("F4_XOPBENE")) > 0 .and. U_VALIDACAO("OSMAR")  // Hélio Ferreira 10/11/21
-					SF4->( dbSetOrder(1) )
-					//If SF4->( dbSeek( xFilial() + aCols[N,_nPTes] ) )
-					If SF4->( dbSeek( xFilial() + aCols[N,nPC6_TES] ) )
-						If SF4->F4_XOPBENE == 'S'
-							If Empty(aCols[N,nPC6_XXOP])
-								MsgStop("Pedido de remessa para beneficiamento. Favor informar o Numero da Ordem de Produção no campo OP Beneficia.")
-								_Retorno := .F.
-							EndIf
-						EndIf
-					EndIf
-				Else
-					If acols[N,nPC6_TES] == '903'
-						If Empty(aCols[N,nPC6_XXOP])
+				//If SF4->( Fieldpos("F4_XOPBENE")) > 0 .and. U_VALIDACAO("OSMAR")  // Hélio Ferreira 10/11/21
+				//	SF4->( dbSetOrder(1) )
+				//	//If SF4->( dbSeek( xFilial() + aCols[N,_nPTes] ) )
+				//	If SF4->( dbSeek( xFilial() + aCols[N,nPC6_TES] ) )
+				//		If SF4->F4_XOPBENE == 'S'
+				//			If Empty(aCols[N,nPC6_XXOP])
+				//				MsgStop("Pedido de remessa para beneficiamento. Favor informar o Numero da Ordem de Produção no campo OP Beneficia.")
+				//				_Retorno := .F.
+				//			EndIf
+				//		EndIf
+				//	EndIf
+				//Else
+				//	If acols[N,nPC6_TES] == '903'
+				//		If Empty(aCols[N,nPC6_XXOP])
 
-							MsgStop("Pedido de remessa para beneficiamento. Favor informar o Numero da Ordem de Produção no campo OP Beneficia.")
+				//			MsgStop("Pedido de remessa para beneficiamento. Favor informar o Numero da Ordem de Produção no campo OP Beneficia.")
 
-							If Date() <= StoD("20130731")
-								MsgStop("Até a data de 31/07/13 o sistema aceitará envios para beneficiamento sem OP. Posteriormente não será possível.")
-							Else
-								If Date() >= StoD("20130810")
-									_Retorno := .F.
-								EndIf
-							EndIf
-						Else
-							SC2->(  dbSetOrder(1) )
-							// Testar se a OP está correta
+				//			If Date() <= StoD("20130731")
+				//				MsgStop("Até a data de 31/07/13 o sistema aceitará envios para beneficiamento sem OP. Posteriormente não será possível.")
+				//			Else
+				//				If Date() >= StoD("20130810")
+				//					_Retorno := .F.
+				//				EndIf
+				//			EndIf
+				//		Else
+				//			SC2->(  dbSetOrder(1) )
+				//			// Testar se a OP está correta
 
-						EndIf
-					EndIf
-				EndIf
-			EndIf
+				//		EndIf
+				//	EndIf
+				//EndIf
+			EndIf  //Fim da validação de remessa para beneficiamento
+
 		EndIf
 	EndIf
 
@@ -186,14 +186,14 @@ _Retorno := .F.
 	EndIf
 
 //Osmar Ferreira - OpusVP - 04/06/2020 - Informa Margem fora do range
-	If _Retorno
-		If M->C5_TIPO == "N"
-			If aCols[n,nPC6_MARGEM] > 0 .And. aCols[n,nPC6_MARGEM] < nMargem
-				MsgInfo("A Margem de Contribuição deste item esta em "+Alltrim(Str(aCols[n,nPC6_MARGEM]))+"%"+Chr(13)+"e esta abaixo de "+AllTrim(Str(nMargem))+"% ","A T E N Ç Ã O")
-				_Retorno := .T.
-			EndIf
-		EndIf
-	EndIf
+	//If _Retorno
+	//	If M->C5_TIPO == "N"
+	//		If aCols[n,nPC6_MARGEM] > 0 .And. aCols[n,nPC6_MARGEM] < nMargem
+	//			MsgInfo("A Margem de Contribuição deste item esta em "+Alltrim(Str(aCols[n,nPC6_MARGEM]))+"%"+Chr(13)+"e esta abaixo de "+AllTrim(Str(nMargem))+"% ","A T E N Ç Ã O")
+	//			_Retorno := .T.
+	//		EndIf
+	//	EndIf
+	//EndIf
 
 //Osmar Ferreira - OpusVP - 24/09/2020 - Para não abrir OP de produto revenda pela opção (botão de venda)
 	If _Retorno
