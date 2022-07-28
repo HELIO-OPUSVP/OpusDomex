@@ -345,7 +345,7 @@ Return .T.
 Static Function ReimprEtq()
 Local cQrySD3 := ""
 Local lRet    := .T.
-
+Local np
 If Len(AllTrim(cEtiqueta))==12 //EAN 13 s/ dígito verificador.
 	cEtiqueta := "0"+cEtiqueta
 	cEtiqueta := Subs(cEtiqueta,1,12)
@@ -377,6 +377,7 @@ If XD1->( dbSeek( xFilial("XD1") + cEtiqueta ) )
 	lImprime := .T.
 	nTotReg := 0
 	nCont := 0
+	aEtqRot := {}
 	If TMPD3->(!Eof())
 		
 		While TMPD3->(!EOF())
@@ -389,40 +390,39 @@ If XD1->( dbSeek( xFilial("XD1") + cEtiqueta ) )
 		While TMPD3->(!EOF())
 			nCont ++
 			IncProc("Reimprimindo Etiqueta do Produto")	
-			
-			IF lImprime 
-				cEtqGerada:= U_EtPgOP39(TMPD3->D3_XXOP,TMPD3->D3_COD,TMPD3->B1_DESC,TMPD3->D3_QUANT,.F.,nCont,nTotReg,xFilial("SC2"),.T.)
-				If !Empty(Alltrim(cEtqGerada))
-					//Ajustar a etiqueta do Movimento e cancelar a eiqueta anterior
-					
-					cQryXD1 := " SELECT XD1_XXPECA  "
-					cQryXD1 += " FROM XD1010 XD1 "
-					cQryXD1 += " WHERE XD1.D_E_L_E_T_ ='' AND XD1_FILIAL = '" + xFilial("XD1") + "' "
-					cQryXD1 += " AND XD1_COD ='" + TMPD3->D3_COD  + "' "
-					cQryXD1 += " AND XD1_OP = '" + TMPD3->D3_XXOP + "' "
-					cQryXD1 += " AND XD1_QTDATU =" + Alltrim(Str(TMPD3->D3_QUANT)) + " AND XD1_LOCAL = '97' "
-					cQryXD1 += " AND XD1_XXPECA <'" + Alltrim(cEtqGerada) + "' AND XD1_OCORRE <> '5' AND XD1_OCORRE = '7' "	
+			cQryXD1 := " SELECT XD1_XXPECA  "
+			cQryXD1 += " FROM XD1010 XD1 "
+			cQryXD1 += " WHERE XD1.D_E_L_E_T_ ='' AND XD1_FILIAL = '" + xFilial("XD1") + "' "
+			cQryXD1 += " AND XD1_COD ='" + TMPD3->D3_COD  + "' "
+			cQryXD1 += " AND XD1_OP = '" + TMPD3->D3_XXOP + "' "					
+			cQryXD1 += " AND XD1_QTDATU =" + Alltrim(Str(TMPD3->D3_QUANT)) + " AND XD1_LOCAL = '97' "
+			//cQryXD1 += " AND XD1_XXPECA <'" + Alltrim(cEtqGerada) + "' "
+			cQryXD1 += " AND XD1_OCORRE <> '5' AND XD1_OCORRE = '7' "	
 
-					If Select("TBXD1") > 0
-						TBXD1->(DbCloseArea())
-					EndIf
-					TCQUERY cQryXD1 NEW ALIAS "TBXD1"					
-					IF TBXD1->(!EOF())
-						U_MsgColetor("As Etiquetas relacionadas já foram validadas no roteiro não será possível re-imprimir")	
-						lRet := .F.
-					Else
+			If Select("TBXD1") > 0
+				TBXD1->(DbCloseArea())
+			EndIf
+			TCQUERY cQryXD1 NEW ALIAS "TBXD1"					
+			IF TBXD1->(!EOF())
+				aAdd(aEtqRot,{TMPD3->D3_COD,TMPD3->D3_QUANT,TBXD1->XD1_XXPECA})	
+			Else			
+				IF lImprime 
+					cEtqGerada:= U_EtPgOP39(TMPD3->D3_XXOP,TMPD3->D3_COD,TMPD3->B1_DESC,TMPD3->D3_QUANT,.F.,nCont,nTotReg,xFilial("SC2"),.T.)
+					If !Empty(Alltrim(cEtqGerada))
+						//Ajustar a etiqueta do Movimento e cancelar a eiqueta anterior
+						
 						If Select("TBXD1") > 0
 							TBXD1->(DbCloseArea())
 						EndIf
-
-
 						cQryXD1 := " SELECT XD1_XXPECA  "
 						cQryXD1 += " FROM XD1010 XD1 "
 						cQryXD1 += " WHERE XD1.D_E_L_E_T_ ='' AND XD1_FILIAL = '" + xFilial("XD1") + "' "
 						cQryXD1 += " AND XD1_COD ='" + TMPD3->D3_COD  + "' "
 						cQryXD1 += " AND XD1_OP = '" + TMPD3->D3_XXOP + "' "
+						//cQryXD1 += " AND XD1_XXPECA = '" + TMPD3->D3_XXPECA + "' "
 						cQryXD1 += " AND XD1_QTDATU =" + Alltrim(Str(TMPD3->D3_QUANT)) + " AND XD1_LOCAL = '97' "
-						cQryXD1 += " AND XD1_XXPECA <'" + Alltrim(cEtqGerada) + "' AND XD1_OCORRE <> '5' AND XD1_OCORRE = '8' "							
+						cQryXD1 += " AND XD1_XXPECA <'" + Alltrim(cEtqGerada) + "' "
+						cQryXD1 += " AND XD1_OCORRE <> '5' AND XD1_OCORRE = '8' "							
 						If Select("TBXD1") > 0
 							TBXD1->(DbCloseArea())
 						EndIf
@@ -438,18 +438,26 @@ If XD1->( dbSeek( xFilial("XD1") + cEtiqueta ) )
 						If Select("TBXD1") > 0
 							TBXD1->(DbCloseArea())
 						EndIf
-					EndiF
-						/*
-					 TMPD3->(DbGoTo(TMPD3->RECSD3))
-					If Alltrim(TMPD3->D3_XXOP) == Alltrim(SD3->D3_XXOP)
-						RecLock("SD3",.F.)
-							SD3->D3_XXPECA := cEtqGerada
-						SD3->(MsUnLock())
-					EndIf*/
-				EndIf
-			Endif
+						
+							/*
+						TMPD3->(DbGoTo(TMPD3->RECSD3))
+						If Alltrim(TMPD3->D3_XXOP) == Alltrim(SD3->D3_XXOP)
+							RecLock("SD3",.F.)
+								SD3->D3_XXPECA := cEtqGerada
+							SD3->(MsUnLock())
+						EndIf*/
+					EndIf
+				Endif
+			EndiF	
 			TMPD3->(DbSkip())
 		EndDo
+ 		If Len(aEtqRot) > 0
+			cMensImp := ""
+			For np := 1 to len(aEtqRot)
+				cMensImp += "Prdoduto:" + aEtqRot[nP][1] +  "-" + "Qtd." + Transform(aEtqRot[np][2],"@E 999,999.99") + "Etq.:" + aEtqRot[np][3] + ENTER
+			Next np
+			U_MsgColetor("Etiqueta(s) Já validada(s) No roteiro: " + ENTER + cMensImp)
+		EndIf
 	else
 		U_MsgColetor("Não foi encontrado transferência para esse produto : " + XD1->XD1_COD)	
 	Endif
