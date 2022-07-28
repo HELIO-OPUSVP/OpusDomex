@@ -99,7 +99,7 @@ Static Function fprocPortal()
 		_cFornec := _cCodFOR+'-'+_cLojFOR+' '+_cNomFOR
 	ENDIF
 
-	DEFINE MSDIALOG oDlg1 TITLE OemToAnsi("Rosenberger - Portal Xml - versão 17/05/22") FROM 0,0 TO 470,910 PIXEL of oMainWnd PIXEL
+	DEFINE MSDIALOG oDlg1 TITLE OemToAnsi("Rosenberger - Portal Xml - versão 13/07/22") FROM 0,0 TO 470,910 PIXEL of oMainWnd PIXEL
 
 	@ 005, 008	SAY oTexto1   VAR OemToAnsi('Chave Eletronica NF-e ( XML )')  PIXEL SIZE 170,15
 	oTexto1:oFont := TFont():New('Arial',,15,,.T.,,,,.T.,.F.)
