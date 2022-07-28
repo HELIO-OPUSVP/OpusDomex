@@ -2,7 +2,7 @@
 #include "FWPrintSetup.ch"
 
 User Function DMXIMPPC(nOpc)
-
+Private cObsRodape  := ""
 	If nOpc == 1
 
 		MsgRun("Imprimindo PC","Gerando PC",{|| DOMGeraPC(nOpc) })
@@ -52,6 +52,7 @@ Static Function DOMGeraPC(nOpc)
 	Private nMoedaPed   := SC7->C7_MOEDA
 	Private cDescMoed   := SuperGetMv("MV_MOEDA"+AllTrim(Str(nMoedaPed,2)))
 	Private cSimbMoeda  := Space(3)
+	
 	Default nOpc := 1
 
 	/*
@@ -146,7 +147,7 @@ Static Function DOMGeraPC(nOpc)
 				cDescProd += " - Finalidade: " + SC7->C7_XOPER + "-" +Alltrim(Posicione("SX5",1,xFilial("SX5")+"ZD"+SC7->C7_XOPER ,"X5_DESCRI"))
 			EndIf
 			//		MaFisAdd(SC6->C6_PRODUTO, SC6->C6_TES, SC6->C6_QTDVEN, SC6->C6_PRCVEN, 0, "", "",, 0, 0, 0, 0, SC6->C6_VALOR, 0)
-
+			cObsRodape += Alltrim(SC7->C7_OBS) + Space(1)
 			oPrinter:Say(nLin,11,AllTrim(SC7->C7_ITEM),oFont9)
 			oPrinter:Say(nLin,29,AllTrim(SC7->C7_PRODUTO),oFont9)
 			oPrinter:Say(nLin ,101,SubStr(cDescProd,1,45),oFont9)
@@ -241,7 +242,7 @@ Static Function RodapePC(nOpc)
 		oPrinter:Line(665,280,765,280)
 		oPrinter:Line(690,10,690,585)
 		oPrinter:Say(700,12,"Observacoes",oFont12)
-		oPrinter:Say(710,12,AllTrim(SC7->C7_OBS),oFont12)
+		oPrinter:Say(710,12,/*AllTrim(SC7->C7_OBS)*/cObsRodape,oFont12)
 		oPrinter:Line(745,10,745,280)
 		oPrinter:Say(700,282,"Total Geral:" + cSimbMoeda + " "+ AllTrim(TransForm(nValorTotal ,PesqPict("SC7","C7_TOTAL"))),oFont12)
 		oPrinter:Line(705,280,705,585)
