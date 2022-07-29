@@ -4,40 +4,52 @@
 
 
 User Function FTPPDF()
-Local oFtp, nStat
-Local cFtpSrv := "10.62.28.114"
-Local nFTPPort := 22
+	Local oFtp, nStat
+	Local cFtpSrv := "10.62.28.114"
+	Local nFTPPort := 21
+	Local aRetDir := {}
 //local aFiles, cErrorMsg := ''
 
 
 // Cria o objeto Client
-oFtp := tFtpClient():New()
-oFtp:Close()
-oFtp:bFireWallMode     := .T.
-oFtp:bUsesIPConnection := .T. //Pega o IP da interface de rede que estabeleceu a cominucação 
-oFtp:nControlPort      := 22   //Define a porta padrão
-oFtp:nConnectTimeOut   := 5
+	oFtp := tFtpClient():New()
+	oFtp:Close()
+	oFtp:bFireWallMode     := .T.
+	oFtp:bUsesIPConnection := .T. //Pega o IP da interface de rede que estabeleceu a cominucação
+	oFtp:nControlPort      := 21   //Define a porta padrão
+	oFtp:nConnectTimeOut   := 5
 
 // Estabelece a conexão com o FTP Server 
-nStat := oFtp:FtpConnect(cFtpSrv,nFTPPort, "ondati", "Ondati2022!@")
+	nStat := oFtp:FtpConnect(cFtpSrv,nFTPPort, "ondati", "Ondati2022!@")
 
-If nStat != 0
-	Alert("Erro na conexão....  "+Str(nStat)+" - "+oFtp:cErrorString)
-Else
-	Alert("Conectou....")
-Endif
-
-oFtp:Close()
+	If nStat != 0
+		Alert("Erro na conexão....  "+Str(nStat)+" - "+oFtp:cErrorString)
+	Else
+		Alert("Conectou no servidor!!!....")
+	Endif
 
 
-/*
-aFiles := SFTPDirLS(cFtpSrv, "/home/ondati/public_html","ondati", "Ondati2022!@", @cErrorMsg)
-If ( valtype(aFiles) != 'A' )
-    Alert("Falha na execução : Erro "+cErrorMsg)
-Else
-	Alert(Len(aFiles))	
-Endif
-*/
+	nRet := oFtp:ChDir( "/home/ondati/public_html" )
+	If nRet <> 0
+		Alert( "Nao foi possível modificar diretório!!" )
+	else
+		Alert(nRet)	
+	EndIf
+
+
+	aRetDir := oFtp:DIRECTORY( "*.*" , .F.)
+	If !Empty(aRetDir)
+		Alert(aRetDir[1][1])   
+	Else	   
+	   Alert('Vazio sem arquivos.....')
+	EndIf
+
+	
+
+	oFtp:Close()
+
+
+	
 
 
 /*
@@ -56,28 +68,33 @@ Endif
 
 Return Nil
 
-
-
 /*
-Local oFtp, nStat
-Local cFtpSrv := "10.62.28.114"
-Local nFTPPort := 22
+	#INCLUDE "protheus.ch"
+	#DEFINE DEFAULT_FTP 21
+	#DEFINE PATH "\teste\"
+Function TestFTP()
+	Local aRetDir := {}
+	//Tenta se conectar ao servidor ftp em localhost na porta 21
+	//com usuário e senha anônimos
+	if !FTPCONNECT( "localhost" , 21 ,"Anonymous", "test@test.com" )
+		conout( "Nao foi possível se conectar!!" )
+		Return NIL
+	EndIf
+	//Tenta mudar do diretório corrente ftp, para o diretório
+	//especificado como parâmetro
+	if !FTPDIRCHANGE( "/test" )
+		conout( "Nao foi possível modificar diretório!!" )
+		Return NIL
+	EndIf
+	//Retorna apenas os arquivos contidos no local
+	aRetDir := FTPDIRECTORY( "*.*" , )
+	//Retorna os diretórios e arquivos contidos no local   	//
+	aRetDir := FTPDIRECTORY( "*.*" , "D")
+	//Verifica se o array está vazio
+	If Empty( aRetDir )
+		conout( "Array Vazio!!" )
+		Return NIL
+	EndIf
+Return
 
-// Cria o objeto Client
-oFtp := tFtpClient():New()
-
-// Estabelece a conexão com o FTP Server 
-nStat := oFtp:FtpConnect(cFtpSrv,nFTPPort, "ondati", "Ondati2022!@")
-
-Alert(nStat)
-
-If nStat != 0
-	Alert("Erro....")
- 
-else
-	Alert("Conectou....")
-Endif
-
-oFtp:Close()
 */
-
